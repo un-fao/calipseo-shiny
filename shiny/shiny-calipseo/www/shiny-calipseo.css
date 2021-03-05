@@ -1,0 +1,40 @@
+hr {border-top: 1px solid #aaa; margin-top: 4px; margin-bottom: 4px;}
+
+.selectize-dropdown { z-index: 1001 !important; }
+.leaflet-control-attribution { font-size:70% !important; }
+.box-body{ padding: 6px !important }
+.leaflet .legend i{
+	border-radius: 50%;
+	width: 10px;
+	height: 10px;
+	margin-top: 4px;
+}
+.datatables{
+  font-size: 80%;
+  overflow: auto;
+}
+
+.tooltip-info { margin-left:4px;color:#cbcbcb;font-size:80%; }
+.tooltip-info:hover { color:orange; }
+
+.btn {font-size:16px; height: 40px;float: left; margin: 4px;}
+.release-info {display:inline-block;}
+
+.user-tooltip {
+    vertical-align: middle;
+    margin-left: 4px;
+    color: #ccc;
+}
+.user-tooltip:hover { color:orange; }
+
+a[data-value=vessel_info] { display:none !important; }
+
+ul.vessel {
+    list-style-type: none;
+    display: inline-flex;
+}
+
+ul.vessel li {
+  margin-left:10px;
+  margin-right:10px;
+}

@@ -1,0 +1,1 @@
+SELECT COUNT(*) as COUNT FROM reg_vessels 

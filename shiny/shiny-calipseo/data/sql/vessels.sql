@@ -1,0 +1,6 @@
+SELECT v.REGISTRATION_NUMBER, v.NAME, vt.name AS VESSEL_TYPE, vos.name AS VESSEL_OPERATIONAL_STATUS, st.name AS VESSEL_STAT_TYPE , ls.name AS HOME_PORT_LANDING_SITE, ls2.name AS REG_PORT_LANDING_SITE FROM reg_vessels AS v 
+LEFT JOIN (SELECT * FROM cl_ref_vessel_types ) AS vt ON v.CL_REF_VESSEL_TYPE_ID = vt.ID 
+LEFT JOIN (SELECT * FROM cl_app_vessel_operational_status) AS vos ON v.CL_APP_VESSEL_OPERATIONAL_STATUS_ID = vos.ID 
+LEFT JOIN (SELECT * FROM cl_app_vessel_stat_type) AS st ON v.CL_APP_VESSEL_STAT_TYPE_ID = st.ID 
+LEFT JOIN (SELECT * FROM cl_fish_landing_sites) AS ls ON v.CL_FISH_HOME_PORT_LANDING_SITE_ID = ls.ID 
+LEFT JOIN (SELECT * FROM cl_fish_landing_sites) AS ls2 ON v.CL_FISH_REG_PORT_LANDING_SITE_ID = ls2.ID
