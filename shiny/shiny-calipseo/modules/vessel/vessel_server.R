@@ -94,10 +94,13 @@ vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
     
     vesselCatches <- accessVesselCatches(pool, vesselId)
     if(nrow(vesselCatches)>0){
-      vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime), tz = "UTC")
-      vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime), tz = "UTC")
-      atSea = as(vesselCatches$ret_datetime-vesselCatches$dep_datetime, "numeric")
-      if(attr(test, "units")=="hours") atSea = atSea/24
+      vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime), tz = appConfig$country_profile$timezone)
+      vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime), tz = appConfig$country_profile$timezone)
+      atSea = vesselCatches$ret_datetime-vesselCatches$dep_datetime
+      atSea <- switch(attr(atSea, "units"),
+        "mins" = as.numeric(atSea)/60/24,
+        "hours" = as.numeric(atSea)/24
+      )
       vesselCatches$daysAtSea <- round(atSea, 2)
       
       vesselCatches$year <- as.factor(format(vesselCatches$ret_datetime, "%Y"))
