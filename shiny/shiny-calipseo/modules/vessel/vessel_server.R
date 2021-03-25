@@ -254,31 +254,17 @@ vesselBreakdownServer <- function(input, output, session, pool) {
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
-  #output$map_vessels <- renderLeaflet({
-  #  
-  #  queryString <-'select longitude , latitude , \'(\'|| cast ( latitude as varchar) ||\', \'||cast ( longitude as varchar)||\')\' coordinates, name as  NAME,  COALESCE (vessels,0) as "Number of vessels"
-  #    	from "landing-site" as ls
-  #    	left join 
-  #    	(SELECT "homePort" code, count(*) as vessels
-  #    	FROM public.vessel
-  #    	group by "homePort")as p
-  #    	on p.code = ls.code
-  #       order by name'
-  #  
-  #  query <- sqlInterpolate(ANSI(),queryString)
-  #  outp <- dbGetQuery(pool, query) 
-  #  
-  #  sites_vessels <- outp
-  #  
-  #  #build the map
-  #  leaflet() %>%
-  #    addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
-  #    addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
-  #               radius = 7000*sqrt(sites_vessels$"Number of vessels"/max(sites_vessels$"Number of vessels",na.rm = TRUE)), 
-  #               popup = paste(
-  #                 em("Home port: "), sites_vessels$NAME,br(),
-  #                 em(paste0("Number of vessels:")), sites_vessels$"Number of vessels"
-  #               ))
-  #})
+  output$map_vessels <- renderLeaflet({
+ 
+    sites_vessels <- accessVesselsCountByLandingSite(pool) 
+    leaflet() %>%
+      addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+      addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
+                 radius = 7000*sqrt(sites_vessels$COUNT/max(sites_vessels$COUNT,na.rm = TRUE)), 
+                 popup = paste(
+                   em("Home port: "), sites_vessels$NAME,br(),
+                   em(paste0("Number of vessels:")), sites_vessels$COUNT
+                 ))
+  })
   
 }

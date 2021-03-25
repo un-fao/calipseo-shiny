@@ -61,7 +61,15 @@ accessVesselCatchesFromDB <- function(con, registrationNumber){
 #accessVesselsCountByTypeFromDB
 accessVesselsCountByTypeFromDB <- function(con){
   vesseltypes_count_sql <- readSQLScript("data/sql/vessels_types_count.sql")
-  dbGetQuery(pool, vesseltypes_count_sql)
+  dbGetQuery(con, vesseltypes_count_sql)
+}
+
+#accessVesselsCountByLandingSiteFromDB
+accessVesselsCountByLandingSiteFromDB <- function(con){
+  vesselsites_count_sql <- readSQLScript("data/sql/vessels_landing_sites_count.sql")
+  sites <- dbGetQuery(con,  vesselsites_count_sql)
+  sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  return(sites)
 }
 
 #generic data callers (considering this needs to be replaced later by API calls)
@@ -94,4 +102,9 @@ accessVesselCatches <- function(con, registrationNumber = NULL){
 #accessVesselsCountByType
 accessVesselsCountByType <- function(con){
   accessVesselsCountByTypeFromDB(con)
+}
+
+#accessLandingSites
+accessVesselsCountByLandingSite <- function(con){
+  accessVesselsCountByLandingSiteFromDB(con)
 }

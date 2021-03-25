@@ -30,8 +30,8 @@ vesselBreakdownUI <- function(id){
             )
           ),
           fluidRow(
-            box(width = 6, height = 540, title = sprintf("Breakdown of vessels in %s per vessel type", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, plotlyOutput(ns("rep_vessels")))
-            #box(width = 6, height = 540, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, leafletOutput(ns("map_vessels"), height = 490))
+            box(width = 6, height = 540, title = sprintf("Breakdown of vessels in %s per vessel type", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, plotlyOutput(ns("rep_vessels"))),
+            box(width = 6, height = 540, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, leafletOutput(ns("map_vessels"), height = 490))
           )
   )
   
