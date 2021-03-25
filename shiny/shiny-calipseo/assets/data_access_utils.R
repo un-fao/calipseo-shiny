@@ -58,6 +58,12 @@ accessVesselCatchesFromDB <- function(con, registrationNumber){
   return(landing_forms)
 }
 
+#accessVesselsCountByTypeFromDB
+accessVesselsCountByTypeFromDB <- function(con){
+  vesseltypes_count_sql <- readSQLScript("data/sql/vessels_types_count.sql")
+  dbGetQuery(pool, vesseltypes_count_sql)
+}
+
 #generic data callers (considering this needs to be replaced later by API calls)
 
 #accessVessels
@@ -83,4 +89,9 @@ accessVesselOwners <- function(con, registrationNumber = NULL){
 #accessVesselCatches
 accessVesselCatches <- function(con, registrationNumber = NULL){
   accessVesselCatchesFromDB(con, registrationNumber)
+}
+
+#accessVesselsCountByType
+accessVesselsCountByType <- function(con){
+  accessVesselsCountByTypeFromDB(con)
 }

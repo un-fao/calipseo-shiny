@@ -23,6 +23,7 @@ server <- function(input, output, session) {
       switch(currentPage,
              'vessel-list' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_list")})},
              'vessel-info' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_info")})},
+             'vessel-breakdown' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_breakdown")})},
              {isolate({updateTabItems(session, "calipseo-tabs", "home")})}
       )
     } else {
@@ -40,7 +41,7 @@ server <- function(input, output, session) {
     #-------------------------------------------------------------------------------
     callModule(vesselListServer, "vessel_list", pool)
     callModule(vesselInfoServer, "vessel_info", pool)
-    #callModule(vesselRepartitionServer, "vessel_repartition", pool)
+    callModule(vesselBreakdownServer, "vessel_breakdown", pool)
 
   })
   

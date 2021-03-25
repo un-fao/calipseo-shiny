@@ -100,8 +100,6 @@ vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
       if(attr(test, "units")=="hours") atSea = atSea/24
       vesselCatches$daysAtSea <- round(atSea, 2)
       
-      attr(vesselCatches$dep_datetime, "tzone") <- appConfig$country$timezone
-      attr(vesselCatches$ret_datetime, "tzone") <- appConfig$country$timezone
       vesselCatches$year <- as.factor(format(vesselCatches$ret_datetime, "%Y"))
       vesselCatches <- vesselCatches[,c("year", "dep_datetime", "ret_datetime", "daysAtSea", "crew", "gr_f_area", "bch_name", 
                                         "f_mthd", "species_desc", "quantity", "quantity_unit", "value")]
@@ -236,4 +234,51 @@ vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
       server = FALSE
     )
   })
+}
+
+#vesselBreakdownServer
+vesselBreakdownServer <- function(input, output, session, pool) {
+  
+  output$vessel_breakdown_info <- renderText({
+    session$userData$page("vessel-breakdown")
+    updatePageUrl("vessel-breakdown", session)
+    text <- "<h2>Breakdown of vessels <small>Visualize the breakdown of vessels</small></h2><hr>"
+    text
+  })
+  
+  #vessels breakdown by type (pie chart)
+  output$rep_vessels <- renderPlotly({
+    vessel_breakdown = accessVesselsCountByType(pool)
+    plot_ly(vessel_breakdown, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+      layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  })
+  
+  #output$map_vessels <- renderLeaflet({
+  #  
+  #  queryString <-'select longitude , latitude , \'(\'|| cast ( latitude as varchar) ||\', \'||cast ( longitude as varchar)||\')\' coordinates, name as  NAME,  COALESCE (vessels,0) as "Number of vessels"
+  #    	from "landing-site" as ls
+  #    	left join 
+  #    	(SELECT "homePort" code, count(*) as vessels
+  #    	FROM public.vessel
+  #    	group by "homePort")as p
+  #    	on p.code = ls.code
+  #       order by name'
+  #  
+  #  query <- sqlInterpolate(ANSI(),queryString)
+  #  outp <- dbGetQuery(pool, query) 
+  #  
+  #  sites_vessels <- outp
+  #  
+  #  #build the map
+  #  leaflet() %>%
+  #    addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+  #    addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
+  #               radius = 7000*sqrt(sites_vessels$"Number of vessels"/max(sites_vessels$"Number of vessels",na.rm = TRUE)), 
+  #               popup = paste(
+  #                 em("Home port: "), sites_vessels$NAME,br(),
+  #                 em(paste0("Number of vessels:")), sites_vessels$"Number of vessels"
+  #               ))
+  #})
+  
 }

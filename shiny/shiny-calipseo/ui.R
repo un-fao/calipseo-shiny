@@ -19,8 +19,8 @@ ui <- dashboardPage(
       menuItem(
         text = "Vessels", tabName = "vessels",
         menuSubItem("List of vessels", tabName = "vessel_list", icon = icon("table")),
-        menuSubItem("Vessel details", tabName = "vessel_info")
-        #menuSubItem("Repartition of Vessels", tabName = "vessel_repartition", icon = icon("map-marker")),
+        menuSubItem("Vessel details", tabName = "vessel_info"),
+        menuSubItem("Breakdown of Vessels", tabName = "vessel_breakdown", icon = icon("map-marker"))
       )
     )
   ),
@@ -31,7 +31,8 @@ ui <- dashboardPage(
     tabItems(
       homeUI("home"),
       vesselListUI("vessel_list"),
-      vesselInfoUI("vessel_info")
+      vesselInfoUI("vessel_info"),
+      vesselBreakdownUI("vessel_breakdown")
     ),
     useShinyjs()
   )
