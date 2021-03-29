@@ -1,58 +1,5 @@
-#vesselListServer
-vesselListServer <- function(input, output, session, pool) {
-
-  output$vessel_list_info <- renderText({
-    session$userData$page("vessel-list")
-    updatePageUrl("vessel-list", session)
-    text <- "<h2>List of vessels <small>Access information on vessels</small></h2><hr>"
-    text
-  })
-  
-  outp <- accessVessels(pool)
-  
-  #factorize types for access to codelists
-  outp$VESSEL_TYPE <- as.factor(outp$VESSEL_TYPE)
-  outp$VESSEL_OPERATIONAL_STATUS <- as.factor(outp$VESSEL_OPERATIONAL_STATUS)
-  outp$VESSEL_STAT_TYPE <- as.factor(outp$VESSEL_STAT_TYPE)
-  outp$HOME_PORT_LANDING_SITE <- as.factor(outp$HOME_PORT_LANDING_SITE)
-  outp$REG_PORT_LANDING_SITE <- as.factor(outp$REG_PORT_LANDING_SITE)
-  
-  #TODO add buttons
-  outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
-    outhtml <- sprintf("<a href=\"/?page=vessel-info&registrationNumber=%s\" target=\"_blank\">Details</a>", x)
-    return(outhtml)
-  })
-  
-  df <- reactiveValues(data = outp)
-  
-  output$vessel_list <- renderDataTable(
-    df$data,
-    server = FALSE,
-    escape = FALSE,
-    rownames = FALSE,
-    extensions = c("Buttons"), 
-    options = list(
-      autoWidth = TRUE,
-      dom = 'Bfrtip',
-      deferRender = TRUE,
-      scroll = FALSE,
-      buttons = list(
-        list(extend = 'copy'),
-        list(extend = 'csv', filename =  "vessels", title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  "vessels", title = NULL, header = TRUE),
-        list(extend = "pdf", title = "List of vessels", header = TRUE, orientation = "landscape")
-      ),
-      exportOptions = list(
-        modifiers = list(page = "all", selected = TRUE)
-      )
-    ),
-    filter = list(position = 'top', clear = FALSE))
-   
-}
-
-
-#vesselInfoServer
-vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
+#vessel_info_server
+vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
@@ -98,8 +45,8 @@ vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
       vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime), tz = appConfig$country_profile$timezone)
       atSea = vesselCatches$ret_datetime-vesselCatches$dep_datetime
       atSea <- switch(attr(atSea, "units"),
-        "mins" = as.numeric(atSea)/60/24,
-        "hours" = as.numeric(atSea)/24
+                      "mins" = as.numeric(atSea)/60/24,
+                      "hours" = as.numeric(atSea)/24
       )
       vesselCatches$daysAtSea <- round(atSea, 2)
       
@@ -227,47 +174,14 @@ vesselInfoServer <- function(input, output, session, pool, lastETLJob) {
         formatDate(
           'dep_datetime',
           method = "toLocaleString",
-          params = list("se", list(timeZone = appConfig$country$timezone))
+          params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
         ) %>% 
         formatDate(
           'ret_datetime',
           method = "toLocaleString",
-          params = list("se", list(timeZone = appConfig$country$timezone))
+          params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
         ),
       server = FALSE
     )
   })
-}
-
-#vesselBreakdownServer
-vesselBreakdownServer <- function(input, output, session, pool) {
-  
-  output$vessel_breakdown_info <- renderText({
-    session$userData$page("vessel-breakdown")
-    updatePageUrl("vessel-breakdown", session)
-    text <- "<h2>Breakdown of vessels <small>Visualize the breakdown of vessels</small></h2><hr>"
-    text
-  })
-  
-  #vessels breakdown by type (pie chart)
-  output$rep_vessels <- renderPlotly({
-    vessel_breakdown = accessVesselsCountByType(pool)
-    plot_ly(vessel_breakdown, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
-      layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-  })
-  
-  output$map_vessels <- renderLeaflet({
- 
-    sites_vessels <- accessVesselsCountByLandingSite(pool) 
-    leaflet() %>%
-      addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
-      addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
-                 radius = 7000*sqrt(sites_vessels$COUNT/max(sites_vessels$COUNT,na.rm = TRUE)), 
-                 popup = paste(
-                   em("Home port: "), sites_vessels$NAME,br(),
-                   em(paste0("Number of vessels:")), sites_vessels$COUNT
-                 ))
-  })
-  
 }

@@ -32,17 +32,8 @@ server <- function(input, output, session) {
   })
   
   observe({
-    
-    #HOME
-    #-------------------------------------------------------------------------------
-    callModule(homeServer, "home", pool)
-    
-    #VESSELS
-    #-------------------------------------------------------------------------------
-    callModule(vesselListServer, "vessel_list", pool)
-    callModule(vesselInfoServer, "vessel_info", pool)
-    callModule(vesselBreakdownServer, "vessel_breakdown", pool)
-
+    #load module server parts    
+    loadModuleServers(appConfig, pool)
   })
   
 }

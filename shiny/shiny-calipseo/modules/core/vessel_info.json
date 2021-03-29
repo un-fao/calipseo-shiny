@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "vessels",
+  "rank": 0,
+  "title": "Vessel details",
+  "icon": "table"
+}
