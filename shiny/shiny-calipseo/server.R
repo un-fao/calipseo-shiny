@@ -20,14 +20,9 @@ server <- function(input, output, session) {
     }
    
     if (!is.na(currentPage)) {
-      switch(currentPage,
-             'vessel-list' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_list")})},
-             'vessel-info' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_info")})},
-             'vessel-breakdown' = {isolate({updateTabItems(session, "calipseo-tabs", "vessel_breakdown")})},
-             {isolate({updateTabItems(session, "calipseo-tabs", "home")})}
-      )
+      isolate({updateTabItems(session, "calipseo-tabs", gsub("-", "_", currentPage))})
     } else {
-      isolate({updateTabItems(session, "calipseo-tabs", "homeTab")})
+      isolate({updateTabItems(session, "calipseo-tabs", "home")})
     }
   })
   

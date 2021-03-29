@@ -41,8 +41,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     vesselCatches <- accessVesselCatches(pool, vesselId)
     if(nrow(vesselCatches)>0){
-      vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime), tz = appConfig$country_profile$timezone)
-      vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime), tz = appConfig$country_profile$timezone)
+      vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime)) 
+      attr(vesselCatches$dep_datetime, "tzone") <- appConfig$country_profile$timezone
+      vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime))
+      attr(vesselCatches$ret_datetime, "tzone") <- appConfig$country_profile$timezone
       atSea = vesselCatches$ret_datetime-vesselCatches$dep_datetime
       atSea <- switch(attr(atSea, "units"),
                       "mins" = as.numeric(atSea)/60/24,

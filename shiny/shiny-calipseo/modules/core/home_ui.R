@@ -1,5 +1,5 @@
-#homeUI
-homeUI <- function(id){
+#home_ui
+home_ui <- function(id){
   
   ns <- NS(id)
   

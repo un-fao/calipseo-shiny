@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "statistics",
+  "rank": 1,
+  "title": "Compute indicators",
+  "icon": "database"
+}

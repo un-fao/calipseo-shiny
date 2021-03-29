@@ -3,7 +3,7 @@ ft.ID as landing_id,
 ft.DATE_FROM as dep_datetime, ft.DATE_TO as ret_datetime, 
 v.REGISTRATION_NUMBER as regnum, vt.NAME as vesstype, ft.CREW_NUMBER as crew,
 fz.CODE as gr_f_area_id, fz.NAME as gr_f_area,
-ls.CODE as arrivalport, ls.NAME as bch_name,
+ls.CODE as arrivalport, ls.ID as bch_id, ls.NAME as bch_name,
 g.CODE as f_mthd_id, g.NAME as f_mthd,
 sp.CODE  as species_id, sp.NAME as species_desc,
 fas.QUANTITY as quantity, uom.CODE as quantity_unit, fas.TOTAL_VALUE as value 

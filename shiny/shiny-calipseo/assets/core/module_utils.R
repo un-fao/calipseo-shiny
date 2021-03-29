@@ -1,15 +1,31 @@
+#listModuleProfiles
+listModuleProfiles <- function(config, core = TRUE, country = TRUE){
+  default_module_profiles <- list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
+  filter <- NULL
+  if(core) filter <- regexpr("core", default_module_profiles) > 0
+  if(country){
+    if(is.null(core)){
+      filter <- regexpr(config$country_profile$iso3, default_module_profiles) > 0
+    }else{
+      filter <- filter | regexpr(config$country_profile$iso3, default_module_profiles) > 0
+    }
+  }
+  if(!is.null(filter)){
+    default_module_profiles <- default_module_profiles[filter]
+  }
+  return(default_module_profiles)
+}
+
 #loadModuleScripts
 loadModuleScripts <- function(config){
-  
-  scripts <- list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
+  default_module_profiles <- listModuleProfiles(config)
   modules <- data.frame(
-    name = sapply(scripts, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}),
-    dirname = sapply(scripts, dirname),
+    name = sapply(default_module_profiles, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}),
+    dirname = sapply(default_module_profiles, dirname),
     stringsAsFactors = FALSE
   )
   for(i in 1:nrow(modules)){
     module <- modules[i,]
-    message(sprintf("-> Shiny module '%s'", module$name))
     enabled = TRUE
     module_config = config$modules[[module$name]]
     has_config = !is.null(module_config)
@@ -26,16 +42,15 @@ loadModuleScripts <- function(config){
 
 #loadModuleServers
 loadModuleServers <- function(config, pool){
-  scripts <- list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
-  modules <- unique(sapply(scripts, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
+  default_module_profiles <- listModuleProfiles(config)
+  modules <- unique(sapply(default_module_profiles, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
   for(module in modules){
-    message(sprintf("Shiny module '%s'", module))
     enabled = TRUE
     module_config = config$modules[[module]]
     has_config = !is.null(module_config)
     if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
     if(enabled){
-      message(sprintf("Loading shiny module '%s' functions...", module))
+      message(sprintf("Loading shiny module '%s' server functions...", module))
       server_fun_name <- paste0(module, "_server")
       server_fun <- try(eval(expr = parse(text = server_fun_name)))
       if(!is(server_fun, "try-error")){
@@ -49,23 +64,22 @@ loadModuleServers <- function(config, pool){
 
 #loadModuleUIs
 loadModuleUIs <- function(config){
-  scripts <- list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
-  modules <- unique(sapply(scripts, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
+  default_module_profiles <- listModuleProfiles(config)
+  modules <- unique(sapply(default_module_profiles, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
   module_uis <- lapply(modules, function(module){
     out <- NULL
-    message(sprintf("Shiny module '%s'", module))
     enabled = TRUE
     module_config = config$modules[[module]]
     has_config = !is.null(module_config)
     if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
     if(enabled){
-      message(sprintf("Loading shiny module '%s' functions...", module))
+      message(sprintf("Loading shiny module '%s' UI functions...", module))
       ui_fun_name <- paste0(module, "_ui")
       ui_fun <- try(eval(expr = parse(text = ui_fun_name)))
       if(!is(ui_fun, "try-error")){
         out <- ui_fun(module)
       }else{
-        message(sprintf("Error while evaluating ui function '%s'", ui_fun_name))
+        message(sprintf("Error while evaluating UI function '%s'", ui_fun_name))
       }
     }
     return(out)
@@ -79,7 +93,7 @@ loadModuleUIs <- function(config){
 sidebarMenuFromModules <- function(config){
   
   #default modules
-  default_module_profiles = list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
+  default_module_profiles <- listModuleProfiles(config)
   
   #extend default module profiles in case custom configs are availble
   module_profiles = lapply(default_module_profiles, function(module_profile){
@@ -94,7 +108,6 @@ sidebarMenuFromModules <- function(config){
     if(!is.null(m_config)){
       for(m_config_propname in names(m_config)){
         if(m_config_propname %in% names(outp)){
-          print(m_config_propname)
           outp[[m_config_propname]] <- m_config[[m_config_propname]]
         }
       }

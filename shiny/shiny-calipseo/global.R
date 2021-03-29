@@ -7,7 +7,7 @@ options(stringsAsFactors = FALSE)
 config_file = "D:/Documents/DEV/Bitbucket/fao/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_TTO.yml"
 #config_file <- "/etc/shiny-calipseo/config.yml"
 if(!nzchar(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
-appConfig <- yaml::read_yaml(config_file)
+appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
 #packages
 #---------------------------------------------------------------------------------------
@@ -31,13 +31,26 @@ pool <- pool::dbPool(
   password = appConfig$openfismis$dbi$password
 )
 
+#global variables / environment
+#---------------------------------------------------------------------------------------
+CALIPSEO_SHINY_ENV <- new.env()
 
 #utilities
 #---------------------------------------------------------------------------------------
-source("assets/utils.R")
-source("assets/module_utils.R")
-source("assets/data_access_utils.R")
-source("assets/ui_utils.R")
+#core R script utils
+source("assets/core/utils.R")
+source("assets/core/module_utils.R")
+source("assets/core/data_access_utils.R")
+source("assets/core/ui_utils.R")
+
+#country R script utils
+country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 
+                             pattern = ".R", recursive = TRUE, full.names = TRUE)
+for(country_asset in country_assets){ source(country_asset) }
+
+#local datasets
+#---------------------------------------------------------------------------------------
+loadLocalCountryDatasets(appConfig)
 
 #modules
 #---------------------------------------------------------------------------------------
@@ -53,4 +66,6 @@ source("server.R")
 onStop(function(){
   cat("Closing DB pool connection\n")
   pool::poolClose(pool)
+  cat("Removing CALIPSEO_SHINY_ENV environment\n")
+  rm(CALIPSEO_SHINY_ENV)
 })
