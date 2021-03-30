@@ -70,7 +70,7 @@ compute_1st_raised_trawl_landings <- function(raw_data, raised_1, by = "species"
 	raw_data_01$raised_lan_lbs <- as.numeric(raw_data_01$quantity) * as.numeric(raw_data_01$act) / as.numeric(raw_data_01$enum)
 	raw_data_01$raised_lan_kgs <- raw_data_01$raised_lan_lbs * UNIT_LBS_TO_KGS
 	#raised value
-	raw_data_01$raised_val <- raw_data_01$raised_lan_lbs * raw_data_01$value
+	raw_data_01$raised_val <- raw_data_01$raised_lan_lbs * (raw_data_01$value / raw_data_01$quantity)
 	#trip numbers
 	raw_data_01$raised_trp <- as.numeric(raw_data_01$act) / as.numeric(raw_data_01$enum)
 
