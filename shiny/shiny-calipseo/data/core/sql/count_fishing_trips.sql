@@ -1,0 +1,1 @@
+select count(*) as COUNT from dt_fishing_trip

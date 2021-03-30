@@ -93,6 +93,28 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
   return(sites)
 }
 
+#countVesselCaptainsFromDB
+countVesselCaptainsFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/count_vessels_captains.sql")
+  count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
+  return(count)
+}
+
+#countVesselOwnersFromDB
+countVesselOwnersFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/count_vessels_owners.sql")
+  count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
+  return(count)
+}
+
+#DATA
+
+#countFishingTripsFromDB
+countFishingTripsFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/count_fishing_trips.sql")
+  count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
+}
+
 #accessAvailableYearsFromDB
 accessAvailableYearsFromDB <- function(con){
   fishing_trip_years_sql <- readSQLScript("data/core/sql/fishing_trip_years.sql")
@@ -154,6 +176,24 @@ accessVesselsCountByType <- function(con){
 #accessVesselsCountByLandingSite
 accessVesselsCountByLandingSite <- function(con){
   accessVesselsCountByLandingSiteFromDB(con)
+}
+
+#countVesselCaptains
+countVesselCaptains <- function(con){
+  countVesselCaptainsFromDB(con)
+}
+
+#countVesselCaptains
+countVesselOwners <- function(con){
+  countVesselOwnersFromDB(con)
+}
+
+
+#DATA
+
+#countFishingTrips
+countFishingTrips <- function(con){
+  countFishingTripsFromDB(con)
 }
 
 #accessAvailableYears

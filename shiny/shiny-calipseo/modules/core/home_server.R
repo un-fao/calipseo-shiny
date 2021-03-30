@@ -11,6 +11,9 @@ home_server <- function(input, output, session, pool){
   
   observe({
     infos$count_vessels <- accessVesselsCount(pool)
+    infos$count_vessels_owners <- countVesselOwners(pool)
+    infos$count_vessels_captains <- countVesselCaptains(pool)
+    infos$count_fishing_trips <- countFishingTrips(pool)
     infos$landing_sites <- nrow(accessLandingSites(pool))
     infos$years <- length(accessAvailableYears(pool))
     #infos$indicators <- length(accessAvailableIndicators())
@@ -28,7 +31,10 @@ home_server <- function(input, output, session, pool){
     output$nb_infos <- renderUI({
 
       fluidRow(
-        infoBox("Vessels", infos$count_vessels, icon = icon("fa-ship"), fill = TRUE),
+        infoBox("Vessels", infos$count_vessels, icon = icon("ship"), fill = TRUE),
+        infoBox("Vessel owners", infos$count_vessels_owners, icon = icon("user"), fill = TRUE),
+        infoBox("Vessel captains", infos$count_vessels_captains, icon = icon("user-shield"), fill = TRUE),
+        infoBox("Fishing trips", infos$count_fishing_trips, icon = icon("ship"), fill = TRUE),
         infoBox("Landing sites", infos$landing_sites, icon = icon("map-marker"), fill = TRUE),
         infoBox("Years analyzed", infos$years, icon = icon("history"), fill = TRUE)
         #infoBox("Statistical indicators", infos$indicators, icon = icon("th-list"), fill = TRUE)

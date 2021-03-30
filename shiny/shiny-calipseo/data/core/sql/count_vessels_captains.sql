@@ -1,0 +1,1 @@
+select distinct count(REG_ENTITY_CAPTAIN_ID) as COUNT from reg_vessels
