@@ -1,0 +1,129 @@
+#landings1_species_maps_server
+landings1_species_maps_server <- function(input, output, session, pool){
+  
+  output$landings1_species_maps_info <- renderText({
+    session$userData$page("landings1-species-maps")
+    updatePageUrl("landings1-species-maps", session)
+    text <- "<h2>Descriptor Species maps "
+    text <- paste0(text, "<small>Access maps of landings with species distributions by landing site / year</small>")
+    text <- paste0(text, userTooltip("These maps represent the different landings by yearincluding the 1st raised landings (LAN), value (VAL) by landing site and giving proportions by the main species.",
+                                     style = "font-size: 75%;"))
+    text <- paste0(text, "</h2>")
+    text <- paste0(text, "<hr>")
+    text
+  })
+  
+  #mapDescriptorYearSpecies
+  mapDescriptorYearSpecies <- function(tsdata, year, descriptor, top){
+    
+    sites_descriptor <- accessLandingSites(pool)
+    
+    if(!is.null(tsdata)){
+      
+      #maxValue <- max(tsdata[is.na(tsdata$gear_id)&is.na(tsdata$species_id)&is.na(tsdata$month)&tsdata$descriptor == descriptor,"value"], na.rm = TRUE)
+      bch_ts <- tsdata[!is.na(tsdata$species_id)&is.na(tsdata$month)&tsdata$year == year & tsdata$descriptor == descriptor,]
+      bch_ts_species <- aggregate(
+        bch_ts$value,
+        by = list(
+          bch_name = bch_ts$bch_name,
+          species_name = bch_ts$species_name
+        ),
+        FUN = function(x){round2(sum(x, na.rm = TRUE))}
+      )
+      colnames(bch_ts_species)[ncol(bch_ts_species)] <- "value"
+      
+      #top species
+      species <- aggregate(
+        bch_ts_species$value,
+        by = list(
+          species_name = bch_ts_species$species_name
+        ),
+        FUN = function(x){round2(sum(x,na.rm=TRUE))}
+      )
+      colnames(species)[ncol(species)] <- "value"
+      species <- species[order(species$value, decreasing = TRUE),]
+      top_species <- species[1:top,"species_name"]
+      
+      bch_ts_species_top <- bch_ts_species[bch_ts_species$species_name %in% top_species, ]
+      bch_ts_species_top <- bch_ts_species_top[order(match(bch_ts_species_top$species_name,top_species)),]
+      bch_ts_species_other <- bch_ts_species[!(bch_ts_species$species_name %in% top_species), ]
+      bch_ts_species_other <- aggregate(
+        bch_ts_species_other$value,
+        by = list(
+          bch_name = bch_ts_species_other$bch_name,
+          species_name = rep("OTHERS", nrow(bch_ts_species_other))
+        ),
+        FUN = function(x){round2(sum(x, na.rm = TRUE))}
+      )
+      colnames(bch_ts_species_other)[ncol(bch_ts_species_other)] <- "value"
+      bch_ts_species <- rbind(bch_ts_species_top, bch_ts_species_other)
+      
+      resh <- reshape(bch_ts_species, timevar = "species_name", idvar = "bch_name", direction = "wide", v.names = "value")
+      colnames(resh)[startsWith(colnames(resh),"value.")] <- gsub("value.", "", colnames(resh)[startsWith(colnames(resh),"value.")])
+      resh$TOTAL <- rowSums(resh[,colnames(resh)[2:ncol(resh)]], na.rm = TRUE)
+      
+      sites_descriptor <- merge(
+        sites_descriptor,
+        resh,
+        by.x = "NAME",
+        by.y = "bch_name",
+        all.x = TRUE,
+        all.y = FALSE
+      )
+      sites_descriptor <- sites_descriptor[,c("NAME", colnames(resh)[colnames(resh)!="bch_name"])]
+      sites_descriptor <- as(sites_descriptor, "Spatial")
+      
+      #colors
+      qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+      col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+      colors <- col_vector[1:(top+1)]
+      
+      #build the map
+      leaflet() %>%
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+        addMinicharts(
+          coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
+          type = "pie",
+          chartdata = sites_descriptor@data[,colnames(sites_descriptor@data)[2:(ncol(sites_descriptor@data)-1)]], 
+          width = 60 * sqrt(sites_descriptor$TOTAL) / sqrt(max(sites_descriptor$TOTAL, na.rm = TRUE)), transitionTime = 0,
+          colorPalette = colors)
+    }else{
+      leaflet() %>%
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+        addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
+                   popup = paste(
+                     em("Landing site: "), sites_descriptor$NAME,br()
+                   ))
+    }
+    
+  }
+  
+  #CONTROLLERS
+  #TOTAL LANDINGS maps
+  #---------------------
+  
+  tsr <- reactiveValues(
+    data = NULL 
+  )
+  
+  observeEvent(input$year_map_species,{
+    targetRelease <- file.path("out/release", sprintf("artisanal_fisheries_landings_%s.xlsx", input$year_map_species))
+    hasRelease <- file.exists(targetRelease)
+    tsdata <- NULL
+    if(hasRelease){
+      tsdata <- readxl::read_excel(targetRelease)
+      tsdata <- tsdata[order(tsdata$bch_name),]
+    }
+    tsr$data <- tsdata
+  })
+  
+  #SPECIES LANDINGS maps
+  #---------------------
+  output$map_species_LAN <- renderLeaflet({
+    mapDescriptorYearSpecies(tsr$data, input$year_map_species, "LAN", 15)
+  })
+  output$map_species_VAL <- renderLeaflet({
+    mapDescriptorYearSpecies(tsr$data, input$year_map_species, "VAL", 15)
+  })
+  
+}

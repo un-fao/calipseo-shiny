@@ -1,0 +1,92 @@
+#landings1_maps_server
+landings1_maps_server <- function(input, output, session, pool){
+  
+  output$landings1_maps_info <- renderText({
+    session$userData$page("landings1-maps")
+    updatePageUrl("landings1-maps", session)
+    text <- "<h2>Descriptor maps "
+    text <- paste0(text, "<small>Access maps of landings by landing site / year</small>")
+    text <- paste0(text, userTooltip("These maps represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
+                                     style = "font-size: 75%;"))
+    text <- paste0(text, "</h2>")
+    text <- paste0(text, "<hr>")
+    text
+  })
+  
+  #mapDescriptorTotal
+  mapDescriptorTotal <- function(tsdata, year, descriptor, color){
+    
+    sites_descriptor <- accessLandingSites(pool)
+    if(!is.null(tsdata)){
+      maxValue <- max(tsdata[is.na(tsdata$gear_id)&is.na(tsdata$species_id)&is.na(tsdata$month)&tsdata$descriptor == descriptor,"value"], na.rm = TRUE)
+      bch_tsdata <- tsdata[is.na(tsdata$gear_id)&is.na(tsdata$species_id)&is.na(tsdata$month)&tsdata$year == year,]
+      bch_tsdata_descriptor <- bch_tsdata[bch_tsdata$descriptor == descriptor,]
+      sites_descriptor <- merge(
+        sites_descriptor,
+        bch_tsdata_descriptor,
+        by.x = "NAME",
+        by.y = "bch_name",
+        all.x = TRUE,
+        all.y = FALSE
+      )
+      sites_descriptor <- sites_descriptor[,c("NAME", "value")]
+      
+      #build the map
+      leaflet() %>%
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+        addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
+                   radius = 7000*sqrt(sites_descriptor$value/maxValue), 
+                   popup = paste(
+                     em("Landing site: "), sites_descriptor$NAME,br(),
+                     em(paste0("Value (", descriptor,"):")), sites_descriptor$value
+                   ))
+    }else{
+      leaflet() %>%
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+        addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
+                   popup = paste(
+                     em("Landing site: "), sites_descriptor$NAME,br()
+                   ))
+    }
+  }
+  
+  #CONTROLLERS
+  #TOTAL LANDINGS maps
+  #---------------------
+  
+  tsr <- reactiveValues(
+    data = NULL 
+  )
+  
+  observeEvent(input$year_map_total,{
+    targetRelease <- file.path("out/release", sprintf("artisanal_fisheries_landings_%s.xlsx", input$year_map_total))
+    hasRelease <- file.exists(targetRelease)
+    tsdata <- NULL
+    if(hasRelease){
+      tsdata <- readxl::read_excel(targetRelease)
+      tsdata <- tsdata[order(tsdata$bch_name),]
+    }
+    tsr$data <- tsdata
+  })
+  
+  output$map_LAN <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "LAN", "#e6550d")
+  })
+  output$map_VAL <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "VAL", "#e6550d")
+  })
+  output$map_TRP <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "TRP", "#e6550d")
+  })
+  output$map_LT <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "L/T", "#e6550d")
+  })
+  output$map_VT <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "V/T", "#e6550d")
+  })
+  output$map_PK <- renderLeaflet({
+    mapDescriptorTotal(tsr$data, input$year_map_total, "P/K", "#e6550d")
+  })
+  
+  
+}

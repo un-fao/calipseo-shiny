@@ -21,6 +21,24 @@ readSQLScript <- function(sqlfile,
   return(sql)
 }
 
+#DB callers
+#-----------------------------------------------------------------------------------------------------
+
+#accessLandingSitesFromDB
+accessLandingSitesFromDB <- function(con){
+  landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql")
+  landingsites <- dbGetQuery(con, landingsites_sql)
+  landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  return(landingsites)
+}
+
+#accessLandingSiteNamesFromDB
+accessLandingSiteNamesFromDB <- function(con){
+  landingsites_sql <- readSQLScript("data/core/sql/landing_sites_names.sql")
+  landingsites <- dbGetQuery(con, landingsites_sql)[,1]
+  return(landingsites)
+}
+
 #accessVesselsFromDB
 accessVesselsFromDB <- function(con){
   vessels_sql <- readSQLScript("data/core/sql/vessels.sql")
@@ -37,7 +55,8 @@ accessVesselsCountFromDB <- function(con){
 
 #accessVesselFromDB
 accessVesselFromDB <- function(con, registrationNumber){
-  vessel_sql <- readSQLScript("data/core/sql/vessels.sql", key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_sql <- readSQLScript("data/core/sql/vessels.sql", 
+                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
   vessel <- dbGetQuery(con, vessel_sql)
   return(vessel)
 }
@@ -54,7 +73,8 @@ accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
 
 #accessVesselCatchesFromDB
 accessVesselCatchesFromDB <- function(con, registrationNumber){
-  landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
+                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
   landing_forms <- dbGetQuery(con, landing_forms_sql)
   return(landing_forms)
 }
@@ -82,12 +102,24 @@ accessAvailableYearsFromDB <- function(con){
 
 #accessLandingFormsFromDB
 accessLandingFormsFromDB <- function(con, year){
-  landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", add_filter_on_year = year, datetime_field = "ft.DATE_TO")
+  landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
+                                     add_filter_on_year = year, datetime_field = "ft.DATE_TO")
   landing_forms <- dbGetQuery(con, landing_forms_sql)
   return(landing_forms)
 }
 
 #generic data callers (considering this needs to be replaced later by API calls)
+#-----------------------------------------------------------------------------------------------------
+
+#accessLandingSites
+accessLandingSites <- function(con){
+  accessLandingSitesFromDB(con)
+}
+
+#accessLandingSiteNames
+accessLandingSiteNames <- function(con){
+  accessLandingSiteNamesFromDB(con)
+}
 
 #accessVessels
 accessVessels <- function(con){
@@ -133,6 +165,9 @@ accessAvailableYears <- function(con){
 accessLandingForms <- function(con, year){
   accessLandingFormsFromDB(con, year)
 }
+
+#Local data accessors
+#-----------------------------------------------------------------------------------------------------
 
 #loadLocalDataset
 loadLocalDataset <- function(filename){

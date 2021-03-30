@@ -1,0 +1,1 @@
+select NAME from cl_fish_landing_sites ORDER BY NAME;
