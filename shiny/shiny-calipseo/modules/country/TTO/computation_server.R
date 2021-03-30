@@ -34,7 +34,6 @@ computation_server <- function(input, output, session, pool) {
     computation = NULL,
     computing = FALSE,
     summary = data.frame(
-      uuid = character(0),
       Year = character(0),
       Status = character(0),
       File = character(0),
@@ -56,7 +55,6 @@ computation_server <- function(input, output, session, pool) {
     }))
 
     df <- data.frame(
-      uuid = character(0),
       Year = character(0),
       Status = character(0),
       File = character(0),
