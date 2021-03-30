@@ -10,9 +10,9 @@ home_server <- function(input, output, session, pool){
   )
   
   observe({
-    #infos$count_vessels <- accessVesselsCountFromDB(pool)
-    #infos$landing_sites <- length(accessLandingSitesFromDB(pool))
-    #infos$years <- length(accessAvailableYearsFromDB(pool))
+    infos$count_vessels <- accessVesselsCount(pool)
+    infos$landing_sites <- nrow(accessLandingSites(pool))
+    infos$years <- length(accessAvailableYears(pool))
     #infos$indicators <- length(accessAvailableIndicators())
   })
   
@@ -26,14 +26,14 @@ home_server <- function(input, output, session, pool){
     })
     
     output$nb_infos <- renderUI({
-      if(infos_fetched()){
-        fluidRow(
-          #infoBox("Vessels", infos$count_vessels, icon = icon("fa-ship"), fill = TRUE)
-          #infoBox("Landing sites", infos$landing_sites, icon = icon("map-marker"), fill = TRUE),
-          #infoBox("Years analyzed", infos$years, icon = icon("history"), fill = TRUE),
-          #infoBox("Statistical indicators", infos$indicators, icon = icon("th-list"), fill = TRUE)
-        )
-      }
+
+      fluidRow(
+        infoBox("Vessels", infos$count_vessels, icon = icon("fa-ship"), fill = TRUE),
+        infoBox("Landing sites", infos$landing_sites, icon = icon("map-marker"), fill = TRUE),
+        infoBox("Years analyzed", infos$years, icon = icon("history"), fill = TRUE)
+        #infoBox("Statistical indicators", infos$indicators, icon = icon("th-list"), fill = TRUE)
+      )
+      
     })
   })
 }

@@ -96,7 +96,7 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
 #accessAvailableYearsFromDB
 accessAvailableYearsFromDB <- function(con){
   fishing_trip_years_sql <- readSQLScript("data/core/sql/fishing_trip_years.sql")
-  fishing_trip_years <- suppressWarnings(dbGetQuery(con, fishing_trip_years_sql))
+  fishing_trip_years <- suppressWarnings(dbGetQuery(con, fishing_trip_years_sql))$YEAR
   return(fishing_trip_years)
 }
 
