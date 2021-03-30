@@ -1,6 +1,9 @@
 #computation_server
 computation_server <- function(input, output, session, pool) {
   
+  ns <- session$ns
+  print(names(session))
+  
   AVAILABLE_INDICATORS <- getLocalCountryDataset("statistical_indicators")
   RAISED_1 <- getLocalCountryDataset("raised_1")
   RAISED_2 <- getLocalCountryDataset("raised_2")
@@ -8,8 +11,8 @@ computation_server <- function(input, output, session, pool) {
   SPECIES_GROUPS <- getLocalCountryDataset("species_groups")
   
   output$computation_info <- renderText({
-    session$userData$page("compute-indicators")
-    updatePageUrl("compute-indicators", session)
+    session$userData$page("computation")
+    updatePageUrl("computation", session)
     text <- "<h2>Statistics "
     text <- paste0(text, "<small>Compute statistics and download statistical reports</small>")
     text <- paste0(text, userTooltip("This section lets you compute the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
@@ -18,6 +21,8 @@ computation_server <- function(input, output, session, pool) {
     text <- paste0(text, "<hr>")
     text
   })
+  
+  
   
   #--------------------------------
   #COMPUTATION / EXPORT MANAGEMENT
@@ -28,7 +33,98 @@ computation_server <- function(input, output, session, pool) {
     year = NULL,
     computation = NULL,
     computing = FALSE,
+    summary = data.frame(
+      uuid = character(0),
+      Year = character(0),
+      Status = character(0),
+      File = character(0),
+      Actions = character(0),
+      stringsAsFactors = FALSE
+    ),
     filename = NULL
+  )
+ 
+  #getComputationStatus
+  getComputationStatus <- function(indicator){
+    
+    staging <- list.files(path = "./out/staging", pattern = indicator$value)
+    released <- list.files(path = "./out/release", pattern = indicator$value)
+    values <- unique(c(unlist(strsplit(staging, ".xlsx")), unlist(strsplit(released, ".xlsx"))))
+    years <- as.vector(sapply(values, function(x){ 
+      x.splits <- unlist(strsplit(x,"_"))
+      return(as.numeric(x.splits[length(x.splits)]))
+    }))
+
+    df <- data.frame(
+      uuid = character(0),
+      Year = character(0),
+      Status = character(0),
+      File = character(0),
+      Actions = character(0),
+      stringsAsFactors = FALSE
+    )
+    if(length(years)>0){
+      years <- years[order(years)]
+      status <- sapply(years, function(x){
+        if(any(regexpr(x, released) > 0)){
+          return("release")
+        }else{
+          return("staging")
+        }
+      })
+      uuids <- NULL
+      for(i in 1:length(years)){
+        one_uuid = uuid::UUIDgenerate() 
+        uuids <- c(uuids, one_uuid)
+      }
+      #print(uuids)
+      df <- tibble::tibble(
+        Year = years,
+        Status = status,
+        File = sapply(1:length(years), function(i){file.path("out", status[i], paste0(indicator$value, "_", years[i], ".xlsx"))}),
+        Actions = shinyInput(downloadButton, length(years), indexes = uuids, id = 'button_', ns = ns, title = "Download report", label = "",
+                             onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button")))
+      )
+      
+      
+      #clean button outputs reactives
+      outs <- outputOptions(output)
+      button_outs <- names(outs)[startsWith(names(outs), ns("button_"))]
+      lapply(button_outs, function(name) {
+        output[[name]] <<- NULL
+      })
+      #add new downloadHandler (for each button)
+      lapply(1:nrow(df), function(i){
+        idx = uuids[i]
+        button_output <- paste0("button_",idx)
+        output[[button_output]] <<- downloadHandler(
+          filename = function() {
+            paste0(out$indicator$value, "_", df[i,"Year"],"_", toupper(df[i,"Status"]),".xlsx")
+          },
+          content = function(con) {
+            filename <- paste0(out$indicator$value, "_", df[i,"Year"], ".xlsx")
+            data <- as.data.frame(readxl::read_excel(file.path("out", df[i,"Status"], filename)))
+            generateReport(session, out$indicator,  df[i,"Year"], data, con)
+          }
+        )
+      })
+      
+    }
+    return(df)
+  }
+  
+  #computation status
+  output$computation_summary <- renderDataTable(
+    out$summary,
+    server = FALSE,
+    escape = FALSE,
+    rownames = FALSE,
+    options = list(
+      paging = FALSE,
+      searching = FALSE,
+      preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
+      drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+    )
   )
   
   #observe on 'compute' button
@@ -98,6 +194,8 @@ computation_server <- function(input, output, session, pool) {
       writexl::write_xlsx(raw_output, outputfilepath)
       
       progress$set(message = indicator_msg, detail = "Successful computation!", value = 100)
+      out$summary <- getComputationStatus(indicator)
+      print(out$summary)
       
     }else{
       errMsg <- sprintf("Landings 1 released results missing for year %s", input$computation_year)
@@ -118,6 +216,7 @@ computation_server <- function(input, output, session, pool) {
     out$year <- input$computation_year
     out$filename <- paste0(indicator$value, "_", input$computation_year, ".xlsx")
     out$computation <- NULL
+    out$summary <- getComputationStatus(indicator)
     
     #DOWNLOAD CONTROLLERS
     #-------------------------------------------------------------------------------------------
@@ -147,7 +246,7 @@ computation_server <- function(input, output, session, pool) {
     )
     #downloadReportInStaging
     output$downloadReportInStaging <- downloadHandler(
-      filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_DRAFT.xlsx")  },
+      filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_STAGING.xlsx")  },
       content = function(con){
         disable("downloadReportInStaging")
         generateReport(session, out$indicator, out$year, out$computation, con)
@@ -159,8 +258,9 @@ computation_server <- function(input, output, session, pool) {
       filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_RELEASE.xlsx")  },
       content = function(con){
         disable("downloadReportInRelease")
-        print(out$indicator$value)
-        generateReport(session, out$indicator, out$year, out$computation, con)
+        filename <- paste0(out$indicator$value, "_", out$year, ".xlsx")
+        data <- as.data.frame(readxl::read_excel(file.path("out/release", filename)))
+        generateReport(session, out$indicator, out$year, data, con)
         enable("downloadReportInRelease")
       }
     )
@@ -196,7 +296,7 @@ computation_server <- function(input, output, session, pool) {
           tags$span(tags$b("Computing..."))
         )
       }else{
-        if(!is.null(out$computation)){
+        if(nrow(out$summary)>0){
           tags$div(
             id = "computation-results",
             h3(tags$b(out$indicator$label), " - ", tags$small(out$year)), hr(),
@@ -282,6 +382,7 @@ computation_server <- function(input, output, session, pool) {
     )
     if(file.exists(file.path("out/release", out$filename))){
       released_vals$filename <- out$filename
+      out$summary <- getComputationStatus(out$indicator)
       removeModal()
     }
   })

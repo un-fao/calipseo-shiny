@@ -27,7 +27,7 @@ readSQLScript <- function(sqlfile,
 #accessLandingSitesFromDB
 accessLandingSitesFromDB <- function(con){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql")
-  landingsites <- dbGetQuery(con, landingsites_sql)
+  landingsites <- suppressWarnings(dbGetQuery(con, landingsites_sql))
   landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   return(landingsites)
 }
@@ -35,21 +35,21 @@ accessLandingSitesFromDB <- function(con){
 #accessLandingSiteNamesFromDB
 accessLandingSiteNamesFromDB <- function(con){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites_names.sql")
-  landingsites <- dbGetQuery(con, landingsites_sql)[,1]
+  landingsites <- suppressWarnings(dbGetQuery(con, landingsites_sql))[,1]
   return(landingsites)
 }
 
 #accessVesselsFromDB
 accessVesselsFromDB <- function(con){
   vessels_sql <- readSQLScript("data/core/sql/vessels.sql")
-  vessels <- dbGetQuery(con, vessels_sql)
+  vessels <- suppressWarnings(dbGetQuery(con, vessels_sql))
   return(vessels)
 }
 
 #accessVesselsCountFromDB
 accessVesselsCountFromDB <- function(con){
   vessels_count_sql <- readSQLScript("data/core/sql/vessels_count.sql")
-  vessels_count <- dbGetQuery(con, vessels_count_sql)
+  vessels_count <- suppressWarnings(dbGetQuery(con, vessels_count_sql))
   return(vessels_count$COUNT)
 }
 
@@ -57,7 +57,7 @@ accessVesselsCountFromDB <- function(con){
 accessVesselFromDB <- function(con, registrationNumber){
   vessel_sql <- readSQLScript("data/core/sql/vessels.sql", 
                               key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  vessel <- dbGetQuery(con, vessel_sql)
+  vessel <- suppressWarnings(dbGetQuery(con, vessel_sql))
   return(vessel)
 }
 
@@ -67,7 +67,7 @@ accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
                                      key = if(!is.null(registrationNumber)) "vo.REG_VESSEL_ID" else NULL,
                                      value = if(!is.null(registrationNumber)) paste("'", registrationNumber, "'") else NULL
   )
-  vessel_owners <- dbGetQuery(con, vessel_owners_sql)
+  vessel_owners <- suppressWarnings(dbGetQuery(con, vessel_owners_sql))
   return(vessel_owners)
 }
 
@@ -75,20 +75,20 @@ accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
 accessVesselCatchesFromDB <- function(con, registrationNumber){
   landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
                                      key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  landing_forms <- dbGetQuery(con, landing_forms_sql)
+  landing_forms <- suppressWarnings(dbGetQuery(con, landing_forms_sql))
   return(landing_forms)
 }
 
 #accessVesselsCountByTypeFromDB
 accessVesselsCountByTypeFromDB <- function(con){
   vesseltypes_count_sql <- readSQLScript("data/core/sql/vessels_types_count.sql")
-  dbGetQuery(con, vesseltypes_count_sql)
+  suppressWarnings(dbGetQuery(con, vesseltypes_count_sql))
 }
 
 #accessVesselsCountByLandingSiteFromDB
 accessVesselsCountByLandingSiteFromDB <- function(con){
   vesselsites_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_count.sql")
-  sites <- dbGetQuery(con,  vesselsites_count_sql)
+  sites <- suppressWarnings(dbGetQuery(con,  vesselsites_count_sql))
   sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   return(sites)
 }
@@ -96,7 +96,7 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
 #accessAvailableYearsFromDB
 accessAvailableYearsFromDB <- function(con){
   fishing_trip_years_sql <- readSQLScript("data/core/sql/fishing_trip_years.sql")
-  fishing_trip_years <- dbGetQuery(con, fishing_trip_years_sql)
+  fishing_trip_years <- suppressWarnings(dbGetQuery(con, fishing_trip_years_sql))
   return(fishing_trip_years)
 }
 
@@ -104,7 +104,7 @@ accessAvailableYearsFromDB <- function(con){
 accessLandingFormsFromDB <- function(con, year){
   landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
                                      add_filter_on_year = year, datetime_field = "ft.DATE_TO")
-  landing_forms <- dbGetQuery(con, landing_forms_sql)
+  landing_forms <- suppressWarnings(dbGetQuery(con, landing_forms_sql))
   return(landing_forms)
 }
 

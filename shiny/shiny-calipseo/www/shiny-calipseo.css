@@ -17,7 +17,7 @@ hr {border-top: 1px solid #aaa; margin-top: 4px; margin-bottom: 4px;}
 .tooltip-info { margin-left:4px;color:#cbcbcb;font-size:80%; }
 .tooltip-info:hover { color:orange; }
 
-.btn {font-size:16px; height: 40px;float: left; margin: 4px;}
+.btn {font-size:14px; height: 40px;float: left; margin: 0px 4px;}
 .release-info {display:inline-block;}
 
 .user-tooltip {

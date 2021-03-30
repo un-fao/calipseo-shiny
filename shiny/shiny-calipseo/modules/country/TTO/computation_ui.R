@@ -29,6 +29,10 @@ computation_ui <- function(id){
             options = list(placeholder = 'Select a year')),
           actionButton(ns("computeButton"), label = "Compute", class = "btn-primary"),
           uiOutput(ns("releaseInfoShortcut"))
+      ),
+      box(width = 6,
+          p(tags$b("Computation status")), hr(),
+          DT::dataTableOutput(ns("computation_summary"))   
       )
     ),
     fluidRow(

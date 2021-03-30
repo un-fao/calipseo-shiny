@@ -1,6 +1,17 @@
 
 #UI helpers
 
+#shinyInput
+shinyInput <- function(FUN, len, indexes = NULL, id, ns, ...) {
+  inputs <- character(len)
+  for (i in seq_len(len)) {
+    idx <- i
+    if(!is.null(indexes)) idx <- indexes[i]
+    inputs[i] <- as.character(FUN(paste0(ns(id), idx), ...))
+  }
+  inputs
+}
+
 #imgToBase64
 imgToBase64 <- function (file, Rd = FALSE, alt = "image") {
   input <- normalizePath(file, mustWork = TRUE)
@@ -14,7 +25,6 @@ downloadButtonCustom <- function (outputId, label = "Download", class = NULL, ic
   tags$a(
     id = outputId, 
     class = paste("btn btn-default shiny-download-link", class), 
-    href = "", 
     target = "_blank", 
     download = NA, 
     icon, 

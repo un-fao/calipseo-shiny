@@ -53,7 +53,6 @@ generateReport <- function(session, indicator, year, data, con){
   cat(sprintf("Function statement: %s\n", fun_statement))
   progress$set(value = 30, message = report_msg, detail = "Prepare report...")
   eval(parse(text = fun_statement))
-  print(head(data_report))
   if(is.null(data_report)){
     cat(sprintf("Error while building report for indicator '%s'\n", indicator$value))
   }else{

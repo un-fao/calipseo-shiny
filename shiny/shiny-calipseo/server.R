@@ -21,9 +21,7 @@ server <- function(input, output, session) {
    
     if (!is.na(currentPage)) {
       isolate({updateTabItems(session, "calipseo-tabs", gsub("-", "_", currentPage))})
-    } else {
-      isolate({updateTabItems(session, "calipseo-tabs", "home")})
-    }
+    } 
   })
   
   observe({
