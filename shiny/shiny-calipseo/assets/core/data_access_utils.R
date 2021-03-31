@@ -24,6 +24,13 @@ readSQLScript <- function(sqlfile,
 #DB callers
 #-----------------------------------------------------------------------------------------------------
 
+#accessRefSpeciesFromDB
+accessRefSpeciesFromDB <- function(con){
+  ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql")
+  ref_species <- suppressWarnings(dbGetQuery(con, ref_species_sql))
+  return(ref_species)
+}
+
 #accessLandingSitesFromDB
 accessLandingSitesFromDB <- function(con){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql")
@@ -130,8 +137,20 @@ accessLandingFormsFromDB <- function(con, year){
   return(landing_forms)
 }
 
+#accessMonthlyFishingActivityFromDB
+accessMonthlyFishingActivityFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/fishing_activities_totalbymonth.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out)
+}
+  
 #generic data callers (considering this needs to be replaced later by API calls)
 #-----------------------------------------------------------------------------------------------------
+
+#accessRefSpecies
+accessRefSpecies <- function(con){
+  accessRefSpeciesFromDB(con)
+}
 
 #accessLandingSites
 accessLandingSites <- function(con){
@@ -204,6 +223,11 @@ accessAvailableYears <- function(con){
 #accessLandingForms
 accessLandingForms <- function(con, year){
   accessLandingFormsFromDB(con, year)
+}
+
+#accessMonthlyFishingActivity
+accessMonthlyFishingActivity <- function(con){
+  accessMonthlyFishingActivityFromDB(con)
 }
 
 #Local data accessors

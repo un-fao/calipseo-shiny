@@ -11,6 +11,9 @@ home_ui <- function(id){
             )
           ),
           uiOutput(ns("nb_infos"))
+          #fluidRow(
+          #  box(width = 12, height = 345, title = "Monthly fishing activity", status = "primary", solidHeader= TRUE, plotlyOutput(ns("activity")))
+          #)
   )
   
 }

@@ -1,6 +1,6 @@
 [
   {
-    "value": "artisanal_fisheries_landings",
+    "value": "artisanal_fisheries_landings1",
     "label": "1st raised landings",
     "compute_with": {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings.R",
@@ -23,7 +23,7 @@
     }
   },
   {
-    "value": "artisanal_fisheries_landings_trawlers_species",
+    "value": "artisanal_fisheries_landings1_trawlers_species",
     "label": "1st raised landings - trawlers - by species",
     "compute_with" : {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings_trawlers.R",
@@ -48,7 +48,7 @@
     }
   },
   {
-    "value": "artisanal_fisheries_landings_trawlers_species_group",
+    "value": "artisanal_fisheries_landings1_trawlers_species_group",
     "label": "1st raised landings - trawlers - by species group",
     "compute_with": {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings_trawlers.R",
@@ -154,7 +154,7 @@
     }
   },
   {
-    "value": "artisanal_fisheries_effort",
+    "value": "artisanal_fisheries_effort1",
     "label": "1st raised effort",
     "compute_with": {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_effort.R",
@@ -177,7 +177,7 @@
     }
   },
   {
-    "value": "artisanal_fisheries_effort_trawlers",
+    "value": "artisanal_fisheries_effort1_trawlers",
     "label": "1st raised effort - trawlers",
     "compute_with" : {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_effort_trawlers.R",
@@ -196,6 +196,18 @@
       "export_options" : {
         "firstActiveRow": 5,
         "firstActiveCol": "C"
+      }
+    }
+  },
+  {
+    "value": "artisanal_fisheries_landings2_FAO",
+    "label": "2nd raised landings - for FAO reporting",
+    "compute_with": {
+      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings2_FAO.R",
+      "fun" : "compute_2nd_raised_landings_FAO",
+      "fun_args": {
+		    "landings_2" : "landings_2",
+        "ref_species" : "ref_species"
       }
     }
   }

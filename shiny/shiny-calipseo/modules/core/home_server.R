@@ -41,5 +41,13 @@ home_server <- function(input, output, session, pool){
       )
       
     })
+    
+    #output$activity <- renderPlotly({
+    #  activity = accessMonthlyFishingActivity(pool)
+    #  activity$idx = 1:nrow(activity)
+    #  activity$time = paste0(activity$YEAR, "-", format(ISOdate(activity$YEAR,activity$MONTH,1), "%m"))
+    #  plot_ly(activity, x = ~time, y = ~QUANTITY, type='scatter', mode = 'lines+markers') %>%  layout(autosize = TRUE)
+    #})
+    
   })
 }

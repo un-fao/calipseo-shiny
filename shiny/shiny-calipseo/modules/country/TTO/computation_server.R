@@ -80,32 +80,55 @@ computation_server <- function(input, output, session, pool) {
         Year = years,
         Status = status,
         File = sapply(1:length(years), function(i){file.path("out", status[i], paste0(indicator$value, "_", years[i], ".xlsx"))}),
-        Actions = shinyInput(downloadButton, length(years), indexes = uuids, id = 'button_', ns = ns, title = "Download report", label = "",
-                             onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button")))
-      )
-      
-      
-      #clean button outputs reactives
-      outs <- outputOptions(output)
-      button_outs <- names(outs)[startsWith(names(outs), ns("button_"))]
-      lapply(button_outs, function(name) {
-        output[[name]] <<- NULL
-      })
-      #add new downloadHandler (for each button)
-      lapply(1:nrow(df), function(i){
-        idx = uuids[i]
-        button_output <- paste0("button_",idx)
-        output[[button_output]] <<- downloadHandler(
-          filename = function() {
-            paste0(out$indicator$value, "_", df[i,"Year"],"_", toupper(df[i,"Status"]),".xlsx")
-          },
-          content = function(con) {
-            filename <- paste0(out$indicator$value, "_", df[i,"Year"], ".xlsx")
-            data <- as.data.frame(readxl::read_excel(file.path("out", df[i,"Status"], filename)))
-            generateReport(session, out$indicator,  df[i,"Year"], data, con)
+        Actions = paste0(
+          shinyInput(downloadButtonCustom, length(years), indexes = uuids, id = 'button_result_', ns = ns, 
+                     title = "Download result", label = "", icon = icon("file-alt"),
+                     onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
+          if(!is.null(indicator$report_with)){
+            shinyInput(downloadButtonCustom, length(years), indexes = uuids, id = 'button_report_', ns = ns, 
+                     title = "Download report", label = "", icon = icon("file-contract"),
+                     onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button")))
+          }else{
+            ""
           }
         )
-      })
+      )
+      
+      #function to manage button server outputs
+      manageButtonServerOutputs <- function(prefix, type){
+        #clean button outputs reactives
+        outs <- outputOptions(output)
+        button_outs <- names(outs)[startsWith(names(outs), ns(prefix))]
+        lapply(button_outs, function(name) {
+          output[[name]] <<- NULL
+        })
+        #add new downloadHandler (for each button)
+        lapply(1:nrow(df), function(i){
+          idx = uuids[i]
+          button_output <- paste0(prefix,idx)
+          output[[button_output]] <<- downloadHandler(
+            filename = function() {
+              paste0(type, "_", out$indicator$value, "_", df[i,"Year"],"_", toupper(df[i,"Status"]),".xlsx")
+            },
+            content = function(con) {
+              filename <- paste0(out$indicator$value, "_", df[i,"Year"], ".xlsx")
+              data <- as.data.frame(readxl::read_excel(file.path("out", df[i,"Status"], filename)))
+              print(head(data))
+              print(type)
+              if(type == "report"){
+                generateReport(session, out$indicator,  df[i,"Year"], data, con)
+              }else{
+                writexl::write_xlsx(data, con)
+              }
+            }
+          )
+        })
+      }
+      
+      manageButtonServerOutputs("button_result_", "result")
+      manageButtonServerOutputs("button_report_", "report")
+      
+     
       
     }
     return(df)
@@ -150,16 +173,26 @@ computation_server <- function(input, output, session, pool) {
     raised_2 <- RAISED_2[RAISED_2$year == input$computation_year,]
     zones <- BEACH_TO_BEACHZONE
     species_groups <- SPECIES_GROUPS
-    
     landings_1 <- NULL
     if("landings_1" %in% indicator$compute_with$fun_args){
-      landings_1_release <- sprintf("out/release/artisanal_fisheries_landings_%s.xlsx", input$computation_year)
+      landings_1_release <- sprintf("out/release/artisanal_fisheries_landings1_%s.xlsx", input$computation_year)
       if(file.exists(landings_1_release)){
         landings_1 <- as.data.frame(readxl::read_excel(landings_1_release))
       }else{
         data_is_loaded <- FALSE
       }
     }
+    #required for FAO reporting
+    landings_2 <- NULL
+    if("landings_2" %in% indicator$compute_with$fun_args){
+      landings_2_release <- sprintf("out/release/artisanal_fisheries_landings2_by_SPECIES_%s.xlsx", input$computation_year)
+      if(file.exists(landings_2_release)){
+        landings_2 <- as.data.frame(readxl::read_excel(landings_2_release))
+      }else{
+        data_is_loaded <- FALSE
+      }
+    }
+    ref_species <- accessRefSpecies(pool)
     
     if(data_is_loaded){
       cat("All data assets are loaded and ready for computation\n")
@@ -275,12 +308,14 @@ computation_server <- function(input, output, session, pool) {
         tags$div(
           tags$div(
             class = "row",
-            downloadButtonCustom(
-              session$ns("downloadReportShortcut"),
-              'Generate & download report',
-              icon = icon("file-excel"),
-              class = "btn-lg btn-light"
-            )
+            if(!is.null(out$indicator$report_with)) {
+              downloadButtonCustom(
+                session$ns("downloadReportShortcut"),
+                'Generate & download report',
+                icon = icon("file-excel"),
+                class = "btn-lg btn-light"
+              )
+            }else{tags$div()}
           )
         )
       }
@@ -313,12 +348,14 @@ computation_server <- function(input, output, session, pool) {
                        icon = icon("file-excel"),
                        class = "btn-lg btn-light"
                      ),
-                     downloadButtonCustom(
-                       session$ns("downloadReportInStaging"),
-                       'Generate & download report',
-                       icon = icon("file-excel"),
-                       class = "btn-lg btn-light"
-                     )
+                     if(!is.null(out$indicator$report_with)) {
+                       downloadButtonCustom(
+                         session$ns("downloadReportInStaging"),
+                         'Generate & download report',
+                         icon = icon("file-excel"),
+                         class = "btn-lg btn-light"
+                       )
+                     }else{ tags$div() }
             ),
             tags$div(class = "col-md-6",
                      h4(
@@ -396,12 +433,14 @@ computation_server <- function(input, output, session, pool) {
         tags$div(
           tags$div(
             class = "row",
-            downloadButtonCustom(
-              session$ns("downloadReportInRelease"),
-              'Generate & download report',
-              icon = icon("file-excel"),
-              class = "btn-lg btn-light"
-            )
+            if(!is.null(out$indicator$report_with)) {
+              downloadButtonCustom(
+                session$ns("downloadReportInRelease"),
+                'Generate & download report',
+                icon = icon("file-excel"),
+                class = "btn-lg btn-light"
+              )
+            }else{ tags$div()}
           ),br(),
           tags$div(
             class = "row", style = "padding-left: 15px",
