@@ -30,7 +30,7 @@ landings1_charts_server <- function(input, output, session, pool){
   )
   
   observeEvent(input$bch_name,{
-    releases <- list.files("out/release", pattern ="artisanal_fisheries_landings_\\d",full.names = T)
+    releases <- list.files("out/release", pattern ="artisanal_fisheries_landings1_\\d",full.names = T)
     print("Releases")
     print(releases)
     if(length(releases)>0){

@@ -59,7 +59,7 @@ landings1_maps_server <- function(input, output, session, pool){
   )
   
   observeEvent(input$year_map_total,{
-    targetRelease <- file.path("out/release", sprintf("artisanal_fisheries_landings_%s.xlsx", input$year_map_total))
+    targetRelease <- file.path("out/release", sprintf("artisanal_fisheries_landings1_%s.xlsx", input$year_map_total))
     hasRelease <- file.exists(targetRelease)
     tsdata <- NULL
     if(hasRelease){
