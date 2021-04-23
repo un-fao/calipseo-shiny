@@ -92,6 +92,12 @@ accessVesselsCountByTypeFromDB <- function(con){
   suppressWarnings(dbGetQuery(con, vesseltypes_count_sql))
 }
 
+#accessVesselsCountByStatTypeFromDB
+accessVesselsCountByStatTypeFromDB <- function(con){
+  vesselstattypes_count_sql <- readSQLScript("data/core/sql/vessels_stat_types_count.sql")
+  suppressWarnings(dbGetQuery(con, vesselstattypes_count_sql))
+}
+
 #accessVesselsCountByLandingSiteFromDB
 accessVesselsCountByLandingSiteFromDB <- function(con){
   vesselsites_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_count.sql")
@@ -129,12 +135,25 @@ accessAvailableYearsFromDB <- function(con){
   return(fishing_trip_years)
 }
 
+#accessFishingActivitiesFromDB
+accessFishingActivitiesFromDB <- function(con, year, vessel_stat_type = NULL){
+  fa_sql <- readSQLScript("data/core/sql/fishing_activities.sql",
+                          add_filter_on_year = year, datetime_field = "ft.DATE_TO")
+  if(!is.null(vessel_stat_type)){
+    fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 #accessLandingFormsFromDB
 accessLandingFormsFromDB <- function(con, year){
-  landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
-                                     add_filter_on_year = year, datetime_field = "ft.DATE_TO")
-  landing_forms <- suppressWarnings(dbGetQuery(con, landing_forms_sql))
-  return(landing_forms)
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1)
+}
+
+#accessLogBooksFromDB
+accessLogBooksFromDB <- function(con, year){
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2)
 }
 
 #accessMonthlyFishingActivityFromDB
@@ -225,6 +244,11 @@ accessLandingForms <- function(con, year){
   accessLandingFormsFromDB(con, year)
 }
 
+#accessLogBooks
+accessLogBooks <- function(con, year){
+  accessLogBooksFromDB(con, year)
+}
+
 #accessMonthlyFishingActivity
 accessMonthlyFishingActivity <- function(con){
   accessMonthlyFishingActivityFromDB(con)
@@ -259,4 +283,22 @@ loadLocalCountryDatasets <- function(config){
 #getLocalCountryDataset
 getLocalCountryDataset <- function(name){
   get(name, envir = CALIPSEO_SHINY_ENV)
+}
+
+#getLocalCountryDatasets
+getLocalCountryDatasets <- function(config){
+  out <- list()
+  country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
+  if(dir.exists(country_dir)){
+    files <- list.files(path = country_dir, full.names = TRUE)
+    out <- lapply(files, function(file){
+      basefilename = unlist(strsplit(basename(file), "\\."))[1]
+      return(get(basefilename, envir = CALIPSEO_SHINY_ENV))
+    })
+    names(out) <- lapply(files, function(file){
+      basefilename = unlist(strsplit(basename(file), "\\."))[1]
+      return(basefilename)
+    })
+  }
+  return(out)
 }

@@ -5,10 +5,8 @@ computation_server <- function(input, output, session, pool) {
   print(names(session))
   
   AVAILABLE_INDICATORS <- getLocalCountryDataset("statistical_indicators")
-  RAISED_1 <- getLocalCountryDataset("raised_1")
-  RAISED_2 <- getLocalCountryDataset("raised_2")
-  BEACH_TO_BEACHZONE <- getLocalCountryDataset("beach_to_beachzone")
-  SPECIES_GROUPS <- getLocalCountryDataset("species_groups")
+  DATASETS <- getLocalCountryDatasets(appConfig)
+  print(names(DATASETS))
   
   output$computation_info <- renderText({
     session$userData$page("computation")
@@ -168,11 +166,13 @@ computation_server <- function(input, output, session, pool) {
     progress$set(message = indicator_msg, detail = "Initialize & read data...", value = 0)
     #required for 1st and 2d raised
     raw_data <- accessLandingForms(pool, year = input$computation_year)
-    raised_1 <- RAISED_1[RAISED_1$year == input$computation_year,]
+    raised_1 <- DATASETS$raised_1[DATASETS$raised_1$year == input$computation_year,]
     #required for 2d raised
-    raised_2 <- RAISED_2[RAISED_2$year == input$computation_year,]
-    zones <- BEACH_TO_BEACHZONE
-    species_groups <- SPECIES_GROUPS
+    raised_2 <- DATASETS$raised_2[DATASETS$raised_2$year == input$computation_year,]
+    zones <- DATASETS$beach_to_beachzone
+    species_groups <- DATASETS$species_groups
+    
+    #dependency of indicators? --> TODO
     landings_1 <- NULL
     if("landings_1" %in% indicator$compute_with$fun_args){
       landings_1_release <- sprintf("out/release/artisanal_fisheries_landings1_%s.xlsx", input$computation_year)
