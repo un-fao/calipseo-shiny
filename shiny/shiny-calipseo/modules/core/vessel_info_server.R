@@ -82,6 +82,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       tags$ul(
         tags$li(tags$span("Vessel name: ", style = "font-weight:bold;"), tags$span(vessel$NAME)),
         tags$li(tags$span("Vessel type: ", style = "font-weight:bold;"), tags$span(vessel$VESSEL_TYPE)),
+        tags$li(tags$span("Vessel stat type: ", style = "font-weight:bold;"), tags$span(vessel$VESSEL_STAT_TYPE)),
         tags$li(tags$span("Registration Number: ", style = "font-weight:bold;"), tags$span(vessel$REGISTRATION_NUMBER)),
         tags$li(tags$span("Registation port: ", style = "font-weight:bold;"), tags$span(vessel$REG_PORT_LANDING_SITE)),
         tags$li(tags$span("Home port: ", style = "font-weight:bold;"), tags$span(vessel$HOME_PORT_LANDING_SITE)),
@@ -185,5 +186,13 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         ),
       server = FALSE
     )
+    
+    #catch data source
+    output$vessel_catch_datasource <- renderUI({
+      tags$small(switch(vessel$VESSEL_STAT_TYPE_CODE,
+        "ART" = "From sample-based survey",
+        "INDUS" = "From lobgooks"
+      ))
+    })
   })
 }

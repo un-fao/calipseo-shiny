@@ -32,7 +32,7 @@ vessel_info_ui <- function(id){
             ),
             div(
               class = "col-md-7",
-              h3("Catch history"),hr(),
+              h3("Catch history", uiOutput(ns("vessel_catch_datasource"), inline = TRUE)),hr(),
               DT::dataTableOutput(ns("vessel_catch_history"))
             )
           )
