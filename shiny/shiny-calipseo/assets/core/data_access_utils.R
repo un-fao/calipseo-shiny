@@ -21,7 +21,10 @@ readSQLScript <- function(sqlfile,
   return(sql)
 }
 
-#DB callers
+#-----------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------
+#DB ACCESSORS
+#-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 
 #accessRefSpeciesFromDB
@@ -120,6 +123,24 @@ countVesselOwnersFromDB <- function(con){
   return(count)
 }
 
+
+#accessVesselsWithLogBooksFromDB
+accessVesselsWithLogBooksFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/vessels_reporting_logbooks.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  outids <- out$REGISTRATION_NUMBER
+  names(outids) <- out$NAME
+  return(outids) 
+}
+
+#accessVesselsOwnersWithLogBooksFromDB
+accessVesselsOwnersWithLogBooksFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/vessels_owners_reporting_logbooks.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out$NAME)
+}
+
+
 #DATA
 
 #countFishingTripsFromDB
@@ -136,24 +157,32 @@ accessAvailableYearsFromDB <- function(con){
 }
 
 #accessFishingActivitiesFromDB
-accessFishingActivitiesFromDB <- function(con, year, vessel_stat_type = NULL){
+accessFishingActivitiesFromDB <- function(con, year, 
+                                          vessel_stat_type = NULL, vesselId = NULL,
+                                          entityOwner = NULL){
   fa_sql <- readSQLScript("data/core/sql/fishing_activities.sql",
                           add_filter_on_year = year, datetime_field = "ft.DATE_TO")
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  if(!is.null(vesselId)){
+    fa_sql <- paste0(fa_sql, " AND v.REGISTRATION_NUMBER = '", vesselId, "'")
+  }
+  if(!is.null(entityOwner)){
+    fa_sql <- paste0(fa_sql, " AND ent.NAME = '", entityOwner, "'")
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
 }
 
 #accessLandingFormsFromDB
-accessLandingFormsFromDB <- function(con, year){
-  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1)
+accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1, vesselId = vesselId, entityOwner = entityOwner)
 }
 
 #accessLogBooksFromDB
-accessLogBooksFromDB <- function(con, year){
-  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2)
+accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
 }
 
 #accessMonthlyFishingActivityFromDB
@@ -163,7 +192,10 @@ accessMonthlyFishingActivityFromDB <- function(con){
   return(out)
 }
   
-#generic data callers (considering this needs to be replaced later by API calls)
+#-----------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------
+#GENERIC DATA ACCESSORS (considering this needs to be replaced later by API calls)
+#-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 
 #accessRefSpecies
@@ -226,6 +258,15 @@ countVesselOwners <- function(con){
   countVesselOwnersFromDB(con)
 }
 
+#accessVesselsWithLogBooks
+accessVesselsWithLogBooks <- function(con){
+  accessVesselsWithLogBooksFromDB(con)
+}
+
+#accessVesselsOwnersWithLogBooks
+accessVesselsOwnersWithLogBooks <- function(con){
+  accessVesselsOwnersWithLogBooksFromDB(con)
+}
 
 #DATA
 
@@ -240,13 +281,13 @@ accessAvailableYears <- function(con){
 }
 
 #accessLandingForms
-accessLandingForms <- function(con, year){
-  accessLandingFormsFromDB(con, year)
+accessLandingForms <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessLandingFormsFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
 }
 
 #accessLogBooks
-accessLogBooks <- function(con, year){
-  accessLogBooksFromDB(con, year)
+accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
 }
 
 #accessMonthlyFishingActivity

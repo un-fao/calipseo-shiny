@@ -17,4 +17,5 @@ LEFT JOIN dt_fishing_trip as ft ON fa.DT_FISHING_TRIP_ID = ft.ID
 LEFT JOIN reg_vessels as v ON ft.REG_VESSEL_ID = v.ID 
 LEFT JOIN cl_ref_vessel_types as vt ON vt.ID = v.CL_REF_VESSEL_TYPE_ID 
 LEFT JOIN cl_fish_fishing_zones as fz ON fz.ID = ft.CL_FISH_FISHING_ZONE_ID 
-LEFT JOIN cl_fish_landing_sites as ls ON ls.ID = ft.CL_TO_PORT_SITE_ID
+LEFT JOIN cl_fish_landing_sites as ls ON ls.ID = ft.CL_TO_PORT_SITE_ID 
+LEFT JOIN reg_entities as ent ON ent.ID = v.REG_ENTITY_OWNER_ID
