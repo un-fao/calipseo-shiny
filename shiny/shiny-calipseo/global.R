@@ -4,13 +4,14 @@ options(stringsAsFactors = FALSE)
 
 #config
 #---------------------------------------------------------------------------------------
-config_file = "D:/Documents/DEV/Bitbucket/fao/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_SUR.yml"
-#config_file <- "/etc/shiny-calipseo/config.yml"
+#config_file = "D:/Documents/DEV/Bitbucket/fao/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_TTO.yml"
+config_file <- "/etc/shiny-calipseo/config.yml"
 if(!nzchar(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
 #packages
 #---------------------------------------------------------------------------------------
+#To be installed on server before (not at shiny runtime)
 #CRAN packages
 list_of_packages <- appConfig$r_packages
 invisible(lapply(list_of_packages, function(x) {
