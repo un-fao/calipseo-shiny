@@ -48,7 +48,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       atSea = vesselCatches$ret_datetime-vesselCatches$dep_datetime
       atSea <- switch(attr(atSea, "units"),
                       "mins" = as.numeric(atSea)/60/24,
-                      "hours" = as.numeric(atSea)/24
+                      "hours" = as.numeric(atSea)/24,
+                      "days" = as.numeric(atSea)
       )
       vesselCatches$daysAtSea <- round(atSea, 2)
       
