@@ -19,7 +19,7 @@ vessel_list_server <- function(input, output, session, pool) {
   
   #TODO add buttons
   outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
-    outhtml <- sprintf("<a href=\"/?page=vessel-info&registrationNumber=%s\" >Details</a>", x)
+    outhtml <- sprintf("<a href=\"./?page=vessel-info&registrationNumber=%s\" >Details</a>", x)
     return(outhtml)
   })
   
