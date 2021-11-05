@@ -23,10 +23,6 @@ home_server <- function(input, output, session, pool){
     
     if(all(!sapply(reactiveValuesToList(infos), is.null))) infos_fetched(TRUE)
     
-    output$home_info <- renderText({
-      session$userData$page("home")
-      text <- "<h2>Calipseo R Shiny Dashboard <small>Access and compute statistics over the Calipseo OpenFismis plateform</small></h2>"
-    })
     
     output$nb_infos <- renderUI({
 
