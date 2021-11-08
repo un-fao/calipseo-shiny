@@ -21,8 +21,8 @@ logbooks_upload_ui <- function(id){
     h2("Upload Logbooks"),
     fluidRow(
       column(3,
-      fileInput(inputId = ns("file_to_upload"), label = "Input data logbooks:",multiple = FALSE,accept = c(".xlsx"))),
-      column(3,uiOutput(ns("validity_btn")))
+      fileInput(inputId = ns("file_to_upload"), label = "Import a data logbooks:",multiple = FALSE,accept = c(".xlsx"))),
+      column(2,style = "margin-top: 25px;",uiOutput(ns("validity_btn")))
     ),
     fluidRow(
       uiOutput(ns("validity_result"))

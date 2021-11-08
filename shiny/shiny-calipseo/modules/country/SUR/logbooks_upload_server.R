@@ -51,25 +51,25 @@ logbooks_upload_server <- function(input, output, session, pool) {
     req(!is.null(out$errors)&!is.null(out$referentials))
     
     fluidRow(
-     box(width=6,title="Referential(s) to update : ",
+     box(width=6,title="Referential(s) to update :",
         if(nrow(out$referentials)>0){
           tagList(
           p(sprintf("Number of referential(s) to update : %s",nrow(out$referentials)),style = "color:red"),
           DTOutput(ns('referentials'))
           )
         }else{
-          p("All referentials implicated in this dataset are up to date",style = "color:green")
+          p("All referentials used in this dataset are up to date",style = "color:green")
         }
          ),
-     box(width=6,title="Error(s) in data : ",
+     box(width=6,title="Error(s) in data :",
          if(nrow(out$errors)>0){
            tagList(
-           p(sprintf("Number of warning value(s) : %s",nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
-           p(sprintf("Number of error value(s) : %s",nrow(subset(out$errors,type=="ERROR"))),style = "color:red"),
+           p(sprintf("Number of no blocking issue(s) : %s",nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
+           p(sprintf("Number of blocking issue(s) : %s",nrow(subset(out$errors,type=="ERROR"))),style = "color:red"),
            DTOutput(ns('errors'))
            )
          }else{
-           p("No issues detected in the dataset",style = "color:green")
+           p("No issues detected in this dataset",style = "color:green")
          }
          )
     )
@@ -79,6 +79,7 @@ output$referentials<-DT::renderDT(server = FALSE, {
   if(nrow(out$referentials)>0){
     DT::datatable(
       out$referentials,
+      colnames = c('Table', 'Value', 'Description'), 
       extensions = c("Buttons"),
       escape = FALSE,
       options = list(
@@ -100,6 +101,7 @@ output$errors<-DT::renderDT(server = FALSE, {
   if(nrow(out$errors)>0){
     DT::datatable(
       out$errors,
+      colnames = c('Trip ID', 'Vessel Resgistration', 'Issue Level','Description'), 
       extensions = c("Buttons"),
       escape = FALSE,
       options = list(
