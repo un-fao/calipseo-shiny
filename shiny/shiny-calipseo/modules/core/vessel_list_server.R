@@ -54,7 +54,5 @@ vessel_list_server <- function(input, output, session, pool) {
       pageLength = 5
     ),
     filter = list(position = 'top', clear = FALSE))
-
-
    
 }
