@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "logbooks",
+  "rank": 3,
+  "title": "Logbooks upload",
+  "icon": "upload"
+}
