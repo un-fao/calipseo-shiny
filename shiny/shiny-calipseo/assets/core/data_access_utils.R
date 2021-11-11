@@ -109,6 +109,18 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
   return(sites)
 }
 
+
+
+#vesselsLandingsitesvesseltypesCountFromDB
+vesselsLandingSitesVesselTypesCountFromDB <- function(con){
+  
+  vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_ landing_sites_vessel_types_count.sql")
+  sitesvesseltypecount <- suppressWarnings(dbGetQuery(con,  vesselsitesvesseltype_count_sql))
+  return(sitesvesseltypecount)
+  
+}
+
+
 #countVesselCaptainsFromDB
 countVesselCaptainsFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/count_vessels_captains.sql")
@@ -246,6 +258,12 @@ accessVesselsCountByType <- function(con){
 #accessVesselsCountByLandingSite
 accessVesselsCountByLandingSite <- function(con){
   accessVesselsCountByLandingSiteFromDB(con)
+}
+
+
+#vesselsLandingsitesvesseltypesCount
+vesselsLandingSitesVesselTypesCount <- function(con){
+  vesselsLandingSitesVesselTypesCountFromDB(con)
 }
 
 #countVesselCaptains

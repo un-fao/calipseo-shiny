@@ -10,6 +10,9 @@ vessel_breakdown_server <- function(input, output, session, pool) {
     text
   })
   
+  
+  
+  
   #vessels breakdown by type (pie chart)
   output$rep_vessels <- renderPlotly({
     vessel_breakdown = accessVesselsCountByType(pool)
@@ -21,8 +24,8 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   })
   
   
-  df_vessel_type <- accessVesselsCountByType(pool)[,-1] %>% 
-    dplyr::rename("VESSEL TYPE"= NAME)
+  df_vessel_type <- accessVesselsCountByType(pool)[,-1]
+  names(df_vessel_type) <- c("VESSEL TYPE", "COUNT")
   
   output$rep_vessels_data <- renderDataTable(
     df_vessel_type,
@@ -67,8 +70,9 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   
   
   
-  df_vessel_landingsite_data <- as.data.frame(accessVesselsCountByLandingSite(pool))[,-3] %>% 
-    dplyr::rename("HOME PORT"= NAME)
+  df_vessel_landingsite_data <- as.data.frame(accessVesselsCountByLandingSite(pool))[,-3] 
+  
+  names(df_vessel_landingsite_data) <- c("HOME PORT", "COUNT")
   
   
   output$map_vessel_data <- renderDataTable(
@@ -106,15 +110,12 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   
   
 
-  df_vessel_landingsite_data_breakdown <- accessVessels(pool) %>% group_by(HOME_PORT_LANDING_SITE,VESSEL_TYPE) %>%
-    count(name = 'COUNT') %>%
-    dplyr::rename("VESSEL TYPE"= VESSEL_TYPE, "HOME PORT/LANDING SITE"=HOME_PORT_LANDING_SITE) %>%
-    dplyr::filter(`HOME PORT/LANDING SITE`!="Unknown")
+  df_vessel_landingsite_data_breakdown <- vesselsLandingSitesVesselTypesCount(pool)
 
  
 
   output$map_vessel_data_breakdown <- renderDataTable(
-    df_vessel_landingsite_data_breakdown[,c(1:3)],
+    df_vessel_landingsite_data_breakdown[,c(1,2,5)],
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -137,24 +138,21 @@ vessel_breakdown_server <- function(input, output, session, pool) {
     filter = list(position = 'top', clear = FALSE))
   
   
+  vessel_landingsite_breakdown <- vesselsLandingSitesVesselTypesCount(pool)
   
+  vessel_landingsite_breakdown <- reshape(vessel_landingsite_breakdown, direction = 'wide', idvar = c('LATITUDE','LONGITUDE','HOME_PORT_LANDING_SITE'),
+          timevar = 'VESSEL_TYPE')
   
-  vessel_landingsite_breakdown <- accessVessels(pool) %>% select(c('HOME_PORT_LANDING_SITE','LONGITUDE','LATITUDE','VESSEL_TYPE', )) %>%
-    dplyr::filter(LONGITUDE!="",LATITUDE!="") %>%
-    group_by(HOME_PORT_LANDING_SITE,VESSEL_TYPE,LONGITUDE,LATITUDE) %>%
-    count(name = 'COUNT') %>%
-    dplyr::rename("VESSEL TYPE"= VESSEL_TYPE, "HOME PORT/LANDING SITE"=HOME_PORT_LANDING_SITE) %>%
-    dplyr::filter(`HOME PORT/LANDING SITE`!="Unknown")
+  names(vessel_landingsite_breakdown) <- gsub("COUNT.", "", names(vessel_landingsite_breakdown), fixed = TRUE)
   
-
-  vessel_landingsite_breakdown <- reshape2::dcast(vessel_landingsite_breakdown, LONGITUDE+LATITUDE+`HOME PORT/LANDING SITE`~`VESSEL TYPE`,value.var = "COUNT")
+  for (i in 2:ncol(vessel_landingsite_breakdown)) {
+    
+    vessel_landingsite_breakdown[,i]<- as.numeric(vessel_landingsite_breakdown[,i])
+    
+  }
   
-  vessel_landingsite_breakdown <- vessel_landingsite_breakdown %>% mutate(Total=rowSums(vessel_landingsite_breakdown[,4:ncol(vessel_landingsite_breakdown)], na.rm = T))
+  vessel_landingsite_breakdown$Total <- rowSums(vessel_landingsite_breakdown[,4:ncol(vessel_landingsite_breakdown)], na.rm = T)
   
-
-  vessel_landingsite_breakdown$LONGITUDE <- as.numeric(vessel_landingsite_breakdown$LONGITUDE)
-  vessel_landingsite_breakdown$LATITUDE <- as.numeric(vessel_landingsite_breakdown$LATITUDE)
-
 
   output$map_vessels2 <- renderLeaflet({
 
