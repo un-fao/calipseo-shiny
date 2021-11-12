@@ -1,7 +1,7 @@
 #createBase64Image
 createBase64Image <- function(url, width = "auto", height = "auto", alt = "image", Rd = FALSE){
   input = tempfile(fileext = ".jpeg")
-  download.file(url = url, destfile = input)
+  download.file(url = url, destfile = input, mode = "wb")
   buf <- readBin(input, raw(), file.info(input)$size)
   base64 <- openssl::base64_encode(buf, linebreaks = FALSE)
   out <- sprintf("%s<img src=\"data:image/png;base64,\n%s\" alt=\"%s\" width=\"%s\" height=\"%s\" />%s", 
