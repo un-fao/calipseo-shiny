@@ -46,6 +46,7 @@ RUN R -e "install.packages(c('sf'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('sp'), repos='https://cran.r-project.org/')" 
 #processing
 RUN R -e "install.packages(c('dplyr'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('reshape2'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('uuid'), repos='https://cran.r-project.org/')" 
 #ui
 RUN R -e "install.packages(c('RColorBrewer'), repos='https://cran.r-project.org/')"
