@@ -25,19 +25,24 @@ vessel_list_server <- function(input, output, session, pool) {
   
   df <- reactiveValues(data = outp)
   
-  df <- df$data %>% dplyr::select(-c(VESSEL_TYPE_CODE,VESSEL_OPERATIONAL_STATUS_CODE,VESSEL_STAT_TYPE_CODE,
-                                     VESSEL_STAT_TYPE,REG_PORT_LANDING_SITE,VESSEL_OPERATIONAL_STATUS))
   
-  df <- dplyr::rename(df,'REGISTRATION NUMBER'= REGISTRATION_NUMBER, "VESSEL TYPE"= VESSEL_TYPE, "HOME PORT/LANDING SITE"=HOME_PORT_LANDING_SITE)
+  df <- df$data[,-c(3,4,5,7,9)]
+  
+  names(df) <- c("REGISTRATION NUMBER", "NAME", "VESSEL TYPE", "VESSEL OPERATIONAL STATUS",
+                 "VESSEL STAT TYPE", "HOME PORT/LANDING SITE", "REGISTRATION PORT/LANDING SITE",
+                 "DETAILS")
   
   output$vessel_list <- renderDataTable(
+    
     df,
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
     extensions = c("Buttons"),
+    filter = list(position = 'top', clear = FALSE),
+    
     options = list(
-      autoWidth = TRUE,
+      autoWidth = FALSE,
       dom = 'Bfrtip',
       deferRender = TRUE,
       scroll = FALSE,
@@ -47,12 +52,13 @@ vessel_list_server <- function(input, output, session, pool) {
         list(extend = 'excel', filename =  "vessels", title = NULL, header = TRUE),
         list(extend = "pdf", title = "List of vessels", header = TRUE, orientation = "landscape")
       ),
+      columnDefs = list(list(targets=7,searchable = FALSE)),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
       ),
-      columnDefs = list(list(searchable = FALSE,targets=6)),
+      
       pageLength = 5
-    ),
-    filter = list(position = 'top', clear = FALSE))
+    )
+    )
    
 }
