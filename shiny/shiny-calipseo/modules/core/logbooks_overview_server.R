@@ -74,8 +74,8 @@ logbooks_overview_server <- function(input, output, session, pool){
     infos$stats_by_type_lastyear <- compute_stats_by_vessel_type(logbooks_lastyear)
     infos$stats_by_type_currentyear <- compute_stats_by_vessel_type(logbooks_currentyear)
     #ratios reporting
-    infos$ratio_reporting_lastyear <- round(length(unique(logbooks_lastyear$regnum))/vessel_count, 2)
-    infos$ratio_reporting_currentyear <- round(length(unique(logbooks_currentyear$regnum))/vessel_count, 2)
+    infos$ratio_reporting_lastyear <- paste0(if(length(unique(logbooks_lastyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_lastyear$regnum))/vessel_count*100, 2)},"%")
+    infos$ratio_reporting_currentyear <- paste0(if(length(unique(logbooks_currentyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_currentyear$regnum))/vessel_count*100, 2)},"%")
   })
   
   observe({
@@ -96,8 +96,8 @@ logbooks_overview_server <- function(input, output, session, pool){
           infoBox(sprintf("Total quantity (%s)", currentyear), paste(infos$total_currentyear, "kg"), icon = icon("fish"), fill = TRUE, width = 6)
         ),
         fluidRow(
-          infoBox(sprintf("Logbook reporting ratio (%s)", lastyear), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6),
-          infoBox(sprintf("Logbook reporting ratio (%s)", currentyear), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
+          infoBox(sprintf("Logbook reporting percentage (%s)", lastyear), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6),
+          infoBox(sprintf("Logbook reporting percentage (%s)", currentyear), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
         )
       )
     })
