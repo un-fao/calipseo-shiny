@@ -65,7 +65,7 @@ logbooks_overview_server <- function(input, output, session, pool){
     logbooks_lastyear <- accessLogBooks(pool, lastyear)
     logbooks_currentyear <- accessLogBooks(pool, currentyear)
     #vessels counting by stat type
-    vessel_count = accessVesselsCountByStatTypeFromDB(pool)
+    vessel_count = accessVesselsCountByStatType(pool)
     vessel_count = vessel_count[!is.na(vessel_count$ID) & vessel_count$ID == 2,]$COUNT
     #infos counting
     infos$total_lastyear <- sum(logbooks_lastyear$quantity) #assumes all units = KG
