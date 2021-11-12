@@ -19,21 +19,19 @@ vessel_list_server <- function(input, output, session, pool) {
   
   #TODO add buttons
   outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
-    outhtml <- sprintf("<a href=\"./?page=vessel-info&registrationNumber=%s\" >Details</a>", x)
+    outhtml <- sprintf("<a href=\"./?page=vessel-info&registrationNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
     return(outhtml)
   })
   
   df <- reactiveValues(data = outp)
-  
-  
-  df <- df$data[,-c(3,4,5,7,9)]
-  
-  names(df) <- c("REGISTRATION NUMBER", "NAME", "VESSEL TYPE", "VESSEL OPERATIONAL STATUS",
-                 "VESSEL STAT TYPE", "HOME PORT/LANDING SITE", "REGISTRATION PORT/LANDING SITE",
-                 "DETAILS")
+
+  df <- df$data[,-which(endsWith(colnames(df$data), "_CODE"))]
+  names(df) <- gsub("_", " ", names(df))
+  names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME PORT/LANDING SITE"
+  names(df)[names(df)=="REG PORT LANDING SITE"] <- "REGISTRATION PORT/LANDING SITE"
+  names(df)[names(df)=="Details"] <- "" 
   
   output$vessel_list <- renderDataTable(
-    
     df,
     server = FALSE,
     escape = FALSE,
@@ -52,12 +50,14 @@ vessel_list_server <- function(input, output, session, pool) {
         list(extend = 'excel', filename =  "vessels", title = NULL, header = TRUE),
         list(extend = "pdf", title = "List of vessels", header = TRUE, orientation = "landscape")
       ),
-      columnDefs = list(list(targets=7,searchable = FALSE)),
+      columnDefs = list(
+        list(targets=7,searchable = FALSE, sortable = FALSE)
+      ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
       ),
       
-      pageLength = 5
+      pageLength = 10
     )
     )
    
