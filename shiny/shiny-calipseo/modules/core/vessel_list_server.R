@@ -25,14 +25,24 @@ vessel_list_server <- function(input, output, session, pool) {
   
   df <- reactiveValues(data = outp)
   
+  
+  df <- df$data[,-c(3,4,5,7,9)]
+  
+  names(df) <- c("REGISTRATION NUMBER", "NAME", "VESSEL TYPE", "VESSEL OPERATIONAL STATUS",
+                 "VESSEL STAT TYPE", "HOME PORT/LANDING SITE", "REGISTRATION PORT/LANDING SITE",
+                 "DETAILS")
+  
   output$vessel_list <- renderDataTable(
-    df$data,
+    
+    df,
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
-    extensions = c("Buttons"), 
+    extensions = c("Buttons"),
+    filter = list(position = 'top', clear = FALSE),
+    
     options = list(
-      autoWidth = TRUE,
+      autoWidth = FALSE,
       dom = 'Bfrtip',
       deferRender = TRUE,
       scroll = FALSE,
@@ -42,10 +52,13 @@ vessel_list_server <- function(input, output, session, pool) {
         list(extend = 'excel', filename =  "vessels", title = NULL, header = TRUE),
         list(extend = "pdf", title = "List of vessels", header = TRUE, orientation = "landscape")
       ),
+      columnDefs = list(list(targets=7,searchable = FALSE)),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
-    ),
-    filter = list(position = 'top', clear = FALSE))
+      ),
+      
+      pageLength = 5
+    )
+    )
    
 }
