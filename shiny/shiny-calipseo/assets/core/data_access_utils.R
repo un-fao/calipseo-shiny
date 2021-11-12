@@ -314,6 +314,18 @@ accessMonthlyFishingActivity <- function(con){
   accessMonthlyFishingActivityFromDB(con)
 }
 
+#Country profile
+#-----------------------------------------------------------------------------------------------------
+loadCountryProfile <- function(appConfig, con){
+  if(is.null(appConfig$country_profile$iso3)){
+    stop("Missing country ISO3 code in configuration file!")
+  }
+  country_data <- DBI::dbGetQuery(con, sprintf("select * from cl_ref_countries where ISO_3_CODE = '%s'", appConfig$country_profile$iso3))
+  appConfig$country_profile$data <- country_data[1L,]
+  return(appConfig)
+}
+
+
 #Local data accessors
 #-----------------------------------------------------------------------------------------------------
 

@@ -40,9 +40,9 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Vessel Type Data Breakdown in",appConfig$country_profile$country), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
@@ -88,9 +88,9 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = 'excel', filename = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$country), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
@@ -127,9 +127,9 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = 'excel', filename = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$country), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$country), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
