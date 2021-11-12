@@ -12,13 +12,13 @@ vessel_breakdown_ui <- function(id){
           ),
           fluidRow(
             
-            box(width = 6, height = 480, title = sprintf("Breakdown of vessels in %s per vessel type", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, plotlyOutput(ns("rep_vessels"))),
+            box(width = 6, height = 480, title = sprintf("Breakdown of vessels in %s per vessel type", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("rep_vessels"))),
             
-            box(width = 6, height = 480, title = sprintf("Data on Breakdown of vessels in %s per vessel type", appConfig$country_profile$country), status = "primary", solidHeader= TRUE, DT::dataTableOutput(ns("rep_vessels_data")))
+            box(width = 6, height = 480, title = sprintf("Data on Breakdown of vessels in %s per vessel type", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, DT::dataTableOutput(ns("rep_vessels_data")))
           ),
           fluidRow(
             
-            box(width = 6, height = 610, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$country), status = "primary", solidHeader= TRUE,
+            box(width = 6, height = 610, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,
             
               
               tabsetPanel(
@@ -30,7 +30,7 @@ vessel_breakdown_ui <- function(id){
             
             ),
             
-            box(width = 6, height = 610, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$country), status = "primary", solidHeader= TRUE,
+            box(width = 6, height = 610, title = sprintf("Breakdown of vessels in %s per home port", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,
                 
                 tabsetPanel(
                   id = "breakdown_vessel_tab2", type = "pills",

@@ -43,11 +43,17 @@ source("assets/core/utils.R")
 source("assets/core/module_utils.R")
 source("assets/core/data_access_utils.R")
 source("assets/core/ui_utils.R")
+source("assets/core/vessel_utils.R")
 
 #country R script utils
 country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 
                              pattern = ".R", recursive = TRUE, full.names = TRUE)
 for(country_asset in country_assets){ source(country_asset) }
+
+#country profile
+#---------------------------------------------------------------------------------------
+appConfig <- loadCountryProfile(appConfig, pool)
+print(appConfig$country_profile$data)
 
 #local datasets
 #---------------------------------------------------------------------------------------
