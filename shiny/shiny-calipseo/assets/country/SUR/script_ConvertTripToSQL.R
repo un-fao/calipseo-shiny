@@ -283,7 +283,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   if(is.na(sp$Landed_weight_kg)){
     target<-subset(sp_register,Alpha3_Code==sp$Species_ASFIS[1]) 
     sp_name<-sprintf("%s (%s - %s)",target$Alpha3_Code,target$Name_En,target$Scientific_Name)
-    errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Missing quantity value for species '%s' in reg_vessels",sp_name)))
+    errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Missing quantity value for species '%s'",sp_name)))
   }
   
   #Validate species in referential
@@ -293,6 +293,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   #test if species value
   if(is.na(sp$Species_ASFIS[1])){
     errors<<-rbind(errors,data.frame(trip_id=sp$`Trip_#`[1],vessel_registration=sp$Vessel_Registration[1],type="ERROR",message="Missing value for species"))
+    sp_code<-NA  
   }else{
       
     #Test ASFIS_CODE
