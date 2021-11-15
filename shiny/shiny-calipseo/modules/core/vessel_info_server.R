@@ -1,6 +1,9 @@
 #vessel_info_server
 vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
+  
+  
+  
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
     text <- "<h2>Vessel information</h2>"
@@ -25,6 +28,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     vessel <- accessVessel(pool, vesselId)
     vesselOwners <- accessVesselOwners(pool, vesselId)
     vesselOwnerColumnNames <- c("FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
+    
     if(nrow(vesselOwners)>0){
       vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
         owner <- vesselOwners[i,]
@@ -40,6 +44,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     }
     
     vesselCatches <- accessVesselCatches(pool, vesselId)
+    
     if(nrow(vesselCatches)>0){
       vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime)) 
       attr(vesselCatches$dep_datetime, "tzone") <- appConfig$country_profile$timezone
@@ -61,6 +66,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       vesselCatches$f_mthd <- as.factor(vesselCatches$f_mthd)
       vesselCatches$species_desc <- as.factor(vesselCatches$species_desc)
       vesselCatches <- vesselCatches[order(vesselCatches$ret_datetime, decreasing = TRUE),]
+      
     }else{
       vesselCatches <- data.frame(
         year = character(0),
@@ -76,25 +82,41 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         quantity_unit = character(0),
         value = character(0)
       )
+      
     }
     
     #general description
     output$vessel_description <- renderUI({
-      tags$ul(
-        tags$li(tags$span("Vessel name: ", style = "font-weight:bold;"), tags$span(vessel$NAME)),
-        tags$li(tags$span("Vessel type: ", style = "font-weight:bold;"), tags$span(vessel$VESSEL_TYPE)),
-        tags$li(tags$span("Vessel stat type: ", style = "font-weight:bold;"), tags$span(vessel$VESSEL_STAT_TYPE)),
-        tags$li(tags$span("Registration Number: ", style = "font-weight:bold;"), tags$span(vessel$REGISTRATION_NUMBER)),
-        tags$li(tags$span("Registation port: ", style = "font-weight:bold;"), tags$span(vessel$REG_PORT_LANDING_SITE)),
-        tags$li(tags$span("Home port: ", style = "font-weight:bold;"), tags$span(vessel$HOME_PORT_LANDING_SITE)),
-        class = "vessel"
+      colnames(vesselOwners)
+      HTML(
+        
+        '<br>Vessel name:',vessel$NAME,'</br>',
+        '<br>Vessel type:', vessel$VESSEL_TYPE,'</br>',
+        '<br>Vessel stat type:', vessel$VESSEL_STAT_TYPE,'</br>',
+        '<br>Home port:', vessel$HOME_PORT_LANDING_SITE,'</br>'
+        
+      )
+    })
+    
+    
+    
+    #registration
+    output$vessel_registration <- renderUI({
+      
+      HTML(
+        
+        '<br>Registration Number:', vessel$REGISTRATION_NUMBER,'</br>',
+        '<br>Registation port:', vessel$REG_PORT_LANDING_SITE,'</br>'
+        
       )
     })
     
     #ownership
-    output$vessel_owners <- renderDataTable(
+    output$vessel_owners <- renderDataTable(server = FALSE,{
+      names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Pone Number", "Mobile Number")
+      
+      datatable(
       vesselOwners,
-      server = FALSE,
       escape = FALSE,
       rownames = FALSE,
       extensions = c("Buttons"), 
@@ -113,8 +135,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         exportOptions = list(
           modifiers = list(page = "all", selected = TRUE)
         )
-      )
-    )
+      ))
+    })
     
     #licenses
     #TODO
@@ -126,10 +148,15 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         aggregate(vesselCatches$quantity, by = list(vesselCatches$year), FUN = sum)$x
       )
       colnames(vesselCatchSummary) <- c("year", "daysAtSea", "quantity")
+      
     }else{
       vesselCatchSummary <- data.frame(year = character(0), daysAtSea = character(0), weight_lb = character(0))
+      
     }
-    output$vessel_catch_summary <- renderDataTable(
+    
+    
+    output$vessel_catch_summary <- renderDataTable(server = FALSE,{
+      names(vesselCatchSummary) <- c("Year", "Days At Sea", "Quantity")
       datatable(vesselCatchSummary,
                 rownames = FALSE,
                 extensions = c("Buttons"),
@@ -149,12 +176,16 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
                   )
-                )),
-      server = FALSE
-    )
+                ))
+    })
     
     #catch history
-    output$vessel_catch_history <- renderDataTable(
+    output$vessel_catch_history <- renderDataTable(server = FALSE,{
+      
+      names(vesselCatches) <- c("Year", "Departure Datetime", "Return Datetime", "Days At Sea", "Crew", "Greater Fishing Area", "Beach Name",
+                   "Fishing Method", "Species Description", "Quantity", "Quantity Unit", "Value")
+
+     
       datatable(vesselCatches,
                 rownames = FALSE,
                 extensions = c("Buttons"),
@@ -176,17 +207,16 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   )
                 )) %>% 
         formatDate(
-          'dep_datetime',
+          'Departure Datetime',
           method = "toLocaleString",
           params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
         ) %>% 
         formatDate(
-          'ret_datetime',
+          'Return Datetime',
           method = "toLocaleString",
           params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
-        ),
-      server = FALSE
-    )
+        )
+    })
     
     #catch data source
     output$vessel_catch_datasource <- renderUI({
