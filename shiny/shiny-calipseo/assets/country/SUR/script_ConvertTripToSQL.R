@@ -184,11 +184,13 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     
     #Check consistency between vessel name and registration number
     ves_name_by_reg<-dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",trip$Vessel_Registration))
-    clean_ves_name<-gsub("-"," ",trip$Vessel_Name)
-    clean_ves_name<-gsub("\\s+", " ", clean_ves_name)
+    clean_ves_name<-gsub("\\s+", " ", trip$Vessel_Name)
     if(nrow(ves_name_by_reg)>0){
       if(toupper(clean_ves_name)!=toupper(ves_name_by_reg)){
+        clean_ves_name<-gsub("-"," ",clean_ves_name)
+        if(toupper(clean_ves_name)!=toupper(ves_name_by_reg)){
         errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Vessel registration '%s' in reg_vessel not corresponding to vessel name '%s' but '%s', please verify and modify the wrong value",trip$Vessel_Registration,trip$Vessel_Name,ves_name_by_reg)))
+        }
       }
     }
     
