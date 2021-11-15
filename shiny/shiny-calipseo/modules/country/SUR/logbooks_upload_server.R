@@ -97,6 +97,8 @@ logbooks_upload_server <- function(input, output, session, pool) {
       }
     })
   
+    out$errors$type<-as.factor(out$errors$type)
+    
     output$errors<-DT::renderDT(server = FALSE, {
       if(nrow(out$errors)>0){
         DT::datatable(
@@ -104,8 +106,9 @@ logbooks_upload_server <- function(input, output, session, pool) {
           colnames = c('Trip ID', 'Vessel Registration', 'Issue Level','Description'), 
           extensions = c("Buttons"),
           escape = FALSE,
+          filter = list(position = 'top',clear =FALSE),
           options = list(
-            dom = 'Brtip',
+            dom = 'Bfrtip',
             scrollX=TRUE,
             pageLength=5,
             buttons = list(
