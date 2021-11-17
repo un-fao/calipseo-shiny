@@ -1,6 +1,11 @@
 #logbooks_details_server
 logbooks_details_server <- function(input, output, session, pool){
   
+  output$urlPage<-renderUI({
+    session$userData$page("logbooks-details")
+    updatePageUrl("logbooks-details", session)
+  })
+  
   emptyDataFrame <- function(){
     data.frame(year = integer(0), quantity = integer(0), stringsAsFactors = FALSE)
   }
