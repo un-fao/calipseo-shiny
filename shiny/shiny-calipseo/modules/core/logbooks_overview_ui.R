@@ -4,6 +4,7 @@ logbooks_overview_ui <- function(id){
   ns <- NS(id)
   
   tabItem(tabName = "logbooks_overview",
+          uiOutput(ns("urlPage")),
           fluidRow(
             div(
               width = 12, style = "margin:12px;",
