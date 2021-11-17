@@ -19,6 +19,7 @@ logbooks_upload_ui <- function(id){
        )
      ),
     h2("Upload Logbooks"),
+    uiOutput(ns("urlPage")),
     fluidRow(
       column(3,
       fileInput(inputId = ns("file_to_upload"), label = "Import a logbook data file:",multiple = FALSE,accept = c(".xlsx"))),
