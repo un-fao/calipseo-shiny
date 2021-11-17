@@ -27,7 +27,8 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   last_fas = dbGetQuery(pool, "SELECT * FROM dt_fishing_activities_species")
   if(nrow(last_fas)>0) fas_idx = max(last_fas$ID)
   
-  data <- readxl::read_excel(filename,col_types = "text")
+  data <- readxl::read_excel(if(is.character(filename)){filename}else{filename$datapath},col_types = "text")
+  names(data)<-tolower(names(data))
   
   errors<-data.frame(
                      trip_id=character(),
@@ -40,6 +41,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   referentials<-data.frame(
     table=character(),
     value=character(),
+    type=character(),
     description=character()
   )
   
@@ -51,9 +53,9 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   
   #validity of columns
   
-  # check_col<-setdiff(c("Trip_#","Vessel_Name","Vessel_Registration","Departure_date","Arrival_date","Time_spent_fishing","Species_ASFIS","Landed_weight_kg","Processing","Landing_site_code","Landing_site_name"),names(data))
+  # check_col<-setdiff(c("trip_#","vessel_name","vessel_registration","departure_date","arrival_date","Time_spent_fishing","species_asfis","landed_weight_kg","processing","landing_site_code","Landing_site_name"),names(data))
   # 
-  # if(length(check_col)==0|check_col=="Processing"){
+  # if(length(check_col)==0|check_col=="processing"){
   #   print("Mandatory columns : Validated") 
   # }else{
   #   err_msg<-sprintf("Mandatory columns : PROBLEM ... columns missing : %s",paste0(check_col,collapse = " ; "))
@@ -62,69 +64,69 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   
   #validity of ID column
   
-  noID<-subset(as.data.frame(data),is.na(`Trip_#`))
+  noID<-subset(as.data.frame(data),is.na(`trip_#`))
   if(nrow(noID)>0){
     err_msg<-sprintf("No Trip ID for row(s) :%s",paste0(row.names(noID),collapse = ","))
     #stop(err_msg)
-    errors<<-rbind(errors,data.frame(trip_id="_",vessel_registration=noID$Vessel_Registration[1],type="ERROR",message="missing trip number"))
+    errors<<-rbind(errors,data.frame(trip_id="_",vessel_registration=noID$vessel_registration[1],type="ERROR",category="trip issue",message="missing trip number"))
     print(err_msg)
   }
   
   #validity of vessel registration
   
-  noVesReg<-subset(as.data.frame(data),is.na(Vessel_Registration),select=`Trip_#`)
+  noVesReg<-subset(as.data.frame(data),is.na(vessel_registration),select=`trip_#`)
   if(nrow(noVesReg)>0){
     err_msg<-sprintf("No Vessel Registration for row(s) :%s",paste0(noVesReg,collapse = ","))
     stop(err_msg)
   }
   
   #standardize vessel registration if need
-  data$Vessel_Registration<-ifelse(nchar(data$Vessel_Registration)==5,
-                                   paste0(substr(data$Vessel_Registration,1,2),"00",substr(data$Vessel_Registration,3,5)),data$Vessel_Registration)
+  data$vessel_registration<-ifelse(nchar(data$vessel_registration)==5,
+                                   paste0(substr(data$vessel_registration,1,2),"00",substr(data$vessel_registration,3,5)),data$vessel_registration)
   
   #Create unique ID of trip
-  data$ID<-paste0(data$Vessel_Registration,"-",data$`Trip_#`)
+  data$ID<-paste0(data$vessel_registration,"-",data$`trip_#`)
   
   #Check consistency between vessel name and registration number
   # 
   # test<- data%>%
-  #   select(Vessel_Name,Vessel_Registration)%>%
-  #   mutate(Vessel_Registration=paste0(substr(Vessel_Registration,1,2),"00",substr(Vessel_Registration,3,5)),Vessel_Registration)%>%
+  #   select(vessel_name,vessel_registration)%>%
+  #   mutate(vessel_registration=paste0(substr(vessel_registration,1,2),"00",substr(vessel_registration,3,5)),vessel_registration)%>%
   #   distinct()%>%
   #   rowwise()%>%
-  #   mutate(ref_Vessel_Name_by_Reg=dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",Vessel_Registration))[1,1])%>%
-  #   mutate(test=if(ref_Vessel_Name_by_Reg==Vessel_Name){TRUE}else{FALSE})%>%
+  #   mutate(ref_vessel_name_by_Reg=dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",vessel_registration))[1,1])%>%
+  #   mutate(test=if(ref_vessel_name_by_Reg==vessel_name){TRUE}else{FALSE})%>%
   #   filter(isFALSE(test))
   # 
   # print(test)
   
   #standardize dates
   
-  data$Departure_date<-ifelse(!is.na(as.numeric(data$Departure_date)),
-               as.character(as.Date(as.numeric(data$Departure_date), origin = "1899-12-30")),
-               as.character(as.Date(data$Departure_date, format="%d/%m/%Y"))
+  data$departure_date<-ifelse(!is.na(as.numeric(data$departure_date)),
+               as.character(as.Date(as.numeric(data$departure_date), origin = "1899-12-30")),
+               as.character(as.Date(data$departure_date, format="%d/%m/%Y"))
   )
   
-  data$Departure_date<-as.Date(data$Departure_date,format = "%Y-%m-%d")
-  data$Departure_date<-format(data$Departure_date, format = "%Y-%m-%d %H:%M:%S")
+  data$departure_date<-as.Date(data$departure_date,format = "%Y-%m-%d")
+  data$departure_date<-format(data$departure_date, format = "%Y-%m-%d %H:%M:%S")
   
-  data$Arrival_date<-ifelse(!is.na(as.numeric(data$Arrival_date)),
-                              as.character(as.Date(as.numeric(data$Arrival_date), origin = "1899-12-30")),
-                              as.character(as.Date(data$Arrival_date, format="%d/%m/%Y"))
+  data$arrival_date<-ifelse(!is.na(as.numeric(data$arrival_date)),
+                              as.character(as.Date(as.numeric(data$arrival_date), origin = "1899-12-30")),
+                              as.character(as.Date(data$arrival_date, format="%d/%m/%Y"))
   )
   
-  data$Arrival_date<-as.Date(data$Arrival_date,format = "%Y-%m-%d")
-  data$Arrival_date<-format(data$Arrival_date, format = "%Y-%m-%d %H:%M:%S")
+  data$arrival_date<-as.Date(data$arrival_date,format = "%Y-%m-%d")
+  data$arrival_date<-format(data$arrival_date, format = "%Y-%m-%d %H:%M:%S")
                
   trips<-data%>%
-        select(-c(Species_ASFIS,Landed_weight_kg,starts_with("Processing")))%>%
+        select(-c(species_asfis,landed_weight_kg,starts_with("processing")))%>%
         distinct()
   
   species<-data%>%
-            select(`Trip_#`,Vessel_Registration,ID,Species_ASFIS,Landed_weight_kg,starts_with("Processing"))
+            select(`trip_#`,vessel_registration,ID,species_asfis,landed_weight_kg,starts_with("processing"))
   
   now<-as.character(format(Sys.time(), format = "%Y-%m-%d %H:%M:%S"))
-  comment<-paste0("Upload-from-logbook;file:",basename(filename),";")
+  comment<-paste0("Upload-from-logbook;file:",if(is.character(filename)){basename(filename)}else{filename$name},";")
   
   sp_register<-readr::read_csv("https://raw.githubusercontent.com/openfigis/RefData/gh-pages/species/CL_FI_SPECIES_ITEM.csv", col_names = T)
   sp_register<-subset(sp_register,select=c('Alpha3_Code','Scientific_Name','Name_En'))
@@ -151,64 +153,64 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     
     #Departure Date
 
-    noDepDate<-trip[is.na(trip$Departure_date),1]
+    noDepDate<-trip[is.na(trip$departure_date),1]
       
     if(nrow(noDepDate)!=0){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message="missing or invalid departure date"))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="missing or invalid departure date"))
       }
     
-    if(length(unique(trip$Departure_date))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="WARNING",message="multiple departure date for a same trip. first selected"))
+    if(length(unique(trip$departure_date))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="date issue",message="multiple departure date for a same trip. first selected"))
     }
     
     #Arrival Date
     
-    noArrDate<-trip[is.na(trip$Arrival_date),1]
+    noArrDate<-trip[is.na(trip$arrival_date),1]
     
     if(nrow(noArrDate)!=0){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message="missing or invalid arrival date"))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="missing or invalid arrival date"))
     }
     
-    if(length(unique(trip$Arrival_date))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="WARNING",message="multiple arrival date for a same trip. first selected"))
+    if(length(unique(trip$arrival_date))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="date issue",message="multiple arrival date for a same trip. first selected"))
     }
     
     #Trip duration
-    trip_duration<-as.numeric(difftime(trip$Arrival_date[1], trip$Departure_date[1], units = "days"))
+    trip_duration<-as.numeric(difftime(trip$arrival_date[1], trip$departure_date[1], units = "days"))
     
     if(trip_duration<0){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message="Arrival date must be greater than departure date"))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="Arrival date must be greater than departure date"))
     }else if(trip_duration>365){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Trip duration of '%s' seems so high",trip_duration)))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message=sprintf("Trip duration of '%s' seems so high",trip_duration)))
     }
     
     #Check consistency between vessel name and registration number
-    ves_name_by_reg<-dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",trip$Vessel_Registration))
-    clean_ves_name<-gsub("\\s+", " ", trip$Vessel_Name)
+    ves_name_by_reg<-dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",trip$vessel_registration))
+    clean_ves_name<-gsub("\\s+", " ", trip$vessel_name)
     if(nrow(ves_name_by_reg)>0){
       if(toupper(clean_ves_name)!=toupper(ves_name_by_reg)){
         clean_ves_name<-gsub("-"," ",clean_ves_name)
         if(toupper(clean_ves_name)!=toupper(ves_name_by_reg)){
-        errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Vessel registration '%s' in reg_vessel not corresponding to vessel name '%s' but '%s', please verify and modify the wrong value",trip$Vessel_Registration,trip$Vessel_Name,ves_name_by_reg)))
+        errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="vessel issue",message=sprintf("Vessel registration '%s' in reg_vessel not corresponding to vessel name '%s' but '%s', please verify and modify the wrong value",trip$vessel_registration,trip$vessel_name,ves_name_by_reg)))
         }
       }
     }
     
     #Vessel registration referential
-    vessel_id<-dbGetQuery(pool, sprintf("SELECT ID FROM reg_vessels where REGISTRATION_NUMBER = '%s'",trip$Vessel_Registration[1]))
+    vessel_id<-dbGetQuery(pool, sprintf("SELECT ID FROM reg_vessels where REGISTRATION_NUMBER = '%s'",trip$vessel_registration[1]))
     
     if(nrow(vessel_id)==0){
-      referentials<<-rbind(referentials,data.frame(table="reg_vessels",value=trip$Vessel_Registration[1],description=sprintf("Missing referential data for vessel. No value for '%s' in reg_vessels",trip$Vessel_Registration[1])))
+      referentials<<-rbind(referentials,data.frame(table="reg_vessels",value=trip$vessel_registration[1],type="ERROR",description=sprintf("Missing referential data for vessel. No value for '%s' in reg_vessels",trip$vessel_registration[1])))
     }
     
     #Landing_site
     
-    if(length(unique(trip$Landing_site_code))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="WARNING",message="multiple landing site for a same trip. first selected"))
+    if(length(unique(trip$landing_site_code))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="landing site issue",message="Multiple landing site for a same trip. first selected"))
     }
     
     #Trip identifier
-    trip_identifier<-sprintf(sprintf("%s-%s - %s - %s",format(trip$Arrival_date[1], format = "%Y"),gsub("0", "", format(trip$Arrival_date[1], format = "%m")),trip$Vessel_Registration[1],trip$`Trip_#`[1]))
+    trip_identifier<-sprintf(sprintf("%s-%s - %s - %s",format(trip$arrival_date[1], format = "%Y"),gsub("0", "", format(trip$arrival_date[1], format = "%m")),trip$vessel_registration[1],trip$`trip_#`[1]))
     
     #Indexes incrementation
     ft_idx<<-ft_idx+1
@@ -221,12 +223,12 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     FT_REG_REPORTING_OFFICER_ID = 1 
     FT_REG_CAPTAIN_ID = 1
     FT_CL_FISH_FISHING_TRIP_TYPE_ID = 1 
-    FT_DATE_FROM = trip$Departure_date[1]
-    FT_DATE_TO = trip$Arrival_date[1]
-    FT_CL_FROM_PORT_LOCATION_ID = trip$Landing_site_code[1]
-    FT_CL_TO_PORT_LOCATION_ID = trip$Landing_site_code[1]
-    FT_CL_FROM_PORT_SITE_ID = trip$Landing_site_code[1]
-    FT_CL_TO_PORT_SITE_ID = trip$Landing_site_code[1]
+    FT_DATE_FROM = trip$departure_date[1]
+    FT_DATE_TO = trip$arrival_date[1]
+    FT_CL_FROM_PORT_LOCATION_ID = trip$landing_site_code[1]
+    FT_CL_TO_PORT_LOCATION_ID = trip$landing_site_code[1]
+    FT_CL_FROM_PORT_SITE_ID = trip$landing_site_code[1]
+    FT_CL_TO_PORT_SITE_ID = trip$landing_site_code[1]
     FT_CL_FISH_FISHING_ZONE_ID = 1
     FT_TIME_SPENT_FISHING_ZONE = trip_duration
     FT_CL_TIME_SPENT_FISHING_UNIT_ID = 18
@@ -252,8 +254,8 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   FA_ID = fa_idx
   FA_DT_FISHING_TRIP_ID = ft_idx
   FA_CL_FISH_FISHING_ACTIVITY_TYPE_ID = 1
-  FA_DATE_FROM = trip$Departure_date[1]
-  FA_DATE_TO = trip$Arrival_date[1]
+  FA_DATE_FROM = trip$departure_date[1]
+  FA_DATE_TO = trip$arrival_date[1]
   FA_UPDATER_ID = 2
   FA_COMMENT = comment
   FA_CREATED_AT = now
@@ -282,10 +284,10 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   fas_idx<<-fas_idx+1
   
   #Validate quantity value  
-  if(is.na(sp$Landed_weight_kg)){
-    target<-subset(sp_register,Alpha3_Code==sp$Species_ASFIS[1]) 
+  if(is.na(sp$landed_weight_kg)){
+    target<-subset(sp_register,Alpha3_Code==sp$species_asfis[1]) 
     sp_name<-sprintf("%s (%s - %s)",target$Alpha3_Code,target$Name_En,target$Scientific_Name)
-    errors<<-rbind(errors,data.frame(trip_id=trip$`Trip_#`[1],vessel_registration=trip$Vessel_Registration[1],type="ERROR",message=sprintf("Missing quantity value for species '%s'",sp_name)))
+    errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="species issue",message=sprintf("Missing quantity value for species '%s'",sp_name)))
   }
   
   #Validate species in referential
@@ -293,72 +295,72 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
 #test if species is already in table
   
   #test if species value
-  if(is.na(sp$Species_ASFIS[1])){
-    errors<<-rbind(errors,data.frame(trip_id=sp$`Trip_#`[1],vessel_registration=sp$Vessel_Registration[1],type="ERROR",message="Missing value for species"))
+  if(is.na(sp$species_asfis[1])){
+    errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="ERROR",category="species issue",message="Missing value for species"))
     sp_code<-NA  
   }else{
       
     #Test ASFIS_CODE
-    sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where ASFIS_CODE = '%s'",sp$Species_ASFIS))
+    sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where ASFIS_CODE = '%s'",sp$species_asfis))
     
     #Test SCIENTIFI_NAME
     if(nrow(sp_code)==0){
-      sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep="")))
+      sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep="")))
       if(nrow(sp_code)>0){
-        sp_asfis_code<-dbGetQuery(pool, sprintf("SELECT ASFIS_CODE FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep="")))
-        errors<<-rbind(errors,data.frame(trip_id=sp$`Trip_#`[1],vessel_registration=sp$Vessel_Registration[1],type="WARNING",message=sprintf("Species is reported '%s' but should be reported '%s'",sp$Species_ASFIS,sp_asfis_code)))
+        sp_asfis_code<-dbGetQuery(pool, sprintf("SELECT ASFIS_CODE FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep="")))
+        errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="WARNING",category="species issue",message=sprintf("Species is reported '%s' but should be reported '%s'",sp$species_asfis,sp_asfis_code)))
       }
     }
   
     #Test ASFIS_NAME_EN
     if(nrow(sp_code)==0){
-      sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where ASFIS_NAME_EN = '%s'",paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep="")))
+      sp_code<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_species where ASFIS_NAME_EN = '%s'",paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep="")))
       if(nrow(sp_code)>0){
-        sp_asfis_code<-dbGetQuery(pool, sprintf("SELECT ASFIS_CODE FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep="")))
-        errors<<-rbind(errors,data.frame(trip_id=sp$`Trip_#`[1],vessel_registration=sp$Vessel_Registration[1],type="WARNING",message=sprintf("Species is reported '%s' but should be reported '%s'",sp$Species_ASFIS,sp_asfis_code)))
+        sp_asfis_code<-dbGetQuery(pool, sprintf("SELECT ASFIS_CODE FROM cl_ref_species where SCIENTIFIC_NAME = '%s'",paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep="")))
+        errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="WARNING",category="species issue",message=sprintf("Species is reported '%s' but should be reported '%s'",sp$species_asfis,sp_asfis_code)))
       }
     }
     
     #Uniqueness of referential
     if(nrow(sp_code)>1){
-      referentials<<-rbind(referentials,data.frame(table="cl_ref_species",value=sp$Species_ASFIS[1],description=sprintf("Multiple referential data for species '%s' : ",sp$Species_ASFIS,paste0(sp_code$ID,collapse = ";"))))
+      referentials<<-rbind(referentials,data.frame(table="cl_ref_species",value=sp$species_asfis[1],type="WARNING",description=sprintf("Multiple referential data for species '%s': %s (first is choosed)",sp$species_asfis,paste0(sp_code$ID,collapse = ";"))))
     }
   
     #New species, add to referential
     if(nrow(sp_code)==0){
-      if(nchar(sp$Species_ASFIS[1])!=3){
-        target<-subset(sp_register,Scientific_Name==paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep=""))
+      if(nchar(sp$species_asfis[1])!=3){
+        target<-subset(sp_register,Scientific_Name==paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep=""))
         if(nrow(target)==0){
-          target<-subset(sp_register,Name_En==paste(toupper(substr(sp$Species_ASFIS, 1, 1)), tolower(substr(sp$Species_ASFIS, 2, nchar(sp$Species_ASFIS))), sep=""))
-          errors<<-rbind(errors,data.frame(trip_id=sp$`Trip_#`[1],vessel_registration=sp$Vessel_Registration[1],type="WARNING",message=sprintf("Species '%s' not have yet be referred in referntial, please confirm no typo exist in name '%s'",sp$Species_ASFIS,sp$Species_ASFIS)))
+          target<-subset(sp_register,Name_En==paste(toupper(substr(sp$species_asfis, 1, 1)), tolower(substr(sp$species_asfis, 2, nchar(sp$species_asfis))), sep=""))
+          errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="WARNING",category="species issue",message=sprintf("Species '%s' not have yet be referred in referntial, please confirm no typo exist in name '%s'",sp$species_asfis,sp$species_asfis)))
         }
       }else{
-        target<-subset(sp_register,Alpha3_Code==sp$Species_ASFIS)  
+        target<-subset(sp_register,Alpha3_Code==sp$species_asfis)  
       }
       
       if(nrow(target)==1){
           sp_name<-sprintf("%s (%s - %s)",target$Alpha3_Code,target$Name_En,target$Scientific_Name)
       }else{
-          sp_name<-sp$Species_ASFIS
+          sp_name<-sp$species_asfis
         }
   
-      referentials<<-rbind(referentials,data.frame(table="cl_ref_species",value=sp$Species_ASFIS[1],description=sprintf("Missing referential data for species '%s'",sp_name)))
+      referentials<<-rbind(referentials,data.frame(table="cl_ref_species",value=sp$species_asfis[1],type="ERROR",description=sprintf("Missing referential data for species '%s'",sp_name)))
     }
   }
   
   FAS_ID = fas_idx
   FAS_DT_FISHING_ACTIVITY_ID = fa_idx
   FAS_CL_REF_SPECIES_ID = sp_code[1]
-  FAS_QUANTITY = sp$Landed_weight_kg
+  FAS_QUANTITY = sp$landed_weight_kg
   FAS_CL_APP_QUANTITY_UNIT_ID = 7
   FAS_TOTAL_VALUE = "null"
   FAS_UPDATER_ID = 2
-  FAS_COMMENT = paste0(comment,ifelse(any("processing"%in%names(sp)),paste0(";processing:",tolower(sp$Processing)),""))
+  FAS_COMMENT = paste0(comment,ifelse(any("processing"%in%names(sp)),paste0(";processing:",tolower(sp$processing)),""))
   FAS_CREATED_AT = now
   FAS_UPDATED_AT = now
   FAS_CATCH_NUMBER = "null"
   FAS_CL_REF_SPECIES_SIZE_ID = "null"
-  FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT = sp$Landed_weight_kg
+  FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT = sp$landed_weight_kg
   FAS_DISCARD_QUANTITY = "null"
   FAS_CL_APP_DISCARD_QUANTITY_UNIT_ID = "null"
   FAS_TOTAL_VALUE_CURRENCY = "null"
@@ -373,7 +375,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   
   referentials<-unique(referentials)
   
-  if(nrow(referentials)>0|nrow(subset(errors,type=="ERROR"))>0){
+  if(nrow(subset(referentials,type=="ERROR"))>0|nrow(subset(errors,type=="ERROR"))>0){
     valid<-FALSE
   }else{
     valid<-TRUE

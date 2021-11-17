@@ -37,7 +37,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
       max=1,
       message = "Dataset validation in progress ... ",
       detail = "" , 
-      convertTripToSQL(file$datapath,pool,monitor=shinyMonitor)
+      convertTripToSQL(file,pool,monitor=shinyMonitor)
     )
 
     out$result<-outt$result
@@ -54,7 +54,8 @@ logbooks_upload_server <- function(input, output, session, pool) {
        box(width=6,title="Referential(s) to update :",
           if(nrow(out$referentials)>0){
             tagList(
-            p(sprintf("Number of referential(s) to update : %s",nrow(out$referentials)),style = "color:red"),
+            p(sprintf("Number of referential(s) to inspect : %s",nrow(subset(out$referentials,type=="WARNING"))),style = "color:orange"),
+            p(sprintf("Number of referential(s) to update : %s",nrow(subset(out$referentials,type=="ERROR"))),style = "color:red"),
             DTOutput(ns('referentials'))
             )
           }else{
@@ -75,15 +76,18 @@ logbooks_upload_server <- function(input, output, session, pool) {
       )
     })
     
+    out$referentials$type<-as.factor(out$referentials$type)
+    
     output$referentials<-DT::renderDT(server = FALSE, {
       if(nrow(out$referentials)>0){
         DT::datatable(
           out$referentials,
-          colnames = c('Table', 'Value', 'Description'), 
+          colnames = c('Table', 'Value','Issue Level', 'Description'), 
           extensions = c("Buttons"),
           escape = FALSE,
+          filter = list(position = 'top',clear =FALSE),
           options = list(
-            dom = 'Brtip',
+            dom = 'Bfrtip',
             scrollX=TRUE,
             pageLength=5,
             buttons = list(
@@ -93,17 +97,19 @@ logbooks_upload_server <- function(input, output, session, pool) {
               modifiers = list(page = "all",selected=TRUE)
             )
           )
-        )
+        )%>%
+          formatStyle("type",target = 'row',backgroundColor = styleEqual(c("WARNING","ERROR"), c("#FDEBD0","#F2D7D5")))
       }
     })
   
     out$errors$type<-as.factor(out$errors$type)
+    out$errors$category<-as.factor(out$errors$category)
     
     output$errors<-DT::renderDT(server = FALSE, {
       if(nrow(out$errors)>0){
         DT::datatable(
           out$errors,
-          colnames = c('Trip ID', 'Vessel Registration', 'Issue Level','Description'), 
+          colnames = c('Trip ID', 'Vessel Registration', 'Issue Level','Issue Domain','Description'), 
           extensions = c("Buttons"),
           escape = FALSE,
           filter = list(position = 'top',clear =FALSE),
@@ -119,8 +125,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
             )
           )
         )%>%
-          formatStyle("type",target = 'row',backgroundColor = styleEqual(c("WARNING","ERROR"), c("#FDEBD0","#F2D7D5")),
-                      )
+          formatStyle("type",target = 'row',backgroundColor = styleEqual(c("WARNING","ERROR"), c("#FDEBD0","#F2D7D5")))
       }
     })
   
