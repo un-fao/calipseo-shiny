@@ -5,23 +5,48 @@ vessel_info_ui <- function(id){
   
   tabItem(tabName = "vessel_info",
 
-fluidRow(width=12,
+div(class='row',
          
-         htmlOutput(ns("vessel_header")),
-         div(class = 'col-sm-4',
+         htmlOutput(ns("vessel_header")),br(),
+        
+         div(class='col-md-5',id='card',style='background-color:#f7f4ff;
+             margin-left:15px;
+             margin-right:15px;
+             padding-left:15px;
+             padding-top:15px;
+             padding-bottom:15px;
+             border:solid 1px;
+             border-color:#ddd;
+             width:48%;',
+             
+         div(class = 'col-sm-6',id='img-grid',style='background-color:#f7f4ff;
+             text-align: center;
+             margin-left:15px;
+             margin-right:15px;
+             padding-right:15px;
+             padding-left:15px;
+             padding-top:15px;
+             padding-bottom:15px;
+             border:solid 1px;
+             border-color:#ddd;',
                 
-                div(class = 'row',
+                
+              uiOutput(ns('vessel_picture')),br(),
+             
+             uiOutput(ns('image_source'))
+             
+                         
+                  ),br(),
                   
-                  div(class = 'col-sm-4', style='padding-left: 15px;',
+                  div(class = 'col-sm-3',id='info-panel', style='padding-left: 15px;
+                      background-color:#f7f4ff;
+                      border:solid 1px;
+                      border-color:#ddd;',
                          
-                         
-                         tags$img(src='placeholder_pic.png',width='160px')
-                         
-                  ),
-                  
-                  div(class = 'col-sm-6 offset-md-1 col-sm-offset-2', style='padding-left: 40px;',
-                         
-                         div(class='row',style='width:200px;',
+                         div(class='row',id='info-tabs',style='padding-left: 15px;
+                             padding-top: 15px;
+                             width:200px;
+                             background-color:#f7f4ff',
                            tabsetPanel(
                              
                              tabPanel('Info',
@@ -29,27 +54,23 @@ fluidRow(width=12,
                              tabPanel('Registration',uiOutput(ns("vessel_registration"),style = "font-weight:bold;"))
                            )
                            
-                         ))
+                         )
                   
                   
-                )
-                
-         ),
+                ),
          
-         div(class = 'col-sm-6 offset-md-1 col-sm-offset-1',
-                
-                '#TODO'
-         )
+        ),div(class='col-md-5',id='licenses-panel', '#TODO')
          
          
-),br(),
+),
 
-div(class='row',style='width:12;',
+
+div(class='row',id='vertical-panels',
          
-         verticalTabsetPanel(
-         verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
-         verticalTabPanel('Licenses',box_height='70px', '#TODO'),
-         verticalTabPanel('Catches',box_height='70px' ,
+         shinyWidgets::verticalTabsetPanel(
+         shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
+         shinyWidgets::verticalTabPanel('Licenses',box_height='70px', '#TODO'),
+         shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
                             tabsetPanel(
                               
                               tabPanel('Summary', DT::dataTableOutput(ns("vessel_catch_summary"))),
