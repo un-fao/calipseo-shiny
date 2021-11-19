@@ -1,33 +1,3 @@
-#createBase64Image
-createBase64Image <- function(url, width = "auto", height = "auto", alt = "image", Rd = FALSE){
-  
-  
-  if(is.null(url)==FALSE)
-    
-  {
-    
-    input = tempfile(fileext = ".jpeg")
-    download.file(url = url, destfile = input, mode = "wb", quiet = TRUE)
-    buf <- readBin(input, raw(), file.info(input)$size)
-    base64 <- openssl::base64_encode(buf, linebreaks = FALSE)
-    out <- sprintf("%s<img src=\"data:image/png;base64,\n%s\" alt=\"%s\" width=\"%s\" height=\"%s\" />%s", 
-                   if (Rd) 
-                     "\\out{"
-                   else "", base64, alt, width, height, if (Rd) 
-                     "}"
-                   else "")
-    unlink(input)
-    
-    
-  }else{
-    
-    placeholder = "placeholder_pic.png"
-    
-    out <- as.character(tags$img(src = placeholder, height='100'))
-  }
-  return(out)
-}
-
 #vesselFindeR
 vesselFindeR <- function(name, flag_iso2){
   

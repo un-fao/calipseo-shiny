@@ -2,6 +2,8 @@
 vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   
+  
+  
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
     text <- "<h2>Vessel information</h2>"
@@ -91,7 +93,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         '<br>Vessel name:',vessel$NAME,'</br>',
         '<br>Vessel type:', vessel$VESSEL_TYPE,'</br>',
         '<br>Vessel stat type:', vessel$VESSEL_STAT_TYPE,'</br>',
-        '<br>Home port:', vessel$HOME_PORT_LANDING_SITE,'</br>','<br>'
+        '<br>Home port:', vessel$HOME_PORT_LANDING_SITE,'</br>'
         
       )
     })
@@ -104,7 +106,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       HTML(
         
         '<br>Registration Number:', vessel$REGISTRATION_NUMBER,'</br>',
-        '<br>Registation port:', vessel$REG_PORT_LANDING_SITE,'</br>','<br>'
+        '<br>Registation port:', vessel$REG_PORT_LANDING_SITE,'</br>'
         
       )
     })
@@ -225,63 +227,29 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     
-    
     vessel_found <- vesselFindeR(vessel$NAME, appConfig$country_profile$data$ISO_2_CODE)
     
-    #incase retrieving picture from the website fails try 3 times
     
-    vessel_found  <- NULL
-    attempt <- 1
-    while( is.null(vessel_found) && attempt <= 3 ) {
-      attempt <- attempt + 1
-      try(
-        vessel_found <- vesselFindeR(vessel$NAME, appConfig$country_profile$data$ISO_2_CODE)
-      )
+    if(!is.null(vessel_found$img_href)){
+      vessel_picture_html <- createBase64Image(url = vessel_found$img_href, height = 100, alt = vessel$NAME)
+      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=width:150px;font-weight:bold;font-size:98%;padding-left:26px;>Image Source: <a href=",vessel_found$img_href, " a> link </a></div>"))
+     
+    }else{
+      vessel_picture_html <- createPlaceholderImage(appConfig$placeholder_image$vessel_placeholder_image)
+      
     }
-    
-    vessel_picture_html <- createBase64Image(url = vessel_found$img_href, height = 100, alt = vessel$NAME)
-    
-    
+
     output$vessel_picture <- renderUI({
       
-      # shinydashboardPlus::userBox(collapsible = F,
-      #         title = shinydashboardPlus::userDescription(
-      #           title = "Minerva",
-      #           type = 2,
-      #           
-      #           image = vessel_found$img_href,
-      #         ),
-      #         gradient = TRUE,
-      #         background = "light-blue",
-      #         boxToolSize = "sm"
-      #         
-      # )
-      # 
-      
-      
-      HTML(
-        vessel_picture_html
-      )
-      
-    })
-    
-    
-    output$image_source <- renderUI({
-      
-      if(is.null(vessel_found$img_href)==FALSE)
-        {
-     
-      HTML(
+      vessel_picture_html
 
-      paste0("Image Source: <a href=",vessel_found$img_href, " a> link </a>")
-
-      )
-        
-      }
-      
     })
-    
+
     
     
   })
+
+    
+    
+
 }

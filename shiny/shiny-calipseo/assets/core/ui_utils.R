@@ -52,3 +52,12 @@ updatePageUrl <- function(page, session){
     mode = "push", session
   )
 }
+
+
+#createplaceholderImage
+createPlaceholderImage <- function(url){
+  vessel_placeholder_image <- tags$img(src= imgToBase64(url),height='100px')
+  return(vessel_placeholder_image)
+}
+
+
