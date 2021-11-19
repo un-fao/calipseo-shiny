@@ -66,12 +66,14 @@ RUN R -e "install.packages(c('leaflet.minicharts'), repos='https://cran.r-projec
 
 #Git clone shiny app
 #---------------------------------------------------------------------------------------
-RUN git -C /root/ clone https://bitbucket.org/cioapps/fao-calipseo-stats.git && echo "OK!"
+# RUN git -C /root/ clone https://bitbucket.org/cioapps/fao-calipseo-stats.git && echo "OK!"
+COPY ../* /root/shiny/shiny-calipseo
+RUN ls -ls /root/shiny/shiny-calipseo
 RUN ln -s /root/shiny/shiny-calipseo /srv/shiny-calipseo
 
 ENV SHINY_CONFIG=""
 RUN mkdir -p /etc/shiny-calipseo
-COPY $SHINY_CONFIG /etc/shiny-calipseo/config.yml
+COPY shinyconfigs/calipseo_shiny_config_TTO.yml /etc/shiny-calipseo/config.yml
  
 EXPOSE 3838
 

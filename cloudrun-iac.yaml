@@ -1,0 +1,30 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: $NAME
+  labels:
+    cloud.googleapis.com/location: $REGION
+  annotations:
+      # run.googleapis.com/ingress: internal-and-cloud-load-balancing
+      # run.googleapis.com/ingress-status: internal-and-cloud-load-balancing
+spec:
+  template:
+    metadata:
+      annotations: 
+        autoscaling.knative.dev/maxScale: '20'
+        run.googleapis.com/cloudsql-instances: $PROJECT_ID:$REGION:$CLOUDSQL_INSTANCE
+        run.googleapis.com/vpc-access-connector: projects/$PROJECT_ID/locations/$REGION/connectors/$VPC_CONNECTOR_NAME
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+      - image: gcr.io/$PROJECT_ID/$NAME:$RELEASE_VERSION
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+  traffic:
+  - percent: 100
+    latestRevision: true
