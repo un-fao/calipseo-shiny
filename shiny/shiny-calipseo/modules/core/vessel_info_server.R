@@ -224,7 +224,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     if(!is.null(vessel_found$img_href)){
-      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, height = "150px", alt = vessel$NAME)
+      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, width = "250px", alt = vessel$NAME)
       vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$link, " target=\"_blank\" a> VesselFinder </a></div>"))
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))

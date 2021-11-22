@@ -8,12 +8,12 @@ vessel_info_ui <- function(id){
     #1st row including vessel identity and indicators
     div(class='row',style = "margin:0px;", 
         htmlOutput(ns("vessel_header")),br(),
-        box(id='vessel-card', status = "primary", width = 5, title = uiOutput(ns("vessel_name")),
-          div(id='img-grid', class = "col-md-5",
+        box(id='vessel-card', status = "primary", width = 6, title = uiOutput(ns("vessel_name")),
+          div(id='img-grid', class = "col-md-6",
               uiOutput(ns('vessel_picture')),br(),
               uiOutput(ns('image_source'))
           ),
-          div(id='info-panel', class = 'col-md-7',
+          div(id='info-panel', class = 'col-md-6',
            div(id='info-tabs',
              tabsetPanel(
                tabPanel('Info', uiOutput(ns("vessel_description"))),
@@ -22,7 +22,7 @@ vessel_info_ui <- function(id){
            )
           )
         ),
-        div(class='col-md-7',id='vessel_indicators', '')
+        div(class='col-md-6',id='vessel_indicators', '')
     ),
   
     div(class='row',style = "margin:0px;", id='vertical-panels',
