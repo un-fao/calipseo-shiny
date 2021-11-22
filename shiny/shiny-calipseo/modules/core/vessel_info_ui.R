@@ -6,7 +6,7 @@ vessel_info_ui <- function(id){
   tabItem(tabName = "vessel_info",
 
     #1st row including vessel identity and indicators
-    div(class='row',
+    div(class='row',style = "margin:0px;", 
         htmlOutput(ns("vessel_header")),br(),
         box(id='vessel-card', status = "primary", width = 5, title = uiOutput(ns("vessel_name")),
           div(id='img-grid', class = "col-md-5",
