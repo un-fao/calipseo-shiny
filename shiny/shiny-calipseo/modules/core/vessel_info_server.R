@@ -1,14 +1,11 @@
 #vessel_info_server
 vessel_info_server <- function(input, output, session, pool, lastETLJob) {
-  
-  
-  
-  
+
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
     text <- "<h2>Vessel information</h2>"
     text <-paste0(text, "<hr>")
-    text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;\"><< Back to list of vessels</a>")
+    text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\"><< Back to list of vessels</a>")
     text
   })
   
@@ -85,29 +82,25 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     }
     
+    #name
+    output$vessel_name <- renderUI({ tags$b(vessel$NAME) })
+    
     #general description
     output$vessel_description <- renderUI({
       colnames(vesselOwners)
-      HTML(
-        
-        '<br>Vessel name:',vessel$NAME,'</br>',
-        '<br>Vessel type:', vessel$VESSEL_TYPE,'</br>',
-        '<br>Vessel stat type:', vessel$VESSEL_STAT_TYPE,'</br>',
-        '<br>Home port:', vessel$HOME_PORT_LANDING_SITE,'</br>'
-        
+      tags$ul(style = "margin-top:10px;",
+        tags$li('Vessel name: ', tags$b(vessel$NAME)),
+        tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
+        tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
+        tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE))
       )
     })
-    
-    
-    
+
     #registration
     output$vessel_registration <- renderUI({
-      
-      HTML(
-        
-        '<br>Registration Number:', vessel$REGISTRATION_NUMBER,'</br>',
-        '<br>Registation port:', vessel$REG_PORT_LANDING_SITE,'</br>'
-        
+      tags$ul(style = "margin-top:10px;",
+        tags$li('Registration Number: ', tags$b(vessel$REGISTRATION_NUMBER)),
+        tags$li('Registation port: ', tags$b(vessel$REG_PORT_LANDING_SITE))
       )
     })
     
@@ -231,12 +224,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     if(!is.null(vessel_found$img_href)){
-      vessel_picture_html <- createBase64Image(url = vessel_found$img_href, height = 100, alt = vessel$NAME)
-      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=width:150px;font-weight:bold;font-size:98%;padding-left:26px;>Image Source: <a href=",vessel_found$img_href, " a> link </a></div>"))
-     
+      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, height = "150px", alt = vessel$NAME)
+      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$link, " target=\"_blank\" a> VesselFinder </a></div>"))
     }else{
-      vessel_picture_html <- createPlaceholderImage(appConfig$placeholder_image$vessel_placeholder_image)
-      
+      vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
 
     output$vessel_picture <- renderUI({

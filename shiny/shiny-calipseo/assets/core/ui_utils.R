@@ -12,14 +12,6 @@ shinyInput <- function(FUN, len, indexes = NULL, id, ns, ...) {
   inputs
 }
 
-#imgToBase64
-imgToBase64 <- function (file, Rd = FALSE, alt = "image") {
-  input <- normalizePath(file, mustWork = TRUE)
-  buf <- readBin(input, raw(), file.info(input)$size)
-  base64 <- sprintf("data:image/png;base64,\n%s", openssl::base64_encode(buf, linebreaks = FALSE))
-  return(base64)
-}
-
 #downloadButtonCustom
 downloadButtonCustom <- function (outputId, label = "Download", class = NULL, href = "", icon = icon("download"), ...) {
   aTab <- tags$a(
@@ -55,11 +47,17 @@ updatePageUrl <- function(page, session){
 
 
 #createBase64Image
-createBase64Image <- function(url, width = "auto", height = "auto", alt = "image", Rd = FALSE){
+createBase64Image <- function(src, width = "auto", height = "auto", alt = "image", Rd = FALSE){
   
-  
-  input = tempfile(fileext = ".jpeg")
-  download.file(url = url, destfile = input, mode = "wb", quiet = TRUE)
+  input <- NULL
+  isSrcUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", src) > 0
+  if(isSrcUrl){
+    input = tempfile(fileext = ".jpeg")
+    download.file(url = src, destfile = input, mode = "wb", quiet = TRUE)
+  }else{
+    input <- normalizePath(src, mustWork = TRUE)
+  }
+ 
   buf <- readBin(input, raw(), file.info(input)$size)
   base64 <- openssl::base64_encode(buf, linebreaks = FALSE)
   out <- sprintf("%s<img src=\"data:image/png;base64,\n%s\" alt=\"%s\" width=\"%s\" height=\"%s\" />%s",
@@ -68,7 +66,7 @@ createBase64Image <- function(url, width = "auto", height = "auto", alt = "image
                  else "", base64, alt, width, height, if (Rd)
                    "}"
                  else "")
-  unlink(input)
+  if(isSrcUrl) unlink(input)
   
   return(out)
 }
@@ -76,9 +74,8 @@ createBase64Image <- function(url, width = "auto", height = "auto", alt = "image
 
 
 #createplaceholderImage
-createPlaceholderImage <- function(url){
-  vessel_placeholder_image <- tags$img(src= imgToBase64(url),height='100px')
-  return(vessel_placeholder_image)
+createPlaceholderImage <- function(id){
+  createBase64Image(src = sprintf("./assets/img/placeholders/%s.png", id), height = '150px')
 }
 
 
