@@ -34,6 +34,14 @@ accessRefSpeciesFromDB <- function(con){
   return(ref_species)
 }
 
+
+#accessSpeciesCatchesYearFromDB
+accessSpeciesCatchesYearFromDB <- function(con){
+  species_catches_year_sql <- readSQLScript("data/core/sql/fish_species_catches_totalbyyear.sql")
+  species_catches_year_sql <- suppressWarnings(dbGetQuery(con, species_catches_year_sql))
+  return(species_catches_year_sql)
+}
+
 #accessLandingSitesFromDB
 accessLandingSitesFromDB <- function(con){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql")
@@ -209,6 +217,12 @@ accessMonthlyFishingActivityFromDB <- function(con){
 #accessRefSpecies
 accessRefSpecies <- function(con){
   accessRefSpeciesFromDB(con)
+}
+
+
+#accessSpeciesCatchesYear
+accessSpeciesCatchesYear <- function(con) {
+  accessSpeciesCatchesYearFromDB(con)
 }
 
 #accessLandingSites
