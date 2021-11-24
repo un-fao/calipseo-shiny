@@ -41,7 +41,7 @@ vessel_info_ui <- function(id){
                                                       
                                                     ))
                                          ))
-        )
+      )
     )
 
   )

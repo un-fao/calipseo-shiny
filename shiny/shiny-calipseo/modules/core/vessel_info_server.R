@@ -230,7 +230,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
 
-    #vesselpictures
     output$vessel_picture <- renderUI({
       
       vessel_picture_html
@@ -238,27 +237,20 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     
-    SpeciesCatchesYear <- accessSpeciesCatchesYear(pool)
+    SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
+    
     
     rank_species <- SpeciesCatchesYear %>%
-      group_by(species_desc) %>% 
-      summarise(catches = sum(quantity))%>%
       mutate(rank = rank(-catches)) %>%
-      arrange(rank) %>% 
-      filter(rank <=10) %>%
-      ungroup()
-    
-    
+      filter(rank <=10)
+
+
     df_SpeciesCatchesYear <- SpeciesCatchesYear %>%
-      filter(species_desc %in% rank_species$species_desc) %>% 
-      group_by(year,species_desc) %>%
-      summarise(catches = sum(quantity)) %>% 
-      ungroup()
-    
+      filter(species_desc %in% rank_species$species_desc)
+
     df_SpeciesCatchesYear$year <- as.factor(df_SpeciesCatchesYear$year)
     
     
-    #catchespiechart
     output$catches_piechart <- renderPlotly({
       
       
@@ -269,8 +261,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     })
     
-    
-    #catcheslineplot
     output$catches_lineplot <- renderPlotly({
       
       fig_sp <- df_SpeciesCatchesYear %>% plot_ly()
