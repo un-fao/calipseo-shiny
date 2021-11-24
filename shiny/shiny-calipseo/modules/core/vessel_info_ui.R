@@ -26,15 +26,22 @@ vessel_info_ui <- function(id){
     ),
   
     div(class='row',style = "margin:0px;", id='vertical-panels',
-       shinyWidgets::verticalTabsetPanel(
-       shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
-       shinyWidgets::verticalTabPanel('Licenses',box_height='70px', ''),
-       shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
-        tabsetPanel(
-          tabPanel('Summary', DT::dataTableOutput(ns("vessel_catch_summary"))),
-          tabPanel('History', DT::dataTableOutput(ns("vessel_catch_history")),htmlOutput(ns("vessel_catch_datasource")))
-        ))
-       )
+        shinyWidgets::verticalTabsetPanel(
+          shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
+          shinyWidgets::verticalTabPanel('Licenses',box_height='70px', '#TODO'),
+          shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
+                                         tabsetPanel(
+                                           
+                                           tabPanel('Summary', DT::dataTableOutput(ns("vessel_catch_summary"))),
+                                           tabPanel('History', DT::dataTableOutput(ns("vessel_catch_history")),htmlOutput(ns("vessel_catch_datasource"))),
+                                           tabPanel('Breakdown by species', 
+                                                    fluidRow(
+                                                      box(width = 6, height = 460, title = sprintf("Breakdown by species in %s total over years.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_piechart"))),
+                                                      box(width = 6, height = 460, title = sprintf("Evolution of species breakdown by year in %s.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_lineplot")))
+                                                      
+                                                    ))
+                                         ))
+      )
     )
 
   )

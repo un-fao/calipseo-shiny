@@ -10,6 +10,8 @@ readSQLScript <- function(sqlfile,
     sql <- sprintf("%s %s %s = %s", sql, ifelse(regexpr("WHERE", sql)>0, "AND", "WHERE"), key, value)
   }
   
+  
+  
   if(!is.null(add_filter_on_year)){
     if(is.null(datetime_field)){
       stop("Specify a datetime field in your sql statement to filter on year")
@@ -32,6 +34,20 @@ accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql")
   ref_species <- suppressWarnings(dbGetQuery(con, ref_species_sql))
   return(ref_species)
+}
+
+
+#accessSpeciesCatchesYearFromDB
+accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
+  species_catches_year_sql <- readSQLScript("data/core/sql/fish_species_catches_totalbyyear.sql",
+                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+
+  if(!is.null(registrationNumber)){
+    species_catches_year_sql <- paste0(species_catches_year_sql, " GROUP BY sp.NAME, year(ft.DATE_TO);")
+  }
+  
+  species_catches_year <- suppressWarnings(dbGetQuery(con,species_catches_year_sql))
+  return(species_catches_year)
 }
 
 #accessLandingSitesFromDB
@@ -209,6 +225,12 @@ accessMonthlyFishingActivityFromDB <- function(con){
 #accessRefSpecies
 accessRefSpecies <- function(con){
   accessRefSpeciesFromDB(con)
+}
+
+
+#accessSpeciesCatchesYear
+accessSpeciesCatchesYear <- function(con, registrationNumber) {
+  accessSpeciesCatchesYearFromDB(con, registrationNumber)
 }
 
 #accessLandingSites

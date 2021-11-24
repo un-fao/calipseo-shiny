@@ -235,6 +235,72 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       vessel_picture_html
 
     })
+    
+    
+    SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
+    
+    
+    rank_species <- SpeciesCatchesYear %>%
+      mutate(rank = rank(-catches)) %>%
+      filter(rank <=10)
+
+
+    df_SpeciesCatchesYear <- SpeciesCatchesYear %>%
+      filter(species_desc %in% rank_species$species_desc)
+
+    df_SpeciesCatchesYear$year <- as.factor(df_SpeciesCatchesYear$year)
+    
+    
+    output$catches_piechart <- renderPlotly({
+      
+      
+      plot_ly(df_SpeciesCatchesYear, labels = ~species_desc, values = ~catches, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+        layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               legend = list(orientation = "h"))
+      
+    })
+    
+    output$catches_lineplot <- renderPlotly({
+      
+      fig_sp <- df_SpeciesCatchesYear %>% plot_ly()
+      fig_sp<-fig_sp%>% add_trace(
+        x = ~year, 
+        y = ~catches,
+        split=~species_desc,
+        type = 'scatter', 
+        mode = 'lines',
+        line = list(simplyfy = F),
+        text = ~paste("Year: ", year, "<br>catches: ", catches, "<br>species: ",species_desc)
+      )
+      
+      fig_sp <- fig_sp %>% layout(
+        hovermode ='closest',
+        legend = list(orientation = "h",
+                      font = list(size = 10),
+                      bgcolor ='rgba(0,0,0,0)',
+                      xanchor = "center",
+                      yanchor = "top",
+                      y =-0.1,
+                      x = 0.5),
+        xaxis = list(
+          titlefont = list(size = 10), 
+          tickfont = list(size = 10),
+          title = "Year",
+          zeroline = F
+        ),
+        yaxis = list(
+          titlefont = list(size = 10), 
+          tickfont = list(size = 10),
+          range = range(df_SpeciesCatchesYear$catches),
+          title = "Catches (Tons)",
+          zeroline = F
+        ))
+      
+      fig_sp
+      
+      
+    })
 
     
     
