@@ -43,20 +43,23 @@ loadModuleScripts <- function(config){
 #loadModuleServers
 loadModuleServers <- function(config, pool){
   default_module_profiles <- listModuleProfiles(config)
-  modules <- unique(sapply(default_module_profiles, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
-  for(module in modules){
-    enabled = TRUE
-    module_config = config$modules[[module]]
-    has_config = !is.null(module_config)
-    if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
-    if(enabled){
-      message(sprintf("Loading shiny module '%s' server functions...", module))
-      server_fun_name <- paste0(module, "_server")
-      server_fun <- try(eval(expr = parse(text = server_fun_name)))
-      if(!is(server_fun, "try-error")){
-        shiny::callModule(server_fun, module, pool)
-      }else{
-        message(sprintf("Error while evaluating server function '%s'", server_fun_name))
+  for(module_profile in default_module_profiles){
+    module <- unlist(strsplit(unlist(strsplit(module_profile, paste0(dirname(module_profile),"/")))[2], ".json"))[1]
+    outp <- jsonlite::read_json(module_profile)
+    if(outp$type != "internal"){
+      enabled = TRUE
+      module_config = config$modules[[module]]
+      has_config = !is.null(module_config)
+      if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
+      if(enabled){
+        message(sprintf("Loading shiny module '%s' server functions...", module))
+        server_fun_name <- paste0(module, "_server")
+        server_fun <- try(eval(expr = parse(text = server_fun_name)))
+        if(!is(server_fun, "try-error")){
+          shiny::callModule(server_fun, module, pool)
+        }else{
+          message(sprintf("Error while evaluating server function '%s'", server_fun_name))
+        }
       }
     }
   }
@@ -65,21 +68,24 @@ loadModuleServers <- function(config, pool){
 #loadModuleUIs
 loadModuleUIs <- function(config){
   default_module_profiles <- listModuleProfiles(config)
-  modules <- unique(sapply(default_module_profiles, function(x){unlist(strsplit(unlist(strsplit(x, paste0(dirname(x),"/")))[2], ".json"))[1]}))
-  module_uis <- lapply(modules, function(module){
+  module_uis <- lapply(default_module_profiles, function(module_profile){
     out <- NULL
-    enabled = TRUE
-    module_config = config$modules[[module]]
-    has_config = !is.null(module_config)
-    if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
-    if(enabled){
-      message(sprintf("Loading shiny module '%s' UI functions...", module))
-      ui_fun_name <- paste0(module, "_ui")
-      ui_fun <- try(eval(expr = parse(text = ui_fun_name)))
-      if(!is(ui_fun, "try-error")){
-        out <- ui_fun(module)
-      }else{
-        message(sprintf("Error while evaluating UI function '%s'", ui_fun_name))
+    module <- unlist(strsplit(unlist(strsplit(module_profile, paste0(dirname(module_profile),"/")))[2], ".json"))[1]
+    outp <- jsonlite::read_json(module_profile)
+    if(outp$type != "internal"){
+      enabled = TRUE
+      module_config = config$modules[[module]]
+      has_config = !is.null(module_config)
+      if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
+      if(enabled){
+        message(sprintf("Loading shiny module '%s' UI functions...", module))
+        ui_fun_name <- paste0(module, "_ui")
+        ui_fun <- try(eval(expr = parse(text = ui_fun_name)))
+        if(!is(ui_fun, "try-error")){
+          out <- ui_fun(module)
+        }else{
+          message(sprintf("Error while evaluating UI function '%s'", ui_fun_name))
+        }
       }
     }
     return(out)
@@ -114,6 +120,9 @@ sidebarMenuFromModules <- function(config){
     }
     return(outp)
   })
+  #remove internal modules
+  module_profiles <- module_profiles[sapply(module_profiles, function(x){x$type != "internal"})]
+  
   #TODO custom modules?
 
   #default structure
