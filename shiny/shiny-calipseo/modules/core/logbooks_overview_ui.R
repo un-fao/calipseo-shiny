@@ -15,7 +15,7 @@ logbooks_overview_ui <- function(id){
           fluidRow(
             div(
               class = "col-md-6",
-              h3(sprintf("Statistics (kg) by vessel type - %s", as.integer(format(Sys.Date(), "%Y"))-1)), hr(),
+              h3(sprintf("Statistics (tons) by vessel type - %s", as.integer(format(Sys.Date(), "%Y"))-1)), hr(),
               box(
                 width = 12,
                 DT::dataTableOutput(ns("stats_by_type_lastyear_table"))
@@ -23,7 +23,7 @@ logbooks_overview_ui <- function(id){
             ),
             div(
               class = "col-md-6",
-              h3(sprintf("Statistics (kg) by vessel type - %s", format(Sys.Date(), "%Y"))), hr(),
+              h3(sprintf("Statistics (tons) by vessel type - %s", format(Sys.Date(), "%Y"))), hr(),
               box(
                 width = 12,
                 DT::dataTableOutput(ns("stats_by_type_currentyear_table"))

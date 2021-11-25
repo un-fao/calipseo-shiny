@@ -54,6 +54,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         vesstype = logbooks_sum_by_trip$vesstype
       ),
       FUN = function(x){
+        x<-x/1000
         list(
           sum = round(sum(x, na.rm = TRUE),2),
           mean = round(mean(x, na.rm = TRUE),2),
@@ -100,8 +101,8 @@ logbooks_overview_server <- function(input, output, session, pool){
     output$nb_infos <- renderUI({
       tagList(
         fluidRow(
-          infoBox(sprintf("Total quantity (%s)", lastyear), paste(infos$total_lastyear, "kg"), icon = icon("fish"), fill = TRUE, width = 6),
-          infoBox(sprintf("Total quantity (%s)", currentyear), paste(infos$total_currentyear, "kg"), icon = icon("fish"), fill = TRUE, width = 6)
+          infoBox(sprintf("Total quantity (%s)", lastyear), paste(round(infos$total_lastyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
+          infoBox(sprintf("Total quantity (%s)", currentyear), paste(round(infos$total_currentyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6)
         ),
         fluidRow(
           infoBox(sprintf("Logbook reporting percentage (%s)", lastyear), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6),
@@ -206,7 +207,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         p<-p%>%add_boxplot(x = ~date,color= ~vesseltype,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
       }else{
         p<-p%>%    
-          add_lines(y =~ get(input$vt_stat),color= ~vesseltype,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s kg",vesseltype,date,round(get(input$vt_stat),2)))
+          add_lines(y =~ get(input$vt_stat),color= ~vesseltype,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s tons",vesseltype,date,round(get(input$vt_stat),2)))
       }
       
       if(isTRUE(input$vt_withsd)){
@@ -230,7 +231,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         yaxis = list(
           titlefont = list(size = 10), 
           tickfont = list(size = 10),
-          title = "Quantity (t)",
+          title = "Quantity (tons)",
           zeroline = F
         ))
     })
@@ -323,7 +324,7 @@ logbooks_overview_server <- function(input, output, session, pool){
       p<-p%>%add_boxplot(x = ~date,color= ~species_desc ,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~max)
     }else{
       p<-p%>%    
-        add_lines(y =~ get(input$sp_stat),color= ~species_desc ,line = list(simplyfy = F),text = ~sprintf("%s-<em>%s</em>(<b>%s</b>)[%s]: %s kg",species_desc,species_sci,species_asfis,date,round(get(input$sp_stat),2)))
+        add_lines(y =~ get(input$sp_stat),color= ~species_desc ,line = list(simplyfy = F),text = ~sprintf("%s-<em>%s</em>(<b>%s</b>)[%s]: %s tons",species_desc,species_sci,species_asfis,date,round(get(input$sp_stat),2)))
     }
     
     if(isTRUE(input$sp_withsd)){
@@ -347,7 +348,7 @@ logbooks_overview_server <- function(input, output, session, pool){
       yaxis = list(
         titlefont = list(size = 10), 
         tickfont = list(size = 10),
-        title = "Quantity (t)",
+        title = "Quantity (tons)",
         zeroline = F
       ))
     })
@@ -404,7 +405,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         p<-p%>%add_boxplot(x = ~date,color= ~ISSCAAP_Group_En,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
       }else{
         p<-p%>%    
-          add_lines(y =~ get(input$fg_stat),color= ~ISSCAAP_Group_En,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s kg",ISSCAAP_Group_En,date,round(get(input$fg_stat),2)))
+          add_lines(y =~ get(input$fg_stat),color= ~ISSCAAP_Group_En,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s tons",ISSCAAP_Group_En,date,round(get(input$fg_stat),2)))
       }
       
       if(isTRUE(input$fg_withsd)){
@@ -428,7 +429,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         yaxis = list(
           titlefont = list(size = 10), 
           tickfont = list(size = 10),
-          title = "Quantity (t)",
+          title = "Quantity (tons)",
           zeroline = F
         ))
     })
