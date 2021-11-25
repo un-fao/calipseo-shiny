@@ -182,6 +182,7 @@ logbooks_overview_server <- function(input, output, session, pool){
       
       p<-data_logbooks%>%
         mutate(date = as.character(format(as.Date(date),format = input$vt_granu)))%>%
+        mutate(quantity=quantity/1000)%>%
         group_by(date,vesseltype,trip_id)%>%
         summarise(sum_by_trip = sum(quantity))%>%
         group_by(date,vesseltype)%>%
@@ -229,7 +230,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         yaxis = list(
           titlefont = list(size = 10), 
           tickfont = list(size = 10),
-          title = "Quantity (kg)",
+          title = "Quantity (t)",
           zeroline = F
         ))
     })
@@ -297,6 +298,7 @@ logbooks_overview_server <- function(input, output, session, pool){
     
     p<-data_logbooks%>%
       filter(species_desc%in%rank_sp)%>%
+      mutate(quantity=quantity/1000)%>%
       mutate(date = as.character(format(as.Date(date),format = input$sp_granu)))%>%
       group_by(date,species_desc,species_sci,species_asfis,trip_id)%>%
       summarise(sum_by_trip = sum(quantity))%>%
@@ -345,7 +347,7 @@ logbooks_overview_server <- function(input, output, session, pool){
       yaxis = list(
         titlefont = list(size = 10), 
         tickfont = list(size = 10),
-        title = "Quantity (kg)",
+        title = "Quantity (t)",
         zeroline = F
       ))
     })
@@ -376,6 +378,7 @@ logbooks_overview_server <- function(input, output, session, pool){
       data_logbooks <- accessLogBooksMultiyear(pool)
       
       p<-data_logbooks%>%
+        mutate(quantity=quantity/1000)%>%
         mutate(date = as.character(format(as.Date(date),format = input$fg_granu)))%>%
         left_join(fish_group)%>%
         group_by(date,ISSCAAP_Group_En,trip_id)%>%
@@ -425,7 +428,7 @@ logbooks_overview_server <- function(input, output, session, pool){
         yaxis = list(
           titlefont = list(size = 10), 
           tickfont = list(size = 10),
-          title = "Quantity (kg)",
+          title = "Quantity (t)",
           zeroline = F
         ))
     })
