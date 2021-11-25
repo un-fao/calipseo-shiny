@@ -199,6 +199,16 @@ accessFishingActivitiesFromDB <- function(con, year,
   return(fa)
 }
 
+#accessFishingActivitiesMultiyearFromDB
+accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
+  fa_sql <- readSQLScript("data/core/sql/fishing_activities_multiyear.sql")
+  if(!is.null(vessel_stat_type)){
+    fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 #accessLandingFormsFromDB
 accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1, vesselId = vesselId, entityOwner = entityOwner)
@@ -207,6 +217,11 @@ accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = N
 #accessLogBooksFromDB
 accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
+}
+
+#accessLogBooksMultiyearFromDB
+accessLogBooksMultiyearFromDB <- function(con){
+  accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
 }
 
 #accessMonthlyFishingActivityFromDB
@@ -329,6 +344,11 @@ accessLandingForms <- function(con, year, vesselId = NULL, entityOwner = NULL){
 #accessLogBooks
 accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
+}
+
+#accessLogBooksMultiyear
+accessLogBooksMultiyear <- function(con){
+  accessLogBooksMultiyearFromDB(con)
 }
 
 #accessMonthlyFishingActivity
