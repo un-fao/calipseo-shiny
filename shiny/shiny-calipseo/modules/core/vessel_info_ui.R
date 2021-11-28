@@ -22,7 +22,25 @@ vessel_info_ui <- function(id){
            )
           )
         ),
-        div(class='col-md-6',id='vessel_indicators', '')
+        div(class='col-md-5',id='vessel_indicators',
+            
+            div(class='row', id='indicators_countingorcalculation',
+                
+                htmlOutput(ns('vessel_indicators_counting'),
+                           style='background-color:white;
+                           box-shadow:0 1px 1px rgba(0,0,0,.1);
+                           margin-left: 15px;
+                           margin-right: 15px;border-top: solid;
+                           border-top-color:#3c8dbc;'),
+                
+                
+                htmlOutput(ns('vessel_indicators_calculation'),
+                           style='background-color:white;
+                           box-shadow:0 1px 1px rgba(0,0,0,.1);
+                           margin-left: 15px;
+                           margin-right: 15px;border-top: solid;
+                           border-top-color:#3c8dbc;')
+            ))
     ),
   
     div(class='row',style = "margin:0px;", id='vertical-panels',
