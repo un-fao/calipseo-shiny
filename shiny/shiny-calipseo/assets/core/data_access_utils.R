@@ -416,3 +416,14 @@ getLocalCountryDatasets <- function(config){
   }
   return(out)
 }
+
+#loadRemoteReferenceDataset
+loadRemoteReferenceDataset <- function(objectname,filename){
+  data <- as.data.frame(readr::read_csv(filename))
+  assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
+}
+
+#getRemoteReferenceDataset
+getRemoteReferenceDataset <- function(name){
+  get(name, envir = CALIPSEO_SHINY_ENV)
+}

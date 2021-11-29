@@ -356,7 +356,7 @@ logbooks_overview_server <- function(input, output, session, pool){
   
 #Fish group plot
   
-  fish_group<-readr::read_csv("https://raw.githubusercontent.com/openfigis/RefData/gh-pages/species/CL_FI_SPECIES_GROUPS.csv")
+  fish_group<-getRemoteReferenceDataset("asfis_enrished")
   fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
   names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
   

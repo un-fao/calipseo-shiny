@@ -5,6 +5,7 @@ options(stringsAsFactors = FALSE)
 #config
 #---------------------------------------------------------------------------------------
 #config_file = "D:/Documents/DEV/Bitbucket/fao/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_SUR.yml"
+#config_file <- "D:/BitbucketFAO/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_SUR.yml"
 config_file <- "/etc/shiny-calipseo/config.yml"
 if(!nzchar(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
@@ -58,6 +59,10 @@ print(appConfig$country_profile$data)
 #local datasets
 #---------------------------------------------------------------------------------------
 loadLocalCountryDatasets(appConfig)
+
+#remote datasets
+#---------------------------------------------------------------------------------------
+loadRemoteReferenceDataset("asfis_enrished","https://raw.githubusercontent.com/openfigis/RefData/gh-pages/species/CL_FI_SPECIES_GROUPS.csv")
 
 #modules
 #---------------------------------------------------------------------------------------
