@@ -1,5 +1,24 @@
-line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most catched:") {
-#  line_chart_server <- function(input, output, session, df, target, value, rank=FALSE, nbToShow=5) {  
+#' @name line_chart_server
+#' @aliases line_chart_server
+#' @title line_chart_server
+#' @description \code{line_chart_server} Server part of line_chart module
+#'
+#' @usage line_chart_server(id, df, colDate, colTarget, colValue, colText, xlab, ylab, rank, nbToShow, rankLabel)
+#'                 
+#' @param id specific id of module to be able to link ui and server part
+#' @param df dataframe 
+#' @param colDate column name of date variable 
+#' @param colTarget column name of variable of interest 
+#' @param colValue column name of value
+#' @param colText column name of variable use to marker label
+#' @param xlab character string to specify x label name
+#' @param ylab character string to specify y label name
+#' @param rank boolean argument, if TRUE slider include capacity to filter target value by rank level of value
+#' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
+#' @param rankLabel character string to specify rank label name
+#'    
+
+line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -34,6 +53,7 @@ line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab
       output$plot<-renderPlotly({
         
         df<-df%>%
+          rename(setNames(colDate,"date"))%>%
           rename(setNames(colTarget,"target"))%>%
           rename(setNames(colValue,"value"))
         
@@ -59,6 +79,7 @@ line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab
                             
           if(input$rank_method=="year_avg"){
             ranked <- df %>%
+            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
             group_by(year,target) %>% 
             summarise(total = sum(value))%>%
             group_by(target)%>%
@@ -71,6 +92,7 @@ line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab
                               
           if(input$rank_method=="last_year"){
             ranked <- df %>%
+            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
             filter(year==max(year))%>%
             group_by(target) %>% 
             summarise(total = sum(value))%>%
@@ -111,7 +133,7 @@ line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab
             p<-p%>%add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
           }else{
             p<-p%>%    
-             add_lines(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
+             add_lines(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
           }
                           
           if(isTRUE(input$withsd)&input$stat=="mean"){
@@ -119,6 +141,7 @@ line_chart_server <- function(id, df, colTarget, colValue,colText=colTarget,xlab
                                ymin = ~ get(input$stat)-sd,
                                ymax = ~ get(input$stat)+sd,
                                showlegend=F,
+                               legendgroup = ~target,
                                opacity = 0.3,
                                line = list(dash="dash"))
           }
