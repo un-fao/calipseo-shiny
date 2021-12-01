@@ -40,7 +40,7 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
       output$additional<-renderUI({
         if(input$stat=="mean"){
           #checkboxInput(ns("withsd"),"standard deviation", value = FALSE)
-          selectInput(ns("witherror"),"Project variation :",choices=c("None"="none","Standard Variation (SD)"="sd",
+          selectInput(ns("witherror"),"Project variation :",choices=c("None"="none","Standard Deviation (SD)"="sd",
                                                                       "Standard Error (SE)"="se",
                                                                       "Confidence Interval (CI) - normal distribution "="ci-n",
                                                                       "Confidence Interval (CI) - t distribution"="ci-t",
