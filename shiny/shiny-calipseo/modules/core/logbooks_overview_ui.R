@@ -32,25 +32,21 @@ logbooks_overview_ui <- function(id){
           ),
           fluidRow(
             div(
-              class = "col-md-6",
-              h3(sprintf("Overview of quantity catched by vessel type")), hr(),
-              line_chart_ui(ns("vt"),sliderWidth =30)
-              ),
-            div(
-              class = "col-md-6",
-              h3(sprintf("Overview of quantity catched by species")), hr(),
-              line_chart_ui(ns("sp"),sliderWidth =30)
+              class = "col-md-12",
+              h3(sprintf("Overview of quantity caught")), hr(),
+              shinyWidgets::verticalTabsetPanel(
+                shinyWidgets::verticalTabPanel('Vessel Types',box_height='70px' , line_chart_ui(ns("vt"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('Gear Types',box_height='70px' , line_chart_ui(ns("gt"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('Species',box_height='70px', 
+                                               tabsetPanel(
+                                                 tabPanel('Species',line_chart_ui(ns("sp"),sliderWidth =25)),
+                                                 tabPanel('Fish groups',line_chart_ui(ns("fg"),sliderWidth =25))
+                                                 )),
+                shinyWidgets::verticalTabPanel('Landing Sites',box_height='70px' ,line_chart_ui(ns("ls"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('Fishing Zones',box_height='70px' ,line_chart_ui(ns("fz"),sliderWidth =25))
               )
-            
-          ),
-        fluidRow(
-          div(
-            class = "col-md-6",
-            h3(sprintf("Overview of quantity catched by fish group")), hr(),
-            line_chart_ui(ns("fg"),sliderWidth =30)
             )
-        )
-          
-  )
+          )
+)
   
 }
