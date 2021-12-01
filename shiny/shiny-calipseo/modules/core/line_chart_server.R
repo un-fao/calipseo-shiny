@@ -39,7 +39,12 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
     observeEvent(input$stat,{
       output$additional<-renderUI({
         if(input$stat=="mean"){
-          checkboxInput(ns("withsd"),"standard deviation", value = FALSE)
+          #checkboxInput(ns("withsd"),"standard deviation", value = FALSE)
+          selectInput(ns("witherror"),"Project variation :",choices=c("None"="none","Standard Variation (SD)"="sd",
+                                                                      "Standard Error (SE)"="se",
+                                                                      "Confidence Interval (CI) - normal distribution "="ci-n",
+                                                                      "Confidence Interval (CI) - t distribution"="ci-t",
+                                                                      "Confidence Interval (CI) - quantile method"="ci-q"))
         }else if(input$stat=="median"){
           checkboxInput(ns("withquartile"),"quartiles", value = FALSE)
         }else{
@@ -113,19 +118,28 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           summarise(sum_by_trip = sum(value))%>%
           group_by(date,target,text)%>%
           summarise(
+            n = length(unique(trip_id)),
             sum = sum(sum_by_trip, na.rm = TRUE),
             mean = mean(sum_by_trip, na.rm = TRUE),
             min = min(sum_by_trip, na.rm = TRUE),
             max = max(sum_by_trip, na.rm = TRUE),
             sd = sd(sum_by_trip, na.rm = TRUE),
+            se = sd/sqrt(n),
+            ci_norm_coef = qnorm(.975)*se,
+            ci_stud_coef = qt(.975, df = n - 1) * se,
+            q025=quantile(sum_by_trip, probs = 0.025, na.rm = TRUE, names = FALSE),
+            q975=quantile(sum_by_trip, probs = 0.975, na.rm = TRUE, names = FALSE),
             q1 = quantile(sum_by_trip, probs = 0.25, na.rm = TRUE, names = FALSE),
             median = median(sum_by_trip, na.rm = TRUE),
             q3 = quantile(sum_by_trip, probs = 0.75, na.rm = TRUE, names = FALSE)
           )%>%
           mutate(target=as.factor(target))%>%
           mutate(sd = ifelse(is.na(sd), 0, sd))%>%
-          ungroup()%>%
-          plot_ly(
+          ungroup()
+        
+        print(head(p))
+        
+          p<-p%>%plot_ly(
             x = ~date
           )
                           
@@ -136,14 +150,27 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
              add_lines(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
           }
                           
-          if(isTRUE(input$withsd)&input$stat=="mean"){
-            p<-p%>%add_ribbons(color= ~target,
-                               ymin = ~ get(input$stat)-sd,
-                               ymax = ~ get(input$stat)+sd,
-                               showlegend=F,
-                               legendgroup = ~target,
-                               opacity = 0.3,
-                               line = list(dash="dash"))
+          if(!is.null(input$witherror)){
+            if(input$witherror!="none"&input$stat=="mean"){
+
+              p<-p%>%add_ribbons(color= ~target,
+                                 ymin = ~ switch(input$witherror,
+                                   "sd"= {get(input$stat)-sd},
+                                   "se"= {get(input$stat)-se},
+                                   "ci-n"={get(input$stat)-ci_norm_coef},
+                                   "ci-t"={get(input$stat)-ci_stud_coef},
+                                   "ci-q"={q025}),
+                                 ymax = ~ switch(input$witherror,
+                                   "sd"= {get(input$stat)+sd},
+                                   "se"= {get(input$stat)+se},
+                                   "ci-n"={get(input$stat)+ci_norm_coef},
+                                   "ci-t"={get(input$stat)+ci_stud_coef},
+                                   "ci-q"={q975}),
+                                 showlegend=F,
+                                 legendgroup = ~target,
+                                 opacity = 0.3,
+                                 line = list(dash="dash"))
+            }
           }
                           
           p%>%layout(

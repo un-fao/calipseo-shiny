@@ -34,7 +34,7 @@ logbooks_overview_ui <- function(id){
             div(
               class = "col-md-6",
               h3(sprintf("Overview of quantity catched by vessel type")), hr(),
-              line_chart_ui(ns("vt"),sliderWidth =25)
+              line_chart_ui(ns("vt"),sliderWidth =30)
               ),
             div(
               class = "col-md-6",
@@ -47,7 +47,7 @@ logbooks_overview_ui <- function(id){
           div(
             class = "col-md-6",
             h3(sprintf("Overview of quantity catched by fish group")), hr(),
-            line_chart_ui(ns("fg"),sliderWidth =25)
+            line_chart_ui(ns("fg"),sliderWidth =30)
             )
         )
           
