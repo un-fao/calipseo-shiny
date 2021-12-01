@@ -320,12 +320,27 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     ftpv$Mean <- round(ftpv$Mean, digits = 2)
     
     
-    sum_no_daysAtSea <- sum(as.numeric(vesselCatches$daysAtSea), na.rm = TRUE)
-    No_of_trips <- nrow(vesselCatches)
+    vesselDaysATSea <- countVesselDaysAtSea(pool,vesselId)
+    
+    for (i in 1:ncol(vesselDaysATSea)) {
+      
+      vesselDaysATSea[,i] <- as.POSIXct(as.character(vesselDaysATSea[,i]))
+      
+      attr(vesselDaysATSea[,i], "tzone") <- appConfig$country_profile$timezone
+      
+    }
+    
+    DaysatSea = vesselDaysATSea$ret_datetime-vesselDaysATSea$dep_datetime
+    DaysatSea <- switch(attr(DaysatSea, "units"),
+                        "mins" = as.numeric(DaysatSea)/60/24,
+                        "hours" = as.numeric(DaysatSea)/24,
+                        "days" = as.numeric(DaysatSea)
+    )
+    vesselDaysATSea$daysAtSea <- round(as.numeric(DaysatSea), 2)
+    
+    sum_no_daysAtSea <- sum(as.numeric(vesselDaysATSea$daysAtSea), na.rm = TRUE)
+    No_of_trips <- nrow(vesselDaysATSea)
     Mean_no_daysAtSea <- round(sum_no_daysAtSea/No_of_trips, digits = 2)
-    
-    
-    
     
     
     vessel_infos_fetched <- reactiveVal(FALSE)
@@ -351,28 +366,55 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)
     
-    output$vessel_indicators_counting <- renderUI({
-      
-      tags$ul(style = "margin-top:10px;",
-              tags$li('Vessel operational status: ', tags$b(vessel_indicators_infos$vessel_operational_status, style='font-size: small;')),
-              tags$li('Number of owners: ', tags$b(vessel_indicators_infos$number_of_owners)),
-              tags$li('Number of licenses: ', tags$b(vessel_indicators_infos$number_of_licenses)),
-              tags$li('Number of fishing gears: ', tags$b(vessel_indicators_infos$number_of_fishing_gears)),br()
+   
+    
+    output$vessel_indicators_counting_rowone <- renderUI({
+      fluidRow( 
+        column(width = 6,custome_infoBox(icon = 'ship', title = 'OperationalStatus',
+                                         value = span(vessel_indicators_infos$vessel_operational_status,style='font-size:8px;'))),
+        column(width = 6,custome_infoBox(icon = 'user', title = 'No of owners',
+                                         value = vessel_indicators_infos$number_of_owners))
+        
       )
       
     })
     
     
-    output$vessel_indicators_calculation <- renderUI({
+    output$vessel_indicators_counting_rowtwo <- renderUI({
       
+      fluidRow(
+        column(width = 6,custome_infoBox(icon = 'ship', title = 'No of licenses',value = vessel_indicators_infos$number_of_licenses)),
+        column(width = 6,custome_infoBox(icon = 'gear', title = 'No fishing gears',value = vessel_indicators_infos$number_of_fishing_gears)),
+        
+        
+      )
       
-      tags$ul(style = "margin-top:10px;",
-              tags$li('Mean Number Of Fishing Trips By Year: ',tags$b(vessel_indicators_infos$mean_number_of_fishing_trips)),
-              tags$li('Mean Number Of Days At Sea By Fishing Trip: ', tags$b(vessel_indicators_infos$mean_number_of_days_at_sea)),
-              tags$li('Number Of Landing Sites Targeted: ', tags$b(vessel_indicators_infos$number_of_landing_sites)),
-              tags$li('Number Of Species Fished: ', tags$b(vessel_indicators_infos$number_of_species_fished)),br()
+    })
+    
+    
+    
+    output$vessel_indicators_calculation_rowone <- renderUI({
+      fluidRow(
+        column(width = 6,custome_infoBox(icon = 'line-chart', title = 'MeanFishingTrips',
+                                         value = vessel_indicators_infos$mean_number_of_fishing_trips)),
+        column(width = 6,custome_infoBox(icon = 'line-chart', title = 'MeanDaysAtSea',
+                                         value = vessel_indicators_infos$mean_number_of_days_at_sea)),
+        
       )
     })
+    
+    
+    output$vessel_indicators_calculation_rowtwo <- renderUI({
+      
+      fluidRow(
+        column(width = 6,custome_infoBox(icon = 'map-marker', title = 'No LandingSites',value = vessel_indicators_infos$number_of_landing_sites)),
+        column(width = 6,custome_infoBox(icon = 'fish', title = 'No SpicesFished',
+                                         value = vessel_indicators_infos$number_of_species_fished)),
+        
+        
+      )
+    })
+    
 
     
     

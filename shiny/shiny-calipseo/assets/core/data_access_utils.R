@@ -157,6 +157,15 @@ countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
 }
 
 
+#countVesselDaysAtSeaFromDB
+countVesselDaysAtSeaFromDB <- function(con, registrationNumber){
+  vessel_days_at_sea_sql <- readSQLScript("data/core/sql/count_vessel_daysatsea.sql", 
+                                          key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_days_at_sea <- suppressWarnings(dbGetQuery(con, vessel_days_at_sea_sql))
+  return(vessel_days_at_sea)
+}
+
+
 
 #accessVesselsWithLogBooksFromDB
 accessVesselsWithLogBooksFromDB <- function(con){
@@ -361,6 +370,12 @@ countVesselOwners <- function(con){
 #countVesselOwnersPerVessel
 countVesselOwnersPerVessel <- function(con, registrationNumber) {
   countVesselOwnersPerVesselFromDB(con, registrationNumber)
+}
+
+
+#countVesselDaysAtSea
+countVesselDaysAtSea <- function(con, registrationNumber) {
+  countVesselDaysAtSeaFromDB(con, registrationNumber)
 }
 
 #accessVesselsWithLogBooks

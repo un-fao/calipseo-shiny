@@ -26,20 +26,16 @@ vessel_info_ui <- function(id){
             
             div(class='row', id='indicators_countingorcalculation',
                 
-                htmlOutput(ns('vessel_indicators_counting'),
-                           style='background-color:white;
-                           box-shadow:0 1px 1px rgba(0,0,0,.1);
-                           margin-left: 15px;
-                           margin-right: 15px;border-top: solid;
-                           border-top-color:#3c8dbc;'),
+                style='margin-left: 20px;color:white;',
                 
+                uiOutput(ns('vessel_indicators_counting_rowone')),p(),
                 
-                htmlOutput(ns('vessel_indicators_calculation'),
-                           style='background-color:white;
-                           box-shadow:0 1px 1px rgba(0,0,0,.1);
-                           margin-left: 15px;
-                           margin-right: 15px;border-top: solid;
-                           border-top-color:#3c8dbc;')
+                uiOutput(ns('vessel_indicators_counting_rowtwo')),br(),
+                
+                uiOutput(ns('vessel_indicators_calculation_rowone')),p(),
+                
+                uiOutput(ns('vessel_indicators_calculation_rowtwo'))
+                
             ))
     ),
   
