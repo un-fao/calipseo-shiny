@@ -203,14 +203,43 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
       referentials<<-rbind(referentials,data.frame(table="reg_vessels",value=trip$vessel_registration[1],type="ERROR",description=sprintf("Missing referential data for vessel. No value for '%s' in reg_vessels",trip$vessel_registration[1])))
     }
     
-    #Landing_site
-    
-    if(length(unique(trip$landing_site_code))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="landing site issue",message="Multiple landing site for a same trip. first selected"))
-    }
-    
     #Trip identifier
     trip_identifier<-sprintf(sprintf("%s-%s - %s - %s",format(trip$arrival_date[1], format = "%Y"),gsub("0", "", format(trip$arrival_date[1], format = "%m")),trip$vessel_registration[1],trip$`trip_#`[1]))
+    
+    #Landing_site
+    
+    l_site_id<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_fish_landing_sites where CODE = '%s'",trip$landing_site_code[1]))
+    
+    if(nrow(l_site_id)==0){
+      referentials<<-rbind(referentials,data.frame(table="cl_fish_landing_sites",value=trip$landing_site_code[1],type="ERROR",description=sprintf("Missing referential data for landing site. No value for '%s' in cl_fish_landing_sites",trip$landing_site_code[1])))
+    }
+    
+    if(length(unique(trip$landing_site_code))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="landing site issue",message="Multiple landing sites for a same trip. first selected"))
+    }
+    
+    #Fishing Gear referential
+    gear_id<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_ref_gears where CODE = '%s'",trip$fishing_gear_code[1]))
+    
+    if(nrow(gear_id)==0){
+      referentials<<-rbind(referentials,data.frame(table="cl_ref_gears",value=trip$fishing_gear_code[1],type="ERROR",description=sprintf("Missing referential data for gear. No value for '%s' in cl_ref_gears",trip$fishing_gear_code[1])))
+    }
+    
+    if(length(unique(trip$fishing_gear_code))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="gear issue",message="Multiple gears for a same trip. first selected"))
+    }
+    
+    #Fishing Zone referential
+    f_zone_id<-dbGetQuery(pool, sprintf("SELECT ID FROM cl_fish_fishing_zones where CODE = '%s'",trip$fishing_zone_code[1]))
+    
+    if(nrow(f_zone_id)==0){
+      referentials<<-rbind(referentials,data.frame(table="cl_fish_fishing_zones",value=trip$fishing_zone_code[1],type="ERROR",description=sprintf("Missing referential data for fishing zone. No value for '%s' in cl_fish_fishing_zones",trip$fishing_zone_code[1])))
+    }
+    
+    if(length(unique(trip$fishing_zone_code))>1){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="fishing zone issue",message="Multiple fishing zones for a same trip. first selected"))
+    }
+    
     
     #Indexes incrementation
     ft_idx<<-ft_idx+1
@@ -225,11 +254,11 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     FT_CL_FISH_FISHING_TRIP_TYPE_ID = 1 
     FT_DATE_FROM = trip$departure_date[1]
     FT_DATE_TO = trip$arrival_date[1]
-    FT_CL_FROM_PORT_LOCATION_ID = trip$landing_site_code[1]
-    FT_CL_TO_PORT_LOCATION_ID = trip$landing_site_code[1]
-    FT_CL_FROM_PORT_SITE_ID = trip$landing_site_code[1]
-    FT_CL_TO_PORT_SITE_ID = trip$landing_site_code[1]
-    FT_CL_FISH_FISHING_ZONE_ID = 1
+    FT_CL_FROM_PORT_LOCATION_ID = l_site_id[1]
+    FT_CL_TO_PORT_LOCATION_ID = l_site_id[1]
+    FT_CL_FROM_PORT_SITE_ID = l_site_id[1]
+    FT_CL_TO_PORT_SITE_ID = l_site_id[1]
+    FT_CL_FISH_FISHING_ZONE_ID = f_zone_id[1]
     FT_TIME_SPENT_FISHING_ZONE = trip_duration
     FT_CL_TIME_SPENT_FISHING_UNIT_ID = 18
     FT_TIME_SPENT_FISHING_IN_FISHING_ZONE = 'null'
@@ -267,7 +296,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
   
   FAG_ID = fag_idx
   FAG_DT_FISHING_ACTIVITY_ID = fa_idx 
-  FAG_CL_REF_GEAR_ID = 2
+  FAG_CL_REF_GEAR_ID = gear_id[1]
   FAG_UPDATER_ID = 2
   FAG_COMMENT = comment
   FAG_CREATED_AT = now
