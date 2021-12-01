@@ -1,6 +1,6 @@
 #vessel_info_server
 vessel_info_server <- function(input, output, session, pool, lastETLJob) {
-
+  
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
     text <- "<h2>Vessel information</h2>"
@@ -89,18 +89,18 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$vessel_description <- renderUI({
       colnames(vesselOwners)
       tags$ul(style = "margin-top:10px;",
-        tags$li('Vessel name: ', tags$b(vessel$NAME)),
-        tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
-        tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
-        tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE))
+              tags$li('Vessel name: ', tags$b(vessel$NAME)),
+              tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
+              tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
+              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE))
       )
     })
-
+    
     #registration
     output$vessel_registration <- renderUI({
       tags$ul(style = "margin-top:10px;",
-        tags$li('Registration Number: ', tags$b(vessel$REGISTRATION_NUMBER)),
-        tags$li('Registation port: ', tags$b(vessel$REG_PORT_LANDING_SITE))
+              tags$li('Registration Number: ', tags$b(vessel$REGISTRATION_NUMBER)),
+              tags$li('Registation port: ', tags$b(vessel$REG_PORT_LANDING_SITE))
       )
     })
     
@@ -109,26 +109,26 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Pone Number", "Mobile Number")
       
       datatable(
-      vesselOwners,
-      escape = FALSE,
-      rownames = FALSE,
-      extensions = c("Buttons"), 
-      options = list(
-        autoWidth = TRUE,
-        dom = 'Bfrtip',
-        deferRender = TRUE,
-        scroll = FALSE,
-        buttons = list(
-          list(extend = 'copy'),
-          list(extend = 'csv', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
-          list(extend = 'excel', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
-          list(extend = "pdf", filename = sprintf("vessel_owners_%s", vesselId), 
-               title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$name), header = TRUE)
-        ),
-        exportOptions = list(
-          modifiers = list(page = "all", selected = TRUE)
-        )
-      ))
+        vesselOwners,
+        escape = FALSE,
+        rownames = FALSE,
+        extensions = c("Buttons"), 
+        options = list(
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          deferRender = TRUE,
+          scroll = FALSE,
+          buttons = list(
+            list(extend = 'copy'),
+            list(extend = 'csv', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf("vessel_owners_%s", vesselId), 
+                 title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$name), header = TRUE)
+          ),
+          exportOptions = list(
+            modifiers = list(page = "all", selected = TRUE)
+          )
+        ))
     })
     
     #licenses
@@ -176,9 +176,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$vessel_catch_history <- renderDataTable(server = FALSE,{
       
       names(vesselCatches) <- c("Year", "Departure Datetime", "Return Datetime", "Days At Sea", "Crew", "Greater Fishing Area", "Beach Name",
-                   "Fishing Method", "Species Description", "Quantity", "Quantity Unit", "Value")
-
-     
+                                "Fishing Method", "Species Description", "Quantity", "Quantity Unit", "Value")
+      
+      
       datatable(vesselCatches,
                 rownames = FALSE,
                 extensions = c("Buttons"),
@@ -214,8 +214,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     #catch data source
     output$vessel_catch_datasource <- renderUI({
       tags$small(switch(vessel$VESSEL_STAT_TYPE_CODE,
-        "ART" = "From sample-based survey",
-        "INDUS" = "From lobgooks"
+                        "ART" = "From sample-based survey",
+                        "INDUS" = "From lobgooks"
       ))
     })
     
@@ -229,11 +229,11 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
-
+    
     output$vessel_picture <- renderUI({
       
       vessel_picture_html
-
+      
     })
     
     
@@ -243,11 +243,11 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     rank_species <- SpeciesCatchesYear %>%
       mutate(rank = rank(-catches)) %>%
       filter(rank <=10)
-
-
+    
+    
     df_SpeciesCatchesYear <- SpeciesCatchesYear %>%
       filter(species_desc %in% rank_species$species_desc)
-
+    
     df_SpeciesCatchesYear$year <- as.factor(df_SpeciesCatchesYear$year)
     
     
@@ -303,6 +303,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     
+    
     ftpv <- countFishingTripsPerVessel(pool,vesselId)
     
     if(nrow(ftpv)>0){
@@ -318,6 +319,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     ftpv$Mean <- ftpv$sum_no_trips_per_year/ftpv$No_years_trips_made
     ftpv <- ftpv[,c(1,4)]
     ftpv$Mean <- round(ftpv$Mean, digits = 2)
+    
     
     
     vesselDaysATSea <- countVesselDaysAtSea(pool,vesselId)
@@ -366,61 +368,43 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)
     
-   
     
-    output$vessel_indicators_counting_rowone <- renderUI({
-      fluidRow( 
-        column(width = 6,custome_infoBox(icon = 'ship', title = 'OperationalStatus',
-                                         value = span(vessel_indicators_infos$vessel_operational_status,style='font-size:8px;'))),
-        column(width = 6,custome_infoBox(icon = 'user', title = 'No of owners',
-                                         value = vessel_indicators_infos$number_of_owners))
-        
-      )
+    output$box_status <- renderUI({
       
+      infoBox('Vessel Operational Status',icon = icon('check'),vessel_indicators_infos$vessel_operational_status, fill = TRUE)
     })
     
     
-    output$vessel_indicators_counting_rowtwo <- renderUI({
+    output$box_owner <- renderUI({
       
-      fluidRow(
-        column(width = 6,custome_infoBox(icon = 'ship', title = 'No of licenses',value = vessel_indicators_infos$number_of_licenses)),
-        column(width = 6,custome_infoBox(icon = 'gear', title = 'No fishing gears',value = vessel_indicators_infos$number_of_fishing_gears)),
-        
-        
-      )
-      
+      infoBox('Number of owners',icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE)
     })
     
     
-    
-    output$vessel_indicators_calculation_rowone <- renderUI({
-      fluidRow(
-        column(width = 6,custome_infoBox(icon = 'line-chart', title = 'MeanFishingTrips',
-                                         value = vessel_indicators_infos$mean_number_of_fishing_trips)),
-        column(width = 6,custome_infoBox(icon = 'line-chart', title = 'MeanDaysAtSea',
-                                         value = vessel_indicators_infos$mean_number_of_days_at_sea)),
-        
-      )
+    output$box_license <- renderUI({
+      
+      infoBox('Number of licenses',icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE)
     })
     
     
-    output$vessel_indicators_calculation_rowtwo <- renderUI({
+    output$box_gears <- renderUI({
+      
+      infoBox('Number of fishing gears',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE)
+    })
+    
+    output$more_indicators <- renderUI({
       
       fluidRow(
-        column(width = 6,custome_infoBox(icon = 'map-marker', title = 'No LandingSites',value = vessel_indicators_infos$number_of_landing_sites)),
-        column(width = 6,custome_infoBox(icon = 'fish', title = 'No SpicesFished',
-                                         value = vessel_indicators_infos$number_of_species_fished)),
-        
-        
+        infoBox('Mean fishingtrips',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
+        infoBox('Mean daysatsea',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
+        infoBox('No landingsites',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
+        infoBox('No speciesfished',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
       )
     })
-    
-
-    
     
   })
-
-    
-    
-
+  
+  
+  
+ 
 }
