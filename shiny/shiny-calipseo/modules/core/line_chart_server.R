@@ -16,9 +16,10 @@
 #' @param rank boolean argument, if TRUE slider include capacity to filter target value by rank level of value
 #' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
 #' @param rankLabel character string to specify rank label name
+#' @param plotType type of maine trace type : 'line' or 'bar'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:") {
+line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -42,9 +43,10 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           #checkboxInput(ns("withsd"),"standard deviation", value = FALSE)
           selectInput(ns("witherror"),"Project variation :",choices=c("None"="none","Standard Deviation (SD)"="sd",
                                                                       "Standard Error (SE)"="se",
+                                                                      "Confidence Interval (CI) - quantile method"="ci-q",
                                                                       "Confidence Interval (CI) - normal distribution "="ci-n",
-                                                                      "Confidence Interval (CI) - t distribution"="ci-t",
-                                                                      "Confidence Interval (CI) - quantile method"="ci-q"))
+                                                                      "Confidence Interval (CI) - t distribution"="ci-t"
+                                                                      ))
         }else if(input$stat=="median"){
           checkboxInput(ns("withquartile"),"quartiles", value = FALSE)
         }else{
@@ -141,13 +143,19 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
         
           p<-p%>%plot_ly(
             x = ~date
+            
           )
                           
           if(isTRUE(input$withquartile)&input$stat=="median"){
             p<-p%>%add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
           }else{
-            p<-p%>%    
-             add_lines(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
+            if(plotType=="line"){
+              p<-p%>%    
+               add_trace(type="scatter",mode="lines+markers",y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
+            }else{
+              p<-p%>%    
+                add_bars(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2))) 
+            }
           }
                           
           if(!is.null(input$witherror)){
