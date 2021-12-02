@@ -23,6 +23,9 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    data_formated<-reactiveVal(NULL)
+    data_ready<-reactiveVal(FALSE)
+    
     output$rank_params<-renderUI({
       
       if(isTRUE(rank)){
@@ -55,10 +58,7 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
       })
     })
     
-    observeEvent(c(input$stat,input$granu,input$number),{
-      
-      output$plot<-renderPlotly({
-        
+    data_formating<-eventReactive(c(input$stat,input$granu,input$number),{
         df<-df%>%
           rename(setNames(colDate,"date"))%>%
           rename(setNames(colTarget,"target"))%>%
@@ -71,49 +71,49 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           df<-df%>%
             rename(setNames(colText,"text"))
         }
-                          
+        
         if(isTRUE(rank)){
           req(input$number)
           if(input$rank_method=="sum"){
             ranked <- df %>%
-            group_by(target) %>% 
-            summarise(total = sum(value))%>%
-            mutate(rank = rank(-total)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              group_by(target) %>% 
+              summarise(total = sum(value))%>%
+              mutate(rank = rank(-total)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }	
-                            
+          
           if(input$rank_method=="year_avg"){
             ranked <- df %>%
-            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-            group_by(year,target) %>% 
-            summarise(total = sum(value))%>%
-            group_by(target)%>%
-            summarise(avg = mean(total))%>%
-            mutate(rank = rank(-avg)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
+              group_by(year,target) %>% 
+              summarise(total = sum(value))%>%
+              group_by(target)%>%
+              summarise(avg = mean(total))%>%
+              mutate(rank = rank(-avg)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }
-                              
+          
           if(input$rank_method=="last_year"){
             ranked <- df %>%
-            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-            filter(year==max(year))%>%
-            group_by(target) %>% 
-            summarise(total = sum(value))%>%
-            mutate(rank = rank(-total)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
+              filter(year==max(year))%>%
+              group_by(target) %>% 
+              summarise(total = sum(value))%>%
+              mutate(rank = rank(-total)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }
-                            
+          
           df<-df%>%
             filter(target%in%ranked)
         }
-                        
-        p<-df%>%
+        
+        df<-df%>%
           mutate(date = as.character(format(as.Date(date),format = input$granu)))%>%
           mutate(quantity=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
@@ -139,9 +139,17 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           mutate(sd = ifelse(is.na(sd), 0, sd))%>%
           ungroup()
         
-        print(head(p))
+        data_formated(df)
+        data_ready(TRUE)
+      }
+    )
+    observeEvent(c(input$stat,input$granu,input$number),{
+      output$plot<-renderPlotly({
+        data_formating()
         
-          p<-p%>%plot_ly(
+        if(isTRUE(data_ready())){
+        
+          p<-data_formated()%>%plot_ly(
             x = ~date
             
           )
@@ -197,10 +205,8 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
               zeroline = F
             )
           )
+        }
       })
-    })  
-        
-        
+      })  
   })
-      
 }
