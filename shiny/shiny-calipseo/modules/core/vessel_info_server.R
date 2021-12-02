@@ -224,7 +224,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     if(!is.null(vessel_found$img_href)){
-      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, width = "160px", alt = vessel$NAME)
+      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, width = "250px", alt = vessel$NAME)
       vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$link, " target=\"_blank\" a> VesselFinder </a></div>"))
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
@@ -307,7 +307,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     ftpv <- countFishingTripsPerVessel(pool,vesselId)
     
     if(nrow(ftpv)>0){
-      ftpv$No_years_trips_made <- nrow(ftpv) 
+      ftpv$No_years_trips_made <- nrow(ftpv)
+      ftpv$sum_no_trips_per_year <- sum(ftpv$sum_no_trips_per_year)
     }else{
       ftpv <- data.frame(
         Year= character(0),
@@ -356,14 +357,14 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       number_of_landing_sites = NULL,
       number_of_species_fished = NULL )
     
-    vessel_indicators_infos$vessel_operational_status <- vessel$VESSEL_OPERATIONAL_STATUS
-    vessel_indicators_infos$number_of_owners <- countVesselOwnersPerVessel(pool,vesselId)
-    vessel_indicators_infos$number_of_licenses <- countVesselLicensePermit(pool,vesselId)
-    vessel_indicators_infos$number_of_fishing_gears <- countVesselFishingGears(pool,vesselId)
-    vessel_indicators_infos$number_of_landing_sites <- length(levels(vesselCatches$bch_name)) 
-    vessel_indicators_infos$number_of_species_fished <- length(levels(vesselCatches$species_desc)) 
-    vessel_indicators_infos$mean_number_of_days_at_sea <- Mean_no_daysAtSea 
-    vessel_indicators_infos$mean_number_of_fishing_trips <- ftpv$Mean
+    vessel_indicators_infos$vessel_operational_status <- as.character(vessel$VESSEL_OPERATIONAL_STATUS)
+    vessel_indicators_infos$number_of_owners <- as.character(countVesselOwnersPerVessel(pool,vesselId))
+    vessel_indicators_infos$number_of_licenses <- as.character(countVesselLicensePermit(pool,vesselId))
+    vessel_indicators_infos$number_of_fishing_gears <- as.character(countVesselFishingGears(pool,vesselId))
+    vessel_indicators_infos$number_of_landing_sites <- as.character(length(levels(vesselCatches$bch_name))) 
+    vessel_indicators_infos$number_of_species_fished <- as.character(length(levels(vesselCatches$species_desc)))
+    vessel_indicators_infos$mean_number_of_days_at_sea <- as.character(Mean_no_daysAtSea)
+    vessel_indicators_infos$mean_number_of_fishing_trips <- as.character(ftpv$Mean[1])
     
     
     if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)

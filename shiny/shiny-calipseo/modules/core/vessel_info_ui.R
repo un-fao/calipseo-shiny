@@ -12,7 +12,7 @@ vessel_info_ui <- function(id){
               div(class='row',uiOutput(ns('box_license')), uiOutput(ns('box_gears')),style='padding-left: 15px;'),
               div(style='float:right;',
                   
-                  box(id='vessel-card', status = "primary", width = 12, title = uiOutput(ns("vessel_name")),
+                  box(id='vessel-card', status = "primary", width = 6, title = uiOutput(ns("vessel_name")),
                       div(id='img-grid', class = "col-md-5",
                           uiOutput(ns('vessel_picture'), style='text-align:center;'),br(),
                           uiOutput(ns('image_source'))
