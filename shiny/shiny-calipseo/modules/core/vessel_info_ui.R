@@ -8,25 +8,37 @@ vessel_info_ui <- function(id){
           #1st row including vessel identity and indicators
           div(class='row',
               htmlOutput(ns("vessel_header")),br(),
-              div(class='row',uiOutput(ns('box_status')),uiOutput(ns('box_owner')),style='padding-left: 15px;'),
-              div(class='row',uiOutput(ns('box_license')), uiOutput(ns('box_gears')),style='padding-left: 15px;'),
-              div(style='float:right;',
-                  
-                  box(id='vessel-card', status = "primary", width = 6, title = uiOutput(ns("vessel_name")),
-                      div(id='img-grid', class = "col-md-5",
-                          uiOutput(ns('vessel_picture'), style='text-align:center;'),br(),
-                          uiOutput(ns('image_source'))
-                          
-                      ),
-                      div(id='info-panel', class = 'col-md-7',
-                          div(id='info-tabs',
-                              tabsetPanel(
-                                tabPanel('Info', uiOutput(ns("vessel_description"))),
-                                tabPanel('Registration', uiOutput(ns("vessel_registration")))
-                              )
-                          )
-                      )
-                  ))
+              div(class='row',
+                  div(
+                    class = "col-md-6",
+                    box(id='vessel-card', status = "primary", width = 12, title = uiOutput(ns("vessel_name")),
+                        div(id='img-grid', class = "col-md-5",
+                            uiOutput(ns('vessel_picture'), style='text-align:center;'),br(),
+                            uiOutput(ns('image_source'))
+                            
+                        ),
+                        div(id='info-panel', class = 'col-md-7',
+                            div(id='info-tabs',
+                                tabsetPanel(
+                                  tabPanel('Info', uiOutput(ns("vessel_description"))),
+                                  tabPanel('Registration', uiOutput(ns("vessel_registration")))
+                                )
+                            )
+                        )
+                    )
+                  ),
+                  div(
+                    class = "col-md-6",
+                    div(class='row', style = "padding: 15px;",
+                      uiOutput(ns('box_status')),
+                      uiOutput(ns('box_owner'))
+                    ),
+                    div(class='row', style = "padding: 15px;",
+                      uiOutput(ns('box_license')),
+                      uiOutput(ns('box_gears'))
+                    )
+                  )
+              )
               
           ),
           uiOutput(ns('more_indicators')),

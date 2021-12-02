@@ -325,12 +325,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     vesselDaysATSea <- countVesselDaysAtSea(pool,vesselId)
     
-    for (i in 1:ncol(vesselDaysATSea)) {
-      
+    for (i in 2:ncol(vesselDaysATSea)) {
       vesselDaysATSea[,i] <- as.POSIXct(as.character(vesselDaysATSea[,i]))
-      
       attr(vesselDaysATSea[,i], "tzone") <- appConfig$country_profile$timezone
-      
     }
     
     DaysatSea = vesselDaysATSea$ret_datetime-vesselDaysATSea$dep_datetime
@@ -366,40 +363,32 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     vessel_indicators_infos$mean_number_of_days_at_sea <- as.character(Mean_no_daysAtSea)
     vessel_indicators_infos$mean_number_of_fishing_trips <- as.character(ftpv$Mean[1])
     
-    
     if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)
     
     
     output$box_status <- renderUI({
-      
-      infoBox('Vessel Operational Status',icon = icon('check'),vessel_indicators_infos$vessel_operational_status, fill = TRUE)
+      #TODO change color depending on operational status
+      infoBox('Vessel Operational Status',icon = icon('check'),vessel_indicators_infos$vessel_operational_status, fill = TRUE, width = 6)
     })
-    
     
     output$box_owner <- renderUI({
-      
-      infoBox('Number of owners',icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE)
+      infoBox('Number of owners',icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE, width = 6)
     })
-    
     
     output$box_license <- renderUI({
-      
-      infoBox('Number of licenses',icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE)
+      infoBox('Number of licenses',icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE, width = 6)
     })
     
-    
     output$box_gears <- renderUI({
-      
-      infoBox('Number of fishing gears',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE)
+      infoBox('Number of fishing gears',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE, width = 6)
     })
     
     output$more_indicators <- renderUI({
-      
       fluidRow(
-        infoBox(span('Mean fishingtrips',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
-        infoBox(span('Mean daysatsea',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
-        infoBox(span('No landingsites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
-        infoBox(span('No speciesfished',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
+        infoBox(span('Mean fishing trips/year',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
+        infoBox(span('Mean days at sea / fishing trip',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
+        infoBox(span('Number of landingsites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
+        infoBox(span('Nnumber of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
       )
     })
     
