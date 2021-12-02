@@ -395,16 +395,14 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$more_indicators <- renderUI({
       
       fluidRow(
-        infoBox('Mean fishingtrips',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
-        infoBox('Mean daysatsea',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
-        infoBox('No landingsites',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
-        infoBox('No speciesfished',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
+        infoBox(span('Mean fishingtrips',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
+        infoBox(span('Mean daysatsea',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
+        infoBox(span('No landingsites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
+        infoBox(span('No speciesfished',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
       )
     })
     
   })
-  
-  
   
  
 }

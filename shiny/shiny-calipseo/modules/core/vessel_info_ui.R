@@ -16,6 +16,7 @@ vessel_info_ui <- function(id){
                       div(id='img-grid', class = "col-md-5",
                           uiOutput(ns('vessel_picture'), style='text-align:center;'),br(),
                           uiOutput(ns('image_source'))
+                          
                       ),
                       div(id='info-panel', class = 'col-md-7',
                           div(id='info-tabs',

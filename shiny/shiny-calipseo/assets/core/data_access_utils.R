@@ -147,7 +147,6 @@ countVesselOwnersFromDB <- function(con){
   return(count)
 }
 
-
 #countVesselOwnersPerVesselFromDB
 countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
   vessel_Owners_Per_vessel_sql <- readSQLScript("data/core/sql/count_vessel_owner_per_vessel.sql", 
