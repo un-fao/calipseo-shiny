@@ -1,1 +1,1 @@
-select count(*) as COUNT from dt_fishing_trip
+SELECT count(*) AS COUNT FROM dt_fishing_trip

@@ -77,5 +77,3 @@ createBase64Image <- function(src, width = "auto", height = "auto", alt = "image
 createPlaceholderImage <- function(id){
   createBase64Image(src = sprintf("./assets/img/placeholders/%s.png", id), height = '150px')
 }
-
-

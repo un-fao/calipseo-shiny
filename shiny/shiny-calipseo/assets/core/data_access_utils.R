@@ -147,6 +147,24 @@ countVesselOwnersFromDB <- function(con){
   return(count)
 }
 
+#countVesselOwnersPerVesselFromDB
+countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
+  vessel_Owners_Per_vessel_sql <- readSQLScript("data/core/sql/count_vessel_owner_per_vessel.sql", 
+                                                key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_Owners_Per_vessel <- suppressWarnings(dbGetQuery(con, vessel_Owners_Per_vessel_sql))
+  return(vessel_Owners_Per_vessel)
+}
+
+
+#countVesselDaysAtSeaFromDB
+countVesselDaysAtSeaFromDB <- function(con, registrationNumber){
+  vessel_days_at_sea_sql <- readSQLScript("data/core/sql/count_vessel_daysatsea.sql", 
+                                          key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_days_at_sea <- suppressWarnings(dbGetQuery(con, vessel_days_at_sea_sql))
+  return(vessel_days_at_sea)
+}
+
+
 
 #accessVesselsWithLogBooksFromDB
 accessVesselsWithLogBooksFromDB <- function(con){
@@ -172,6 +190,40 @@ countFishingTripsFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/count_fishing_trips.sql")
   count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
 }
+
+
+#countFishingTripsPerVesselFromDB
+countFishingTripsPerVesselFromDB <- function(con, registrationNumber){
+  fishingTripsPerVessel_sql <- readSQLScript("data/core/sql/count_fishing_trip_per_vessel.sql", 
+                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  
+  if(!is.null(registrationNumber)){
+    fishingTripsPerVessel_sql <- paste0(fishingTripsPerVessel_sql, " GROUP BY year(ft.DATE_TO);")
+  }
+  
+  fishingTripsPerVessel_sql <- suppressWarnings(dbGetQuery(con, fishingTripsPerVessel_sql))
+  return(fishingTripsPerVessel_sql)
+}
+
+
+
+#countVesselFishingGearsFromDB
+countVesselFishingGearsFromDB <- function(con, registrationNumber){
+  vessel_fishing_gears_sql <- readSQLScript("data/core/sql/count_vessel_fishing_gears.sql", 
+                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_fishing_gears <- suppressWarnings(dbGetQuery(con, vessel_fishing_gears_sql))
+  return(vessel_fishing_gears)
+}
+
+
+#countVesselLicensePermitFromDB
+countVesselLicensePermitFromDB <- function(con, registrationNumber){
+  vessel_license_permit_sql <- readSQLScript("data/core/sql/count_vessel_license_permits.sql", 
+                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_license_permit <- suppressWarnings(dbGetQuery(con, vessel_license_permit_sql))
+  return(vessel_license_permit)
+}
+
 
 #accessAvailableYearsFromDB
 accessAvailableYearsFromDB <- function(con){
@@ -230,6 +282,8 @@ accessMonthlyFishingActivityFromDB <- function(con){
   out <- suppressWarnings(dbGetQuery(con, sql))
   return(out)
 }
+
+
   
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -314,6 +368,17 @@ countVesselOwners <- function(con){
   countVesselOwnersFromDB(con)
 }
 
+#countVesselOwnersPerVessel
+countVesselOwnersPerVessel <- function(con, registrationNumber) {
+  countVesselOwnersPerVesselFromDB(con, registrationNumber)
+}
+
+
+#countVesselDaysAtSea
+countVesselDaysAtSea <- function(con, registrationNumber) {
+  countVesselDaysAtSeaFromDB(con, registrationNumber)
+}
+
 #accessVesselsWithLogBooks
 accessVesselsWithLogBooks <- function(con){
   accessVesselsWithLogBooksFromDB(con)
@@ -330,6 +395,25 @@ accessVesselsOwnersWithLogBooks <- function(con){
 countFishingTrips <- function(con){
   countFishingTripsFromDB(con)
 }
+
+
+#countFishingTripPerVessel
+countFishingTripsPerVessel <- function(con, registrationNumber){
+  countFishingTripsPerVesselFromDB(con, registrationNumber)
+}
+
+
+#countVesselFishingGears
+countVesselFishingGears <- function(con, registrationNumber) {
+  countVesselFishingGearsFromDB(con, registrationNumber)
+}
+
+
+#countVesselLicensePermit
+countVesselLicensePermit <- function(con, registrationNumber) {
+  countVesselLicensePermitFromDB(con, registrationNumber)
+}
+
 
 #accessAvailableYears
 accessAvailableYears <- function(con){
