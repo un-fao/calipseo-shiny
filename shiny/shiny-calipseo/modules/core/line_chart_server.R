@@ -7,6 +7,7 @@
 #'                 
 #' @param id specific id of module to be able to link ui and server part
 #' @param df dataframe 
+#' @param label label use to target column
 #' @param colDate column name of date variable 
 #' @param colTarget column name of variable of interest 
 #' @param colValue column name of value
@@ -20,7 +21,7 @@
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line",mode="plot") {
+line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity (tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line",mode="plot") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -221,8 +222,15 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
     
     if(isTRUE(data_ready())){
       
+      granu<-switch(input$granu,"%Y"="Year",
+                    "%Y-%m"="Month",
+                    "%Y-%U"="Week")
+      
       DT::datatable(
-        data_formated(),
+        data_formated()%>%
+          select(-text)%>%
+          rename(!!granu:=date)%>%
+                   rename(!!label:=target),
         extensions = c("Buttons"),
         escape = FALSE,
         filter = list(position = 'top',clear =FALSE),
@@ -231,7 +239,11 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           scrollX=TRUE,
           pageLength=5,
           buttons = list(
-            list(extend = 'csv', filename =  "table", title = NULL, header = TRUE)
+            list(extend = 'copy'),
+            list(extend = 'csv', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf("%s_%s_statistics",label,granu), 
+            title = sprintf("Statistics by %s - %s", label,granu), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
