@@ -42,7 +42,7 @@ logbooks_overview_ui <- function(id){
                                                  tabPanel('Species',line_chart_ui(ns("sp"),sliderWidth =25)),
                                                  tabPanel('Species groups',line_chart_ui(ns("fg"),sliderWidth =25))
                                                  )),
-                shinyWidgets::verticalTabPanel('by sanding sites',box_height='70px',contentWidth=11 ,line_chart_ui(ns("ls"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('by landing sites',box_height='70px',contentWidth=11 ,line_chart_ui(ns("ls"),sliderWidth =25)),
                 shinyWidgets::verticalTabPanel('by fishing zones',box_height='70px',contentWidth=11 ,line_chart_ui(ns("fz"),sliderWidth =25))
               )
             )
