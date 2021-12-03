@@ -230,7 +230,8 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         data_formated()%>%
           select(-text)%>%
           rename(!!granu:=date)%>%
-                   rename(!!label:=target),
+                   rename(!!label:=target)%>%
+        mutate(!!label:=as.factor(!!sym(label))),
         extensions = c("Buttons"),
         escape = FALSE,
         filter = list(position = 'top',clear =FALSE),
