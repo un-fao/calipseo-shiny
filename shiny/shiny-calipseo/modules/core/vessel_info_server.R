@@ -132,7 +132,99 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     #licenses
-    #TODO
+    output$license_table <- renderDT(server = FALSE,{
+      
+      vessellicensepermits <- accessVesselLicensePermit(pool,vesselId)
+      
+      if(nrow(vessellicensepermits>0)){
+        
+        dt <- reactive({
+          
+          unique_permits <- dplyr::distinct(vessellicensepermits, PERMIT_NUMBER,.keep_all = TRUE)
+          
+          unique_gears <- unique(vessellicensepermits$Gears)
+          
+          vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
+          
+          vessellicensepermits$Valid_to_date <- as.Date(vessellicensepermits$Valid_to_date)
+          
+          
+          valid_to_date <- vessellicensepermits$Valid_to_date
+          
+          vessellicensepermits$Validity <- NA
+          
+          for (i in 1:length(valid_to_date)) {
+            validity_status <- Sys.Date()-valid_to_date[i]
+            
+            if(validity_status<0){
+              vessellicensepermits$Validity[i] <- 'ok'
+            }else{
+              
+              vessellicensepermits$Validity[i] <- 'remove'
+            }
+          }
+          
+          names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
+                                          'Valid From (Date)', 'Valid To (Date)', 'Gears', 'Validity')
+          
+          vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
+          return(unique(vessellicensepermits))
+          
+        })
+        
+        
+        
+        DT::datatable(dt(),
+                      rownames = FALSE, extensions = c("Select","Buttons"),
+                      selection = "none",
+                      filter = list(position = 'top', clear = FALSE),
+                      
+                      options = list(
+                        autoWidth = TRUE,
+                        dom = 'Bfrtip',
+                        deferRender = TRUE,
+                        scroll = FALSE,
+                        buttons = list(
+                          list(extend = 'copy'),
+                          list(extend = 'csv', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
+                          list(extend = 'excel', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
+                          list(extend = "pdf", filename = sprintf("vessel_license_permits_%s", vesselId), orientation = "landscape",
+                               title = sprintf("Vessel '%s' (%s) License Permits (as of %s)", vesselId, vessel$name, Sys.Date()), header = TRUE)
+                        ),
+                        exportOptions = list(
+                          modifiers = list(page = "all", selected = TRUE)
+                        ),
+                        
+                        
+                        columnDefs = list(
+                          list(targets = 5, render = JS(js_render_for_license_table)) 
+                        )
+                      ))
+        
+        
+        
+      }else{
+        
+        vessellicensepermits <- data.frame(
+          'Permit Number' = character(0), 
+          'Application Date' = character(0), 
+          'Permit Date' = character(0),
+          'Valid From (Date)' = character(0), 
+          'Valid To (Date)' = character(0), 
+          'Validity' = character(0),
+          'Gears' = character(0)
+          
+        )
+        
+        names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
+                                        'Valid From (Date)', 'Valid To (Date)', 'Validity', 'Gears')
+        
+        
+        DT::datatable(vessellicensepermits,rownames = FALSE)
+        
+      }
+      
+    })
     
     #catch summary
     if(nrow(vesselCatches)>0){
@@ -391,6 +483,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         infoBox(span('Nnumber of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
       )
     })
+    
     
   })
   
