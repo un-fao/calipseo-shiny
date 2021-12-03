@@ -148,7 +148,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           vessellicensepermits$Valid_to_date <- as.Date(vessellicensepermits$Valid_to_date)
           
-          
           valid_to_date <- vessellicensepermits$Valid_to_date
           
           vessellicensepermits$Validity <- NA
@@ -164,10 +163,13 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
             }
           }
           
+          vessellicensepermits <- dplyr::arrange(vessellicensepermits, desc(Valid_to_date))
+          
           names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
                                           'Valid From (Date)', 'Valid To (Date)', 'Gears', 'Validity')
           
           vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
+          
           return(unique(vessellicensepermits))
           
         })
@@ -206,7 +208,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       }else{
         
         vessellicensepermits <- data.frame(
-          'Permit Number' = character(0), 
+          `Permit Number` = character(0), 
           'Application Date' = character(0), 
           'Permit Date' = character(0),
           'Valid From (Date)' = character(0), 
@@ -219,12 +221,12 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
                                         'Valid From (Date)', 'Valid To (Date)', 'Validity', 'Gears')
         
-        
-        DT::datatable(vessellicensepermits,rownames = FALSE)
+        DT::datatable(vessellicensepermits)
         
       }
       
     })
+    
     
     #catch summary
     if(nrow(vesselCatches)>0){

@@ -121,8 +121,6 @@ accessVesselsCountByStatTypeFromDB <- function(con){
 accessVesselLicensePermitFromDB <- function(con, registrationNumber){
   licensePermit_sql <- readSQLScript("data/core/sql/vessel_license_permits.sql", 
                                      key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  
-  
   licensePermit <- suppressWarnings(dbGetQuery(con, licensePermit_sql))
   return(licensePermit)
 }

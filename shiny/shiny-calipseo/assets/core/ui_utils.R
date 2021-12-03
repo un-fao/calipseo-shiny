@@ -78,7 +78,6 @@ createPlaceholderImage <- function(id){
   createBase64Image(src = sprintf("./assets/img/placeholders/%s.png", id), height = '150px')
 }
 
-
 #JSrenderforlicensetable
 js_render_for_license_table <- c(
   'function(data, type, row, meta){',
