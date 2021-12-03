@@ -35,15 +35,15 @@ logbooks_overview_ui <- function(id){
               class = "col-md-12",
               h3(sprintf("Breakdown of quantity caught")), hr(),
               shinyWidgets::verticalTabsetPanel(
-                shinyWidgets::verticalTabPanel('by vessel types',box_height='70px' , line_chart_ui(ns("vt"),sliderWidth =25)),
-                shinyWidgets::verticalTabPanel('by gear types',box_height='70px' , line_chart_ui(ns("gt"),sliderWidth =25)),
-                shinyWidgets::verticalTabPanel('by species',box_height='70px', 
-                                               tabsetPanel(
+                shinyWidgets::verticalTabPanel('by vessel types',box_height='70px', line_chart_ui(ns("vt"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('by gear types',box_height='70px' ,line_chart_ui(ns("gt"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('by species',box_height='70px',
+                                               tabsetPanel(type="pills",
                                                  tabPanel('Species',line_chart_ui(ns("sp"),sliderWidth =25)),
-                                                 tabPanel('Fish groups',line_chart_ui(ns("fg"),sliderWidth =25))
+                                                 tabPanel('Species groups',line_chart_ui(ns("fg"),sliderWidth =25))
                                                  )),
-                shinyWidgets::verticalTabPanel('by sanding sites',box_height='70px' ,line_chart_ui(ns("ls"),sliderWidth =25)),
-                shinyWidgets::verticalTabPanel('by fishing zones',box_height='70px' ,line_chart_ui(ns("fz"),sliderWidth =25))
+                shinyWidgets::verticalTabPanel('by sanding sites',box_height='70px',contentWidth=11 ,line_chart_ui(ns("ls"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('by fishing zones',box_height='70px',contentWidth=11 ,line_chart_ui(ns("fz"),sliderWidth =25))
               )
             )
           )

@@ -169,12 +169,12 @@ logbooks_overview_server <- function(input, output, session, pool){
   fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
   names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
   
-  line_chart_server("vt", data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE)
-  line_chart_server("gt", data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE)
+  line_chart_server("vt", data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("gt", data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE,mode='plot+table')
   line_chart_server("sp", data_logbooks%>%
-                        mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:")
-  line_chart_server("fg", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",colValue="quantity", rank=FALSE)
-  line_chart_server("ls", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE)
-  line_chart_server("fz", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE)
+                        mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:",mode='plot+table')
+  line_chart_server("fg", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("ls", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("fz", data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE,mode='plot+table')
 
 }

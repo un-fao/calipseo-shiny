@@ -17,9 +17,10 @@
 #' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
 #' @param rankLabel character string to specify rank label name
 #' @param plotType type of maine trace type : 'line' or 'bar'
+#' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line") {
+line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line",mode="plot") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -136,14 +137,19 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
             q3 = quantile(sum_by_trip, probs = 0.75, na.rm = TRUE, names = FALSE)
           )%>%
           mutate(target=as.factor(target))%>%
-          mutate(sd = ifelse(is.na(sd), 0, sd))%>%
+          mutate(sd = ifelse(is.na(sd), 0, sd),
+                 se = ifelse(is.na(se), 0, se),
+                 ci_norm_coef = ifelse(is.na(ci_norm_coef), 0, ci_norm_coef),
+                 ci_stud_coef = ifelse(is.na(ci_stud_coef), 0, ci_stud_coef)
+                 )%>%
           ungroup()
         
         data_formated(df)
         data_ready(TRUE)
       }
     )
-    observeEvent(c(input$stat,input$granu,input$number),{
+    
+    #observeEvent(c(input$stat,input$granu,input$number),{
       output$plot<-renderPlotly({
         data_formating()
         
@@ -207,6 +213,57 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           )
         }
       })
-      })  
+#  })
+  
+  output$table<-DT::renderDT(server = FALSE, {
+    
+    data_formating()
+    
+    if(isTRUE(data_ready())){
+      
+      DT::datatable(
+        data_formated(),
+        extensions = c("Buttons"),
+        escape = FALSE,
+        filter = list(position = 'top',clear =FALSE),
+        options = list(
+          dom = 'Bfrtip',
+          scrollX=TRUE,
+          pageLength=5,
+          buttons = list(
+            list(extend = 'csv', filename =  "table", title = NULL, header = TRUE)
+          ),
+          exportOptions = list(
+            modifiers = list(page = "all",selected=TRUE)
+          )
+        )
+      )
+    }
+    
+    })
+  
+  output$result<-renderUI({
+      switch(mode,
+        'plot+table'={
+          tabsetPanel(
+            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
+            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4))
+          )
+        },
+        'table+plot'={
+          tabsetPanel(
+            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4)),
+            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+          )
+        },
+        'plot'={
+          plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+        },
+        'table'={
+          DTOutput(ns("table"))%>%withSpinner(type = 4)
+        }
+      )
   })
+  
+  })  
 }
