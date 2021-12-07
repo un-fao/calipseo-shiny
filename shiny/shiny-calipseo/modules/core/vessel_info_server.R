@@ -237,71 +237,27 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     
+  
     SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
     
+    fish_group<-getRemoteReferenceDataset("asfis_enrished")
+    fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
+    names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
     
-    rank_species <- SpeciesCatchesYear %>%
-      mutate(rank = rank(-catches)) %>%
-      filter(rank <=10)
+    #linechart
+    line_chart_server("catches_spices", SpeciesCatchesYear%>%
+                        mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",
+                                            species_desc,species_sci,species_asfis)),
+                      colDate = "date",colTarget="species_desc",
+                      colValue="quantity",colText="text", 
+                      rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:")
     
+    line_chart_server("catches_fishgroup", 
+                      SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
+                      colDate = "date", colTarget="ISSCAAP_Group_En",
+                      colValue="quantity", rank=FALSE)
     
-    df_SpeciesCatchesYear <- SpeciesCatchesYear %>%
-      filter(species_desc %in% rank_species$species_desc)
-    
-    df_SpeciesCatchesYear$year <- as.factor(df_SpeciesCatchesYear$year)
-    
-    
-    output$catches_piechart <- renderPlotly({
-      
-      
-      plot_ly(df_SpeciesCatchesYear, labels = ~species_desc, values = ~catches, type = 'pie', sort = FALSE, direction = "clockwise") %>%
-        layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-               legend = list(orientation = "h"))
-      
-    })
-    
-    output$catches_lineplot <- renderPlotly({
-      
-      fig_sp <- df_SpeciesCatchesYear %>% plot_ly()
-      fig_sp<-fig_sp%>% add_trace(
-        x = ~year, 
-        y = ~catches,
-        split=~species_desc,
-        type = 'scatter', 
-        mode = 'lines',
-        line = list(simplyfy = F),
-        text = ~paste("Year: ", year, "<br>catches: ", catches, "<br>species: ",species_desc)
-      )
-      
-      fig_sp <- fig_sp %>% layout(
-        hovermode ='closest',
-        legend = list(orientation = "h",
-                      font = list(size = 10),
-                      bgcolor ='rgba(0,0,0,0)',
-                      xanchor = "center",
-                      yanchor = "top",
-                      y =-0.1,
-                      x = 0.5),
-        xaxis = list(
-          titlefont = list(size = 10), 
-          tickfont = list(size = 10),
-          title = "Year",
-          zeroline = F
-        ),
-        yaxis = list(
-          titlefont = list(size = 10), 
-          tickfont = list(size = 10),
-          range = range(df_SpeciesCatchesYear$catches),
-          title = "Catches (Tons)",
-          zeroline = F
-        ))
-      
-      fig_sp
-      
-      
-    })
-    
+    #piechart
     
     
     ftpv <- countFishingTripsPerVessel(pool,vesselId)
