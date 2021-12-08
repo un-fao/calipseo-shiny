@@ -54,23 +54,15 @@ vessel_info_ui <- function(id){
                                                  tabPanel('History', DT::dataTableOutput(ns("vessel_catch_history")),htmlOutput(ns("vessel_catch_datasource"))),
                                                  tabPanel('Breakdown by species', 
                                                           fluidRow(
-                                                            # box(width = 6, height = 460, title = sprintf("Breakdown by species in %s total over years.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_piechart"))),
-                                                            # box(width = 6, height = 460, title = sprintf("Evolution of species breakdown by year in %s.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_lineplot")))
-                                                            # 
-                                                          ),
-                                                          
-                                                          fluidRow(
-                                                            
-                                                            box(width = 12, title = sprintf("Evolution of species breakdown in %s.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,
-                                                                tabsetPanel(
-                                                                  tabPanel('Species',line_chart_ui(ns("catches_spices"),sliderWidth =25)),
-                                                                  tabPanel('Fish groups',line_chart_ui(ns("catches_fishgroup"),sliderWidth =25))
-                                                                )
-                                                            ))
-                                                          
-                                                          
+                                                            tabsetPanel(
+                                                              type = "pills",
+                                                              tabPanel('Species',line_chart_ui(ns("catches_sp"),sliderWidth =25)),
+                                                              tabPanel('Species groups',line_chart_ui(ns("catches_spgroups"),sliderWidth =25))
+                                                            )
                                                           )
-                                               ))
+                                                 )
+                                               )
+                )
               )
           )
           

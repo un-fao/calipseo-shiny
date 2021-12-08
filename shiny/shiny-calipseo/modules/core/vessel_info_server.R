@@ -245,15 +245,17 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
     
     #linechart
-    line_chart_server("catches_spices", SpeciesCatchesYear%>%
+    line_chart_server("catches_sp", SpeciesCatchesYear%>%
                         mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",
                                             species_desc,species_sci,species_asfis)),
+                      mode = "plot+table", label = "Species",
                       colDate = "date",colTarget="species_desc",
-                      colValue="quantity",colText="text", 
+                      colValue="quantity",colText="text",
                       rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:")
     
-    line_chart_server("catches_fishgroup", 
+    line_chart_server("catches_spgroups", 
                       SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
+                      mode = "plot+table", label = "Species groups",
                       colDate = "date", colTarget="ISSCAAP_Group_En",
                       colValue="quantity", rank=FALSE)
     
