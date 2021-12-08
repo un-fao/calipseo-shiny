@@ -163,7 +163,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
             }
           }
           
-          vessellicensepermits <- dplyr::arrange(vessellicensepermits, desc(Valid_to_date))
+          vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
           
           names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
                                           'Valid From (Date)', 'Valid To (Date)', 'Gears', 'Validity')

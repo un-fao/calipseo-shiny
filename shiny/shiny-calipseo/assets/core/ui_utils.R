@@ -83,7 +83,7 @@ js_render_for_license_table <- c(
   'function(data, type, row, meta){',
   '  if(type === "display"){',
   '    var color = data === "ok" ? "green" : "red";',
-  'var validity = data === "ok" ? "The&nbsp;license&nbsp;is&nbsp;valid" : "The&nbsp;license&nbsp;is&nbsp;expired" ',
+  '    var validity = data === "ok" ? "The&nbsp;license&nbsp;is&nbsp;valid" : "The&nbsp;license&nbsp;is&nbsp;expired" ',
   '    return "<span style=\\\"color:" + color +',
   '           "; font-size:18px\\\" title=\\\ "+ validity +" \\\"><i class=\\\"glyphicon glyphicon-" +', 
   '           data +"\\\"></i></span>";',
