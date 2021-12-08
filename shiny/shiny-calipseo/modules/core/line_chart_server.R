@@ -7,6 +7,7 @@
 #'                 
 #' @param id specific id of module to be able to link ui and server part
 #' @param df dataframe 
+#' @param label label use to target column
 #' @param colDate column name of date variable 
 #' @param colTarget column name of variable of interest 
 #' @param colValue column name of value
@@ -17,11 +18,15 @@
 #' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
 #' @param rankLabel character string to specify rank label name
 #' @param plotType type of maine trace type : 'line' or 'bar'
+#' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity(tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line") {
+line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity (tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line",mode="plot") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    data_formated<-reactiveVal(NULL)
+    data_ready<-reactiveVal(FALSE)
     
     output$rank_params<-renderUI({
       
@@ -55,10 +60,7 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
       })
     })
     
-    observeEvent(c(input$stat,input$granu,input$number),{
-      
-      output$plot<-renderPlotly({
-        
+    data_formating<-eventReactive(c(input$stat,input$granu,input$number),{
         df<-df%>%
           rename(setNames(colDate,"date"))%>%
           rename(setNames(colTarget,"target"))%>%
@@ -71,49 +73,49 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
           df<-df%>%
             rename(setNames(colText,"text"))
         }
-                          
+        
         if(isTRUE(rank)){
           req(input$number)
           if(input$rank_method=="sum"){
             ranked <- df %>%
-            group_by(target) %>% 
-            summarise(total = sum(value))%>%
-            mutate(rank = rank(-total)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              group_by(target) %>% 
+              summarise(total = sum(value))%>%
+              mutate(rank = rank(-total)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }	
-                            
+          
           if(input$rank_method=="year_avg"){
             ranked <- df %>%
-            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-            group_by(year,target) %>% 
-            summarise(total = sum(value))%>%
-            group_by(target)%>%
-            summarise(avg = mean(total))%>%
-            mutate(rank = rank(-avg)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
+              group_by(year,target) %>% 
+              summarise(total = sum(value))%>%
+              group_by(target)%>%
+              summarise(avg = mean(total))%>%
+              mutate(rank = rank(-avg)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }
-                              
+          
           if(input$rank_method=="last_year"){
             ranked <- df %>%
-            mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-            filter(year==max(year))%>%
-            group_by(target) %>% 
-            summarise(total = sum(value))%>%
-            mutate(rank = rank(-total)) %>%
-            filter(rank <=as.numeric(input$number)) %>%
-            arrange(rank)%>%
-            pull(target)
+              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
+              filter(year==max(year))%>%
+              group_by(target) %>% 
+              summarise(total = sum(value))%>%
+              mutate(rank = rank(-total)) %>%
+              filter(rank <=as.numeric(input$number)) %>%
+              arrange(rank)%>%
+              pull(target)
           }
-                            
+          
           df<-df%>%
             filter(target%in%ranked)
         }
-                        
-        p<-df%>%
+        
+        df<-df%>%
           mutate(date = as.character(format(as.Date(date),format = input$granu)))%>%
           mutate(quantity=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
@@ -136,12 +138,25 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
             q3 = quantile(sum_by_trip, probs = 0.75, na.rm = TRUE, names = FALSE)
           )%>%
           mutate(target=as.factor(target))%>%
-          mutate(sd = ifelse(is.na(sd), 0, sd))%>%
+          mutate(sd = ifelse(is.na(sd), 0, sd),
+                 se = ifelse(is.na(se), 0, se),
+                 ci_norm_coef = ifelse(is.na(ci_norm_coef), 0, ci_norm_coef),
+                 ci_stud_coef = ifelse(is.na(ci_stud_coef), 0, ci_stud_coef)
+                 )%>%
           ungroup()
         
-        print(head(p))
+        data_formated(df)
+        data_ready(TRUE)
+      }
+    )
+    
+    #observeEvent(c(input$stat,input$granu,input$number),{
+      output$plot<-renderPlotly({
+        data_formating()
         
-          p<-p%>%plot_ly(
+        if(isTRUE(data_ready())){
+        
+          p<-data_formated()%>%plot_ly(
             x = ~date
             
           )
@@ -197,10 +212,71 @@ line_chart_server <- function(id, df,colDate, colTarget, colValue,colText=colTar
               zeroline = F
             )
           )
+        }
       })
-    })  
-        
-        
-  })
+#  })
+  
+  output$table<-DT::renderDT(server = FALSE, {
+    
+    data_formating()
+    
+    if(isTRUE(data_ready())){
       
+      granu<-switch(input$granu,"%Y"="Year",
+                    "%Y-%m"="Month",
+                    "%Y-%U"="Week")
+      
+      DT::datatable(
+        data_formated()%>%
+          select(-text)%>%
+          rename(!!granu:=date)%>%
+                   rename(!!label:=target)%>%
+        mutate(!!label:=as.factor(!!sym(label))),
+        extensions = c("Buttons"),
+        escape = FALSE,
+        filter = list(position = 'top',clear =FALSE),
+        options = list(
+          dom = 'Bfrtip',
+          scrollX=TRUE,
+          pageLength=5,
+          buttons = list(
+            list(extend = 'copy'),
+            list(extend = 'csv', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf("%s_%s_statistics",label,granu), 
+            title = sprintf("Statistics by %s - %s", label,granu), header = TRUE)
+          ),
+          exportOptions = list(
+            modifiers = list(page = "all",selected=TRUE)
+          )
+        )
+      )
+    }
+    
+    })
+  
+  output$result<-renderUI({
+      switch(mode,
+        'plot+table'={
+          tabsetPanel(
+            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
+            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4))
+          )
+        },
+        'table+plot'={
+          tabsetPanel(
+            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4)),
+            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+          )
+        },
+        'plot'={
+          plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+        },
+        'table'={
+          DTOutput(ns("table"))%>%withSpinner(type = 4)
+        }
+      )
+  })
+  
+  })  
 }

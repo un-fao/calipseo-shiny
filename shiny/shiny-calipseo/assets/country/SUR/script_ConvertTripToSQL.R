@@ -204,7 +204,7 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     }
     
     #Trip identifier
-    trip_identifier<-sprintf(sprintf("%s-%s - %s - %s",format(trip$arrival_date[1], format = "%Y"),gsub("0", "", format(trip$arrival_date[1], format = "%m")),trip$vessel_registration[1],trip$`trip_#`[1]))
+    trip_identifier<-sprintf("%s-%s - %s - %s",substring(as.character(trip$arrival_date[1]),1,4),gsub("0", "", substring(as.character(trip$arrival_date[1]),6,7)),trip$vessel_registration[1],trip$`trip_#`[1])
     
     #Landing_site
     

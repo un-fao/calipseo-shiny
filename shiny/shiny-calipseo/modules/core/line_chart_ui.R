@@ -24,8 +24,9 @@ line_chart_ui <- function(id,sliderWidth = 25) {
         selectInput(ns("granu"),"Temporal resolution :",choices=c("Yearly"="%Y","Monthly"="%Y-%m","Weekly"="%Y-%U")),
         selectInput(ns("stat"),"Statistic :",choices=c("Total"="sum","Average"="mean","Median"="median")),
         uiOutput(ns("additional"))),
-        plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+        uiOutput(ns("result"))
     )
-  )
+    )
+  
   
 }
