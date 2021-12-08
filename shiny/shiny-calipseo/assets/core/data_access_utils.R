@@ -117,6 +117,14 @@ accessVesselsCountByStatTypeFromDB <- function(con){
   suppressWarnings(dbGetQuery(con, vesselstattypes_count_sql))
 }
 
+#accessVesselLicensePermitFromDB
+accessVesselLicensePermitFromDB <- function(con, registrationNumber){
+  licensePermit_sql <- readSQLScript("data/core/sql/vessel_license_permits.sql", 
+                                     key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  licensePermit <- suppressWarnings(dbGetQuery(con, licensePermit_sql))
+  return(licensePermit)
+}
+
 #accessVesselsCountByLandingSiteFromDB
 accessVesselsCountByLandingSiteFromDB <- function(con){
   vesselsites_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_count.sql")
@@ -345,6 +353,11 @@ accessVesselsCountByType <- function(con){
 #accessVesselsCountByStatType
 accessVesselsCountByStatType <- function(con){
   accessVesselsCountByStatTypeFromDB(con)
+}
+
+#accessVesselLicensePermitFromDB
+accessVesselLicensePermit <- function(con, registrationNumber){
+  accessVesselLicensePermitFromDB(con, registrationNumber)
 }
 
 #accessVesselsCountByLandingSite

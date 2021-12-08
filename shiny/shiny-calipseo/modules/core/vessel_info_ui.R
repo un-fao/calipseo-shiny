@@ -46,7 +46,7 @@ vessel_info_ui <- function(id){
           div(class='row',style = "margin:0px;", id='vertical-panels',
               shinyWidgets::verticalTabsetPanel(
                 shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
-                shinyWidgets::verticalTabPanel('Licenses',box_height='70px', '#TODO'),
+                shinyWidgets::verticalTabPanel('Licenses',box_height='70px', DT::dataTableOutput(ns("license_table"))),
                 shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
                                                tabsetPanel(
                                                  
