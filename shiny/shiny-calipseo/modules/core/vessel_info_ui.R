@@ -57,7 +57,6 @@ vessel_info_ui <- function(id){
                                                             box(width = 6, height = 460, title = sprintf("Breakdown by species in %s total over years.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_piechart"))),
                                                             box(width = 6, height = 460, title = sprintf("Evolution of species breakdown by year in %s.", appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("catches_lineplot")))
                                                             
-                                                            
                                                           ))
                                                ))
               )))
