@@ -4,10 +4,16 @@ options(stringsAsFactors = FALSE)
 
 #config
 #---------------------------------------------------------------------------------------
-#config_file = "D:/Documents/DEV/Bitbucket/fao/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_SUR.yml"
-#config_file <- "D:/BitbucketFAO/fao-calipseo-stats/shinyconfigs/calipseo_shiny_config_SUR.yml"
+#default config_file path for DEPLOYMENT
 config_file <- "/etc/shiny-calipseo/config.yml"
-if(!nzchar(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
+
+#local configuration
+#If you are an R developer, you need to create a .REnviron file (no file extension) in /shiny-calipseo dir
+#The file should include the local path for your shiny config file in that way:
+#CALIPSEO_SHINY_CONFIG=<your config path>
+local_config_file <- Sys.getenv("CALIPSEO_SHINY_CONFIG")
+if(nzchar(local_config_file)) config_file <- local_config_file
+if(!file.exists(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
 #packages
