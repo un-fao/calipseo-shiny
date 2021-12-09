@@ -324,10 +324,37 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)
     
     
-    output$box_status <- renderUI({
-      #TODO change color depending on operational status
-      infoBox('Vessel Operational Status',icon = icon('check'),vessel_indicators_infos$vessel_operational_status, fill = TRUE, width = 6)
+    colRList <- reactive({
+      
+      if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION'){
+        
+        colorlist <- c('green','black','check-circle')
+      }else if(vessel_indicators_infos$vessel_operational_status=='UNKNOWN'){
+        
+        colorlist <- c('lightgray', 'black','') 
+      }else if(vessel_indicators_infos$vessel_operational_status=='TOTAL LOSS'){
+        
+        colorlist <- c('black','white','calendar-times')
+      }else if(vessel_indicators_infos$vessel_operational_status=='BROKEN UP'){
+        
+        colorlist <- c('darkred', 'wheat','crutches')
+      }else if(vessel_indicators_infos$vessel_operational_status=='LAID UP'){
+        
+        colorlist <- c('orange', 'black','anchor')
+      }else{
+        
+        colorlist <- c('purple', 'black','ban')
+      }
+      return(colorlist)
     })
+    
+    
+    
+    output$box_status <- renderUI({
+      
+      custome_infoBox(span('Vessel Operational Status',style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
+    })
+    
     
     output$box_owner <- renderUI({
       infoBox('Number of owners',icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE, width = 6)
