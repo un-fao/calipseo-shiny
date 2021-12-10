@@ -117,31 +117,31 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         
         df<-df%>%
           mutate(date = as.character(format(as.Date(date),format = input$granu)))%>%
-          mutate(quantity=value/1000)%>%
+          mutate(value=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
           summarise(sum_by_trip = sum(value))%>%
           group_by(date,target,text)%>%
           summarise(
             n = length(unique(trip_id)),
-            sum = sum(sum_by_trip, na.rm = TRUE),
-            mean = mean(sum_by_trip, na.rm = TRUE),
-            min = min(sum_by_trip, na.rm = TRUE),
-            max = max(sum_by_trip, na.rm = TRUE),
-            sd = sd(sum_by_trip, na.rm = TRUE),
-            se = sd/sqrt(n),
-            ci_norm_coef = qnorm(.975)*se,
-            ci_stud_coef = qt(.975, df = n - 1) * se,
-            q025=quantile(sum_by_trip, probs = 0.025, na.rm = TRUE, names = FALSE),
-            q975=quantile(sum_by_trip, probs = 0.975, na.rm = TRUE, names = FALSE),
-            q1 = quantile(sum_by_trip, probs = 0.25, na.rm = TRUE, names = FALSE),
-            median = median(sum_by_trip, na.rm = TRUE),
-            q3 = quantile(sum_by_trip, probs = 0.75, na.rm = TRUE, names = FALSE)
+            sum = round(sum(sum_by_trip, na.rm = TRUE),2),
+            mean = round(mean(sum_by_trip, na.rm = TRUE),2),
+            median = round(median(sum_by_trip, na.rm = TRUE),2),
+            min = round(min(sum_by_trip, na.rm = TRUE),2),
+            max = round(max(sum_by_trip, na.rm = TRUE),2),
+            sd = round(sd(sum_by_trip, na.rm = TRUE),2),
+            se = round(sd/sqrt(n),2),
+            q1 = round(quantile(sum_by_trip, probs = 0.25, na.rm = TRUE, names = FALSE),2),
+            q3 = round(quantile(sum_by_trip, probs = 0.75, na.rm = TRUE, names = FALSE),2),
+            ci_norm_coef = round(qnorm(.975)*se,2),
+            ci_stud_coef = round(qt(.975, df = n - 1) * se,2),
+            q025=round(quantile(sum_by_trip, probs = 0.025, na.rm = TRUE, names = FALSE),2),
+            q975=round(quantile(sum_by_trip, probs = 0.975, na.rm = TRUE, names = FALSE),2)
           )%>%
           mutate(target=as.factor(target))%>%
-          mutate(sd = ifelse(is.na(sd), 0, sd),
-                 se = ifelse(is.na(se), 0, se),
-                 ci_norm_coef = ifelse(is.na(ci_norm_coef), 0, ci_norm_coef),
-                 ci_stud_coef = ifelse(is.na(ci_stud_coef), 0, ci_stud_coef)
+          mutate(sd = ifelse(is.na(sd), 0.00, sd),
+                 se = ifelse(is.na(se), 0.00, se),
+                 ci_norm_coef = ifelse(is.na(ci_norm_coef), 0.00, ci_norm_coef),
+                 ci_stud_coef = ifelse(is.na(ci_stud_coef), 0.00, ci_stud_coef)
                  )%>%
           ungroup()
         
@@ -239,11 +239,12 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
           dom = 'Bfrtip',
           scrollX=TRUE,
           pageLength=5,
+          orientation ='landscape',
           buttons = list(
             list(extend = 'copy'),
             list(extend = 'csv', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
             list(extend = 'excel', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
-            list(extend = "pdf", filename = sprintf("%s_%s_statistics",label,granu), 
+            list(extend = "pdf", pageSize = 'A4',orientation = 'landscape',filename = sprintf("%s_%s_statistics",label,granu), 
             title = sprintf("Statistics by %s - %s", label,granu), header = TRUE)
           ),
           exportOptions = list(
