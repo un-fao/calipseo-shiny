@@ -94,70 +94,83 @@ logbooks_overview_server <- function(input, output, session, pool){
     #info
     output$logbooks_overview_info <- renderText({
       #session$userData$page("logbooks_overview")
-      text <- "<h2>Overview of industrial fishing activities<small>Based on logbooks monitoring</small></h2>"
+      text <- "<h2 style='margin-top:0px;'>Overview of industrial fishing activities<small>Based on logbooks monitoring</small></h2>"
     })
     
     #counters
     output$nb_infos <- renderUI({
       tagList(
+        tags$head(tags$style(HTML('.info-box {min-height: 55px;} .info-box-icon {height: 55px; line-height: 55px;} .info-box-content {padding-top: 2px; padding-bottom: 2px;}'))),
         fluidRow(
-          infoBox(sprintf("Total quantity (%s)", lastyear), paste(round(infos$total_lastyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
-          infoBox(sprintf("Total quantity (%s)", currentyear), paste(round(infos$total_currentyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6)
-        ),
-        fluidRow(
-          infoBox(sprintf("Logbook reporting percentage (%s)", lastyear), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6),
-          infoBox(sprintf("Logbook reporting percentage (%s)", currentyear), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
+          div(
+            class = "col-md-6",
+            box(
+              title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
+              width = 12,
+              infoBox(tags$span("Total quantity", style = "font-size: 90%;"), paste(round(infos$total_lastyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
+              infoBox(tags$span("Logbook reporting percentage", style = "font-size: 90%;"), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6)
+            )
+          ),
+          div(
+            class = "col-md-6",
+            box(
+              title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
+              width = 12,
+              infoBox(tags$span("Total quantity", style = "font-size: 90%;"), paste(round(infos$total_currentyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
+              infoBox(tags$span("Logbook reporting percentage", style = "font-size: 90%;"), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
+            )
+          )
         )
       )
     })
     
-    #stats by type
-    output$stats_by_type_lastyear_table <- renderDataTable(
-      infos$stats_by_type_lastyear,
-      server = FALSE,
-      escape = FALSE,
-      rownames = FALSE,
-      extensions = c("Buttons"), 
-      options = list(
-        autoWidth = TRUE,
-        dom = 'Bfrtip',
-        deferRender = TRUE,
-        scroll = FALSE,
-        buttons = list(
-          list(extend = 'copy'),
-          list(extend = 'csv', filename =  sprintf("stats_by_vesseltype_%s", lastyear), title = NULL, header = TRUE),
-          list(extend = 'excel', filename =  sprintf("stats_by_vesseltype_%s", lastyear), title = NULL, header = TRUE),
-          list(extend = "pdf", filename = sprintf("stats_by_vesseltype_%s", lastyear), 
-               title = sprintf("Statistics by vessel type - %s", lastyear), header = TRUE)
-        ),
-        exportOptions = list(
-          modifiers = list(page = "all", selected = TRUE)
-        )
-      )
-    )
-    output$stats_by_type_currentyear_table <- renderDataTable(
-      infos$stats_by_type_currentyear,
-      server = FALSE,
-      escape = FALSE,
-      rownames = FALSE,
-      extensions = c("Buttons"), 
-      options = list(
-        autoWidth = TRUE,
-        dom = 'Bfrtip',
-        deferRender = TRUE,
-        scroll = FALSE,
-        buttons = list(
-          list(extend = 'copy'),
-          list(extend = 'csv', filename =  sprintf("stats_by_vesseltype_%s", currentyear), title = NULL, header = TRUE),
-          list(extend = 'excel', filename =  sprintf("stats_by_vesseltype_%s", currentyear), title = NULL, header = TRUE),
-          list(extend = "pdf", filename = sprintf("stats_by_vesseltype_%s", currentyear), 
-               title = sprintf("Statistics by vessel type - %s", currentyear), header = TRUE)
-        ),
-        exportOptions = list(
-          modifiers = list(page = "all", selected = TRUE)
-        )
-      )
-    )
+    # #stats by type
+    # output$stats_by_type_lastyear_table <- renderDataTable(
+    #   infos$stats_by_type_lastyear,
+    #   server = FALSE,
+    #   escape = FALSE,
+    #   rownames = FALSE,
+    #   extensions = c("Buttons"), 
+    #   options = list(
+    #     autoWidth = TRUE,
+    #     dom = 'Bfrtip',
+    #     deferRender = TRUE,
+    #     scroll = FALSE,
+    #     buttons = list(
+    #       list(extend = 'copy'),
+    #       list(extend = 'csv', filename =  sprintf("stats_by_vesseltype_%s", lastyear), title = NULL, header = TRUE),
+    #       list(extend = 'excel', filename =  sprintf("stats_by_vesseltype_%s", lastyear), title = NULL, header = TRUE),
+    #       list(extend = "pdf", filename = sprintf("stats_by_vesseltype_%s", lastyear), 
+    #            title = sprintf("Statistics by vessel type - %s", lastyear), header = TRUE)
+    #     ),
+    #     exportOptions = list(
+    #       modifiers = list(page = "all", selected = TRUE)
+    #     )
+    #   )
+    # )
+    # output$stats_by_type_currentyear_table <- renderDataTable(
+    #   infos$stats_by_type_currentyear,
+    #   server = FALSE,
+    #   escape = FALSE,
+    #   rownames = FALSE,
+    #   extensions = c("Buttons"), 
+    #   options = list(
+    #     autoWidth = TRUE,
+    #     dom = 'Bfrtip',
+    #     deferRender = TRUE,
+    #     scroll = FALSE,
+    #     buttons = list(
+    #       list(extend = 'copy'),
+    #       list(extend = 'csv', filename =  sprintf("stats_by_vesseltype_%s", currentyear), title = NULL, header = TRUE),
+    #       list(extend = 'excel', filename =  sprintf("stats_by_vesseltype_%s", currentyear), title = NULL, header = TRUE),
+    #       list(extend = "pdf", filename = sprintf("stats_by_vesseltype_%s", currentyear), 
+    #            title = sprintf("Statistics by vessel type - %s", currentyear), header = TRUE)
+    #     ),
+    #     exportOptions = list(
+    #       modifiers = list(page = "all", selected = TRUE)
+    #     )
+    #   )
+    # )
     
   })
   
