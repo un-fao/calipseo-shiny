@@ -263,7 +263,27 @@ accessFishingActivitiesFromDB <- function(con, year,
 accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
   fa_sql <- readSQLScript("data/core/sql/fishing_activities_multiyear.sql")
   if(!is.null(vessel_stat_type)){
-    fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+    fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessFishingTripsFromDB
+accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL){
+  fa_sql <- readSQLScript("data/core/sql/fishing_trips.sql")
+  if(!is.null(vessel_stat_type)){
+    fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessFishingTripDetailFromDB
+accessFishingTripDetailFromDB <- function(con,trip_id = NULL){
+  fa_sql <- readSQLScript("data/core/sql/fishing_trip_details.sql")
+  if(!is.null(trip_id)){
+    fa_sql <- paste0(fa_sql, " WHERE ft.ID = ", trip_id)
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
@@ -282,6 +302,11 @@ accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL)
 #accessLogBooksMultiyearFromDB
 accessLogBooksMultiyearFromDB <- function(con){
   accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
+}
+
+#accessLogBooksTripsFromDB
+accessLogBooksTripsFromDB <- function(con){
+  accessFishingTripsFromDB(con,vessel_stat_type = 2)
 }
 
 #accessMonthlyFishingActivityFromDB
@@ -446,6 +471,16 @@ accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){
 #accessLogBooksMultiyear
 accessLogBooksMultiyear <- function(con){
   accessLogBooksMultiyearFromDB(con)
+}
+
+#accessLogBooksTrips
+accessLogBooksTrips <- function(con){
+  accessLogBooksTripsFromDB(con)
+}
+
+#accessFishingTripDetails
+accessFishingTripDetails <- function(con,trip_id){
+  accessFishingTripDetailFromDB(con,trip_id)
 }
 
 #accessMonthlyFishingActivity
