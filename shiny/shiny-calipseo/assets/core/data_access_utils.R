@@ -270,10 +270,13 @@ accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
 }
 
 #accessFishingTripsFromDB
-accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL){
+accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL){
   fa_sql <- readSQLScript("data/core/sql/fishing_trips.sql")
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  if(!is.null(vesselId)){
+    fa_sql <- paste0(fa_sql, " AND v.REGISTRATION_NUMBER = '", vesselId, "'")
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
@@ -305,8 +308,8 @@ accessLogBooksMultiyearFromDB <- function(con){
 }
 
 #accessLogBooksTripsFromDB
-accessLogBooksTripsFromDB <- function(con){
-  accessFishingTripsFromDB(con,vessel_stat_type = 2)
+accessLogBooksTripsFromDB <- function(con,vesselId=NULL){
+  accessFishingTripsFromDB(con,vessel_stat_type = 2,vesselId = vesselId)
 }
 
 #accessMonthlyFishingActivityFromDB
@@ -411,7 +414,6 @@ countVesselOwnersPerVessel <- function(con, registrationNumber) {
   countVesselOwnersPerVesselFromDB(con, registrationNumber)
 }
 
-
 #countVesselDaysAtSea
 countVesselDaysAtSea <- function(con, registrationNumber) {
   countVesselDaysAtSeaFromDB(con, registrationNumber)
@@ -477,6 +479,10 @@ accessLogBooksMultiyear <- function(con){
 accessLogBooksTrips <- function(con){
   accessLogBooksTripsFromDB(con)
 }
+
+#accessFishingTrips
+accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL)
+accessFishingTripsFromDB(con,vessel_stat_type,vesselId)
 
 #accessFishingTripDetails
 accessFishingTripDetails <- function(con,trip_id){

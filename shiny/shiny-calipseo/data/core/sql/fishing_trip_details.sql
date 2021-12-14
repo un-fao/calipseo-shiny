@@ -5,7 +5,7 @@ v.NAME as vessel_name,v.REGISTRATION_NUMBER as reg_number, vt.NAME as vesseltype
 fz.NAME as fishing_zone,
 ls.NAME as landing_site,
 g.NAME as fishing_gear,
-sp.NAME as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, 
+sp.NAME as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, sp.COMMENT as comment, 
 fas.QUANTITY as quantity, uom.CODE as quantity_unit 
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_gear as fag ON fa.ID = fag.DT_FISHING_ACTIVITY_ID 
