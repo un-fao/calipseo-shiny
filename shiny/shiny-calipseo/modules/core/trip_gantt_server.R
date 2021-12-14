@@ -3,22 +3,13 @@
 #' @title trip_gantt_server
 #' @description \code{trip_gantt_server} Server part of trip_gantt module
 #'
-#' @usage line_chart_server(id, df, colDate, colTarget, colValue, colText, xlab, ylab, rank, nbToShow, rankLabel)
+#' @usage trip_gantt_server(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full")
 #'                 
 #' @param id specific id of module to be able to link ui and server part
-#' @param df dataframe 
-#' @param label label use to target column
-#' @param colDate column name of date variable 
-#' @param colTarget column name of variable of interest 
-#' @param colValue column name of value
-#' @param colText column name of variable use to marker label
-#' @param xlab character string to specify x label name
-#' @param ylab character string to specify y label name
-#' @param rank boolean argument, if TRUE slider include capacity to filter target value by rank level of value
-#' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
-#' @param rankLabel character string to specify rank label name
-#' @param plotType type of maine trace type : 'line' or 'bar'
-#' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
+#' @param pool database connection 
+#' @param vessel_stat_type id number to vessel stat type
+#' @param vesselId registration number of vessel
+#' @param mode 'full' for completed application with capacity to filter data and indicators; 'light' to minimal format without options
 #'    
 
 trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full") {
