@@ -2,8 +2,8 @@ SELECT
 ft.ID,
 ft.DATE_FROM as date_from , ft.DATE_TO as date_to, 
 v.NAME as vessel_name,v.REGISTRATION_NUMBER as reg_number, vt.NAME as vesseltype, 
-fz.NAME as fishing_zone,
-ls.NAME as landing_site,
+fz.NAME as fishing_zone, fz.COORDINATE_LONGITUDE as fz_longitude, fz.COORDINATE_LATITUDE as fz_latitude,
+ls.NAME as landing_site, ls.LONGITUDE as ls_longitude, ls.LATITUDE as ls_latitude,
 g.NAME as fishing_gear,
 sp.NAME as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, sp.COMMENT as comment, 
 fas.QUANTITY as quantity, uom.CODE as quantity_unit 

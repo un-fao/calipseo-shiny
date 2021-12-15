@@ -167,7 +167,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       output$indicators<-renderUI({
         fluidRow(
           infoBox("Number of vessels",max(formated$y), icon = icon("ship"), fill = TRUE, width = 3),
-          infoBox("Number of trips",length(unique(formated$trip_id)), icon = icon("ship"), fill = TRUE, width = 3)
+          infoBox("Number of trips",length(unique(formated$trip_id)), icon = icon("calendar",lib="glyphicon"), fill = TRUE, width = 3)
         )
       })
       
@@ -302,6 +302,52 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
           
         })
         
+        landing_site<-trip%>%
+          select(landing_site,ls_longitude,ls_latitude)%>%
+          distinct()%>%
+          rename(longitude=ls_longitude)%>%
+          rename(latitude=ls_latitude)
+        
+        output$landing_map <- renderUI({
+          if(is.na(landing_site$latitude)|is.na(landing_site$longitude)){
+            HTML("<p><em>(landing site position not available)</em></p>")
+          }else{
+            leafletOutput(ns("map_ls"),width = "90%",height=150)
+          }
+        })
+        
+        if(!is.na(landing_site$latitude)&!is.na(landing_site$longitude)){
+          output$map_ls <- renderLeaflet({
+            leaflet() %>%
+              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+              addMarkers(data = landing_site, lat = as.numeric(landing_site$latitude), lng = as.numeric(landing_site$longitude))%>%
+              setView(lat = as.numeric(landing_site$latitude), lng = as.numeric(landing_site$longitude),zoom=6)
+          })
+        }
+        
+        fishing_zone<-trip%>%
+          select(fishing_zone,fz_longitude,fz_latitude)%>%
+          distinct()%>%
+          rename(longitude=fz_longitude)%>%
+          rename(latitude=fz_latitude)
+        
+        output$fishingZone_map <- renderUI({
+          if(is.na(fishing_zone$latitude)|is.na(fishing_zone$longitude)){
+            HTML("<p><em>(fishing zone position not available)</em></p>")
+          }else{
+            leafletOutput(ns("map_fz"),width = "90%",height=150)
+          }
+        })
+        
+        if(!is.na(fishing_zone$latitude)&!is.na(fishing_zone$longitude)){
+          output$map_fz <- renderLeaflet({
+            leaflet() %>%
+              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+              addMarkers(data = fishing_zone, lat = as.numeric(fishing_zone$latitude), lng = as.numeric(fishing_zone$longitude))%>%
+              setView(lat = as.numeric(fishing_zone$latitude), lng = as.numeric(fishing_zone$longitude),zoom=6)
+          })
+        }
+        
         showModal(
           modalDialog(
             fluidPage(
@@ -323,6 +369,14 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                 ),
                 column(6,
                        HTML(sprintf("<p style='font-size:16px;'>Landing site : <span style='color:#0288D1;'><u>%s</u></span>",trip$landing_site[1])),
+                )
+              ),
+              fluidRow(
+                column(6,
+                       uiOutput(ns("fishingZone_map"))
+                ),
+                column(6,
+                       uiOutput(ns("landing_map"))
                 )
               ),
               fluidRow(
