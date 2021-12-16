@@ -31,6 +31,8 @@ vessel_list_server <- function(input, output, session, pool) {
   names(df)[names(df)=="REG PORT LANDING SITE"] <- "REGISTRATION PORT/LANDING SITE"
   names(df)[names(df)=="Details"] <- "" 
   
+  df <- df[,c(1,2,3,4,5,6,7,16)]
+  
   output$vessel_list <- renderDataTable(
     df,
     server = FALSE,

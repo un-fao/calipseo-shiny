@@ -21,7 +21,8 @@ vessel_info_ui <- function(id){
                             div(id='info-tabs',
                                 tabsetPanel(
                                   tabPanel('Info', uiOutput(ns("vessel_description"))),
-                                  tabPanel('Registration', uiOutput(ns("vessel_registration")))
+                                  tabPanel('Registration', uiOutput(ns("vessel_registration"))),
+                                  tabPanel('Characteristic', uiOutput(ns("vessel_characteristic")))
                                 )
                             )
                         )

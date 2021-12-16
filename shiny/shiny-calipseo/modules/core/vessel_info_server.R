@@ -92,7 +92,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
               tags$li('Vessel name: ', tags$b(vessel$NAME)),
               tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
               tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
-              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE))
+              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE)),
+              tags$li('IRCS: ', tags$b(ifelse(!is.na(vessel$IRCS),vessel$IRCS, '-'))),
+              tags$li('IMO: ', tags$b(ifelse(!is.na(vessel$IMO),vessel$IMO, '-')))
       )
     })
     
@@ -327,6 +329,149 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$vessel_picture <- renderUI({
       
       vessel_picture_html
+      
+    })
+    
+    #vesselcharacteristics
+    
+    df_characteristic <- reactive({
+      
+      descr_calipseo <- vessel[,c(11:16)]
+      
+      descr_calipseo$id <- row.names(descr_calipseo)
+      
+      
+      descr_calipseo <- reshape(descr_calipseo, direction = 'long',idvar = 'id', v.names = c('LOA','DRA','GT', 'SPEED','TRAWLING.SPEED','POWER') ,
+                                varying = list(1:6),times = c('LOA','DRA','GT', 'SPEED','TRAWLING.SPEED','POWER'))
+      
+      descr_calipseo <- data.frame(
+        Description = descr_calipseo$time,
+        Value = descr_calipseo$LOA
+      )
+      
+      descr_calipseo$Description[descr_calipseo$Description=='LOA'] <- 'Length Overall (m)'
+      descr_calipseo$Description[descr_calipseo$Description=='DRA'] <- 'Draught (m)'
+      descr_calipseo$Description[descr_calipseo$Description=='GT'] <- 'Gross Tonnage'
+      descr_calipseo$Description[descr_calipseo$Description=='SPEED'] <- 'Speed'
+      descr_calipseo$Description[descr_calipseo$Description=='TRAWLING.SPEED'] <- 'Trawling Speed'
+      descr_calipseo$Description[descr_calipseo$Description=='POWER'] <- 'Power'
+      descr_calipseo$Value[is.na(descr_calipseo$Value)] <- '-'
+      
+      
+      extra_calipseo <- data.frame(
+        Description = c('Beam (m)','Summer Deadweight (t)'),
+        Value = c('-', '-')
+      )
+      
+      df_calipseo <- rbind(descr_calipseo,extra_calipseo)
+      
+      df_calipseo <- df_calipseo[c(1,2,7,3,8,4,5,6),]
+      
+      
+      names(df_calipseo) <- c('Description','Calipseo')
+      
+      return(df_calipseo)
+      
+    })
+    
+    
+    
+    
+    
+    output$vessel_characteristic <- renderUI({
+      
+      df_calipseo_char <- df_characteristic()
+      df_vesselfinder_char <- vesselFindeR_char_table(vessel_found[['link']])
+      
+      
+      
+      if(!is.null(df_vesselfinder_char)){
+        df <- cbind(df_calipseo_char,df_vesselfinder_char)
+        
+        tags$table(border = 1,
+                   tags$tbody(
+                     tags$tr(
+                       tags$td(),
+                       tags$td(align = "center", strong("Calipseo")),
+                       tags$td(align = "center", strong("VesselFinder*"))),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[1]),
+                       tags$td(align = "center", df$Calipseo[1]),
+                       tags$td(align = "center", df$VesselFinder[1])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[2]),
+                       tags$td(align = "center", df$Calipseo[2]),
+                       tags$td(align = "center", df$VesselFinder[2])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[3]),
+                       tags$td(align = "center", df$Calipseo[3]),
+                       tags$td(align = "center", df$VesselFinder[3])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[4]),
+                       tags$td(align = "center", df$Calipseo[4]),
+                       tags$td(align = "center", df$VesselFinder[4])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[5]),
+                       tags$td(align = "center", df$Calipseo[5]),
+                       tags$td(align = "center", df$VesselFinder[5])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[6]),
+                       tags$td(align = "center", df$Calipseo[6]),
+                       tags$td(align = "center", df$VesselFinder[6])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[7]),
+                       tags$td(align = "center", df$Calipseo[7]),
+                       tags$td(align = "center", df$VesselFinder[7])),
+                     tags$tr(
+                       tags$td(align = "center", df$Description[8]),
+                       tags$td(align = "center", df$Calipseo[8]),
+                       tags$td(align = "center", df$VesselFinder[8]))
+                   ))
+        
+        
+        
+      }else{
+        
+        tags$table(border = 1,
+                   tags$tbody(
+                     tags$tr(
+                       tags$td(),
+                       tags$td(align = "center", strong("Calipseo"))),
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[1]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[1])),
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[2]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[2])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[3]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[3])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[4]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[4])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[5]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[5])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[6]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[6])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[7]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[7])),
+                     
+                     tags$tr(
+                       tags$td(align = "center", df_calipseo_char$Description[8]),
+                       tags$td(align = "center", df_calipseo_char$Calipseo[8])),
+                     
+                   ))
+        
+      }
+      
       
     })
     

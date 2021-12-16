@@ -43,6 +43,37 @@ vesselFindeR <- function(name, flag_iso2){
 }
 
 
+#vesselcharacteristicttable
+
+vesselFindeR_char_table<- function(url){
+  tryCatch({
+    link<- xml2::read_html(url)
+    descr_vessel_finder<-link%>%
+      rvest::html_table("tparams", header=F)
+    descr_vessel_finder<-descr_vessel_finder[[1]]
+    
+    names(descr_vessel_finder) <- c('Description','Value')
+    
+    descr_vessel_finder <- descr_vessel_finder[c(8,10,9,6,7),]
+    
+    extra_vessel_finder <- data.frame(
+      Description = c('Speed', 'Trawling Speed', 'Power'),
+      Value = c('-', '-', '-')
+    )
+    
+    df_vessel_finder <- rbind(descr_vessel_finder,extra_vessel_finder)
+    
+    df_vessel_finder <-as.data.frame(df_vessel_finder$Value)
+    names(df_vessel_finder) <- 'VesselFinder'
+    
+    return(df_vessel_finder)
+  },error=function(e){
+    
+    df <- NULL
+  })
+}
+
+
 #customeinfobox
 custome_infoBox <- function(title = NULL, value = NULL, icon = NULL,
                             width=3, color = 'aqua',text_color = 'white') {
@@ -70,3 +101,4 @@ custome_infoBox <- function(title = NULL, value = NULL, icon = NULL,
   )
   
 }
+
