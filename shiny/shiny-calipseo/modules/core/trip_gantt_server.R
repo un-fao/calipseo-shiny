@@ -10,9 +10,10 @@
 #' @param vessel_stat_type id number to vessel stat type
 #' @param vesselId registration number of vessel
 #' @param mode 'full' for completed application with capacity to filter data and indicators; 'light' to minimal format without options
+#' @param withMap boolean, if TRUE display fishing zone and landing site map
 #'    
 
-trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full") {
+trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full", withMap=F) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -28,7 +29,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
     
       box(id='trip-box', width = 12,
           fluidPage(
-            fluidRow(column(8,offset=4,p("click on a trip to see more informations"))),
+            fluidRow(column(8,offset=4,p("Click on a trip to see more information"))),
             fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
           )
       )
@@ -61,39 +62,45 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
   
   if(mode!="light"){
     
-    output$from<-renderUI({
-      years<-sort(as.integer(unique(format(as.Date(unique(c(trips$date_from,trips$date_to))),format = '%Y'))))
-      shinyWidgets::pickerInput(ns("period_from"),"Period from ",choices=years,selected = min(years),width = 'fit')
-    })
-    
-    output$to<-renderUI({
-      years<-sort(as.integer(unique(format(as.Date(unique(c(trips$date_from,trips$date_to))),format = '%Y'))))
-      shinyWidgets::pickerInput(ns("period_to"),"to ",choices=years[as.integer(years)>=as.integer(input$period_from)],selected=max(years),width = 'fit')
+    output$daterange<-renderUI({
+      dates<-as.Date(unique(trips$date_from,trips$date_to))
+      dateRangeInput(ns("period"), "Period:",
+                     start  = min(dates),
+                     end    = max(dates),
+                     min    = min(dates),
+                     max    = max(dates),
+                     format = "yyyy-mm-dd",
+                     language ='en',
+                     separator = " to ",
+                     width='60%')
     })
     
     output$vesseltype_select<-renderUI({
-      vesseltypeList<-unique(subset(trips,date_to>=as.Date(sprintf('%s-01-01',input$period_from),format="%Y-%m-%d")&
-                           date_from<=as.Date(sprintf('%s-12-31',input$period_to),format="%Y-%m-%d"))$vesseltype)
+      print(class(input$period[1]))
+       vesseltypeList<-unique(subset(trips,date_from>=input$period[1]&date_to<=input$period[2])$vesseltype)
+      #vesseltypeList<-unique(trips$vesseltype)
 
-      shinyWidgets::pickerInput(ns("vesseltype"),"Vessel type : ",choices=vesseltypeList,selected=NULL,multiple=T,width = 'fit',options = pickerOptions(title = "All"
-      ))
+      shinyWidgets::pickerInput(ns("vesseltype"),"Vessel type : ",choices=vesseltypeList,selected=NULL,multiple=T,width = 'fit',
+                                options = pickerOptions(title = "All",selectedTextFormat = "static")
+                                )
      
     })
     
     output$vessel_select<-renderUI({
-      vesselList<-subset(trips,date_to>=as.Date(sprintf('%s-01-01',input$period_from),format="%Y-%m-%d")&
-                                       date_from<=as.Date(sprintf('%s-12-31',input$period_to),format="%Y-%m-%d"))
+       vesselList<-subset(trips,date_from>=input$period[1]&date_to<=input$period[2])
+      #vesselList<-trips
       if(!is.null(input$vesseltype)){
         vesselList<-subset(vesselList,vesseltype%in%input$vesseltype)
       }
       vesselList<-unique(vesselList$vesselname)
-      shinyWidgets::pickerInput(ns("vesselname"),"Vessels : ",choices=vesselList,selected=NULL,multiple=T,width = 'fit',options = pickerOptions(title = "All"
-      ))
+      shinyWidgets::pickerInput(ns("vesselname"),"Vessels : ",choices=vesselList,selected=NULL,multiple=T,width = 'fit',
+                                options = pickerOptions(title = "All",maxOptions = 5,maxOptionsText = "Only five vessels can be selected at a time",selectedTextFormat = "static")
+                                )
     })
 
     output$nbByPage_select<-renderUI({
-      tmp<-subset(trips,date_to>=as.Date(sprintf('%s-01-01',input$period_from),format="%Y-%m-%d")&
-                           date_from<=as.Date(sprintf('%s-12-31',input$period_to),format="%Y-%m-%d"))
+       tmp<-subset(trips,date_from>=input$period[1]&date_to<=input$period[2])
+      #tmp<-trips
       if(!is.null(input$vesseltype)){
         tmp<-subset(tmp,vesseltype%in%input$vesseltype)
       }
@@ -106,34 +113,17 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       }else{return(NULL)}
     })
     
-    output$test<-renderUI({
-      dates<-as.Date(unique(trips$date_from,trips$date_to))
-      dateRangeInput(ns("daterange"), "Period:",
-                     start  = min(dates),
-                     end    = max(dates),
-                     min    = min(dates),
-                     max    = max(dates),
-                     format = "yyyy-mm-dd",
-                     language ='en',
-                     separator = " to ")
-    })
-    
     output$message<-renderUI({
       if(isTRUE(data_ready())){
-        p("click on a trip to see more informations")
+        p("Click on a trip to see more information")
       }else{
         p("Select criteria to display corresponding trips")
       }
     })
 
     output$selector<-renderUI({
-      years<-unique(format(as.Date(unique(c(trips$date_from,trips$date_to))),format = '%Y'))
       tagList(
-        fluidRow(
-          column(width=6,uiOutput(ns("from"))),
-          column(width=6,uiOutput(ns("to")))
-        ),
-        #uiOutput(ns("test")),
+        uiOutput(ns("daterange")),
         uiOutput(ns("vesseltype_select")),
         uiOutput(ns("vessel_select")),
         uiOutput(ns("nbByPage_select")),
@@ -144,8 +134,8 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
   #Data subsetting
     data_formating<-eventReactive(input$go,{
       
-      formated<-subset(trips,date_to>=as.Date(sprintf('%s-01-01',input$period_from),format="%Y-%m-%d")&
-                    date_from<=as.Date(sprintf('%s-12-31',input$period_to),format="%Y-%m-%d"))
+       formated<-subset(trips,date_from>=input$period[1]&date_to<=input$period[2])
+      #formated<-trips
       if(!is.null(input$vesseltype)){
         formated<-subset(formated,vesseltype%in%input$vesseltype)
       }
@@ -302,6 +292,9 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
           
         })
         
+        
+        if(isTRUE(withMap)){
+        
         landing_site<-trip%>%
           select(landing_site,ls_longitude,ls_latitude)%>%
           distinct()%>%
@@ -310,7 +303,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         output$landing_map <- renderUI({
           if(is.na(landing_site$latitude)|is.na(landing_site$longitude)){
-            HTML("<p><em>(landing site position not available)</em></p>")
+            HTML("<p><em>(landing site coordinates not available)</em></p>")
           }else{
             leafletOutput(ns("map_ls"),width = "90%",height=150)
           }
@@ -333,7 +326,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         output$fishingZone_map <- renderUI({
           if(is.na(fishing_zone$latitude)|is.na(fishing_zone$longitude)){
-            HTML("<p><em>(fishing zone position not available)</em></p>")
+            HTML("<p><em>(fishing zone coordinates not available)</em></p>")
           }else{
             leafletOutput(ns("map_fz"),width = "90%",height=150)
           }
@@ -348,44 +341,48 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
           })
         }
         
+        output$map<-renderUI({
+          fluidRow(
+            column(6,
+                   uiOutput(ns("fishingZone_map"))
+            ),
+            column(6,
+                   uiOutput(ns("landing_map"))
+            )
+          )
+          })
+        }else{
+          output$map<-renderUI({NULL})
+        }
+        
         showModal(
           modalDialog(
             fluidPage(
               fluidRow(
                 column(12,
-                       HTML(sprintf("<p style='font-size:16px;'>Trip from <span style='color:#0288D1;'><u>%s</u></span> to <span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span> days)</p>",format(as.Date(trip$date_from[1]),format = '%d %B %Y'),format(as.Date(trip$date_to[1]),format = '%d %B %Y'),as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days"))),)
+                       HTML(sprintf("<p style='font-size:16px;'>Trip from <span style='color:#0288D1;'><u>%s</u></span> to <span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span> days)</p>",format(as.Date(trip$date_from[1]),format = '%d-%m-%Y'),format(as.Date(trip$date_to[1]),format = '%d-%m-%Y'),as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days"))))
                 )),
               fluidRow(
                 column(6,
                        HTML(sprintf("<p style='font-size:16px;'>Vessel type : <span style='color:#0288D1;'><u>%s</u></span>",trip$vesseltype[1]))
                 ),
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Fishing gear : <span style='color:#0288D1;'><u>%s</u></span>",trip$fishing_gear[1]))
-                )
+                       HTML(sprintf("<p style='font-size:16px;'>Fishing gear : <span style='color:#0288D1;'><u>%s</u></span></p>",if(length(unique(trip$fishing_gear))>1){sprintf("<ul>%s</li></ul>",paste0("<li style='color:#0288D1;>",unique(trip$fishing_gear),collapse = "","</li>"))}else{trip$fishing_gear[1]}))
+                       )
               ),
               fluidRow(
                 column(6,
                        HTML(sprintf("<p style='font-size:16px;'>Fishing zone : <span style='color:#0288D1;'><u>%s</u></span>",trip$fishing_zone[1]))
                 ),
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Landing site : <span style='color:#0288D1;'><u>%s</u></span>",trip$landing_site[1])),
+                       HTML(sprintf("<p style='font-size:16px;'>Landing site : <span style='color:#0288D1;'><u>%s</u></span>",trip$landing_site[1]))
                 )
               ),
+              uiOutput(ns('map')),
               fluidRow(
-                column(6,
-                       uiOutput(ns("fishingZone_map"))
-                ),
-                column(6,
-                       uiOutput(ns("landing_map"))
-                )
-              ),
-              fluidRow(
-                column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Total quantity caught : <span style='color:#0288D1;'><u>%s kg</u></span>",sum(trip$quantity)))
-                ),
-                column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Number of species caught : <span style='color:#0288D1;'><u>%s</u></span>",length(unique(trip$species_asfis)))),
-                )
+                valueBox(value=tags$p("Quantity caught",style="font-size: 40%"), subtitle=paste(sum(trip$quantity)/1000, "tons"), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p("Content",style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),"species"), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p("Global CPUE",style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0), "kg/day"), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
               ),
               fluidRow(column(10, align="center",offset=1,DTOutput(ns("table"))%>%withSpinner(type = 4)))
             )

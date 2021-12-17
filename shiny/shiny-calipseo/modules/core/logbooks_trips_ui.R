@@ -5,7 +5,7 @@ logbooks_trips_ui <- function(id){
   
   tabItem(tabName = "logbooks_trips",
           uiOutput(ns("urlPage")),
-          h2("Trips catalog"),
+          h2("Trips overview"),
           trip_gantt_ui(ns("trips"),sliderWidth =25)
   )
 
