@@ -92,7 +92,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
               tags$li('Vessel name: ', tags$b(vessel$NAME)),
               tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
               tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
-              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE))
+              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE)),
+              tags$li('IRCS: ', tags$b(ifelse(!is.na(vessel$IRCS),vessel$IRCS, '-'))),
+              tags$li('IMO: ', tags$b(ifelse(!is.na(vessel$IMO),vessel$IMO, '-')))
       )
     })
     
@@ -317,9 +319,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     vessel_found <- vesselFindeR(vessel$NAME, appConfig$country_profile$data$ISO_2_CODE)
     
     
-    if(!is.null(vessel_found$img_href)){
-      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, width = "250px", alt = vessel$NAME)
-      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$link, " target=\"_blank\" a> VesselFinder </a></div>"))
+    
+    if(nrow(vessel_found)>0){
+      vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
+      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$Value[1], " target=\"_blank\" a> VesselFinder </a></div>"))
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
@@ -330,6 +333,268 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     })
     
+    #vesselcharacteristics
+    
+    df_characteristics <- reactive({
+      
+      descr_calipseo <- vessel[,c(11:16)]
+      
+      descr_calipseo$id <- row.names(descr_calipseo)
+      
+      
+      descr_calipseo <- reshape(descr_calipseo, direction = 'long',idvar = 'id', v.names = c('LOA','DRA','GT', 'SPEED','TRAWLING.SPEED','POWER') ,
+                                varying = list(1:6),times = c('LOA','DRA','GT', 'SPEED','TRAWLING.SPEED','POWER'))
+      
+      descr_calipseo <- data.frame(
+        Description = descr_calipseo$time,
+        Value = descr_calipseo$LOA
+      )
+      
+      descr_calipseo$Description[descr_calipseo$Description=='LOA'] <- 'Length Overall (m)'
+      descr_calipseo$Description[descr_calipseo$Description=='DRA'] <- 'Draught (m)'
+      descr_calipseo$Description[descr_calipseo$Description=='GT'] <- 'Gross Tonnage'
+      descr_calipseo$Description[descr_calipseo$Description=='SPEED'] <- 'Speed'
+      descr_calipseo$Description[descr_calipseo$Description=='TRAWLING.SPEED'] <- 'Trawling Speed'
+      descr_calipseo$Description[descr_calipseo$Description=='POWER'] <- 'Power'
+      descr_calipseo$Value[is.na(descr_calipseo$Value)] <- '-'
+      
+      
+      extra_calipseo <- data.frame(
+        Description = c('Beam (m)','Summer Deadweight (t)'),
+        Value = c('-', '-')
+      )
+      
+      df_calipseo <- rbind(descr_calipseo,extra_calipseo)
+      
+      df_calipseo <- df_calipseo[c(1,2,7,3,8,4,5,6),]
+      
+      
+      names(df_calipseo) <- c('Description','Calipseo')
+      
+      return(df_calipseo)
+      
+    })
+    
+    
+    
+    output$vessel_characteristics <- renderUI({
+      
+      df_calipseo_char <- df_characteristics()
+      df_vesselfinder_char <- vessel_found[c(3:10),2]
+      
+      if(!is.null(df_vesselfinder_char)){
+        df <- cbind(df_calipseo_char,df_vesselfinder_char)
+        names(df) <- c('Description','Calipseo','VesselFinder')
+        
+        tags$table(class="table table-striped", style="font-size:80% !important;",
+                   tags$thead(
+                     tags$tr(
+                       tags$th(
+                         scope='col'
+                       ),
+                       tags$th(
+                         scope='col','Calipseo'
+                       ),
+                       tags$th(
+                         scope='col','VesselFinder*'
+                       )
+                     )
+                   ),
+                   tags$tbody(
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[1]
+                       ),
+                       tags$td(
+                         df$Calipseo[1]
+                       ),
+                       tags$td(
+                         df$VesselFinder[1]
+                       )
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[2]
+                       ),
+                       tags$td(
+                         df$Calipseo[2]
+                       ),
+                       tags$td(
+                         df$VesselFinder[2]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[3]
+                       ),
+                       tags$td(
+                         df$Calipseo[3]
+                       ),
+                       tags$td(
+                         df$VesselFinder[3]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[4]
+                       ),
+                       tags$td(
+                         df$Calipseo[4]
+                       ),
+                       tags$td(
+                         df$VesselFinder[4]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[5]
+                       ),
+                       tags$td(
+                         df$Calipseo[5]
+                       ),
+                       tags$td(
+                         df$VesselFinder[5]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[6]
+                       ),
+                       tags$td(
+                         df$Calipseo[6]
+                       ),
+                       tags$td(
+                         df$VesselFinder[6]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[7]
+                       ),
+                       tags$td(
+                         df$Calipseo[7]
+                       ),
+                       tags$td(
+                         df$VesselFinder[7]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df$Description[8]
+                       ),
+                       tags$td(
+                         df$Calipseo[8]
+                       ),
+                       tags$td(
+                         df$VesselFinder[8]
+                       )
+                       
+                     )
+                   ))
+        
+        
+        
+      }else{
+        
+        tags$table(class="table table-striped", style="font-size:80% !important;",
+                   tags$thead(
+                     tags$tr(
+                       tags$th(
+                         scope='col'
+                       ),
+                       tags$th(
+                         scope='col','Calipseo'
+                       )
+                     )
+                   ),
+                   tags$tbody(
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[1]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[1]
+                       )
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[2]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[2]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[3]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[3]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[4]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[4]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[5]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[5]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[6]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[6]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[7]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[7]
+                       )
+                       
+                     ),
+                     tags$tr(
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[8]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[8]
+                       )
+                       
+                     )
+                   ))
+        
+      }
+      
+      
+      
+      
+      
+      
+    })
     
   
     SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
