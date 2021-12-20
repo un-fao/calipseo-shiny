@@ -9,13 +9,10 @@ home_ui <- function(id){
             div(
               width = 12, style = "margin:12px;",
               
-              tags$h2("Calipseo R Shiny Dashboard",tags$small("Access and compute statistics over the Calipseo OpenFismis plateform"))
+              tags$h2(i18n("HOME_CALIPSEO_TITLE"),tags$small(i18n("HOME_CALIPSEO_SUBTITLE")))
             )
           ),
           withSpinner(uiOutput(ns("nb_infos")))
-          #fluidRow(
-          #  box(width = 12, height = 345, title = "Monthly fishing activity", status = "primary", solidHeader= TRUE, plotlyOutput(ns("activity")))
-          #)
   )
   
 }

@@ -16,6 +16,9 @@ if(nzchar(local_config_file)) config_file <- local_config_file
 if(!file.exists(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
+#language (in case not part of configuration)
+if(is.null(appConfig$language)) appConfig$language <- "en"
+
 #packages
 #---------------------------------------------------------------------------------------
 #To be installed on server before (not at shiny runtime)
@@ -69,6 +72,11 @@ loadLocalCountryDatasets(appConfig)
 #remote datasets
 #---------------------------------------------------------------------------------------
 loadRemoteReferenceDataset("asfis_enrished","https://raw.githubusercontent.com/openfigis/RefData/gh-pages/species/CL_FI_SPECIES_GROUPS.csv")
+
+#language/i18n
+#---------------------------------------------------------------------------------------
+#we extend appConfig with i18n iterms
+appConfig$i18n <- getModuleI18nTerms()
 
 #modules
 #---------------------------------------------------------------------------------------

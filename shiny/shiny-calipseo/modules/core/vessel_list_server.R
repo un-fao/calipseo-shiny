@@ -4,7 +4,7 @@ vessel_list_server <- function(input, output, session, pool) {
   output$vessel_list_info <- renderText({
     session$userData$page("vessel-list")
     updatePageUrl("vessel-list", session)
-    text <- "<h2>List of vessels <small>Access information on vessels</small></h2><hr>"
+    text <- paste0("<h2>", i18n("VESSEL_LIST_TITLE")," <small>", i18n("VESSEL_LIST_SUBTITLE"),"</small></h2><hr>")
     text
   })
   

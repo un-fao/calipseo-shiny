@@ -1,6 +1,7 @@
 #listModuleProfiles
 listModuleProfiles <- function(config, core = TRUE, country = TRUE){
   default_module_profiles <- list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
+  default_module_profiles <- default_module_profiles[regexpr("i18n", default_module_profiles)<0]
   filter <- NULL
   if(core) filter <- regexpr("core", default_module_profiles) > 0
   if(country){
@@ -38,6 +39,33 @@ loadModuleScripts <- function(config){
       message(sprintf("Shiny module '%s' is disabled!", module$name))
     }
   }
+}
+
+#getModuleI18nTerms
+getModuleI18nTerms <- function(){
+  module_i18n_files <- list.files(path = "./modules", pattern = "i18n", recursive = TRUE, full.names = TRUE)
+  module_i18n_files <- sapply(module_i18n_files, function(x){unlist(strsplit(x,"\\.json"))[1]})
+  names(module_i18n_files) <- NULL
+  available_i18n_languages <- unique(sapply(module_i18n_files, function(x){
+    file_parts <- unlist(strsplit(x,"_"))
+    return(file_parts[[length(file_parts)]])
+  }))
+  i18n <- lapply(available_i18n_languages,
+    function(lang){
+     i18n_files <- list.files(path = "./modules", pattern = sprintf("i18n_%s.json", lang), recursive = TRUE, full.names = TRUE)
+     i18n_terms <- do.call("c", lapply(i18n_files, jsonlite::read_json))
+     return(i18n_terms)
+    }
+  )
+  names(i18n) <- available_i18n_languages
+  return(i18n)
+}
+
+#i18n
+i18n <- function(term){
+  i18n_term <- appConfig$i18n[[appConfig$language]][[term]]
+  if(is.null(i18n_term)) i18n_term <- tags$span(paste0("<",term,">"), style = "color:red;")
+  return(i18n_term)
 }
 
 #loadModuleServers
