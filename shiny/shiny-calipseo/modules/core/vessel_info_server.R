@@ -386,7 +386,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         df <- cbind(df_calipseo_char,df_vesselfinder_char)
         names(df) <- c('Description','Calipseo','VesselFinder')
         
-        tags$table(class="table table-sm",
+        tags$table(class="table table-striped", style="font-size:80% !important;",
                    tags$thead(
                      tags$tr(
                        tags$th(
@@ -502,7 +502,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         
       }else{
         
-        tags$table(class="table table-sm",
+        tags$table(class="table table-striped", style="font-size:80% !important;",
                    tags$thead(
                      tags$tr(
                        tags$th(
