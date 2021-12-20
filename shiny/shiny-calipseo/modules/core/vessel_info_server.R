@@ -319,9 +319,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     vessel_found <- vesselFindeR(vessel$NAME, appConfig$country_profile$data$ISO_2_CODE)
     
     
-    if(!is.null(vessel_found$img_href)){
-      vessel_picture_html <- createBase64Image(src = vessel_found$img_href, width = "250px", alt = vessel$NAME)
-      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$link, " target=\"_blank\" a> VesselFinder </a></div>"))
+    
+    if(nrow(vessel_found)>0){
+      vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
+      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$Value[1], " target=\"_blank\" a> VesselFinder </a></div>"))
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
@@ -334,7 +335,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #vesselcharacteristics
     
-    df_characteristic <- reactive({
+    df_characteristics <- reactive({
       
       descr_calipseo <- vessel[,c(11:16)]
       
@@ -376,105 +377,224 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     
-    
-    
-    output$vessel_characteristic <- renderUI({
+    output$vessel_characteristics <- renderUI({
       
-      df_calipseo_char <- df_characteristic()
-      df_vesselfinder_char <- vesselFindeR_char_table(vessel_found[['link']])
-      
-      
+      df_calipseo_char <- df_characteristics()
+      df_vesselfinder_char <- vessel_found[c(3:10),2]
       
       if(!is.null(df_vesselfinder_char)){
         df <- cbind(df_calipseo_char,df_vesselfinder_char)
+        names(df) <- c('Description','Calipseo','VesselFinder')
         
-        tags$table(border = 1,
+        tags$table(class="table table-sm",
+                   tags$thead(
+                     tags$tr(
+                       tags$th(
+                         scope='col'
+                       ),
+                       tags$th(
+                         scope='col','Calipseo'
+                       ),
+                       tags$th(
+                         scope='col','VesselFinder*'
+                       )
+                     )
+                   ),
                    tags$tbody(
                      tags$tr(
-                       tags$td(),
-                       tags$td(align = "center", strong("Calipseo")),
-                       tags$td(align = "center", strong("VesselFinder*"))),
+                       tags$th(
+                         scope="row", df$Description[1]
+                       ),
+                       tags$td(
+                         df$Calipseo[1]
+                       ),
+                       tags$td(
+                         df$VesselFinder[1]
+                       )
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[1]),
-                       tags$td(align = "center", df$Calipseo[1]),
-                       tags$td(align = "center", df$VesselFinder[1])),
+                       tags$th(
+                         scope="row", df$Description[2]
+                       ),
+                       tags$td(
+                         df$Calipseo[2]
+                       ),
+                       tags$td(
+                         df$VesselFinder[2]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[2]),
-                       tags$td(align = "center", df$Calipseo[2]),
-                       tags$td(align = "center", df$VesselFinder[2])),
+                       tags$th(
+                         scope="row", df$Description[3]
+                       ),
+                       tags$td(
+                         df$Calipseo[3]
+                       ),
+                       tags$td(
+                         df$VesselFinder[3]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[3]),
-                       tags$td(align = "center", df$Calipseo[3]),
-                       tags$td(align = "center", df$VesselFinder[3])),
+                       tags$th(
+                         scope="row", df$Description[4]
+                       ),
+                       tags$td(
+                         df$Calipseo[4]
+                       ),
+                       tags$td(
+                         df$VesselFinder[4]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[4]),
-                       tags$td(align = "center", df$Calipseo[4]),
-                       tags$td(align = "center", df$VesselFinder[4])),
+                       tags$th(
+                         scope="row", df$Description[5]
+                       ),
+                       tags$td(
+                         df$Calipseo[5]
+                       ),
+                       tags$td(
+                         df$VesselFinder[5]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[5]),
-                       tags$td(align = "center", df$Calipseo[5]),
-                       tags$td(align = "center", df$VesselFinder[5])),
+                       tags$th(
+                         scope="row", df$Description[6]
+                       ),
+                       tags$td(
+                         df$Calipseo[6]
+                       ),
+                       tags$td(
+                         df$VesselFinder[6]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[6]),
-                       tags$td(align = "center", df$Calipseo[6]),
-                       tags$td(align = "center", df$VesselFinder[6])),
+                       tags$th(
+                         scope="row", df$Description[7]
+                       ),
+                       tags$td(
+                         df$Calipseo[7]
+                       ),
+                       tags$td(
+                         df$VesselFinder[7]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df$Description[7]),
-                       tags$td(align = "center", df$Calipseo[7]),
-                       tags$td(align = "center", df$VesselFinder[7])),
-                     tags$tr(
-                       tags$td(align = "center", df$Description[8]),
-                       tags$td(align = "center", df$Calipseo[8]),
-                       tags$td(align = "center", df$VesselFinder[8]))
+                       tags$th(
+                         scope="row", df$Description[8]
+                       ),
+                       tags$td(
+                         df$Calipseo[8]
+                       ),
+                       tags$td(
+                         df$VesselFinder[8]
+                       )
+                       
+                     )
                    ))
         
         
         
       }else{
         
-        tags$table(border = 1,
+        tags$table(class="table table-sm",
+                   tags$thead(
+                     tags$tr(
+                       tags$th(
+                         scope='col'
+                       ),
+                       tags$th(
+                         scope='col','Calipseo'
+                       )
+                     )
+                   ),
                    tags$tbody(
                      tags$tr(
-                       tags$td(),
-                       tags$td(align = "center", strong("Calipseo"))),
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[1]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[1]
+                       )
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[1]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[1])),
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[2]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[2]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[2]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[2])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[3]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[3]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[3]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[3])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[4]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[4]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[4]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[4])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[5]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[5]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[5]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[5])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[6]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[6]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[6]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[6])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[7]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[7]
+                       )
+                       
+                     ),
                      tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[7]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[7])),
-                     
-                     tags$tr(
-                       tags$td(align = "center", df_calipseo_char$Description[8]),
-                       tags$td(align = "center", df_calipseo_char$Calipseo[8])),
-                     
+                       tags$th(
+                         scope="row", df_calipseo_char$Description[8]
+                       ),
+                       tags$td(
+                         df_calipseo_char$Calipseo[8]
+                       )
+                       
+                     )
                    ))
         
       }
       
       
+      
+      
+      
+      
     })
-    
     
   
     SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)

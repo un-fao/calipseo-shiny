@@ -22,7 +22,7 @@ vessel_info_ui <- function(id){
                                 tabsetPanel(
                                   tabPanel('Info', uiOutput(ns("vessel_description"))),
                                   tabPanel('Registration', uiOutput(ns("vessel_registration"))),
-                                  tabPanel('Characteristic', uiOutput(ns("vessel_characteristic")))
+                                  tabPanel('Characteristics', uiOutput(ns("vessel_characteristics")))
                                 )
                             )
                         )
