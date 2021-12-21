@@ -16,7 +16,7 @@ vesselFindeR <- function(name, flag_iso2){
     }
     
     
-    html2<- xml2::read_html(link)
+    html2 = httr::content(httr::GET(link, httr::add_headers("User-Agent" = "vesselFindeR")))
     df<-html2%>%
       rvest::html_table("tparams", header=F)
     df<-df[[1]]
