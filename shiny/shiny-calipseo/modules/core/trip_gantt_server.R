@@ -26,13 +26,20 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
   output$content<-renderUI({
     
     if(mode=="light"){
-    
-      box(id='trip-box', width = 12,
-          fluidPage(
-            fluidRow(column(8,offset=4,p("Click on a trip to see more information"))),
-            fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
+      if(nrow(trips)>0){
+        box(id='trip-box', width = 12,
+            fluidPage(
+              fluidRow(column(8,offset=4,p("Click on a trip to see more information"))),
+              fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
+            )
+        )
+      }else{
+          box(id='trip-box', width = 12,
+              fluidPage(
+                fluidRow(column(8,offset=4,p("No trip to display for this vessel")))
+              )
           )
-      )
+        }
     
       }else{
         tagList(

@@ -276,7 +276,7 @@ accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL
     fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
   }
   if(!is.null(vesselId)){
-    fa_sql <- paste0(fa_sql, " AND v.REGISTRATION_NUMBER = '", vesselId, "'")
+    fa_sql <- paste0(fa_sql, " WHERE v.REGISTRATION_NUMBER = '", vesselId, "'")
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
