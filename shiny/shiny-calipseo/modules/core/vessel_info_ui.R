@@ -48,6 +48,7 @@ vessel_info_ui <- function(id){
               shinyWidgets::verticalTabsetPanel(
                 shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
                 shinyWidgets::verticalTabPanel('Licenses',box_height='70px', DT::dataTableOutput(ns("license_table"))),
+                shinyWidgets::verticalTabPanel('Fishing Trips',box_height='70px', trip_gantt_ui(ns("fishing_trips_chart"),sliderWidth =25)),
                 shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
                                                tabsetPanel(
                                                  
