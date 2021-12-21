@@ -229,6 +229,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     })
     
+    #fishing trips chart
+    trip_gantt_server(id="fishing_trips_chart",pool,vessel_stat_type=NULL,vesselId=vesselId,mode="light")
+    
+    
     
     #catch summary
     if(nrow(vesselCatches)>0){
@@ -618,7 +622,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                       colDate = "date", colTarget="ISSCAAP_Group_En",
                       colValue="quantity", rank=FALSE)
     
-    #piechart
+   
     
     
     ftpv <- countFishingTripsPerVessel(pool,vesselId)
