@@ -106,6 +106,93 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       )
     })
     
+    
+    #history
+    
+    historical_df <- reactive({
+      historical_data <- accessVesselHistoricalCharacteristics(pool,vesselId)
+      
+      if(nrow(historical_data)>0){
+        
+        const_data <- historical_data[,c(1,10,11)]
+        
+        var_data <-  historical_data[,c(2:9)]
+        
+        old_data <- var_data[,c(1,3,5,7)]
+        new_data <- var_data[,-c(1,3,5,7)]
+        
+        
+        old_data <- within(old_data,  value <- paste(OLD_VALUE_FLOAT,OLD_ID_LABEL,OLD_VALUE_STRING,OLD_VALUE_DATE, sep=""))
+        new_data <- within(new_data,  value <- paste(NEW_VALUE_FLOAT,NEW_ID_LABEL,NEW_VALUE_STRING,NEW_VALUE_DATE, sep=""))
+        
+        old_data <- old_data[,5]
+        new_data <- new_data[,5]
+        
+        cl_data <- function(data){
+          data <- gsub('NA', '',data)
+          data <- gsub("[ \t](2,)", "", data)
+          data<- gsub("^\\s+|\\s+$", "", data)
+          return(data)
+        }
+        
+        
+        cl_df <- data.frame(
+          old=cl_data(old_data),
+          new=cl_data(new_data)
+        )
+        
+        df <- cbind(cl_df,const_data)
+        
+        for (i in 1:ncol(df)) {
+          
+          df[,i][df[,i]==""] <- 'NULL'
+          
+        }
+        
+        df <- df[,c(3,4,1,2,5)]
+        
+      }else{
+        
+        df <- data.frame(
+          Type = character(0),
+          Description = character(0),
+          Old_Value = character(0),
+          New_Value = character(0),
+          Change_Date = character(0)
+        )
+      }
+      return(df)
+    })
+    
+    
+    output$vessel_history <- renderDataTable(server = FALSE,{
+      datatable(
+        historical_df(),
+        escape = FALSE,
+        rownames = FALSE,
+        extensions = c("Buttons"), 
+        filter = list(position = 'top', clear = FALSE),
+        options = list(
+          autoWidth = TRUE,
+          dom = 'Bfrtip',
+          deferRender = TRUE,
+          scroll = FALSE,
+          buttons = list(
+            list(extend = 'copy'),
+            list(extend = 'csv', filename =  sprintf("vessel_historical_characteristics_%s", vesselId), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf("vessel_historical_characteristics_%s", vesselId), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf("vessel_historical_characteristics_%s", vesselId), 
+                 title = sprintf("Vessel '%s' (%s) Historical Characteristics", vesselId, vessel$NAME), header = TRUE)
+          ),
+          exportOptions = list(
+            modifiers = list(page = "all", selected = TRUE)
+          )
+        ),
+        colnames = c('Type','Description', 'Old Value', 'New Value', 'Change Date')
+      )
+      
+    })
+    
     #ownership
     output$vessel_owners <- renderDataTable(server = FALSE,{
       names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Pone Number", "Mobile Number")

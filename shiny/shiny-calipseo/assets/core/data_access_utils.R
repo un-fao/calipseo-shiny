@@ -87,6 +87,15 @@ accessVesselFromDB <- function(con, registrationNumber){
   return(vessel)
 }
 
+
+#accessVesselHistoricalCharacteristicsFromDB
+accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber){
+  vessel_historical_char_sql <- readSQLScript("data/core/sql/vessel_historical_characteristics.sql", 
+                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+  vessel_historical_char <- suppressWarnings(dbGetQuery(con, vessel_historical_char_sql))
+  return(vessel_historical_char)
+}
+
 #accessVesselOwnersFromDB
 accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
   vessel_owners_sql <- readSQLScript("data/core/sql/vessels_owners.sql",
@@ -361,6 +370,12 @@ accessVesselsCount <- function(con){
 #accessVessel
 accessVessel <- function(con, registrationNumber){
   accessVesselFromDB(con, registrationNumber)
+}
+
+
+#accessVesselHistoricalCharacteristics
+accessVesselHistoricalCharacteristics <- function(con, registrationNumber){
+  accessVesselHistoricalCharacteristicsFromDB(con, registrationNumber)
 }
 
 #accessVesselOwners
