@@ -320,9 +320,32 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     })
     
+    #warnings
+    warning_msg <- reactive({
+      if(nrow(vesselCatches)>0){
+        if(accessVesselCatches(pool, vesselId)$stat_type_id=='1'){
+          div(class="alert alert-warning", role="alert",style='text-align:center;',
+              tags$em("Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel")  
+          )
+        }
+      }
+      
+    })
+    
+    #warningvesselstattypefishingtrips
+    output$warning_vessel_stat_type_fishingtrips <- renderUI({
+      warning_msg()
+    })
+    
+    
+    #warningvesselstattypecatches
+    output$warning_vessel_stat_type_catches <- renderUI({
+      warning_msg()
+    })
+    
+    
     #fishing trips chart
     trip_gantt_server(id="fishing_trips_chart",pool,vessel_stat_type=NULL,vesselId=vesselId,mode="light")
-    
     
     
     #catch summary

@@ -49,10 +49,10 @@ vessel_info_ui <- function(id){
                 shinyWidgets::verticalTabPanel('History',box_height='70px' , DT::dataTableOutput(ns("vessel_history"))),
                 shinyWidgets::verticalTabPanel('Ownership',box_height='70px' , DT::dataTableOutput(ns("vessel_owners"))),
                 shinyWidgets::verticalTabPanel('Licenses',box_height='70px', DT::dataTableOutput(ns("license_table"))),
-                shinyWidgets::verticalTabPanel('Fishing Trips',box_height='70px', trip_gantt_ui(ns("fishing_trips_chart"),sliderWidth =25)),
+                shinyWidgets::verticalTabPanel('Fishing Trips',box_height='70px',uiOutput(ns('warning_vessel_stat_type_fishingtrips')), trip_gantt_ui(ns("fishing_trips_chart"),sliderWidth =25)),
                 shinyWidgets::verticalTabPanel('Catches',box_height='70px' ,
+                                               uiOutput(ns('warning_vessel_stat_type_catches')),
                                                tabsetPanel(
-                                                 
                                                  tabPanel('Summary', DT::dataTableOutput(ns("vessel_catch_summary"))),
                                                  tabPanel('History', DT::dataTableOutput(ns("vessel_catch_history")),htmlOutput(ns("vessel_catch_datasource"))),
                                                  tabPanel('Breakdown by species', 
