@@ -150,6 +150,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         }
         
         df <- df[,c(3,4,1,2,5)]
+        df$UPDATED_AT <- as.POSIXct(as.character(df$UPDATED_AT))
+        attr(df$UPDATED_AT, "tzone") <- appConfig$country_profile$timezone
+        df <- df[order(rank(df$UPDATED_AT),decreasing=TRUE),]
+        df$UPDATED_AT <- as.character.Date(df$UPDATED_AT)
         
       }else{
         
