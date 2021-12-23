@@ -324,8 +324,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     warning_msg <- reactive({
       if(nrow(vesselCatches)>0){
         if(accessVesselCatches(pool, vesselId)$stat_type_id=='1'){
-          div(class="alert alert-warning", role="alert",style='text-align:center;',
-              tags$em("Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel")  
+          div(class="alert alert-warning", role="alert",style='font-size:90%;',
+              icon("warning", "fa-2x"), tags$em("Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel")  
           )
         }
       }
