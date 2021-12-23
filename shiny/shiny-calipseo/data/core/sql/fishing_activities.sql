@@ -1,7 +1,7 @@
 SELECT 
 ft.ID as landing_id, 
 ft.DATE_FROM as dep_datetime, ft.DATE_TO as ret_datetime, 
-v.REGISTRATION_NUMBER as regnum, vt.NAME as vesstype, ft.CREW_NUMBER as crew,
+v.REGISTRATION_NUMBER as regnum, vt.NAME as vesstype,v.CL_APP_VESSEL_STAT_TYPE_ID as stat_type_id,ft.CREW_NUMBER as crew,
 fz.CODE as gr_f_area_id, fz.NAME as gr_f_area,
 ls.CODE as arrivalport, ls.ID as bch_id, ls.NAME as bch_name,
 g.CODE as f_mthd_id, g.NAME as f_mthd,
