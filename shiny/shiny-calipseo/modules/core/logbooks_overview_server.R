@@ -94,7 +94,8 @@ logbooks_overview_server <- function(input, output, session, pool){
     #info
     output$logbooks_overview_info <- renderText({
       #session$userData$page("logbooks_overview")
-      text <- "<h2 style='margin-top:0px;'>Overview of industrial fishing activities<small>Based on logbooks monitoring</small></h2>"
+      text <- paste0("<h2>", i18n("LOGBOOKS_OVERVIEW_TITLE")," <small>", i18n("LOGBOOKS_OVERVIEW_SUBTITLE"),"</small></h2>")
+      text
     })
     
     #counters

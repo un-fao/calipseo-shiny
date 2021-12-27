@@ -3,8 +3,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
-    text <- "<h2>Vessel information</h2>"
-    text <-paste0(text, "<hr>")
+    text <- paste0("<h2>", i18n("VESSEL_INFO_TITLE"),"</h2><hr>")
     text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\"><< Back to list of vessels</a>")
     text
   })

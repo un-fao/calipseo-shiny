@@ -18,7 +18,7 @@ logbooks_upload_ui <- function(id){
          )
        )
      ),
-    h2("Upload Logbooks"),
+    tags$h2(i18n("LOGBOOKS_UPLOAD_TITLE")),
     uiOutput(ns("urlPage")),
     fluidRow(
       column(3,

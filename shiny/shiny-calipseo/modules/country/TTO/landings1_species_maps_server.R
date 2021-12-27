@@ -4,12 +4,9 @@ landings1_species_maps_server <- function(input, output, session, pool){
   output$landings1_species_maps_info <- renderText({
     session$userData$page("landings1-species-maps")
     updatePageUrl("landings1-species-maps", session)
-    text <- "<h2>Descriptor Species maps "
-    text <- paste0(text, "<small>Access maps of landings with species distributions by landing site / year</small>")
-    text <- paste0(text, userTooltip("These maps represent the different landings by yearincluding the 1st raised landings (LAN), value (VAL) by landing site and giving proportions by the main species.",
-                                     style = "font-size: 75%;"))
-    text <- paste0(text, "</h2>")
-    text <- paste0(text, "<hr>")
+    text <- paste0("<h2>", i18n("LANDINGS1_SPECIES_MAPS_TITLE")," <small>", i18n("LANDINGS1_SPECIES_MAPS_SUBTITLE"),
+                   userTooltip("These maps represent the different landings by yearincluding the 1st raised landings (LAN), value (VAL) by landing site and giving proportions by the main species.",
+                               style = "font-size: 75%;"),"</small></h2><hr>")
     text
   })
   
