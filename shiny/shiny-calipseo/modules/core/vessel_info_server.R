@@ -3,9 +3,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
-    text <- "<h2>Vessel information</h2>"
-    text <-paste0(text, "<hr>")
-    text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\"><< Back to list of vessels</a>")
+    text <- paste0("<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\"><< Back to list of vessels</a>")
     text
   })
   
@@ -83,7 +81,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     }
     
     #name
-    output$vessel_name <- renderUI({ tags$b(vessel$NAME) })
+    output$vessel_name <- renderUI({tags$b('Vessel information - ',vessel$NAME)})
     
     #general description
     output$vessel_description <- renderUI({
