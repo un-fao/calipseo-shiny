@@ -82,6 +82,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #name
     output$vessel_name <- renderUI({tags$b('Vessel information - ',vessel$NAME)})
+    #output$vessel_name <- renderUI({tags$b(paste0(i18n("VESSEL_INFO_TITLE")," - ",vessel$NAME))}) To be implemented when i18n is in use
     
     #general description
     output$vessel_description <- renderUI({
@@ -197,7 +198,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #ownership
     output$vessel_owners <- renderDataTable(server = FALSE,{
-      names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Pone Number", "Mobile Number")
+      names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Phone Number", "Mobile Number")
       
       datatable(
         vesselOwners,
@@ -214,7 +215,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
             list(extend = 'csv', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
             list(extend = 'excel', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
             list(extend = "pdf", filename = sprintf("vessel_owners_%s", vesselId), 
-                 title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$name), header = TRUE)
+                 title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$NAME), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all", selected = TRUE)
@@ -282,7 +283,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                           list(extend = 'csv', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
                           list(extend = 'excel', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
                           list(extend = "pdf", filename = sprintf("vessel_license_permits_%s", vesselId), orientation = "landscape",
-                               title = sprintf("Vessel '%s' (%s) License Permits (as of %s)", vesselId, vessel$name, Sys.Date()), header = TRUE)
+                               title = sprintf("Vessel '%s' (%s) License Permits (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
                         ),
                         exportOptions = list(
                           modifiers = list(page = "all", selected = TRUE)
@@ -376,7 +377,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                     list(extend = 'csv', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf("vessel_catch_summary_%s", vesselId),
-                         title = sprintf("Vessel '%s' (%s) Catch summary (as of %s)", vesselId, vessel$name, Sys.Date()), header = TRUE)
+                         title = sprintf("Vessel '%s' (%s) Catch summary (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
@@ -405,7 +406,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                     list(extend = 'csv', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf("vessel_catch_history_%s", vesselId), orientation = "landscape",
-                         title = sprintf("Vessel '%s' (%s) Catch history (as of %s)", vesselId, vessel$name, Sys.Date()), header = TRUE)
+                         title = sprintf("Vessel '%s' (%s) Catch history (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
@@ -847,8 +848,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       fluidRow(
         infoBox(span('Mean fishing trips/year',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
         infoBox(span('Mean days at sea / fishing trip',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
-        infoBox(span('Number of landingsites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
-        infoBox(span('Nnumber of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
+        infoBox(span('Number of landing sites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
+        infoBox(span('Number of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
       )
     })
     
