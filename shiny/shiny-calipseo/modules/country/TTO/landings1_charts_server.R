@@ -57,6 +57,6 @@ landings1_charts_server <- function(input, output, session, pool){
   })
   output$event <- renderPrint({
     d <- event_data("plotly_hover")
-    if (is.null(d)) "Hover on a point!" else d
+    if (is.null(d)) i18n("HOVER_ON_POINT_LABEL") else d
   })
 }

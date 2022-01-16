@@ -1,0 +1,48 @@
+{
+  /*Trip keys on the server*/
+  "DISPLAY_TRIP_MSG" : "Click on a trip to see more information",
+  "NO_TRIP_MSG" : "No trip to display for this vessel",
+  "SELECT_TRIP_MSG" : "Select criteria to display corresponding trips",
+  "PERIOD" : "Period",
+  "DAYS" : "days",
+  "DATE_SEPARATOR_TO" : "to",
+  "VESSEL TYPE" : "Vessel type",
+  "TRIP_FROM" : "Trip from",
+  
+  /*Pickers*/
+  "PICKER_LABEL_VESSELS" : "Vessels",
+  "PICKER_LABEL_VESSELS_HINT" : "Only five vessels can be selected at a time",
+  "PICKER_LABEL_VESSELS_BY_PAGE" : "Vessels by page",
+  "RUN_SELECTION_LABEL" : "Run selection",
+  "VESSELS_LABEL" : "Vessels ",
+  
+  /*Infoboxes*/
+  "INFOBOX_TITLE_NUMBER_OF_VESSELS" : "Number of vessels",
+  "INFOBOX_TITLE_NUMBER_OF_TRIPS" : "Number of trips",
+  "LANDING_SITE_COORDINATES_NOT_AVAILABLE" : "landing site coordinates not available",
+  "FISHING_ZONE_COORDINATES_NOT_AVAILABLE" : "fishing zone coordinates not available",
+  
+  /*Labels*/
+  "1_YEAR_LABEL" : "1y",
+  "2_YEAR_LABEL" : "2y",
+  "3_YEAR_LABEL" : "3y",
+  "ALL_YEAR_LABEL" : "all",
+  "LABEL_FISHING_GEAR" : "Fishing gear",
+  "LABEL_FISHING_ZONE" : "Fishing zone",
+  "LABEL_LANDING_SITE" : "Landing site",
+  "LABEL_QUANTITY_CAUGHT" : "Quantity caught",
+  "LABEL_QUANTITY_CAUGHT_SUBTITLE" : "tons",
+  "LABEL_CONTENT" : "Content",
+  "LABEL_CONTENT_SUBTITLE" : "species",
+  "LABEL_GLOBAL_CPUE" : "Global CPUE",
+  "LABEL_GLOBAL_CPUE_SUBTITLE" : "kg/day",
+  "TITLE_TRIP_DETAILS_FOR_VESSEL" : "Trip detail for Vessel",
+  
+  /*Trip table*/
+  
+  "TRIP_TABLE_COLNAME_1" : "Species",
+  "TRIP_TABLE_COLNAME_2" : "Quantity",
+  "TRIP_TABLE_COLNAME_3" : "Percent",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}

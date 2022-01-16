@@ -11,10 +11,10 @@ landings1_species_maps_ui <- function(id){
         htmlOutput(ns("landings1_species_maps_info"))
       ),
       box(width = 6,
-          selectizeInput(ns("year_map_species"), label = "Year", 
+          selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
                          choice = accessAvailableYears(pool), selected = NULL, 
                          options = list(
-                           placeholder = 'Select a year',
+                           placeholder = i18n("LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL"),
                            onInitialize = I('function() { this.setValue(""); }')
                          ))
       )

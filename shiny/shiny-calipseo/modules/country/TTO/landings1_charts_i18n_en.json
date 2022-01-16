@@ -1,4 +1,11 @@
 {
+  /*landing1 chart title and subtitle*/
   "LANDINGS1_CHARTS_TITLE" : "Descriptor charts",
-  "LANDINGS1_CHARTS_SUBTITLE" : "Access line charts by landing site"
+  "LANDINGS1_CHARTS_SUBTITLE" : "Access line charts by landing site",
+  
+  /*landing site selector*/
+  
+  "LANDING_SITE_LABEL" : "Landing site",
+  "LANDING_SITE_PLACEHOLDER_LABEL" : "Select a landing site",
+  "HOVER_ON_POINT_LABEL" : "Hover on a point!"
 }

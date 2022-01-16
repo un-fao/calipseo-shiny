@@ -1,0 +1,49 @@
+{
+  /*Ui keys*/
+  "TOTAL_QUANTITIES_GRAPH_TITLE" : "Total quantities by year",
+  "GRAPH_TABPANEL_TITLE" : "Graph",
+  "MAP_TABPANEL_TITLE" : "Map",
+  "DATA_TABPANEL_TITLE" : "Data",
+  
+  /*tabpanel by vessel*/
+  "TABPANEL_BY_VESSEL" : "By vessel",
+  "TABPANEL_BY_VESSEL_SELECT_LABEL" : "Vessel",
+  "TABPANEL_BY_VESSEL_SELECT_PLACEHOLDER_LABEL" : "Select a vessel",
+  "BY_VESSEL_DATA_EXPORT_FILENAME" : "quantities_by_vessel",
+  "BY_VESSEL_PDF_TITLE" : "Quantities by vessel",
+  
+  /*tabpanel by owner*/
+  "TABPANEL_BY_OWNER" : "By owner",
+  "TABPANEL_BY_OWNER_SELECT_LABEL" : "Vessel owner (company)",
+  "TABPANEL_BY_OWNER_SELECT_PLACEHOLDER_LABEL" : "Select a vessel owner",
+  "BY_OWNER_DATA_EXPORT_FILENAME" : "quantities_by_vessel_owner",
+  "BY_OWNER_PDF_TITLE" : "Quantities by vessel owner",
+  
+  /*tabpanel by landing site*/
+  "TABPANEL_BY_LANDING_SITE" : "By landing site",
+  "TABPANEL_BY_LANDING_SITE_SELECT_LABEL" : "Year",
+  "TABPANEL_BY_LANDING_SITE_SELECT_PLACEHOLDER_LABEL" : "Select a year",
+  
+  /*totals*/
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_TITLE" : "Breakdown of total quantities by landing site / year",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME" : "total_quantities_by_landingsite",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE" : "Total quantities by landing site",
+  "MAP_POPUP_LANDINGSITE_LABEL" : "Landing site",
+  "MAP_POPUP_QUANTITY_LABEL" : "Quantity (kg)",
+  
+  /*species*/
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_TITLE" : "Breakdown of total quantities by landing site / species / year",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME" : "species_quantities_by_landingsite",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE" : "Species quantities by landing site",
+  
+  
+  "SPECIES_TABLE_COLNAME_1" : "NAME",
+  "SPECIES_TABLE_COLNAME_12" : "OTHERS",
+  "SPECIES_TABLE_COLNAME_13" : "TOTAL",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  
+  "TABLE_COLNAME_YEAR" : "year",
+  "TABLE_COLNAME_QUANTITY" : "quantity",
+  "TABLE_COLNAME_NAME" : "Name"
+}

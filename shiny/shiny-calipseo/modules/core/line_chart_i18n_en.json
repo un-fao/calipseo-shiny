@@ -1,0 +1,52 @@
+{
+  /*Line chart keys on the UI*/
+  "TEMPORAL_RESOLUTION" : "Temporal resolution",
+  "YEARLY" : "Yearly",
+  "MONTHLY" : "Monthly",
+  "WEEKLY" : "Weekly",
+  "STATISTIC" : "Statistic",
+  "TOTAL" : "Total",
+  "AVERAGE" : "Average",
+  "MEDIAN" : "Median",
+  "GRANU_LABEL_YEAR" : "year",
+  "GRANU_LABEL_MONTH" : "month",
+  "GRANU_LABEL_WEEK" : "week",
+  
+  
+  /*Line chart keys on the SERVER*/
+  "RANK_LABEL" : "Display x most caught:",
+  "RANK_METHOD" : "Rank method :",
+  "TOTAL_CATCH_OVER_THE_PERIOD" : "Total catch over the period",
+  "CATCH_UNIT" : "tons",
+  "LAST_YEAR_TOTAL_CATCH" : "Last year total catch",
+  "ANNUAL_CATCH_AVERAGE" : "Annual catch average",
+  
+  /*Projecton variation*/
+  "PROJECTION_VARIATION" : "Project variation",
+  "NONE" : "None",
+  "STANDARD_DEVIATION" : "Standard Deviation (SD)",
+  "STANDARD_ERROR" : "Standard Error (SE)",
+  "CONFIDENCE_INTERVAL_QUANTILE_METHOD" : "Confidence Interval (CI) - quantile method",
+  "CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION" : "Confidence Interval (CI) - normal distribution",
+  "CONFIDENCE_INTERVAL_T_DISTRIBUTION" : "Confidence Interval (CI) - t distribution",
+  "QUARTILES" : "quartiles",
+  
+  /*Plot and datatable/export labels*/
+  "PLOT_XLAB" : "Time",
+  "PLOT_YLAB" : "Quantity (tons)",
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "STATISTIC_TABLE_COLNAME_1" : "Year",
+  "STATISTIC_TABLE_COLNAME_4" : "sum",
+  "STATISTIC_TABLE_COLNAME_5" : "mean",
+  "STATISTIC_TABLE_COLNAME_6" : "median",
+  "SPECIES_STATISTIC_LABEL" : "Species",
+  "SPECIES_GROUP_STATISTIC_LABEL" : "Species groups",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "%s_%s_statistics",
+  "STATISTIC_PDF_TITLE" : "Statistics by %s - %s",
+  
+  
+  /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistics",
+  "TABPANEL_PLOT" : "Plot"
+   
+}

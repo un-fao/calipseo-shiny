@@ -29,14 +29,14 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       if(nrow(trips)>0){
         box(id='trip-box', width = 12,
             fluidPage(
-              fluidRow(column(8,offset=4,p("Click on a trip to see more information"))),
+              fluidRow(column(8,offset=4,p(i18n("DISPLAY_TRIP_MSG")))),
               fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
             )
         )
       }else{
           box(id='trip-box', width = 12,
               fluidPage(
-                fluidRow(column(8,offset=4,p("No trip to display for this vessel")))
+                fluidRow(column(8,offset=4,p(i18n("NO_TRIP_MSG"))))
               )
           )
         }
@@ -71,23 +71,23 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
     
     output$daterange<-renderUI({
       dates<-as.Date(unique(trips$date_from,trips$date_to))
-      dateRangeInput(ns("period"), "Period:",
+      dateRangeInput(ns("period"), paste0(i18n("PERIOD"),":"),
                      start  = min(dates),
                      end    = max(dates),
                      min    = min(dates),
                      max    = max(dates),
                      format = "yyyy-mm-dd",
-                     language ='en',
-                     separator = " to ",
+                     language = appConfig$language,
+                     separator = paste0(" ",i18n("DATE_SEPARATOR_TO")," "),
                      width='60%')
     })
     
     output$vesseltype_select<-renderUI({
-      print(class(input$period[1]))
-       vesseltypeList<-unique(subset(trips,date_from>=input$period[1]&date_to<=input$period[2])$vesseltype)
-      #vesseltypeList<-unique(trips$vesseltype)
 
-      shinyWidgets::pickerInput(ns("vesseltype"),"Vessel type : ",choices=vesseltypeList,selected=NULL,multiple=T,width = 'fit',
+       vesseltypeList<-unique(subset(trips,date_from>=input$period[1]&date_to<=input$period[2])$vesseltype)
+     
+
+      shinyWidgets::pickerInput(ns("vesseltype"),paste(i18n("VESSEL TYPE"),":"),choices=vesseltypeList,selected=NULL,multiple=T,width = 'fit',
                                 options = pickerOptions(title = "All",selectedTextFormat = "static")
                                 )
      
@@ -100,8 +100,8 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         vesselList<-subset(vesselList,vesseltype%in%input$vesseltype)
       }
       vesselList<-unique(vesselList$vesselname)
-      shinyWidgets::pickerInput(ns("vesselname"),"Vessels : ",choices=vesselList,selected=NULL,multiple=T,width = 'fit',
-                                options = pickerOptions(title = "All",maxOptions = 5,maxOptionsText = "Only five vessels can be selected at a time",selectedTextFormat = "static")
+      shinyWidgets::pickerInput(ns("vesselname"),paste(i18n("PICKER_LABEL_VESSELS"),":"),choices=vesselList,selected=NULL,multiple=T,width = 'fit',
+                                options = pickerOptions(title = "All",maxOptions = 5,maxOptionsText = i18n("PICKER_LABEL_VESSELS_HINT"),selectedTextFormat = "static")
                                 )
     })
 
@@ -116,15 +116,15 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       }
       nbvessels<-length(unique(tmp$vesselname))
       if(nbvessels>10){
-      shinyWidgets::pickerInput(ns("nbByPage"),"Vessels by page : ",choices=c(10,20,30,40,"All"),selected=10,multiple=F,width = 'fit')
+      shinyWidgets::pickerInput(ns("nbByPage"),paste(i18n("PICKER_LABEL_VESSELS_BY_PAGE"),":"),choices=c(10,20,30,40,"All"),selected=10,multiple=F,width = 'fit')
       }else{return(NULL)}
     })
     
     output$message<-renderUI({
       if(isTRUE(data_ready())){
-        p("Click on a trip to see more information")
+        p(i18n("DISPLAY_TRIP_MSG"))
       }else{
-        p("Select criteria to display corresponding trips")
+        p(i18n("SELECT_TRIP_MSG"))
       }
     })
 
@@ -134,7 +134,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         uiOutput(ns("vesseltype_select")),
         uiOutput(ns("vessel_select")),
         uiOutput(ns("nbByPage_select")),
-        actionButton(ns("go"),"Run selection")
+        actionButton(ns("go"),i18n("RUN_SELECTION_LABEL"))
       )
     })
     
@@ -157,14 +157,14 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       output$page_selector<-renderUI({
         if(!is.null(input$nbByPage))if(input$nbByPage!='All'){
           x<-unique(c(seq(0,max(formated$y),by=as.integer(input$nbByPage)),max(formated$y)))
-          shinyWidgets::pickerInput(ns("page"),"Vessels ",choices=unlist(lapply(seq(0:(length(x)-2)),function(y,i){paste0(y[i]+1,'-',y[i+1])},y=x)),width = 'fit')}else{
-          shinyWidgets::pickerInput(ns("page"),"Vessels ",choices=paste0(1,"-",max(formated$y)),width = 'fit')}
+          shinyWidgets::pickerInput(ns("page"),paste0(i18n("VESSELS_LABEL")," "),choices=unlist(lapply(seq(0:(length(x)-2)),function(y,i){paste0(y[i]+1,'-',y[i+1])},y=x)),width = 'fit')}else{
+          shinyWidgets::pickerInput(ns("page"),paste0(i18n("VESSELS_LABEL")," "),choices=paste0(1,"-",max(formated$y)),width = 'fit')}
       })
       
       output$indicators<-renderUI({
         fluidRow(
-          infoBox("Number of vessels",max(formated$y), icon = icon("ship"), fill = TRUE, width = 3),
-          infoBox("Number of trips",length(unique(formated$trip_id)), icon = icon("calendar",lib="glyphicon"), fill = TRUE, width = 3)
+          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_VESSELS"),max(formated$y), icon = icon("ship"), fill = TRUE, width = 3),
+          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_TRIPS"),length(unique(formated$trip_id)), icon = icon("calendar",lib="glyphicon"), fill = TRUE, width = 3)
         )
       })
       
@@ -206,10 +206,10 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                                  rangeslider = list(visible = F),
                                  rangeselector=list(
                                    buttons=list(
-                                     list(count=3, label="3y", step="year", stepmode="backward"),
-                                     list(count=2, label="2y", step="year", stepmode="backward"),
-                                     list(count=1, label="1y", step="year", stepmode="backward"),
-                                     list(step="all")
+                                     list(count=3, label=i18n("3_YEAR_LABEL"), step="year", stepmode="backward"),
+                                     list(count=2, label=i18n("2_YEAR_LABEL"), step="year", stepmode="backward"),
+                                     list(count=1, label=i18n("1_YEAR_LABEL"), step="year", stepmode="backward"),
+                                     list(step=i18n("ALL_YEAR_LABEL"))
                                    ))),
                     yaxis = list(showgrid = F, tickfont = list(color = "#333333"),
                                  tickmode = "array", tickvals = unique(trips$y), ticktext = unique(trips$vesselname),
@@ -245,10 +245,10 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                                      rangeslider = list(visible = F),
                                      rangeselector=list(
                                        buttons=list(
-                                         list(count=3, label="3y", step="year", stepmode="backward"),
-                                         list(count=2, label="2y", step="year", stepmode="backward"),
-                                         list(count=1, label="1y", step="year", stepmode="backward"),
-                                         list(step="all")
+                                         list(count=3, label=i18n("3_YEAR_LABEL"), step="year", stepmode="backward"),
+                                         list(count=2, label=i18n("2_YEAR_LABEL"), step="year", stepmode="backward"),
+                                         list(count=1, label=i18n("1_YEAR_LABEL"), step="year", stepmode="backward"),
+                                         list(step=i18n("ALL_YEAR_LABEL"))
                                        ))),
                         yaxis = list(showgrid = F, tickfont = list(color = "#333333"),
                                      tickmode = "array", tickvals = unique(trips$y), ticktext = unique(trips$vesselname),
@@ -281,16 +281,20 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             mutate(Quantity= sprintf("%s %s",quantity,tolower(quantity_unit)))%>%
             select(Species,Quantity,Percent)
           
+          names(species) <- c(i18n("TRIP_TABLE_COLNAME_1"),i18n("TRIP_TABLE_COLNAME_2"),
+                              i18n("TRIP_TABLE_COLNAME_3"))
+          
           DT::datatable(
             species,
             escape = FALSE,
             rownames = FALSE,
             options = list(
-              pageLength = 10, dom = 'tip')
+              pageLength = 10, dom = 'tip',
+              language = list(url = i18n("TABLE_LANGUAGE")))
           )  %>%
-            formatPercentage("Percent", 1) %>%
+            formatPercentage(i18n("TRIP_TABLE_COLNAME_3"), 1) %>%
             formatStyle(
-              'Percent',
+              i18n("TRIP_TABLE_COLNAME_3"),
               background = styleColorBar(c(0,1), '#0288D1',-90),
               backgroundSize = '90% 80%',
               backgroundRepeat = 'no-repeat',
@@ -310,7 +314,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         output$landing_map <- renderUI({
           if(is.na(landing_site$latitude)|is.na(landing_site$longitude)){
-            HTML("<p><em>(landing site coordinates not available)</em></p>")
+            HTML(paste("<p><em>(",i18n("LANDING_SITE_COORDINATES_NOT_AVAILABLE"),")</em></p>"))
           }else{
             leafletOutput(ns("map_ls"),width = "90%",height=150)
           }
@@ -333,7 +337,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         output$fishingZone_map <- renderUI({
           if(is.na(fishing_zone$latitude)|is.na(fishing_zone$longitude)){
-            HTML("<p><em>(fishing zone coordinates not available)</em></p>")
+            HTML(paste("<p><em>(",i18n("FISHING_ZONE_COORDINATES_NOT_AVAILABLE"),")</em></p>"))
           }else{
             leafletOutput(ns("map_fz"),width = "90%",height=150)
           }
@@ -367,40 +371,40 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             fluidPage(
               fluidRow(
                 column(12,
-                       HTML(sprintf("<p style='font-size:16px;'>Trip from <span style='color:#0288D1;'><u>%s</u></span> to <span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span> days)</p>",format(as.Date(trip$date_from[1]),format = '%d-%m-%Y'),format(as.Date(trip$date_to[1]),format = '%d-%m-%Y'),as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days"))))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("TRIP_FROM"), "<span style='color:#0288D1;'><u>%s</u></span>",i18n("DATE_SEPARATOR_TO"),"<span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span>",i18n("DAYS"),")</p>"),format(as.Date(trip$date_from[1]),format = '%d-%m-%Y'),format(as.Date(trip$date_to[1]),format = '%d-%m-%Y'),as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days"))))
                 )),
               fluidRow(
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Vessel type : <span style='color:#0288D1;'><u>%s</u></span>",trip$vesseltype[1]))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("VESSEL TYPE"),": <span style='color:#0288D1;'><u>%s</u></span>"),trip$vesseltype[1]))
                 ),
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Fishing gear : <span style='color:#0288D1;'><u>%s</u></span></p>",if(length(unique(trip$fishing_gear))>1){sprintf("<ul>%s</li></ul>",paste0("<li style='color:#0288D1;>",unique(trip$fishing_gear),collapse = "","</li>"))}else{trip$fishing_gear[1]}))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("LABEL_FISHING_GEAR"),": <span style='color:#0288D1;'><u>%s</u></span></p>"),if(length(unique(trip$fishing_gear))>1){sprintf("<ul>%s</li></ul>",paste0("<li style='color:#0288D1;>",unique(trip$fishing_gear),collapse = "","</li>"))}else{trip$fishing_gear[1]}))
                        )
               ),
               fluidRow(
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Fishing zone : <span style='color:#0288D1;'><u>%s</u></span>",trip$fishing_zone[1]))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("LABEL_FISHING_ZONE"),": <span style='color:#0288D1;'><u>%s</u></span>"),trip$fishing_zone[1]))
                 ),
                 column(6,
-                       HTML(sprintf("<p style='font-size:16px;'>Landing site : <span style='color:#0288D1;'><u>%s</u></span>",trip$landing_site[1]))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("LABEL_LANDING_SITE"),": <span style='color:#0288D1;'><u>%s</u></span>"),trip$landing_site[1]))
                 )
               ),
               uiOutput(ns('map')),
               fluidRow(
-                valueBox(value=tags$p("Quantity caught",style="font-size: 40%"), subtitle=paste(sum(trip$quantity)/1000, "tons"), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
-                valueBox(value=tags$p("Content",style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),"species"), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
-                valueBox(value=tags$p("Global CPUE",style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0), "kg/day"), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
+                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(sum(trip$quantity)/1000, i18n("LABEL_QUANTITY_CAUGHT_SUBTITLE")), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p(i18n("LABEL_CONTENT"),style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),i18n("LABEL_CONTENT_SUBTITLE")), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p(i18n("LABEL_GLOBAL_CPUE"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0), i18n("LABEL_GLOBAL_CPUE_SUBTITLE")), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
               ),
               fluidRow(column(10, align="center",offset=1,DTOutput(ns("table"))%>%withSpinner(type = 4)))
             )
             ,
-            title = sprintf("Trip detail for Vessel '%s' [%s]",toupper(trip$vessel_name[1]),trip$reg_number[1]),
+            title = sprintf(paste(i18n("TITLE_TRIP_DETAILS_FOR_VESSEL"),"'%s' [%s]"),toupper(trip$vessel_name[1]),trip$reg_number[1]),
             size = 'm',
             easyClose = T,
             footer = NULL
           )
         )
-        print(subset(trips,trip_id==event.data$key))
+        
       }
     })
   })

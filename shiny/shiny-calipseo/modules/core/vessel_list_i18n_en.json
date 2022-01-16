@@ -1,4 +1,17 @@
 {
+  /*veseel list title and subtitle*/
   "VESSEL_LIST_TITLE" : "List of vessels",
-  "VESSEL_LIST_SUBTITLE": "Access information on vessels"
+  "VESSEL_LIST_SUBTITLE": "Access information on vessels",
+  "VESSELS": "Vessels",
+  
+  /*vessel list table*/
+  "VESSEL_LIST_TABLE_COLNAME_1": "REGISTRATION NUMBER",
+  "VESSEL_LIST_TABLE_COLNAME_2": "NAME",
+  "VESSEL_LIST_TABLE_COLNAME_3": "VESSEL TYPE",
+  "VESSEL_LIST_TABLE_COLNAME_4": "VESSEL OPERATIONAL STATUS",
+  "VESSEL_LIST_TABLE_COLNAME_5": "VESSEL STAT TYPE",
+  "VESSEL_LIST_TABLE_COLNAME_6": "HOME PORT/LANDING SITE",
+  "VESSEL_LIST_TABLE_COLNAME_7": "REGISTRATION PORT/LANDING SITE",
+  "VESSEL_LIST_TABLE_COLNAME_8": "",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }

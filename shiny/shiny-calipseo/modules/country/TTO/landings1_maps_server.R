@@ -34,15 +34,15 @@ landings1_maps_server <- function(input, output, session, pool){
         addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
                    radius = 7000*sqrt(sites_descriptor$value/maxValue), 
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br(),
-                     em(paste0("Value (", descriptor,"):")), sites_descriptor$value
+                     em(paste0(i18n("LANDINGS1_MAP_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br(),
+                     em(paste0(i18n("LANDINGS1_MAP_VALUE_LABEL")," (", descriptor,"):")), sites_descriptor$value
                    ))
     }else{
       leaflet() %>%
         addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br()
+                     em(paste0(i18n("LANDINGS1_MAP_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br()
                    ))
     }
   }

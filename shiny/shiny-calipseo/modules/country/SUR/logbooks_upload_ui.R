@@ -22,7 +22,7 @@ logbooks_upload_ui <- function(id){
     uiOutput(ns("urlPage")),
     fluidRow(
       column(3,
-      fileInput(inputId = ns("file_to_upload"), label = "Import a logbook data file:",multiple = FALSE,accept = c(".xlsx"))),
+      fileInput(inputId = ns("file_to_upload"), label = paste0(i18n("LOGBOOK_UPLOAD_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))),
       column(2,style = "margin-top: 25px;",uiOutput(ns("validity_btn")))
     ),
     fluidRow(

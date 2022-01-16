@@ -21,12 +21,35 @@
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab="Time",ylab="Quantity (tons)", rank=FALSE, nbToShow=5,rankLabel="Display x most caught:",plotType="line",mode="plot") {
+line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("PLOT_XLAB"),ylab=i18n("PLOT_YLAB"), rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+   
     data_formated<-reactiveVal(NULL)
     data_ready<-reactiveVal(FALSE)
+    
+    format_date <- if(input$granu==i18n("YEARLY")){
+      "%Y"
+    }else if(input$granu==i18n("MONTHLY")){
+      "%Y-%m"
+    }else if(input$granu==i18n("WEEKLY")){
+      "%Y-%U"
+    }
+    
+    stat_output <- if(input$stat==i18n("TOTAL")){
+      "sum"
+    }else if(input$stat==i18n("AVERAGE")){
+      "mean"
+    }else if(input$stat==i18n("MEDIAN")){
+      "median"
+    }
+    
+    
+    rank_method_choices <- c(i18n("TOTAL_CATCH_OVER_THE_PERIOD"),i18n("LAST_YEAR_TOTAL_CATCH"),i18n("ANNUAL_CATCH_AVERAGE"))
+    witherror_choices <- c(i18n("NONE"),i18n("STANDARD_DEVIATION"),i18n("STANDARD_ERROR"),
+                           i18n("CONFIDENCE_INTERVAL_QUANTILE_METHOD"),
+                           i18n("CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION"),
+                           i18n("CONFIDENCE_INTERVAL_T_DISTRIBUTION"))
     
     output$rank_params<-renderUI({
       
@@ -34,7 +57,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         max_nb<-length(unique(df[[colTarget]]))
         tagList(
           numericInput(ns("number"), rankLabel, value = if(max_nb<=5){max_nb}else{5}, min = 0, max = max_nb),
-          selectInput(ns("rank_method"),"Rank method :",choices=c("Total catch over the period"="sum","Last year total catch"="last_year","Annual catch average"="year_avg"))
+          selectInput(ns("rank_method"),paste0(i18n("RANK_METHOD")," :"),choices=rank_method_choices)
         )
       }else{
         NULL
@@ -44,16 +67,11 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     
     observeEvent(input$stat,{
       output$additional<-renderUI({
-        if(input$stat=="mean"){
-          #checkboxInput(ns("withsd"),"standard deviation", value = FALSE)
-          selectInput(ns("witherror"),"Project variation :",choices=c("None"="none","Standard Deviation (SD)"="sd",
-                                                                      "Standard Error (SE)"="se",
-                                                                      "Confidence Interval (CI) - quantile method"="ci-q",
-                                                                      "Confidence Interval (CI) - normal distribution "="ci-n",
-                                                                      "Confidence Interval (CI) - t distribution"="ci-t"
-                                                                      ))
-        }else if(input$stat=="median"){
-          checkboxInput(ns("withquartile"),"quartiles", value = FALSE)
+        if(stat_output=="mean"){
+          selectInput(ns("witherror"),paste0(i18n("PROJECTION_VARIATION")," :"),choices= witherror_choices)
+          
+        }else if(stat_output=="median"){
+          checkboxInput(ns("withquartile"),i18n("QUARTILES"), value = FALSE)
         }else{
           NULL
         }
@@ -61,6 +79,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     })
     
     data_formating<-eventReactive(c(input$stat,input$granu,input$number),{
+      
         df<-df%>%
           rename(setNames(colDate,"date"))%>%
           rename(setNames(colTarget,"target"))%>%
@@ -76,7 +95,17 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         
         if(isTRUE(rank)){
           req(input$number)
-          if(input$rank_method=="sum"){
+          
+          rank_method_output <- if(input$rank_method==i18n("TOTAL_CATCH_OVER_THE_PERIOD")){
+            "sum"
+          }else if(input$rank_method==i18n("LAST_YEAR_TOTAL_CATCH")){
+            "last_year"
+          }else if(input$rank_method==i18n("ANNUAL_CATCH_AVERAGE")){
+            "year_avg"
+          }
+          
+          
+          if(rank_method_output=="sum"){
             ranked <- df %>%
               group_by(target) %>% 
               summarise(total = sum(value))%>%
@@ -86,7 +115,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
               pull(target)
           }	
           
-          if(input$rank_method=="year_avg"){
+          if(rank_method_output=="year_avg"){
             ranked <- df %>%
               mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
               group_by(year,target) %>% 
@@ -99,7 +128,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
               pull(target)
           }
           
-          if(input$rank_method=="last_year"){
+          if(rank_method_output=="last_year"){
             ranked <- df %>%
               mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
               filter(year==max(year))%>%
@@ -116,7 +145,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         }
         
         df<-df%>%
-          mutate(date = as.character(format(as.Date(date),format = input$granu)))%>%
+          mutate(date = as.character(format(as.Date(date),format = format_date)))%>%
           mutate(value=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
           summarise(sum_by_trip = sum(value))%>%
@@ -161,33 +190,48 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
             
           )
                           
-          if(isTRUE(input$withquartile)&input$stat=="median"){
+          if(isTRUE(input$withquartile)&stat_output=="median"){
             p<-p%>%add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
           }else{
             if(plotType=="line"){
               p<-p%>%    
-               add_trace(type="scatter",mode="lines+markers",y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2)))
+               add_trace(type="scatter",mode="lines+markers",y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",i18n("CATCH_UNIT")),text,date,round(get(stat_output),2)))
             }else{
               p<-p%>%    
-                add_bars(y =~ get(input$stat),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf("%s[%s]: %s tons",text,date,round(get(input$stat),2))) 
+                add_bars(y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",i18n("CATCH_UNIT")),text,date,round(get(stat_output),2))) 
             }
           }
                           
           if(!is.null(input$witherror)){
-            if(input$witherror!="none"&input$stat=="mean"){
+            
+            witherror_output <- if(input$witherror==i18n("NONE")){
+              "none"
+            }else if(input$witherror==i18n("STANDARD_DEVIATION")){
+              "sd"
+            }else if(input$witherror==i18n("STANDARD_ERROR")){
+              "se"
+            }else if(input$witherror==i18n("CONFIDENCE_INTERVAL_QUANTILE_METHOD")){
+              "ci-q"
+            }else if(input$witherror==i18n(i18n("CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION"))){
+              "ci-n"
+            }else if(input$witherror==i18n("CONFIDENCE_INTERVAL_T_DISTRIBUTION")){
+              "ci-t"
+            }
+            
+            if(witherror_output!="none"&stat_output=="mean"){
 
               p<-p%>%add_ribbons(color= ~target,
-                                 ymin = ~ switch(input$witherror,
-                                   "sd"= {get(input$stat)-sd},
-                                   "se"= {get(input$stat)-se},
-                                   "ci-n"={get(input$stat)-ci_norm_coef},
-                                   "ci-t"={get(input$stat)-ci_stud_coef},
+                                 ymin = ~ switch(witherror_output,
+                                   "sd"= {get(stat_output)-sd},
+                                   "se"= {get(stat_output)-se},
+                                   "ci-n"={get(stat_output)-ci_norm_coef},
+                                   "ci-t"={get(stat_output)-ci_stud_coef},
                                    "ci-q"={q025}),
-                                 ymax = ~ switch(input$witherror,
-                                   "sd"= {get(input$stat)+sd},
-                                   "se"= {get(input$stat)+se},
-                                   "ci-n"={get(input$stat)+ci_norm_coef},
-                                   "ci-t"={get(input$stat)+ci_stud_coef},
+                                 ymax = ~ switch(witherror_output,
+                                   "sd"= {get(stat_output)+sd},
+                                   "se"= {get(stat_output)+se},
+                                   "ci-n"={get(stat_output)+ci_norm_coef},
+                                   "ci-t"={get(stat_output)+ci_stud_coef},
                                    "ci-q"={q975}),
                                  showlegend=F,
                                  legendgroup = ~target,
@@ -221,17 +265,29 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     data_formating()
     
     if(isTRUE(data_ready())){
-      
-      granu<-switch(input$granu,"%Y"="Year",
+     
+      granu<-switch(format_date,"%Y"="Year",
                     "%Y-%m"="Month",
                     "%Y-%U"="Week")
       
+      granu_label<-switch(granu,"Year"= i18n("GRANU_LABEL_YEAR"),
+                    "Month"= i18n("GRANU_LABEL_MONTH"),
+                    "Week"= i18n("GRANU_LABEL_WEEK"))
+      
+      df <- data_formated()%>%
+        select(-text)%>%
+        rename(!!granu:=date)%>%
+        rename(!!label:=target)%>%
+        mutate(!!label:=as.factor(!!sym(label)))
+      
+      colnames(df)[1] <- i18n("STATISTIC_TABLE_COLNAME_1")
+      colnames(df)[4] <- i18n("STATISTIC_TABLE_COLNAME_4")
+      colnames(df)[5] <- i18n("STATISTIC_TABLE_COLNAME_5")
+      colnames(df)[6] <- i18n("STATISTIC_TABLE_COLNAME_6")
+      
+     
       DT::datatable(
-        data_formated()%>%
-          select(-text)%>%
-          rename(!!granu:=date)%>%
-                   rename(!!label:=target)%>%
-        mutate(!!label:=as.factor(!!sym(label))),
+        df,
         extensions = c("Buttons"),
         escape = FALSE,
         filter = list(position = 'top',clear =FALSE),
@@ -242,14 +298,15 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
           orientation ='landscape',
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("%s_%s_statistics",label,granu), title = NULL, header = TRUE),
-            list(extend = "pdf", pageSize = 'A4',orientation = 'landscape',filename = sprintf("%s_%s_statistics",label,granu), 
-            title = sprintf("Statistics by %s - %s", label,granu), header = TRUE)
+            list(extend = 'csv', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu_label), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu_label), title = NULL, header = TRUE),
+            list(extend = "pdf", pageSize = 'A4',orientation = 'landscape',filename = sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu), 
+            title = sprintf(i18n("STATISTIC_PDF_TITLE"), label,granu_label), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
-          )
+          ),
+          language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
         )
       )
     }
@@ -260,14 +317,14 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
       switch(mode,
         'plot+table'={
           tabsetPanel(
-            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
-            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4))
+            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
+            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4))
           )
         },
         'table+plot'={
           tabsetPanel(
-            tabPanel('Statistics',DTOutput(ns("table"))%>%withSpinner(type = 4)),
-            tabPanel("Plot",plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4)),
+            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
           )
         },
         'plot'={

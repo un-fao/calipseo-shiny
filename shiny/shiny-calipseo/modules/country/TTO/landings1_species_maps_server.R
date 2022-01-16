@@ -48,7 +48,7 @@ landings1_species_maps_server <- function(input, output, session, pool){
         bch_ts_species_other$value,
         by = list(
           bch_name = bch_ts_species_other$bch_name,
-          species_name = rep("OTHERS", nrow(bch_ts_species_other))
+          species_name = rep(i18n("LANDINGS1_SPECIES_MAPS_OTHERS_LABEL"), nrow(bch_ts_species_other))
         ),
         FUN = function(x){round2(sum(x, na.rm = TRUE))}
       )
@@ -89,7 +89,7 @@ landings1_species_maps_server <- function(input, output, session, pool){
         addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br()
+                     em(paste0(i18n("LANDINGS1_SPECIES_MAPS_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br()
                    ))
     }
     

@@ -1,3 +1,126 @@
 {
-  "VESSEL_INFO_TITLE" : "Vessel information"
+  /*Vessel title*/
+  "VESSEL_INFO_TITLE" : "Vessel information",
+  
+  /*Link back to vessel list*/
+  "BACK_TO_LIST_OF_VESSELS" : "<< Back to list of vessels",
+  
+  /*Vessel Finder*/
+  "VESSEL_FINDER" : "VesselFinder",
+  "IMAGE_SOURCE" : "Image source",
+  
+  /*Information tab*/
+  "TABPANEL_INFO" : "Info",
+  "VESSEL_NAME" : "Vessel name",
+  "VESSEL_TYPE" : "Vessel type",
+  "VESSEL_STAT_TYPE" : "Vessel stat type",
+  "HOME_PORT" : "Home port: ",
+  
+  /*Registration tab*/
+  "TABPANEL_REGISTRATION" : "Registration",
+  "REGISTRATION_NUMBER" : "Registration Number",
+  "REGISTRATION_PORT" : "Registration Port",
+  
+  /*Characteristics tab*/
+  "TABPANEL_CHARACTERISTICS" : "Characteristics",
+  "CALIPSEO_DATA_COLNAME" : "Calipseo",
+  "VESSEL_FINDER_DATA_COLNAME" : "VesselFinder*",
+  "LENGTH_OVERALL" : "Length Overall (m)",
+  "DRAUGHT" : "Draught (m)",
+  "BEAM" : "Beam (m)",
+  "GROSS TONNAGE" : "Gross Tonnage",
+  "SUMMER_DEADWEIGHT" : "Summer Deadweight (t)",
+  "SPEED" : "Speed",
+  "TRAWLING_SPEED" : "Trawling Speed",
+  "POWER" : "Power",
+  
+  /*Vertical tab history*/
+  "VERTICALTABPANEL_HISTORY" : "History",
+  "HISTORY_TABLE_COLNAME_1" : "Type",
+  "HISTORY_TABLE_COLNAME_2" : "Description",
+  "HISTORY_TABLE_COLNAME_3" : "Old Value",
+  "HISTORY_TABLE_COLNAME_4" : "New Value",
+  "HISTORY_TABLE_COLNAME_5" : "Change Date",
+  "HISTORY_DATA_EXPORT_FILENAME" : "vessel_historical_characteristics_%s",
+  "HISTORY_PDF_TITLE" : "Vessel '%s' (%s) Historical Characteristics",
+  
+  /*Vertical tab ownership*/
+  "VERTICALTABPANEL_OWNERSHIP" : "Ownership",
+  "OWNERSHIP_TABLE_COLNAME_1" : "Full Name",
+  "OWNERSHIP_TABLE_COLNAME_2" : "Entity Document Number",
+  "OWNERSHIP_TABLE_COLNAME_3" : "Address",
+  "OWNERSHIP_TABLE_COLNAME_4" : "Address City",
+  "OWNERSHIP_TABLE_COLNAME_5" : "Address Zip Code",
+  "OWNERSHIP_TABLE_COLNAME_6" : "Phone Number",
+  "OWNERSHIP_TABLE_COLNAME_7" : "Mobile Number",
+  "OWNERSHIP_DATA_EXPORT_FILENAME" : "vessel_owners_%s",
+  "OWNERSHIP_PDF_TITLE" : "Vessel '%s' (%s) ownership",
+  
+  /*Vertical tab licenses*/
+  "VERTICALTABPANEL_LICENCES" : "Licenses",
+  "LICENCES_TABLE_COLNAME_1" : "Permit Number",
+  "LICENCES_TABLE_COLNAME_2" : "Application Date",
+  "LICENCES_TABLE_COLNAME_3" : "Permit Date",
+  "LICENCES_TABLE_COLNAME_4" : "Valid From (Date)",
+  "LICENCES_TABLE_COLNAME_5" : "Valid To (Date)",
+  "LICENCES_TABLE_COLNAME_6" : "Gears",
+  "LICENCES_TABLE_COLNAME_7" : "Validity",
+  "LICENCES_DATA_EXPORT_FILENAME" : "vessel_license_permits_%s",
+  "LICENCES_PDF_TITLE" : "Vessel '%s' (%s) License Permits (as of %s)",
+  
+  
+  /*Vertical tab fishing trips*/
+  "VERTICALTABPANEL_FISHING_TRIPS" : "Fishing Trips",
+  
+  
+  /*Vertical tab catches and its dependent tabpanels*/
+  "VERTICALTABPANEL_CATCHES" : "Catches",
+  /*Summary tabpanel*/
+  "TABPANEL_SUMMARY" : "Summary",
+  "SUMMARY_CATCHES_COLNAME_1" : "Year",
+  "SUMMARY_CATCHES_COLNAME_2" : "Days At Sea",
+  "SUMMARY_CATCHES_COLNAME_3" : "Quantity",
+  "SUMMARY_CATCHES_DATA_EXPORT_FILENAME" : "vessel_catch_summary_%s",
+  "SUMMARY_CATCHES_PDF_TITLE" : "Vessel '%s' (%s) Catch summary (as of %s)",
+  
+  /*History tabpanel*/
+  "TABPANEL_HISTORY" : "History",
+  "HISTORY_CATCHES_COLNAME_1" : "Year",
+  "HISTORY_CATCHES_COLNAME_2" : "Departure Datetime",
+  "HISTORY_CATCHES_COLNAME_3" : "Return Datetime",
+  "HISTORY_CATCHES_COLNAME_4" : "Days At Sea",
+  "HISTORY_CATCHES_COLNAME_5" : "Crew",
+  "HISTORY_CATCHES_COLNAME_6" : "Greater Fishing Area",
+  "HISTORY_CATCHES_COLNAME_7" : "Beach Name",
+  "HISTORY_CATCHES_COLNAME_8" : "Fishing Method",
+  "HISTORY_CATCHES_COLNAME_9" : "Species Description",
+  "HISTORY_CATCHES_COLNAME_10" : "Quantity",
+  "HISTORY_CATCHES_COLNAME_11" : "Quantity Unit",
+  "HISTORY_CATCHES_COLNAME_12" : "Value",
+  "HISTORY_CATCHES_DATA_EXPORT_FILENAME" : "vessel_catch_history_%s",
+  "HISTORY_CATCHES_PDF_TITLE" : "Vessel '%s' (%s) Catch history (as of %s)",
+  
+  /*Breakdown by species tabpanel*/
+  "TABPANEL_BREAKDOWN_BY_SPECIES" : "Breakdown by Species",
+  "TABPANEL_SPECIES" : "Species",
+  "TABPANEL_SPECIES_GROUPS" : "Species groups",
+  
+  /*Catches data sources*/
+  "CATCHES_DATA_SOURCE_ART" : "From sample-based survey",
+  "CATCHES_DATA_SOURCE_INDUS" : "From logbooks",
+  
+  /*Information boxes*/
+  "INFOBOX_VESSEL_OPERATIONAL_STATUS" : "Vessel Operational Status",
+  "INFOBOX_NUMBER_OF_OWNERS" : "Number of owners",
+  "INFOBOX_NUMBER_OF_LICENSES" : "Number of licenses",
+  "INFOBOX_NUMBER_OF_FISHING_GEARS" : "Number of fishing gears",
+  "INFOBOX_MEAN_FISHING_TRIPS_YEAR" : "Mean fishing trips/year",
+  "INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS" : "Mean days at sea / fishing trip",
+  "INFOBOX_NUMBER_OF_LANDING_SITES" : "Number of landing sites",
+  "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Number of species caught",
+  
+  /*Warning message*/
+  "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }

@@ -18,18 +18,17 @@ logbooks_upload_server <- function(input, output, session, pool) {
   #Validity to file in input
   output$validity_btn<-renderUI({
     if(!is.null(input$file_to_upload)){
-      actionButton(ns("check_validity"),"Test file validity",style = "color:green; background-color:#b8efa0")
+      actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY"),style = "color:green; background-color:#b8efa0")
     }else{
-      disabled(actionButton(ns("check_validity"),"Test file validity"))
+      disabled(actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY")))
     }
   })
 
   shinyMonitor = function(value,step,max,trip_id){
     shiny::setProgress(value = value, 
-                       message = "Dataset validation in progress ... ",
-                       detail = sprintf("Trip ID : %s - [%s on %s trips]",trip_id,step,max))
+                       message = i18n("UPLOAD_PROGRESS_MESSAGE"),
+                       detail = sprintf(paste0(i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPID"),": %s - [%s ",i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_ON")," %s ",i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPS"),"]"),trip_id,step,max))
   }
-  
   
   #Validity to content
   observeEvent(input$check_validity,{
@@ -40,7 +39,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
       value = 0,
       min=0,
       max=1,
-      message = "Dataset validation in progress ... ",
+      message = i18n("UPLOAD_PROGRESS_MESSAGE"),
       detail = "" , 
       convertTripToSQL(file,pool,monitor=shinyMonitor)
     )
@@ -56,26 +55,26 @@ logbooks_upload_server <- function(input, output, session, pool) {
       req(!is.null(out$errors)&!is.null(out$referentials))
       
       fluidRow(
-       box(width=6,title="Referential(s) to update :",
+       box(width=6,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
           if(nrow(out$referentials)>0){
             tagList(
-            p(sprintf("Number of referential(s) to inspect : %s",nrow(subset(out$referentials,type=="WARNING"))),style = "color:orange"),
-            p(sprintf("Number of referential(s) to update : %s",nrow(subset(out$referentials,type=="ERROR"))),style = "color:red"),
+            p(sprintf(paste0(i18n("NUMBER_REFERENTIAL_INSPECT")," : %s"),nrow(subset(out$referentials,type=="WARNING"))),style = "color:orange"),
+            p(sprintf(paste0(i18n("NUMBER_REFERENTIAL_UPDATE")," : %s"),nrow(subset(out$referentials,type=="ERROR"))),style = "color:red"),
             DTOutput(ns('referentials'))
             )
           }else{
-            p("All referentials used in this dataset are up-to-date",style = "color:green")
+            p(i18n("NUMBER_REFERENTIAL_UPTODATE"),style = "color:green")
           }
            ),
-       box(width=6,title="Error(s) in data :",
+       box(width=6,title=paste0(i18n("ERROR_IN_DATA_TITLE")," :"),
            if(nrow(out$errors)>0){
              tagList(
-             p(sprintf("Number of non-blocking issue(s) : %s",nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
-             p(sprintf("Number of blocking issue(s) : %s",nrow(subset(out$errors,type=="ERROR"))),style = "color:red"),
+             p(sprintf(paste0(i18n("NUMBER_NON_BLOCKING_ISSUES")," : %s"),nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
+             p(sprintf(paste0(i18n("NUMBER_BLOCKING_ISSUES")," : %s"),nrow(subset(out$errors,type=="ERROR"))),style = "color:red"),
              DTOutput(ns('errors'))
              )
            }else{
-             p("No issues detected in this dataset",style = "color:green")
+             p(i18n("NO_ISSUES_DETECTED"),style = "color:green")
            }
            )
       )
@@ -87,7 +86,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
       if(nrow(out$referentials)>0){
         DT::datatable(
           out$referentials,
-          colnames = c('Table', 'Value','Issue Level', 'Description'), 
+          colnames = c(i18n("REFERENTIAL_TABLE_COLNAME_1"), i18n("REFERENTIAL_TABLE_COLNAME_2"),i18n("REFERENTIAL_TABLE_COLNAME_3"), i18n("REFERENTIAL_TABLE_COLNAME_4")), 
           extensions = c("Buttons"),
           escape = FALSE,
           filter = list(position = 'top',clear =FALSE),
@@ -96,11 +95,12 @@ logbooks_upload_server <- function(input, output, session, pool) {
             scrollX=TRUE,
             pageLength=5,
             buttons = list(
-              list(extend = 'csv', filename =  paste0("ref_to_add_",strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
+              list(extend = 'csv', filename =  paste0(i18n("REFERENTIAL_TABLE_DATA_FILENAME"),strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
             ),
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
-            )
+            ),
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )%>%
           formatStyle("type",target = 'row',backgroundColor = styleEqual(c("WARNING","ERROR"), c("#FDEBD0","#F2D7D5")))
@@ -114,7 +114,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
       if(nrow(out$errors)>0){
         DT::datatable(
           out$errors,
-          colnames = c('Trip ID', 'Vessel Registration', 'Issue Level','Issue Domain','Description'), 
+          colnames = c(i18n("ERROR_TABLE_COLNAME_1"),i18n("ERROR_TABLE_COLNAME_2"),i18n("ERROR_TABLE_COLNAME_3"),i18n("ERROR_TABLE_COLNAME_4"),i18n("ERROR_TABLE_COLNAME_5")), 
           extensions = c("Buttons"),
           escape = FALSE,
           filter = list(position = 'top',clear =FALSE),
@@ -123,11 +123,12 @@ logbooks_upload_server <- function(input, output, session, pool) {
             scrollX=TRUE,
             pageLength=5,
             buttons = list(
-              list(extend = 'csv', filename =  paste0("errors_",strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
+              list(extend = 'csv', filename =  paste0(i18n("ERROR_TABLE_DATA_FILENAME"),strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
             ),
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
-            )
+            ),
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )%>%
           formatStyle("type",target = 'row',backgroundColor = styleEqual(c("WARNING","ERROR"), c("#FDEBD0","#F2D7D5")))
@@ -137,7 +138,7 @@ logbooks_upload_server <- function(input, output, session, pool) {
     #Generate SQL
     output$generate_SQL_btn<-renderUI({
       if(isTRUE(out$valid)){
-        downloadButton(ns("generate_SQL"),"Generate SQL file")
+        downloadButton(ns("generate_SQL"),i18n("GENERATE_SQL_FILE"))
       }
     })
     
