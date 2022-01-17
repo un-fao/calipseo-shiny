@@ -202,14 +202,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #ownership
     output$vessel_owners <- renderDataTable(server = FALSE,{
-<<<<<<< HEAD
-      names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Phone Number", "Mobile Number")
-=======
       names(vesselOwners) <- c(i18n("OWNERSHIP_TABLE_COLNAME_1"),i18n("OWNERSHIP_TABLE_COLNAME_2"),
                                i18n("OWNERSHIP_TABLE_COLNAME_3"),i18n("OWNERSHIP_TABLE_COLNAME_4"),
                                i18n("OWNERSHIP_TABLE_COLNAME_5"),i18n("OWNERSHIP_TABLE_COLNAME_6"),
                                i18n("OWNERSHIP_TABLE_COLNAME_7"))
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
       
       datatable(
         vesselOwners,
@@ -223,17 +219,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           scroll = FALSE,
           buttons = list(
             list(extend = 'copy'),
-<<<<<<< HEAD
-            list(extend = 'csv', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
-            list(extend = "pdf", filename = sprintf("vessel_owners_%s", vesselId), 
-                 title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$NAME), header = TRUE)
-=======
             list(extend = 'csv', filename =  sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
             list(extend = 'excel', filename =  sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
             list(extend = "pdf", filename = sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), 
                  title = sprintf(i18n("OWNERSHIP_PDF_TITLE"), vesselId, vessel$NAME), header = TRUE)
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
           ),
           exportOptions = list(
             modifiers = list(page = "all", selected = TRUE)
@@ -300,17 +289,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                         scroll = FALSE,
                         buttons = list(
                           list(extend = 'copy'),
-<<<<<<< HEAD
-                          list(extend = 'csv', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
-                          list(extend = 'excel', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
-                          list(extend = "pdf", filename = sprintf("vessel_license_permits_%s", vesselId), orientation = "landscape",
-                               title = sprintf("Vessel '%s' (%s) License Permits (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
-=======
                           list(extend = 'csv', filename =  sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                           list(extend = 'excel', filename =  sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                           list(extend = "pdf", filename = sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), orientation = "landscape",
                                title = sprintf(i18n("LICENCES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                         ),
                         exportOptions = list(
                           modifiers = list(page = "all", selected = TRUE)
@@ -404,17 +386,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   scroll = FALSE,
                   buttons = list(
                     list(extend = 'copy'),
-<<<<<<< HEAD
-                    list(extend = 'csv', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
-                    list(extend = 'excel', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
-                    list(extend = "pdf", filename = sprintf("vessel_catch_summary_%s", vesselId),
-                         title = sprintf("Vessel '%s' (%s) Catch summary (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
-=======
                     list(extend = 'csv', filename =  sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId),
                          title = sprintf(i18n("SUMMARY_CATCHES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
@@ -442,17 +417,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   scroll = FALSE,
                   buttons = list(
                     list(extend = 'copy'),
-<<<<<<< HEAD
-                    list(extend = 'csv', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
-                    list(extend = 'excel', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
-                    list(extend = "pdf", filename = sprintf("vessel_catch_history_%s", vesselId), orientation = "landscape",
-                         title = sprintf("Vessel '%s' (%s) Catch history (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
-=======
                     list(extend = 'csv', filename =  sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), orientation = "landscape",
                          title = sprintf(i18n("HISTORY_CATCHES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
@@ -900,17 +868,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     output$more_indicators <- renderUI({
       fluidRow(
-<<<<<<< HEAD
-        infoBox(span('Mean fishing trips/year',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
-        infoBox(span('Mean days at sea / fishing trip',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
-        infoBox(span('Number of landing sites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
-        infoBox(span('Number of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
-=======
         infoBox(span(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
         infoBox(span(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
         infoBox(span(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
         infoBox(span(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
->>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
       )
     })
     
