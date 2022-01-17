@@ -64,7 +64,7 @@ getModuleI18nTerms <- function(){
 #i18n
 i18n <- function(term){
   i18n_term <- appConfig$i18n[[appConfig$language]][[term]]
-  if(is.null(i18n_term)) i18n_term <- tags$span(paste0("<",term,">"), style = "color:red;")
+  if(is.null(i18n_term)) i18n_term <- tags$span(paste0("<",term,"_", toupper(appConfig$language),">"), style = "color:red;")
   return(i18n_term)
 }
 
