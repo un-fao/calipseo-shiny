@@ -4,12 +4,9 @@ landings1_maps_server <- function(input, output, session, pool){
   output$landings1_maps_info <- renderText({
     session$userData$page("landings1-maps")
     updatePageUrl("landings1-maps", session)
-    text <- "<h2>Descriptor maps "
-    text <- paste0(text, "<small>Access maps of landings by landing site / year</small>")
-    text <- paste0(text, userTooltip("These maps represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
-                                     style = "font-size: 75%;"))
-    text <- paste0(text, "</h2>")
-    text <- paste0(text, "<hr>")
+    text <- paste0("<h2>", i18n("LANDINGS1_MAPS_TITLE")," <small>", i18n("LANDINGS1_MAPS_SUBTITLE"),
+                   userTooltip("These maps represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
+                               style = "font-size: 75%;"),"</small></h2><hr>")
     text
   })
   
@@ -37,15 +34,15 @@ landings1_maps_server <- function(input, output, session, pool){
         addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
                    radius = 7000*sqrt(sites_descriptor$value/maxValue), 
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br(),
-                     em(paste0("Value (", descriptor,"):")), sites_descriptor$value
+                     em(paste0(i18n("LANDINGS1_MAP_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br(),
+                     em(paste0(i18n("LANDINGS1_MAP_VALUE_LABEL")," (", descriptor,"):")), sites_descriptor$value
                    ))
     }else{
       leaflet() %>%
         addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br()
+                     em(paste0(i18n("LANDINGS1_MAP_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br()
                    ))
     }
   }

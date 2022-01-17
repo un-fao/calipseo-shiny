@@ -1,0 +1,30 @@
+{
+  /*Logbooks title and subtitle*/
+  "LOGBOOKS_OVERVIEW_TITLE" : "Overview of industrial fishing activities",
+  "LOGBOOKS_OVERVIEW_SUBTITLE" : "Based on logbooks monitoring",
+  
+  /*Information boxes*/
+  "VERTICALTABPANEL_BREAKDOWN_BY_VESSEL_TYPES" : "Breakdown by vessel types",
+  "VERTICALTABPANEL_BREAKDOWN_BY_GEAR_TYPES" : "Breakdown by gear types",
+  
+  /*verticaltab Breakdown species*/
+  "VERTICALTABPANEL_BREAKDOWN_BY_SPECIES" : "Breakdown by species",
+  "TABPANEL_BREAKDOWN_BY_SPECIES" : "Species",
+  "TABPANEL_BREAKDOWN_BY_SPECIES_GROUPS" : "Species groups",
+  
+  "VERTICALTABPANEL_BREAKDOWN_BY_LANDING_SITES" : "Breakdown by landing sites",
+  "VERTICALTABPANEL_BREAKDOWN_BY_FISHING_ZONE" : "Breakdown by fishing zones",
+  
+  /*Information boxes*/
+  "INFOBOX_OVERVIEW_TOTAL_QUANTITY" : "Total quantity",
+  "TOTAL_QUANTITY_UNITS" : "tons",
+  "INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE" : "Logbook reporting percentage",
+  "VESSEL_TYPE_LABEL" : "Vessel type",
+  "GEAR_TYPE_LABEL" : "Gear type",
+  "SPECIES_LABEL" : "Species",
+  "FISHING_GEAR_LABEL" : "Fishing gear",
+  "LANDING_SITES_LABEL" : "Landing site",
+  "FISHING_ZONE_LABEL" : "Fishing zone"
+ 
+  
+}

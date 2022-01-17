@@ -94,7 +94,8 @@ logbooks_overview_server <- function(input, output, session, pool){
     #info
     output$logbooks_overview_info <- renderText({
       #session$userData$page("logbooks_overview")
-      text <- "<h2 style='margin-top:0px;'>Overview of industrial fishing activities<small>Based on logbooks monitoring</small></h2>"
+      text <- paste0("<h2>", i18n("LOGBOOKS_OVERVIEW_TITLE")," <small>", i18n("LOGBOOKS_OVERVIEW_SUBTITLE"),"</small></h2>")
+      text
     })
     
     #counters
@@ -107,8 +108,8 @@ logbooks_overview_server <- function(input, output, session, pool){
             box(
               title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
               width = 12,
-              infoBox(tags$span("Total quantity", style = "font-size: 90%;"), paste(round(infos$total_lastyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
-              infoBox(tags$span("Logbook reporting percentage", style = "font-size: 90%;"), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6)
+              infoBox(tags$span(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style = "font-size: 90%;"), paste(round(infos$total_lastyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), fill = TRUE, width = 6),
+              infoBox(tags$span(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style = "font-size: 90%;"), infos$ratio_reporting_lastyear, icon = icon("percent"), fill = TRUE, width = 6)
             )
           ),
           div(
@@ -116,8 +117,8 @@ logbooks_overview_server <- function(input, output, session, pool){
             box(
               title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
               width = 12,
-              infoBox(tags$span("Total quantity", style = "font-size: 90%;"), paste(round(infos$total_currentyear/1000,2), "tons"), icon = icon("fish"), fill = TRUE, width = 6),
-              infoBox(tags$span("Logbook reporting percentage", style = "font-size: 90%;"), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
+              infoBox(tags$span(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style = "font-size: 90%;"), paste(round(infos$total_currentyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), fill = TRUE, width = 6),
+              infoBox(tags$span(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style = "font-size: 90%;"), infos$ratio_reporting_currentyear, icon = icon("percent"), fill = TRUE, width = 6)
             )
           )
         )
@@ -182,12 +183,12 @@ logbooks_overview_server <- function(input, output, session, pool){
   fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
   names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
   
-  line_chart_server("vt", label="Vessel type",df=data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("gt", label="Gear type",df=data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("sp", label="Species",df=data_logbooks%>%
-                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:",mode='plot+table')
-  line_chart_server("fg", label="Fishing gear",df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("ls", label="Landing site",df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("fz", label="Fishing zone",df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("sp", label=i18n("SPECIES_LABEL"),df=data_logbooks%>%
+                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"),mode='plot+table')
+  line_chart_server("fg", label=i18n("FISHING_GEAR_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE,mode='plot+table')
 
 }

@@ -11,15 +11,11 @@ computation_server <- function(input, output, session, pool) {
   output$computation_info <- renderText({
     session$userData$page("computation")
     updatePageUrl("computation", session)
-    text <- "<h2>Statistics "
-    text <- paste0(text, "<small>Compute statistics and download statistical reports</small>")
-    text <- paste0(text, userTooltip("This section lets you compute the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
-                                     style = "font-size: 75%;"))
-    text <- paste0(text, "</h2>")
-    text <- paste0(text, "<hr>")
+    text <- paste0("<h2>", i18n("COMPUTATION_TITLE")," <small>", i18n("COMPUTATION_SUBTITLE"),
+                   userTooltip("This section lets you compute the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
+                               style = "font-size: 75%;"),"</small></h2><hr>")
     text
   })
-  
   
   
   #--------------------------------
@@ -80,11 +76,11 @@ computation_server <- function(input, output, session, pool) {
         File = sapply(1:length(years), function(i){file.path("out", status[i], paste0(indicator$value, "_", years[i], ".xlsx"))}),
         Actions = paste0(
           shinyInput(downloadButtonCustom, length(years), indexes = uuids, id = 'button_result_', ns = ns, 
-                     title = "Download result", label = "", icon = icon("file-alt"),
+                     title = i18n("DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
                      onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
           if(!is.null(indicator$report_with)){
             shinyInput(downloadButtonCustom, length(years), indexes = uuids, id = 'button_report_', ns = ns, 
-                     title = "Download report", label = "", icon = icon("file-contract"),
+                     title = i18n("DOWNLOAD_REPORT_TITLE"), label = "", icon = icon("file-contract"),
                      onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button")))
           }else{
             ""
@@ -138,11 +134,14 @@ computation_server <- function(input, output, session, pool) {
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
+    colnames = c(i18n("COMPUTATION_STATUS_TABLE_COLNAME_1"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_2"),
+                 i18n("COMPUTATION_STATUS_TABLE_COLNAME_3"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_4")),
     options = list(
       paging = FALSE,
       searching = FALSE,
       preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
-      drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+      drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } '),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
   
@@ -157,13 +156,13 @@ computation_server <- function(input, output, session, pool) {
     out$computing <- TRUE
     raw_output <- NULL
     out$computation <- NULL
-    cat(sprintf("Retrieve indicator for '%s'\n", input$computation_indicator))
+    cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), input$computation_indicator))
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    indicator_msg <- sprintf("Compute %s - %s", indicator$label, input$computation_year)
+    indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), indicator$label, input$computation_year)
     
-    cat(sprintf("Query data for year %s\n", input$computation_year))
+    cat(sprintf(paste0(i18n("QUERY_DATA_YEAR_LABEL")," %s\n"), input$computation_year))
     data_is_loaded <- TRUE
-    progress$set(message = indicator_msg, detail = "Initialize & read data...", value = 0)
+    progress$set(message = indicator_msg, detail = i18n("COMPUTATION_PROGRESS_SUB_LABEL"), value = 0)
     #required for 1st and 2d raised
     raw_data <- accessLandingForms(pool, year = input$computation_year)
     raised_1 <- DATASETS$raised_1[DATASETS$raised_1$year == input$computation_year,]
@@ -172,10 +171,10 @@ computation_server <- function(input, output, session, pool) {
     zones <- DATASETS$beach_to_beachzone
     species_groups <- DATASETS$species_groups
     
-    #dependency of indicators? --> TODO
+    #dependency of indicators? --> TODO 
     landings_1 <- NULL
     if("landings_1" %in% indicator$compute_with$fun_args){
-      landings_1_release <- sprintf("out/release/artisanal_fisheries_landings1_%s.xlsx", input$computation_year)
+      landings_1_release <- sprintf(paste0("out/",i18n("RELEASE_LANDING1_FILE_NAME"),"_%s.xlsx"), input$computation_year)
       if(file.exists(landings_1_release)){
         landings_1 <- as.data.frame(readxl::read_excel(landings_1_release))
       }else{
@@ -185,7 +184,7 @@ computation_server <- function(input, output, session, pool) {
     #required for FAO reporting
     landings_2 <- NULL
     if("landings_2" %in% indicator$compute_with$fun_args){
-      landings_2_release <- sprintf("out/release/artisanal_fisheries_landings2_by_SPECIES_%s.xlsx", input$computation_year)
+      landings_2_release <- sprintf(paste0("out/",i18n("RELEASE_LANDING2_FILE_NAME"),"_%s.xlsx"), input$computation_year)
       if(file.exists(landings_2_release)){
         landings_2 <- as.data.frame(readxl::read_excel(landings_2_release))
       }else{
@@ -195,25 +194,25 @@ computation_server <- function(input, output, session, pool) {
     ref_species <- accessRefSpecies(pool)
     
     if(data_is_loaded){
-      cat("All data assets are loaded and ready for computation\n")
-      cat(sprintf("Load R 'compute' script '%s'\n", indicator$compute_with$script))
-      progress$set(message = indicator_msg, detail = "Prepare R script...", value = 20)
+      cat(paste0(i18n("NOTIFICATION_DATALOAD_FOR_COMPUTATION"),"\n"))
+      cat(sprintf(paste0(i18n("LOAD_R_COMPUTE_SCRIPT_LABEL"),"'%s'\n"), indicator$compute_with$script))
+      progress$set(message = indicator_msg, detail = i18n("LOADING_R_COMPUTE_SCRIPT_PROGRESS_LABEL"), value = 20)
       source(indicator$compute_with$script)
-      cat(sprintf("Execute indicator '%s'\n", indicator$value))
+      cat(sprintf(paste0(i18n("EXECUTE_INDICATOR_LABEL"),"'%s'\n"), indicator$value))
       args <- names(formals(indicator$compute_with$fun))
       fun_statement <- paste0("raw_output <- ", indicator$compute_with$fun, 
                               "(", paste0(sapply(args, function(arg){paste0(arg, " = ", indicator$compute_with$fun_args[[arg]])}), collapse=","), ")"
       )
-      cat(sprintf("Function statement: %s\n", fun_statement))
-      progress$set(message = indicator_msg, detail = "Execute R script...", value = 40)
+      cat(sprintf(paste0(i18n("FUNCTION_STATEMENT_LABEL"),": %s\n"), fun_statement))
+      progress$set(message = indicator_msg, detail = i18n("EXECUTE_R_SCRIPT_LABEL"), value = 40)
       eval(parse(text = fun_statement))
       if(is.null(raw_output)){
-        cat(sprintf("Error while executing indicator '%s'\n", indicator$value))
+        cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$value))
       }else{
-        cat(sprintf("Successful computation of indicator '%s': %s results\n", indicator$value, nrow(raw_output)))
+        cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
       }
       
-      progress$set(message = indicator_msg, detail = "Export result to 'staging' area...", value = 90)
+      progress$set(message = indicator_msg, detail = i18n("EXPORT_RESULTS_STAGING_LABEL"), value = 90)
       out$computation <- raw_output
       out$computing <- FALSE
       out$indicator <- indicator
@@ -224,14 +223,14 @@ computation_server <- function(input, output, session, pool) {
       outputfilepath <- sprintf("out/staging/%s",out$filename)
       writexl::write_xlsx(raw_output, outputfilepath)
       
-      progress$set(message = indicator_msg, detail = "Successful computation!", value = 100)
+      progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
       out$summary <- getComputationStatus(indicator)
       print(out$summary)
       
     }else{
-      errMsg <- sprintf("Landings 1 released results missing for year %s", input$computation_year)
+      errMsg <- sprintf(paste0(i18n("LANDING1_RELEASE_RESULT_MISSIG_YEAR"),"%s"), input$computation_year)
       cat(paste0(errMsg,"\n"))
-      progress$set(message = errMsg, detail = "Error during computation", value = 100)
+      progress$set(message = errMsg, detail = i18n("ERROR_DURING_COMPUTATION"), value = 100)
     }
     
     enable("computeButton")
@@ -266,7 +265,7 @@ computation_server <- function(input, output, session, pool) {
     #downloadRawData
     output$downloadRawData <- downloadHandler(
       filename = function(){
-        cat("Filename:",out$filename)
+        cat(paste0(i18n("FILENAME_LABEL"),":"),out$filename)
         out$filename 
       },
       content = function(con){
@@ -304,14 +303,14 @@ computation_server <- function(input, output, session, pool) {
       filename <- paste0(out$indicator$value, "_", out$year, ".xlsx")
       if(!dir.exists("out/release")) dir.create("out/release", recursive = TRUE)
       if (file.exists(file.path("out/release", filename))){
-        cat(sprintf("File '%s' existing, enabling release button shortcut\n", file.path("out/release", filename)))
+        cat(sprintf(paste0(i18n("FILE_LABEL")," %s ", i18n("RELEASE_SHORTCUT_BUTTON_LABEL"),"\n"), file.path("out/release", filename)))
         tags$div(
           tags$div(
             class = "row",
             if(!is.null(out$indicator$report_with)) {
               downloadButtonCustom(
                 session$ns("downloadReportShortcut"),
-                'Generate & download report',
+                i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
                 icon = icon("file-excel"),
                 class = "btn-lg btn-light"
               )
@@ -326,32 +325,32 @@ computation_server <- function(input, output, session, pool) {
       if(out$computing){
         tags$div(
           id = "computation-results",
-          tags$span(tags$b("Computing..."))
+          tags$span(tags$b(i18n("COMPUTATION_IN_PROGRESS")))
         )
       }else{
         if(nrow(out$summary)>0){
           tags$div(
             id = "computation-results",
             h3(tags$b(out$indicator$label), " - ", tags$small(out$year)), hr(),
-            p(em(paste0("Computation results with ", nrow(out$computation), " records - stored in 'staging' environment"))),
+            p(em(paste0(i18n("COMPUTATION_RESULTS_WITH_LABEL")," ", nrow(out$computation)," ",i18n("RECORDS_STORED_IN_STAGING_LABEL")))),
             tags$div(class = "col-md-6",
                      h4(
-                       tags$b("Draft"), " ", 
+                       tags$b(i18n("DRAFT_LABEL")), " ", 
                        tags$span(
                          class = "glyphicon glyphicon-info-sign tooltip-info", 
-                         title = "This section allows you to download computation results and reports"
+                         title = i18n("COMPUTATION_SECTION_TITLE")
                        )
                      ), hr(),
                      downloadButtonCustom(
                        session$ns("downloadRawData"),
-                       'Download computation results',
+                       i18n("COMPUTATION_DOWNLOAD_RESULT_LABEL"),
                        icon = icon("file-excel"),
                        class = "btn-lg btn-light"
                      ),
                      if(!is.null(out$indicator$report_with)) {
                        downloadButtonCustom(
                          session$ns("downloadReportInStaging"),
-                         'Generate & download report',
+                         i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
                          icon = icon("file-excel"),
                          class = "btn-lg btn-light"
                        )
@@ -359,20 +358,20 @@ computation_server <- function(input, output, session, pool) {
             ),
             tags$div(class = "col-md-6",
                      h4(
-                       tags$b("Release")," ",
+                       tags$b(i18n("RELEASE_LABEL"))," ",
                        tags$span(
                          class = "glyphicon glyphicon-info-sign tooltip-info", 
-                         title = "This section allows you to release the computation. It is possible to overwrite a previous release but this action should done cautiously! You can generate/download a report based on the released computation result."
+                         title = i18n("RELEASE_COMPUTATION_MESSAGE")
                        )
                      ), hr(),
-                     actionButton(session$ns("showReleaseModal"), "Create a release", class = "btn-primary"),
+                     actionButton(session$ns("showReleaseModal"), i18n("CREATE_RELEASE_LABEL"), class = "btn-primary"),
                      uiOutput(session$ns("releaseInfo"))
             )
           )
         }else{
           tags$div(
             id = "computation-results",
-            tags$span(em("No computation run, select an indicator and year to launch a statistical computation!"))
+            tags$span(em(i18n("NO_COMPUTATION_RUN_LABEL")))
           )
         }
       }
@@ -389,13 +388,13 @@ computation_server <- function(input, output, session, pool) {
   releaseModal <- function(session, warning = FALSE) {
     modalDialog(
       if (warning){
-        div(tags$b("Dataset already released. Click OK to overwrite release, or cancel.", style = "color: orange; font-weight:bold;"))
+        div(tags$b(i18n("DATASET_RELEASED_LABEL"), style = "color: orange; font-weight:bold;"))
       }else{ 
-        div(tags$b("Are your sure to want to create a release? If yes click OK to confirm, or cancel."))
+        div(tags$b(i18n("CONFIRMATION_TO_CREATE_RELEASE")))
       },
       footer = tagList(
-        modalButton("Cancel"),
-        actionButton(session$ns("releaseButton"), "OK")
+        modalButton(i18n("TO_CANCEL_RELEASE_LABEL")),
+        actionButton(session$ns("releaseButton"), i18n("TO_CREATE_RELEASE_LABEL"))
       )
     )
   }
@@ -428,7 +427,7 @@ computation_server <- function(input, output, session, pool) {
   observe({
     output$releaseInfo <- renderUI({
       if (is.null(released_vals$filename) & !file.exists(file.path("out/release", out$filename))){
-        tags$div(tags$b("No data released yet!"), style="margin-left:5px;padding:12px;")
+        tags$div(tags$b(i18n("RELEASE_NO_DATA_LABEL")), style="margin-left:5px;padding:12px;")
       }else{
         tags$div(
           tags$div(
@@ -436,7 +435,7 @@ computation_server <- function(input, output, session, pool) {
             if(!is.null(out$indicator$report_with)) {
               downloadButtonCustom(
                 session$ns("downloadReportInRelease"),
-                'Generate & download report',
+                i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
                 icon = icon("file-excel"),
                 class = "btn-lg btn-light"
               )
@@ -444,7 +443,7 @@ computation_server <- function(input, output, session, pool) {
           ),br(),
           tags$div(
             class = "row", style = "padding-left: 15px",
-            p(tags$b("Last release:"), tags$span(file.info(file.path("out/release", out$filename))$mtime))
+            p(tags$b(paste0(i18n("LAST_RELEASE_LABEL"),":")), tags$span(file.info(file.path("out/release", out$filename))$mtime))
           )
         )
       }

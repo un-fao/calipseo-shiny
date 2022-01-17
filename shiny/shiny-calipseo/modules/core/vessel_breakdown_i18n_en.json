@@ -1,0 +1,35 @@
+{ 
+  /*Main title and subtitle*/
+  "VESSEL_BREAKDOWN_TITLE" : "Breakdown of vessels",
+  "VESSEL_BREAKDOWN_SUBTITLE" : "Visualize the breakdown of vessels",
+  
+  "BREAKDOWN_VESSEL_TITLE_PIECHART" : "Breakdown of vessels in %s per vessel type",
+  "BREAKDOWN_VESSEL_TITLE_MAP" : "Map",
+  "BREAKDOWN_VESSEL_TITLE_DATA" : "Data",
+  /*Homeport*/
+  "BREAKDOWN_VESSEL_TITLE_HOMEPORT" : "Breakdown of vessels in %s per home port",
+  "BREAKDOWN_VESSEL_HOMEPORT_TABLE_COLNAME_1" : "VESSEL TYPE",
+  "BREAKDOWN_VESSEL_HOMEPORT_TABLE_COLNAME_2" : "COUNT",
+  "BREAKDOWN_VESSEL_HOMEPORT_MAP_LABEL_HOMEPORT" : "Home port",
+  "BREAKDOWN_VESSEL_HOMEPORT_MAP_LABEL_NUMBER_OF_VESSELS" : "Number of vessels",
+  "BREAKDOWN_VESSEL_HOMEPORT_DATA_EXPORT_FILENAME" : "Vessel Type Data Breakdown in",
+  "BREAKDOWN_VESSEL_HOMEPORT_PDF_TITLE" : "Vessel Type Data Breakdown in",
+  /*Vesseltype Homeport*/
+  "BREAKDOWN_VESSEL_TITLE_VESSELTYPE_HOMEPORT" : "Breakdown of vessel type in %s per home port",
+  "BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_1" : "HOME PORT",
+  "BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_2" : "COUNT",
+  "BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_DATA_EXPORT_FILENAME" : "Vessel LandingSite Data Breakdown in",
+  "BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_PDF_TITLE" : "Vessel LandingSite Data Breakdown in",
+  /*Datatable*/
+  "BREAKDOWN_VESSEL_TITLE_TABLE" : "Data on Breakdown of vessels in %s per vessel type",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  
+  /*LandingSite data breakdown*/
+  
+  "BREAKDOWN_VESSELTYPE_TITLE_LANDINGSITE" : "Breakdown of vessel type in %s per Landing sites",
+  "BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_1" : "LANDING SITE/HOME PORT",
+  "BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_2" : "VESSELTYPE",
+  "BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_3" : "COUNT",
+  "BREAKDOWN_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME" : "Home port/LandingSite Vessel Data Breakdown in",
+  "BREAKDOWN_VESSELTYPE_LANDINGSITE_PDF_TITLE" : "Home port/LandingSite Vessel Data Breakdown in"
+}

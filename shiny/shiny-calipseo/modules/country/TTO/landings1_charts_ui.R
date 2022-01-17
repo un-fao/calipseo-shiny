@@ -11,8 +11,8 @@ landings1_charts_ui <- function(id){
         htmlOutput(ns("landings1_charts_info"))
       ),
       box(width = 6,
-          selectizeInput(ns("bch_name"), label = "Landing site", choices = accessLandingSiteNames(pool),
-                         options = list(placeholder = 'Select a landing site',
+          selectizeInput(ns("bch_name"), label = i18n("LANDING_SITE_LABEL"), choices = accessLandingSiteNames(pool),
+                         options = list(placeholder = i18n("LANDING_SITE_PLACEHOLDER_LABEL"),
                                         onInitialize = I('function() { this.setValue(""); }')))
       )
     ),

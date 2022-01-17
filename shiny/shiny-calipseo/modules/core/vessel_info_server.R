@@ -3,7 +3,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
-    text <- paste0("<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\"><< Back to list of vessels</a>")
+    text <- paste0("<h2>", i18n("VESSEL_INFO_TITLE"),"</h2><hr>")
+    text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">",i18n("BACK_TO_LIST_OF_VESSELS"),"</a>")
     text
   })
   
@@ -88,10 +89,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$vessel_description <- renderUI({
       colnames(vesselOwners)
       tags$ul(style = "margin-top:10px;",
-              tags$li('Vessel name: ', tags$b(vessel$NAME)),
-              tags$li('Vessel type: ', tags$b(vessel$VESSEL_TYPE)),
-              tags$li('Vessel stat type: ', tags$b(vessel$VESSEL_STAT_TYPE)),
-              tags$li('Home port: ', tags$b(vessel$HOME_PORT_LANDING_SITE)),
+              tags$li(paste0(i18n("VESSEL_NAME"),": "), tags$b(vessel$NAME)),
+              tags$li(paste0(i18n("VESSEL_TYPE"),": "), tags$b(vessel$VESSEL_TYPE)),
+              tags$li(paste0(i18n("VESSEL_STAT_TYPE"),": "), tags$b(vessel$VESSEL_STAT_TYPE)),
+              tags$li(paste0(i18n("HOME_PORT"),": "), tags$b(vessel$HOME_PORT_LANDING_SITE)),
               tags$li('IRCS: ', tags$b(ifelse(!is.na(vessel$IRCS),vessel$IRCS, '-'))),
               tags$li('IMO: ', tags$b(ifelse(!is.na(vessel$IMO),vessel$IMO, '-')))
       )
@@ -100,8 +101,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     #registration
     output$vessel_registration <- renderUI({
       tags$ul(style = "margin-top:10px;",
-              tags$li('Registration Number: ', tags$b(vessel$REGISTRATION_NUMBER)),
-              tags$li('Registation port: ', tags$b(vessel$REG_PORT_LANDING_SITE))
+              tags$li(paste0(i18n("REGISTRATION_NUMBER"),": "), tags$b(vessel$REGISTRATION_NUMBER)),
+              tags$li(paste0(i18n("REGISTRATION_PORT"),": "), tags$b(vessel$REG_PORT_LANDING_SITE))
       )
     })
     
@@ -182,23 +183,33 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           scroll = FALSE,
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf("vessel_historical_characteristics_%s", vesselId), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("vessel_historical_characteristics_%s", vesselId), title = NULL, header = TRUE),
-            list(extend = "pdf", filename = sprintf("vessel_historical_characteristics_%s", vesselId), 
-                 title = sprintf("Vessel '%s' (%s) Historical Characteristics", vesselId, vessel$NAME), header = TRUE)
+            list(extend = 'csv', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), 
+                 title = sprintf("HISTORY_PDF_TITLE", vesselId, vessel$NAME), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all", selected = TRUE)
-          )
+          ),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         ),
-        colnames = c('Type','Description', 'Old Value', 'New Value', 'Change Date')
+        colnames = c(i18n("HISTORY_TABLE_COLNAME_1"),i18n("HISTORY_TABLE_COLNAME_2"),
+                     i18n("HISTORY_TABLE_COLNAME_3"),i18n("HISTORY_TABLE_COLNAME_4"),
+                     i18n("HISTORY_TABLE_COLNAME_1"))
       )
       
     })
     
     #ownership
     output$vessel_owners <- renderDataTable(server = FALSE,{
+<<<<<<< HEAD
       names(vesselOwners) <- c("Full Name", "Entity Document Number", "Address", "Address City", "Address Zip Code", "Phone Number", "Mobile Number")
+=======
+      names(vesselOwners) <- c(i18n("OWNERSHIP_TABLE_COLNAME_1"),i18n("OWNERSHIP_TABLE_COLNAME_2"),
+                               i18n("OWNERSHIP_TABLE_COLNAME_3"),i18n("OWNERSHIP_TABLE_COLNAME_4"),
+                               i18n("OWNERSHIP_TABLE_COLNAME_5"),i18n("OWNERSHIP_TABLE_COLNAME_6"),
+                               i18n("OWNERSHIP_TABLE_COLNAME_7"))
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
       
       datatable(
         vesselOwners,
@@ -212,14 +223,22 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           scroll = FALSE,
           buttons = list(
             list(extend = 'copy'),
+<<<<<<< HEAD
             list(extend = 'csv', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
             list(extend = 'excel', filename =  sprintf("vessel_owners_%s", vesselId), title = NULL, header = TRUE),
             list(extend = "pdf", filename = sprintf("vessel_owners_%s", vesselId), 
                  title = sprintf("Vessel '%s' (%s) ownership", vesselId, vessel$NAME), header = TRUE)
+=======
+            list(extend = 'csv', filename =  sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+            list(extend = "pdf", filename = sprintf(i18n("OWNERSHIP_DATA_EXPORT_FILENAME"), vesselId), 
+                 title = sprintf(i18n("OWNERSHIP_PDF_TITLE"), vesselId, vessel$NAME), header = TRUE)
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
           ),
           exportOptions = list(
             modifiers = list(page = "all", selected = TRUE)
-          )
+          ),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         ))
     })
     
@@ -257,9 +276,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
           
-          names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
-                                          'Valid From (Date)', 'Valid To (Date)', 'Gears', 'Validity')
-          
+          names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+                                          i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
+                                          i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
+                                          i18n("LICENCES_TABLE_COLNAME_7"))
           vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
           
           return(unique(vessellicensepermits))
@@ -280,10 +300,17 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                         scroll = FALSE,
                         buttons = list(
                           list(extend = 'copy'),
+<<<<<<< HEAD
                           list(extend = 'csv', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
                           list(extend = 'excel', filename =  sprintf("vessel_license_permits_%s", vesselId), title = NULL, header = TRUE),
                           list(extend = "pdf", filename = sprintf("vessel_license_permits_%s", vesselId), orientation = "landscape",
                                title = sprintf("Vessel '%s' (%s) License Permits (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+=======
+                          list(extend = 'csv', filename =  sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                          list(extend = 'excel', filename =  sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                          list(extend = "pdf", filename = sprintf(i18n("LICENCES_DATA_EXPORT_FILENAME"), vesselId), orientation = "landscape",
+                               title = sprintf(i18n("LICENCES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                         ),
                         exportOptions = list(
                           modifiers = list(page = "all", selected = TRUE)
@@ -292,7 +319,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                         
                         columnDefs = list(
                           list(targets = 5, render = JS(js_render_for_license_table)) 
-                        )
+                        ),
+                        language = list(url = i18n("TABLE_LANGUAGE"))
                       ))
         
         
@@ -310,9 +338,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
         )
         
-        names(vessellicensepermits)<- c('Permit Number', 'Application Date', 'Permit Date',
-                                        'Valid From (Date)', 'Valid To (Date)', 'Validity', 'Gears')
-        
+        names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+                                        i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
+                                        i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
+                                        i18n("LICENCES_TABLE_COLNAME_7"))
         DT::datatable(vessellicensepermits)
         
       }
@@ -324,7 +353,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       if(nrow(vesselCatches)>0){
         if(accessVesselCatches(pool, vesselId)$stat_type_id=='1'){
           div(class="alert alert-warning", role="alert",style='font-size:90%;',
-              icon("warning", "fa-2x"), tags$em("Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel")  
+              icon("warning", "fa-2x"), tags$em(i18n("WARNING_MESSAGE"))  
           )
         }
       }
@@ -362,7 +391,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     output$vessel_catch_summary <- renderDataTable(server = FALSE,{
-      names(vesselCatchSummary) <- c("Year", "Days At Sea", "Quantity")
+      names(vesselCatchSummary) <- c(i18n("SUMMARY_CATCHES_COLNAME_1"),i18n("SUMMARY_CATCHES_COLNAME_2"),
+                                     i18n("SUMMARY_CATCHES_COLNAME_3"))
       datatable(vesselCatchSummary,
                 rownames = FALSE,
                 extensions = c("Buttons"),
@@ -374,23 +404,32 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   scroll = FALSE,
                   buttons = list(
                     list(extend = 'copy'),
+<<<<<<< HEAD
                     list(extend = 'csv', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf("vessel_catch_summary_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf("vessel_catch_summary_%s", vesselId),
                          title = sprintf("Vessel '%s' (%s) Catch summary (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+=======
+                    list(extend = 'csv', filename =  sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                    list(extend = 'excel', filename =  sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                    list(extend = "pdf", filename = sprintf(i18n("SUMMARY_CATCHES_DATA_EXPORT_FILENAME"), vesselId),
+                         title = sprintf(i18n("SUMMARY_CATCHES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
-                  )
+                  ),
+                  language = list(url = i18n("TABLE_LANGUAGE"))
                 ))
     })
     
     #catch history
     output$vessel_catch_history <- renderDataTable(server = FALSE,{
       
-      names(vesselCatches) <- c("Year", "Departure Datetime", "Return Datetime", "Days At Sea", "Crew", "Greater Fishing Area", "Beach Name",
-                                "Fishing Method", "Species Description", "Quantity", "Quantity Unit", "Value")
-      
+      names(vesselCatches) <- c(i18n("HISTORY_CATCHES_COLNAME_1"),i18n("HISTORY_CATCHES_COLNAME_2"),i18n("HISTORY_CATCHES_COLNAME_3"),
+        i18n("HISTORY_CATCHES_COLNAME_4"),i18n("HISTORY_CATCHES_COLNAME_5"),i18n("HISTORY_CATCHES_COLNAME_6"),
+        i18n("HISTORY_CATCHES_COLNAME_7"),i18n("HISTORY_CATCHES_COLNAME_8"),i18n("HISTORY_CATCHES_COLNAME_9"),
+        i18n("HISTORY_CATCHES_COLNAME_10"),i18n("HISTORY_CATCHES_COLNAME_11"),i18n("HISTORY_CATCHES_COLNAME_12"))
       
       datatable(vesselCatches,
                 rownames = FALSE,
@@ -403,22 +442,30 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                   scroll = FALSE,
                   buttons = list(
                     list(extend = 'copy'),
+<<<<<<< HEAD
                     list(extend = 'csv', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = 'excel', filename =  sprintf("vessel_catch_history_%s", vesselId), title = NULL, header = TRUE),
                     list(extend = "pdf", filename = sprintf("vessel_catch_history_%s", vesselId), orientation = "landscape",
                          title = sprintf("Vessel '%s' (%s) Catch history (as of %s)", vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+=======
+                    list(extend = 'csv', filename =  sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                    list(extend = 'excel', filename =  sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
+                    list(extend = "pdf", filename = sprintf(i18n("HISTORY_CATCHES_DATA_EXPORT_FILENAME"), vesselId), orientation = "landscape",
+                         title = sprintf(i18n("HISTORY_CATCHES_PDF_TITLE"), vesselId, vessel$NAME, Sys.Date()), header = TRUE)
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
                   ),
                   exportOptions = list(
                     modifiers = list(page = "all", selected = TRUE)
-                  )
+                  ),
+                  language = list(url = i18n("TABLE_LANGUAGE"))
                 )) %>% 
         formatDate(
-          'Departure Datetime',
+          i18n("HISTORY_CATCHES_COLNAME_2"),
           method = "toLocaleString",
           params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
         ) %>% 
         formatDate(
-          'Return Datetime',
+          i18n("HISTORY_CATCHES_COLNAME_3"),
           method = "toLocaleString",
           params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
         )
@@ -427,8 +474,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     #catch data source
     output$vessel_catch_datasource <- renderUI({
       tags$small(switch(vessel$VESSEL_STAT_TYPE_CODE,
-                        "ART" = "From sample-based survey",
-                        "INDUS" = "From lobgooks"
+                        "ART" = i18n("CATCHES_DATA_SOURCE_ART"),
+                        "INDUS" = i18n("CATCHES_DATA_SOURCE_INDUS")
       ))
     })
     
@@ -439,7 +486,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     if(nrow(vessel_found)>0){
       vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
-      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">Image source: <a href=",vessel_found$Value[1], " target=\"_blank\" a> VesselFinder </a></div>"))
+      vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">",paste0(i18n("IMAGE_SOURCE"),":"),"<a href=",vessel_found$Value[1], " target=\"_blank\" a>",i18n("VESSEL_FINDER"),"</a></div>"))
     }else{
       vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
     }
@@ -487,7 +534,14 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       
       names(df_calipseo) <- c('Description','Calipseo')
-      
+      df_calipseo$Description[1] <- i18n("LENGTH_OVERALL")
+      df_calipseo$Description[2] <- i18n("DRAUGHT")
+      df_calipseo$Description[3] <- i18n("BEAM")
+      df_calipseo$Description[4] <- i18n("GROSS TONNAGE")
+      df_calipseo$Description[5] <- i18n("SUMMER_DEADWEIGHT")
+      df_calipseo$Description[6] <- i18n("SPEED")
+      df_calipseo$Description[7] <- i18n("TRAWLING_SPEED")
+      df_calipseo$Description[8] <- i18n("POWER")
       return(df_calipseo)
       
     })
@@ -510,10 +564,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                          scope='col'
                        ),
                        tags$th(
-                         scope='col','Calipseo'
+                         scope='col',i18n("CALIPSEO_DATA_COLNAME")
                        ),
                        tags$th(
-                         scope='col','VesselFinder*'
+                         scope='col',i18n("VESSEL_FINDER_DATA_COLNAME")
                        )
                      )
                    ),
@@ -626,7 +680,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                          scope='col'
                        ),
                        tags$th(
-                         scope='col','Calipseo'
+                         scope='col',i18n("CALIPSEO_DATA_COLNAME")
                        )
                      )
                    ),
@@ -724,14 +778,14 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     line_chart_server("catches_sp", SpeciesCatchesYear%>%
                         mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",
                                             species_desc,species_sci,species_asfis)),
-                      mode = "plot+table", label = "Species",
+                      mode = "plot+table", label = i18n("SPECIES_STATISTIC_LABEL"),
                       colDate = "date",colTarget="species_desc",
                       colValue="quantity",colText="text",
-                      rank=TRUE,nbToShow=5,rankLabel="Display x most caught species:")
+                      rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"))
     
     line_chart_server("catches_spgroups", 
                       SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
-                      mode = "plot+table", label = "Species groups",
+                      mode = "plot+table", label = i18n("SPECIES_GROUP_STATISTIC_LABEL"),
                       colDate = "date", colTarget="ISSCAAP_Group_En",
                       colValue="quantity", rank=FALSE)
     
@@ -828,28 +882,35 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     output$box_status <- renderUI({
       
-      custome_infoBox(span('Vessel Operational Status',style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
+      custome_infoBox(span(i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
     })
     
     
     output$box_owner <- renderUI({
-      infoBox('Number of owners',icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE, width = 6)
+      infoBox(i18n("INFOBOX_NUMBER_OF_OWNERS"),icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE, width = 6)
     })
     
     output$box_license <- renderUI({
-      infoBox('Number of licenses',icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE, width = 6)
+      infoBox(i18n("INFOBOX_NUMBER_OF_LICENSES"),icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE, width = 6)
     })
     
     output$box_gears <- renderUI({
-      infoBox('Number of fishing gears',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE, width = 6)
+      infoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE, width = 6)
     })
     
     output$more_indicators <- renderUI({
       fluidRow(
+<<<<<<< HEAD
         infoBox(span('Mean fishing trips/year',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
         infoBox(span('Mean days at sea / fishing trip',style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
         infoBox(span('Number of landing sites',style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
         infoBox(span('Number of species caught',style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
+=======
+        infoBox(span(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips, fill = TRUE,width = 3),
+        infoBox(span(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style='font-size:10px;'),icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea, fill = TRUE,width = 3),
+        infoBox(span(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style='font-size:10px;'),icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites, fill = TRUE,width = 3),
+        infoBox(span(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style='font-size:10px;'),icon = icon('fish'),vessel_indicators_infos$number_of_species_fished, fill = TRUE,width = 3)
+>>>>>>> remotes/origin/feature/CALR-49-apply-i18n-english-en-terms-to-all-modules
       )
     })
     

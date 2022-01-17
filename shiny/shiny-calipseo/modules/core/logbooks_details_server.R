@@ -45,10 +45,12 @@ logbooks_details_server <- function(input, output, session, pool){
   })
   
   output$plot_vessel <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel, x = ~year, y = ~quantity, mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290)
+    plot_ly(ctrl$data_for_vessel, x = ~ctrl$data_for_vessel[,1], y = ~ctrl$data_for_vessel[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=i18n("TABLE_COLNAME_QUANTITY")))
   })
+  
   output$data_vessel <- renderDataTable(
     ctrl$data_for_vessel,
+    colnames = c(i18n("TABLE_COLNAME_YEAR"),i18n("TABLE_COLNAME_QUANTITY")),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -60,14 +62,15 @@ logbooks_details_server <- function(input, output, session, pool){
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  sprintf("quantities_by_vessel_%s", input$logbooks_vessel), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf("quantities_by_vessel_%s", input$logbooks_vessel), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf("quantities_by_vessel_%s", input$logbooks_vessel), 
-             title = sprintf("Quantities by vessel - %s", input$logbooks_vessel), header = TRUE)
+        list(extend = 'csv', filename =  sprintf(paste0(i18n("BY_VESSEL_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BY_VESSEL_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BY_VESSEL_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel), 
+             title = sprintf(paste0(i18n("BY_VESSEL_PDF_TITLE")," - %s"), input$logbooks_vessel), header = TRUE)
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
   
@@ -97,11 +100,14 @@ logbooks_details_server <- function(input, output, session, pool){
     }
   })
   
+ 
   output$plot_vessel_owner <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel_owner, x = ~year, y = ~quantity, mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290)
+    plot_ly(ctrl$data_for_vessel_owner, x = ~ctrl$data_for_vessel_owner[,1], y = ~ctrl$data_for_vessel_owner[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=i18n("TABLE_COLNAME_QUANTITY")))
   })
+  
   output$data_vessel_owner <- renderDataTable(
     ctrl$data_for_vessel_owner,
+    colnames = c(i18n("TABLE_COLNAME_YEAR"),i18n("TABLE_COLNAME_QUANTITY")),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -113,14 +119,15 @@ logbooks_details_server <- function(input, output, session, pool){
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  sprintf("quantities_by_vessel_owner_%s", input$logbooks_vessel_owner), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf("quantities_by_vessel_owner_%s", input$logbooks_vessel_owner), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf("quantities_by_vessel_owner_%s", input$logbooks_vessel_owner), 
-             title = sprintf("Quantities by vessel owner - %s", input$logbooks_vessel_owner), header = TRUE)
+        list(extend = 'csv', filename =  sprintf(paste0(i18n("BY_OWNER_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel_owner), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BY_OWNER_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel_owner), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BY_OWNER_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_vessel_owner), 
+             title = sprintf(paste0(i18n("BY_OWNER_PDF_TITLE"),"- %s"), input$logbooks_vessel_owner), header = TRUE)
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
   
@@ -212,8 +219,10 @@ logbooks_details_server <- function(input, output, session, pool){
         all.y = FALSE
       )
       sites_descriptor <- sites_descriptor[,c("NAME", colnames(resh)[colnames(resh)!="bch_id"])]
+      colnames(sites_descriptor)[1] <- i18n("SPECIES_TABLE_COLNAME_1")
+      colnames(sites_descriptor)[12] <- i18n("SPECIES_TABLE_COLNAME_12")
+      colnames(sites_descriptor)[13] <- i18n("SPECIES_TABLE_COLNAME_13")
       sites_descriptor <- as(sites_descriptor, "Spatial")
-      
       colnames(sites_descriptor@data) <- gsub("\\.", " ", gsub("\\.\\.", "; ", colnames(sites_descriptor@data)))
       
     }
@@ -230,15 +239,15 @@ logbooks_details_server <- function(input, output, session, pool){
         addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
                    radius = 7000*sqrt(sites_descriptor$quantity/maxValue), 
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br(),
-                     em("Quantity (kg): "), sites_descriptor$quantity
+                     em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")),sites_descriptor$NAME,br(),
+                     em(paste0(i18n("MAP_POPUP_QUANTITY_LABEL"),": ")), sites_descriptor$quantity 
                    ))
     }else{
       leaflet() %>%
         addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br()
+                     em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor$NAME,br()
                    ))
     }
   }
@@ -259,14 +268,14 @@ logbooks_details_server <- function(input, output, session, pool){
           coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
           type = "pie",
           chartdata = sites_descriptor@data[,colnames(sites_descriptor@data)[2:(ncol(sites_descriptor@data)-1)]], 
-          width = 60 * sqrt(sites_descriptor$TOTAL) / sqrt(max(sites_descriptor$TOTAL, na.rm = TRUE)), transitionTime = 0,
+          width = 60 * sqrt(sites_descriptor@data[,13]) / sqrt(max(sites_descriptor@data[,13], na.rm = TRUE)), transitionTime = 0,
           colorPalette = colors)
     }else{
       leaflet() %>%
         addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
-                     em("Landing site: "), sites_descriptor$NAME,br()
+                     em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor[,1],br()
                    ))
     }
   }
@@ -283,12 +292,16 @@ logbooks_details_server <- function(input, output, session, pool){
   output$map_total <- renderLeaflet({
     mapTotal(ctrl$data_for_map_total, color = "#e6550d")
   })
+  
   output$data_total <- renderDataTable(
     {
       df <- as.data.frame(ctrl$data_for_map_total)
       df$geometry <- NULL
       df[!is.na(df$quantity),]
+      
+     
     },
+    colnames = c(i18n("TABLE_COLNAME_NAME"),i18n("TABLE_COLNAME_QUANTITY")),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -300,19 +313,24 @@ logbooks_details_server <- function(input, output, session, pool){
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  sprintf("total_quantities_by_landingsite_%s", input$year_map_total), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf("total_quantities_by_landingsite_%s", input$year_map_total), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf("total_quantities_by_landingsite_%s", input$year_map_total), 
-             title = sprintf("Total quantities by landing site - %s", input$year_map_total), header = TRUE)
+        list(extend = 'csv', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), 
+             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE")," - %s"), input$year_map_total), header = TRUE)
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
   output$map_species <- renderLeaflet({
     mapSpeciesTotal(ctrl$data_for_map_species, topspecies)
   })
+  
+  
+ 
+  
   output$data_species <- renderDataTable(
     {
       df <- ctrl$data_for_map_species
@@ -330,14 +348,15 @@ logbooks_details_server <- function(input, output, session, pool){
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  sprintf("species_quantities_by_landingsite_%s", input$year_map_species), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf("species_quantities_by_landingsite_%s", input$year_map_species), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf("species_quantities_by_landingsite_%s", input$year_map_species), 
-             title = sprintf("Species quantities by landing site - %s", input$year_map_species), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  sprintf("me %s", input$year_map_species), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_species), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_species), 
+             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE")," - %s"), input$year_map_species), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
   

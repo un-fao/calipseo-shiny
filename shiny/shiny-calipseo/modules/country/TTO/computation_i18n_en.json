@@ -1,0 +1,68 @@
+{
+  /*computation title and subtitle*/
+  "COMPUTATION_TITLE" : "Statistics",
+  "COMPUTATION_SUBTITLE" : "Compute statistics and download statistical reports",
+  
+  /*computation*/
+  "COMPUTATION_IN_PROGRESS" : "Computing...",
+  "COMPUTATION_SECTION_TITLE" : "This section allows you to download computation results and reports",
+  "NOTIFICATION_DATALOAD_FOR_COMPUTATION" : "All data assets are loaded and ready for computation",
+  "LOAD_R_COMPUTE_SCRIPT_LABEL" : "Load R 'compute' script",
+  "LOADING_R_COMPUTE_SCRIPT_PROGRESS_LABEL" : "Prepare R script...",
+  "EXECUTE_INDICATOR_LABEL" : "Execute indicator",
+  "EXECUTE_R_SCRIPT_LABEL" : "Execute R script...",
+  "COMPUTATION_DOWNLOAD_RESULT_LABEL" : "Download computation results",
+  "NO_COMPUTATION_RUN_LABEL" : "No computation run, select an indicator and year to launch a statistical computation!",
+  "COMPUTATION_SUCCESSFUL_LABEL" : "Successful computation!",
+  "COMPUTATION_RESULTS_WITH_LABEL" : "Computation results with",
+  "RECORDS_STORED_IN_STAGING_LABEL" : "records - stored in 'staging' environment",
+  "DRAFT_LABEL" : "Draft",
+  
+  /*computation indicator*/
+  "COMPUTATION_INDICATOR_LABEL" : "Statistical indicator",
+  "COMPUTATION_INDICATOR_PLACEHOLDER_LABEL" : "Select an indicator",
+  "RETRIEVE_INDICATOR_FOR_LABEL" : "Retrieve indicator for",
+  
+  /*computation year*/
+  "COMPUTATION_YEAR_LABEL" : "Year",
+  "COMPUTATION_YEAR_PLACEHOLDER_LABEL" : "Select a year",
+  "COMPUTATION_ACTIONBUTTON_LABEL" : "Compute",
+  "COMPUTATION_STATUS_LABEL" : "Computation status",
+  "COMPUTATION_PROGRESS_SUB_LABEL" : "Initialize & read data...",
+  "QUERY_DATA_YEAR_LABEL" : "Query data for year",
+  
+  /*Computation status*/
+  "COMPUTATION_STATUS_TABLE_COLNAME_1" : "Year",
+  "COMPUTATION_STATUS_TABLE_COLNAME_2" : "Status",
+  "COMPUTATION_STATUS_TABLE_COLNAME_3" : "File",
+  "COMPUTATION_STATUS_TABLE_COLNAME_4" : "Actions",
+  
+  /*release information*/
+  "RELEASE_LABEL" : "Release",
+  "RELEASE_COMPUTATION_MESSAGE" : "This section allows you to release the computation. It is possible to overwrite a previous release but this action should done cautiously! You can generate/download a report based on the released computation result.",
+  "CREATE_RELEASE_LABEL" : "Create a release",
+  "RELEASE_NO_DATA_LABEL" : "No data released yet!",
+  "LAST_RELEASE_LABEL" : "Last release",
+  "GENERATE_DOWNLOAD_REPORT_LABEL" : "Generate & download report",
+  "DATASET_RELEASED_LABEL" : "Dataset already released. Click OK to overwrite release, or cancel.",
+  "CONFIRMATION_TO_CREATE_RELEASE" : "Are your sure to want to create a release? If yes click OK to confirm, or cancel.",
+  "TO_CANCEL_RELEASE_LABEL" : "Cancel",
+  "TO_CREATE_RELEASE_LABEL" : "OK",
+  "DOWNLOAD_RESULT_TITLE" : "Download result",
+  "DOWNLOAD_REPORT_TITLE" : "Download report",
+  "FILE_LABEL" : "File",
+  "RELEASE_SHORTCUT_BUTTON_LABEL" : "existing, enabling release button shortcut",
+  "RELEASE_LANDING1_FILE_NAME" : "release/artisanal_fisheries_landings1",
+  "RELEASE_LANDING2_FILE_NAME" : "release/artisanal_fisheries_landings2_by_SPECIES",
+  "FILENAME_LABEL" : "Filename",
+  "FUNCTION_STATEMENT_LABEL" : "Function statement",
+  /*errors*/
+  
+  "ERROR_EXECUTING_INDICATORS_LABEL": "Error while executing indicator",
+  "SUCCESS_COMPUTATION_INDICATOR_LABEL" : "Successful computation of indicator",
+  "EXPORT_RESULTS_STAGING_LABEL" : "Export result to 'staging' area...",
+  "LANDING1_RELEASE_RESULT_MISSIG_YEAR" : "Landings 1 released results missing for year",
+  "ERROR_DURING_COMPUTATION" : "Error during computation",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}

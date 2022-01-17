@@ -1,0 +1,11 @@
+{
+  /*landings map title and subtitle*/
+  "LANDINGS1_MAPS_TITLE" : "Descriptor maps",
+  "LANDINGS1_MAPS_SUBTITLE" : "Access maps of landings by landing site / year",
+  
+  /*maps landing site selector*/
+  "LANDINGS1_MAP_YEAR_LABEL" : "Year",
+  "LANDINGS1_MAP_YEAR_PLACEHOLDER_LABEL" : "Select a year",
+  "LANDINGS1_MAP_LANDING_SITE_LABEL" : "Landing site",
+  "LANDINGS1_MAP_VALUE_LABEL" : "Value"
+}

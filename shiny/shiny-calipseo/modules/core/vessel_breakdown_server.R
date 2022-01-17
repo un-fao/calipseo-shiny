@@ -6,7 +6,7 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   output$vessel_breakdown_info <- renderText({
     session$userData$page("vessel-breakdown")
     updatePageUrl("vessel-breakdown", session)
-    text <- "<h2>Breakdown of vessels <small>Visualize the breakdown of vessels</small></h2><hr>"
+    text <- paste0("<h2>", i18n("VESSEL_BREAKDOWN_TITLE")," <small>", i18n("VESSEL_BREAKDOWN_SUBTITLE"),"</small></h2><hr>")
     text
   })
   
@@ -25,7 +25,7 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   
   
   df_vessel_type <- accessVesselsCountByType(pool)[,-1]
-  names(df_vessel_type) <- c("VESSEL TYPE", "COUNT")
+  names(df_vessel_type) <- c(i18n("BREAKDOWN_VESSEL_HOMEPORT_TABLE_COLNAME_1"),i18n("BREAKDOWN_VESSEL_HOMEPORT_TABLE_COLNAME_2"))
   
   output$rep_vessels_data <- renderDataTable(
     df_vessel_type,
@@ -40,13 +40,14 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Vessel Type Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste(i18n("BREAKDOWN_VESSEL_HOMEPORT_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  paste(i18n("BREAKDOWN_VESSEL_HOMEPORT_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste(i18n("BREAKDOWN_VESSEL_HOMEPORT_PDF_TITLE"),appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     ),
     filter = list(position = 'top', clear = FALSE))
   
@@ -63,8 +64,8 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
                  radius = 7000*sqrt(sites_vessels$COUNT/max(sites_vessels$COUNT,na.rm = TRUE)), 
                  popup = paste(
-                   em("Home port: "), sites_vessels$NAME,br(),
-                   em(paste0("Number of vessels:")), sites_vessels$COUNT
+                   em(paste0(i18n("BREAKDOWN_VESSEL_HOMEPORT_MAP_LABEL_HOMEPORT"),": ")), sites_vessels$NAME,br(),
+                   em(paste0(i18n("BREAKDOWN_VESSEL_HOMEPORT_MAP_LABEL_NUMBER_OF_VESSELS"),":")), sites_vessels$COUNT
                  ))
   })
   
@@ -72,7 +73,8 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   
   df_vessel_landingsite_data <- as.data.frame(accessVesselsCountByLandingSite(pool))[,-3] 
   
-  names(df_vessel_landingsite_data) <- c("HOME PORT", "COUNT")
+  names(df_vessel_landingsite_data) <- c(i18n("BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_1"),
+                                         i18n("BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_2"))
   
   
   output$map_vessel_data <- renderDataTable(
@@ -88,13 +90,14 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = 'excel', filename = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Vessel LandingSite Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste(i18n("BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename = paste(i18n("BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste(i18n("BREAKDOWN_VESSEL_VESSELTYPE_HOMEPORT_PDF_TITLE"),appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     ),
     filter = list(position = 'top', clear = FALSE))
   
@@ -110,12 +113,14 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   
   
 
-  df_vessel_landingsite_data_breakdown <- vesselsLandingSitesVesselTypesCount(pool)
+  df_vessel_landingsite_data_breakdown <- vesselsLandingSitesVesselTypesCount(pool)[,c(1,2,5)]
 
- 
+  names(df_vessel_landingsite_data_breakdown) <- c(i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_1"),
+                                                   i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_2"),
+                                                   i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_3"))
 
   output$map_vessel_data_breakdown <- renderDataTable(
-    df_vessel_landingsite_data_breakdown[,c(1,2,5)],
+    df_vessel_landingsite_data_breakdown,
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -127,13 +132,14 @@ vessel_breakdown_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = 'excel', filename = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
-        list(extend = "pdf", title = paste("Home port/LandingSite Vessel Data Breakdown in",appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename =  paste(i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = 'excel', filename = paste(i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME"),appConfig$country_profile$data$NAME), title = NULL, header = TRUE),
+        list(extend = "pdf", title = paste(i18n("BREAKDOWN_VESSELTYPE_LANDINGSITE_PDF_TITLE"),appConfig$country_profile$data$NAME), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
-      )
+      ),
+      language = list(url = i18n("TABLE_LANGUAGE"))
     ),
     filter = list(position = 'top', clear = FALSE))
   
@@ -152,7 +158,7 @@ vessel_breakdown_server <- function(input, output, session, pool) {
   }
   
   vessel_landingsite_breakdown$Total <- rowSums(vessel_landingsite_breakdown[,4:ncol(vessel_landingsite_breakdown)], na.rm = T)
-  
+ 
 
   output$map_vessels2 <- renderLeaflet({
 

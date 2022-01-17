@@ -27,12 +27,12 @@ home_server <- function(input, output, session, pool){
     output$nb_infos <- renderUI({
 
       fluidRow(
-        infoBox("Vessels", infos$count_vessels, icon = icon("ship"), fill = TRUE),
-        infoBox("Vessel owners", infos$count_vessels_owners, icon = icon("user"), fill = TRUE),
-        infoBox("Vessel captains", infos$count_vessels_captains, icon = icon("user-shield"), fill = TRUE),
-        infoBox("Fishing trips", infos$count_fishing_trips, icon = icon("ship"), fill = TRUE),
-        infoBox("Landing sites", infos$landing_sites, icon = icon("map-marker"), fill = TRUE),
-        infoBox("Years analyzed", infos$years, icon = icon("history"), fill = TRUE)
+        infoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship"), fill = TRUE),
+        infoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user"), fill = TRUE),
+        infoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"), fill = TRUE),
+        infoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), infos$count_fishing_trips, icon = icon("ship"), fill = TRUE),
+        infoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), infos$landing_sites, icon = icon("map-marker"), fill = TRUE),
+        infoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), infos$years, icon = icon("history"), fill = TRUE)
         #infoBox("Statistical indicators", infos$indicators, icon = icon("th-list"), fill = TRUE)
       )
       

@@ -12,10 +12,10 @@ computation_ui <- function(id){
       ),
       box(width = 6,
           selectizeInput(
-            ns("computation_indicator"), label = "Statistical indicator", 
+            ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
             choices = sapply(getLocalCountryDataset("statistical_indicators"), function(x){x$label}), selected = NULL,
             options = list(
-              placeholder = 'Select an indicator',
+              placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
               render = I('{
                 option: function(item, escape) {
                   return "<div><strong>" + escape(item.label) + "</strong>"
@@ -24,14 +24,14 @@ computation_ui <- function(id){
             )
           ),
           selectizeInput(
-            ns("computation_year"), label = "Year", 
+            ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
             choices = accessAvailableYears(pool), selected = NULL, 
-            options = list(placeholder = 'Select a year')),
-          actionButton(ns("computeButton"), label = "Compute", class = "btn-primary"),
+            options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL"))),
+          actionButton(ns("computeButton"), label = i18n("COMPUTATION_ACTIONBUTTON_LABEL"), class = "btn-primary"),
           uiOutput(ns("releaseInfoShortcut"))
       ),
       box(width = 6,
-          p(tags$b("Computation status")), hr(),
+          p(tags$b(i18n("COMPUTATION_STATUS_LABEL"))), hr(),
           DT::dataTableOutput(ns("computation_summary"))   
       )
     ),

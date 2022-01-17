@@ -31,6 +31,10 @@ vessel_list_server <- function(input, output, session, pool) {
   names(df)[names(df)=="REG PORT LANDING SITE"] <- "REGISTRATION PORT/LANDING SITE"
   names(df)[names(df)=="Details"] <- "" 
   df <- df[,c(1,2,3,4,5,6,7,16)]
+  names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_1"),i18n("VESSEL_LIST_TABLE_COLNAME_2"),
+                 i18n("VESSEL_LIST_TABLE_COLNAME_3"),i18n("VESSEL_LIST_TABLE_COLNAME_4"),
+                 i18n("VESSEL_LIST_TABLE_COLNAME_5"),i18n("VESSEL_LIST_TABLE_COLNAME_6"),
+                 i18n("VESSEL_LIST_TABLE_COLNAME_7"),i18n("VESSEL_LIST_TABLE_COLNAME_8"))
   
   output$vessel_list <- renderDataTable(
     df,
@@ -47,9 +51,9 @@ vessel_list_server <- function(input, output, session, pool) {
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  "vessels", title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  "vessels", title = NULL, header = TRUE),
-        list(extend = "pdf", title = "List of vessels", header = TRUE, orientation = "landscape")
+        list(extend = 'csv', filename = i18n("VESSELS") , title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  i18n("VESSELS"), title = NULL, header = TRUE),
+        list(extend = "pdf", title = i18n("VESSEL_LIST_TITLE"), header = TRUE, orientation = "landscape")
       ),
       columnDefs = list(
         list(targets=7,searchable = FALSE, sortable = FALSE)
@@ -57,6 +61,7 @@ vessel_list_server <- function(input, output, session, pool) {
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
       ),
+      language = list(url = i18n("TABLE_LANGUAGE")),
       
       pageLength = 10
     )

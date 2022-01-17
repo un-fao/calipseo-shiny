@@ -1,0 +1,12 @@
+{
+  /*landings species title and subtitle*/
+  "LANDINGS1_SPECIES_MAPS_TITLE" : "Descriptor Species maps",
+  "LANDINGS1_SPECIES_MAPS_SUBTITLE" : "Access maps of landings with species distributions by landing site / year",
+  
+  /*landings species site selector*/
+  "LANDINGS1_SPECIES_MAPS_YEAR_LABEL" : "Year",
+  "LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL" : "Select a year",
+  "LANDINGS1_SPECIES_MAPS_LANDING_SITE_LABEL" : "Landing site",
+  "LANDINGS1_SPECIES_MAPS_OTHERS_LABEL" : "OTHERS"
+  
+}
