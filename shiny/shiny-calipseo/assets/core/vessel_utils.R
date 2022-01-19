@@ -51,32 +51,3 @@ vesselFindeR <- function(name, flag_iso2){
   })
 }
 
-
-#customeinfobox
-custome_infoBox <- function(title = NULL, value = NULL, icon = NULL,
-                            width=3, color = 'aqua',text_color = 'white') {
-  
-  tags$div( class= paste0('col-sm-',width),
-            tags$div(class=paste0('info-box bg-',color),
-                     style=paste0('background-color:',color,';'),
-                     tags$span( class='info-box-icon',
-                                style=paste0("color:",text_color,';'),
-                                
-                                icon),
-                     
-                     tags$div(
-                       class='info-box-content',
-                       style=paste0("color:",text_color,';'),
-                       
-                       tags$span( class='info-box-text',
-                                  tags$span( style="font-size:10px;",
-                                             title)),
-                       tags$span(class='info-box-number',
-                                 value)
-                     )
-                     
-            )
-  )
-  
-}
-

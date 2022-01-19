@@ -92,3 +92,33 @@ js_render_for_license_table <- c(
   '  }',
   '}'
 )
+
+
+#customeinfobox
+CalipseoinfoBox <- function(title = NULL, value = NULL, icon = NULL,
+                            width=4, color = 'aqua',text_color = 'white',style_title = 'font-size:14px',style_value='font-size:18px') {
+  
+  tags$div( class= paste0('col-sm-',width),
+            tags$div(class=paste0('info-box bg-',color),
+                     style=paste0('background-color:',color,';'),
+                     tags$span( class='info-box-icon',
+                                style=paste0("color:",text_color,';'),
+                                
+                                icon),
+                     
+                     tags$div(
+                       class='info-box-content',
+                       style=paste0("color:",text_color,';'),
+                       
+                       tags$span( class='info-box-text',
+                                  tags$span(style=paste0("display:block;white-space:nowrap;",style_title,";"),
+                                            title)),
+                       tags$span(class='info-box-number',
+                                 style=paste0(style_value,";"),
+                                 value)
+                     )
+                     
+            )
+  )
+  
+}
