@@ -850,7 +850,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     output$box_status <- renderUI({
       
-      CalipseoinfoBox(span(i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
+      CalipseoInfoBox(span(i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
     })
     
     
@@ -868,10 +868,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     output$more_indicators <- renderUI({
       fluidRow(
-        CalipseoinfoBox(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips,width = 3),
-        CalipseoinfoBox(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea,width = 3),
-        CalipseoinfoBox(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style_title ='font-size:10px;',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites,width = 3),
-        CalipseoinfoBox(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style_title = 'font-size:10px;',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished,width = 3)
+        CalipseoInfoBox(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips,width = 3),
+        CalipseoInfoBox(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea,width = 3),
+        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style_title ='font-size:10px;',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites,width = 3),
+        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style_title = 'font-size:10px;',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished,width = 3)
       )
     })
     

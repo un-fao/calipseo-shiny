@@ -108,8 +108,8 @@ logbooks_overview_server <- function(input, output, session, pool){
             box(
               title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
               width = 12,
-              CalipseoinfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(infos$total_lastyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
-              CalipseoinfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$ratio_reporting_lastyear, icon = icon("percent"), width = 6)
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(infos$total_lastyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$ratio_reporting_lastyear, icon = icon("percent"), width = 6)
             )
           ),
           div(
@@ -117,8 +117,8 @@ logbooks_overview_server <- function(input, output, session, pool){
             box(
               title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
               width = 12,
-              CalipseoinfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(infos$total_currentyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
-              CalipseoinfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$ratio_reporting_currentyear, icon = icon("percent"), width = 6)
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(infos$total_currentyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$ratio_reporting_currentyear, icon = icon("percent"), width = 6)
             )
           )
         )

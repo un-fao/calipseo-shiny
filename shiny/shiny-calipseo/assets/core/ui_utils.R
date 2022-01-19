@@ -95,7 +95,7 @@ js_render_for_license_table <- c(
 
 
 #customeinfobox
-CalipseoinfoBox <- function(title = NULL, value = NULL, icon = NULL,
+CalipseoInfoBox <- function(title = NULL, value = NULL, icon = NULL,
                             width=4, color = 'aqua',text_color = 'white',style_title = 'font-size:14px',style_value='font-size:18px') {
   
   tags$div( class= paste0('col-sm-',width),
