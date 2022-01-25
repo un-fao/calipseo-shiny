@@ -1,7 +1,7 @@
 SELECT 
 ft.ID as trip_id, 
 ft.DATE_TO as date,
-sp.NAME as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis,
+sp.I18n_DEFAULT as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis,
 fas.QUANTITY as quantity 
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 

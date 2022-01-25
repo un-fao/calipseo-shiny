@@ -1,5 +1,5 @@
 SELECT 
-vhct.NAME AS Type,
+vhct.I18n_DEFAULT AS Type_char,
 rgvhch.OLD_VALUE_DATE,rgvhch.NEW_VALUE_DATE,rgvhch.OLD_VALUE_FLOAT,rgvhch.NEW_VALUE_FLOAT,
 rgvhch.OLD_ID_LABEL,rgvhch.NEW_ID_LABEL,rgvhch.OLD_VALUE_STRING,rgvhch.NEW_VALUE_STRING,rgvhch.DESCRIPTION,rgvhch.UPDATED_AT 
 FROM reg_vessel_historical_characteristics AS rgvhch 

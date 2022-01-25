@@ -1,4 +1,13 @@
 {
+  /*Home title and subtitle*/
   "HOME_CALIPSEO_TITLE" : "Calipseo R Shiny - Tableau de bord",
-  "HOME_CALIPSEO_SUBTITLE" : "Calculer et accéder aux statistiques de la plateforme Calipseo OpenFismis"
+  "HOME_CALIPSEO_SUBTITLE" : "Calculer et accéder aux statistiques de la plateforme Calipseo OpenFismis",
+  
+   /*Infoboxes*/
+  "INFOBOX_TITLE_VESSELS" : "Navires",
+  "INFOBOX_TITLE_VESSEL_OWNERS" : "Propriétaires de navires",
+  "INFOBOX_TITLE_VESSEL_CAPTAINS" : "Capitaines de navire",
+  "INFOBOX_TITLE_FISHING_TRIPS" : "Voyages de pêche",
+  "INFOBOX_TITLE_LANDING_SITES" : "Sites d'atterrissage",
+  "INFOBOX_TITLE_YEARS_ANALYZED" : "Années analysées"
 }

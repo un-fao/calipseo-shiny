@@ -1,15 +1,15 @@
 #readSQLScript
 readSQLScript <- function(sqlfile, 
                           key = NULL, value = NULL,
-                          add_filter_on_year = NULL, datetime_field = NULL
+                          add_filter_on_year = NULL, datetime_field = NULL,language = NULL
 ){
   sql <- paste(suppressWarnings(readLines(sqlfile)), collapse="")
   sql <- gsub("\\s+"," ",sql)
   
+  
   if(!is.null(key) && !is.null(value)){
     sql <- sprintf("%s %s %s = %s", sql, ifelse(regexpr("WHERE", sql)>0, "AND", "WHERE"), key, value)
   }
-  
   
   
   if(!is.null(add_filter_on_year)){
@@ -18,6 +18,16 @@ readSQLScript <- function(sqlfile,
     }
     sql <- sprintf("%s %s year(%s) = %s", 
                    sql, ifelse(regexpr("WHERE", sql)>0, "AND", "WHERE"), datetime_field, add_filter_on_year)
+  }
+  
+  
+  if(is.null(language)){
+    return(sql)
+    
+  }else{
+    
+    sql <- gsub("I18n_DEFAULT", sprintf("I18N_%s", toupper(language)), sql)
+    return(sql)
   }
   
   return(sql)
@@ -34,13 +44,14 @@ accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql")
   ref_species <- suppressWarnings(dbGetQuery(con, ref_species_sql))
   return(ref_species)
-}
+}  
 
 
 #accessSpeciesCatchesYearFromDB
 accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
   species_catches_year_sql <- readSQLScript("data/core/sql/fish_species_catches_totalbyyear.sql",
-                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                            language = appConfig$language)
 
   if(!is.null(registrationNumber)){
     species_catches_year_sql <- paste0(species_catches_year_sql, " GROUP BY sp.NAME, year(ft.DATE_TO);")
@@ -52,22 +63,23 @@ accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
 
 #accessLandingSitesFromDB
 accessLandingSitesFromDB <- function(con){
-  landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql")
+  landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql",
+                                    language = appConfig$language)
   landingsites <- suppressWarnings(dbGetQuery(con, landingsites_sql))
   landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   return(landingsites)
-}
+}  
 
 #accessLandingSiteNamesFromDB
 accessLandingSiteNamesFromDB <- function(con){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites_names.sql")
   landingsites <- suppressWarnings(dbGetQuery(con, landingsites_sql))[,1]
   return(landingsites)
-}
+}  
 
 #accessVesselsFromDB
 accessVesselsFromDB <- function(con){
-  vessels_sql <- readSQLScript("data/core/sql/vessels.sql")
+  vessels_sql <- readSQLScript("data/core/sql/vessels.sql", language = appConfig$language)
   vessels <- suppressWarnings(dbGetQuery(con, vessels_sql))
   return(vessels)
 }
@@ -77,21 +89,23 @@ accessVesselsCountFromDB <- function(con){
   vessels_count_sql <- readSQLScript("data/core/sql/vessels_count.sql")
   vessels_count <- suppressWarnings(dbGetQuery(con, vessels_count_sql))
   return(vessels_count$COUNT)
-}
+}  
 
 #accessVesselFromDB
 accessVesselFromDB <- function(con, registrationNumber){
   vessel_sql <- readSQLScript("data/core/sql/vessels.sql", 
-                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"), 
+                              language = appConfig$language)
   vessel <- suppressWarnings(dbGetQuery(con, vessel_sql))
   return(vessel)
-}
+} 
 
 
 #accessVesselHistoricalCharacteristicsFromDB
 accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber){
   vessel_historical_char_sql <- readSQLScript("data/core/sql/vessel_historical_characteristics.sql", 
-                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                     language = appConfig$language)
   vessel_historical_char <- suppressWarnings(dbGetQuery(con, vessel_historical_char_sql))
   return(vessel_historical_char)
 }
@@ -104,39 +118,44 @@ accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
   )
   vessel_owners <- suppressWarnings(dbGetQuery(con, vessel_owners_sql))
   return(vessel_owners)
-}
+}  
 
 #accessVesselCatchesFromDB
 accessVesselCatchesFromDB <- function(con, registrationNumber){
   landing_forms_sql <- readSQLScript("data/core/sql/fishing_activities.sql", 
-                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                     language = appConfig$language)
   landing_forms <- suppressWarnings(dbGetQuery(con, landing_forms_sql))
   return(landing_forms)
 }
 
 #accessVesselsCountByTypeFromDB
 accessVesselsCountByTypeFromDB <- function(con){
-  vesseltypes_count_sql <- readSQLScript("data/core/sql/vessels_types_count.sql")
+  vesseltypes_count_sql <- readSQLScript("data/core/sql/vessels_types_count.sql",
+                                         language = appConfig$language)
   suppressWarnings(dbGetQuery(con, vesseltypes_count_sql))
 }
 
 #accessVesselsCountByStatTypeFromDB
 accessVesselsCountByStatTypeFromDB <- function(con){
-  vesselstattypes_count_sql <- readSQLScript("data/core/sql/vessels_stat_types_count.sql")
+  vesselstattypes_count_sql <- readSQLScript("data/core/sql/vessels_stat_types_count.sql",
+                                             language = appConfig$language)
   suppressWarnings(dbGetQuery(con, vesselstattypes_count_sql))
 }
 
 #accessVesselLicensePermitFromDB
 accessVesselLicensePermitFromDB <- function(con, registrationNumber){
   licensePermit_sql <- readSQLScript("data/core/sql/vessel_license_permits.sql", 
-                                     key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
+                                     key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                     language = appConfig$language)
   licensePermit <- suppressWarnings(dbGetQuery(con, licensePermit_sql))
   return(licensePermit)
 }
 
 #accessVesselsCountByLandingSiteFromDB
 accessVesselsCountByLandingSiteFromDB <- function(con){
-  vesselsites_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_count.sql")
+  vesselsites_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_count.sql",
+                                         language = appConfig$language)
   sites <- suppressWarnings(dbGetQuery(con,  vesselsites_count_sql))
   sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   return(sites)
@@ -144,7 +163,8 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
 
 #vesselsLandingsitesVesselTypesCountFromDB
 vesselsLandingSitesVesselTypesCountFromDB <- function(con){
-  vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_ landing_sites_vessel_types_count.sql")
+  vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_ landing_sites_vessel_types_count.sql",
+                                                   language = appConfig$language)
   sitesvesseltypecount <- suppressWarnings(dbGetQuery(con, vesselsitesvesseltype_count_sql))
   return(sitesvesseltypecount)
 }
@@ -155,14 +175,14 @@ countVesselCaptainsFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/count_vessels_captains.sql")
   count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
   return(count)
-}
+} 
 
 #countVesselOwnersFromDB
 countVesselOwnersFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/count_vessels_owners.sql")
   count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
   return(count)
-}
+} 
 
 #countVesselOwnersPerVesselFromDB
 countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
@@ -170,7 +190,7 @@ countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
                                                 key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
   vessel_Owners_Per_vessel <- suppressWarnings(dbGetQuery(con, vessel_Owners_Per_vessel_sql))
   return(vessel_Owners_Per_vessel)
-}
+} 
 
 
 #countVesselDaysAtSeaFromDB
@@ -190,14 +210,14 @@ accessVesselsWithLogBooksFromDB <- function(con){
   outids <- out$REGISTRATION_NUMBER
   names(outids) <- out$NAME
   return(outids) 
-}
+} 
 
 #accessVesselsOwnersWithLogBooksFromDB
 accessVesselsOwnersWithLogBooksFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/vessels_owners_reporting_logbooks.sql")
   out <- suppressWarnings(dbGetQuery(con, sql))
   return(out$NAME)
-}
+}  
 
 
 #DATA
@@ -206,7 +226,7 @@ accessVesselsOwnersWithLogBooksFromDB <- function(con){
 countFishingTripsFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/count_fishing_trips.sql")
   count <- suppressWarnings(dbGetQuery(con, sql))$COUNT
-}
+}  
 
 
 #countFishingTripsPerVesselFromDB
@@ -230,7 +250,7 @@ countVesselFishingGearsFromDB <- function(con, registrationNumber){
                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
   vessel_fishing_gears <- suppressWarnings(dbGetQuery(con, vessel_fishing_gears_sql))
   return(vessel_fishing_gears)
-}
+} 
 
 
 #countVesselLicensePermitFromDB
@@ -239,7 +259,7 @@ countVesselLicensePermitFromDB <- function(con, registrationNumber){
                                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
   vessel_license_permit <- suppressWarnings(dbGetQuery(con, vessel_license_permit_sql))
   return(vessel_license_permit)
-}
+} 
 
 
 #accessAvailableYearsFromDB
@@ -254,7 +274,8 @@ accessFishingActivitiesFromDB <- function(con, year,
                                           vessel_stat_type = NULL, vesselId = NULL,
                                           entityOwner = NULL){
   fa_sql <- readSQLScript("data/core/sql/fishing_activities.sql",
-                          add_filter_on_year = year, datetime_field = "ft.DATE_TO")
+                          add_filter_on_year = year, datetime_field = "ft.DATE_TO",
+                          language = appConfig$language)
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
   }
@@ -266,21 +287,22 @@ accessFishingActivitiesFromDB <- function(con, year,
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
-}
+} 
 
 #accessFishingActivitiesMultiyearFromDB
 accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
-  fa_sql <- readSQLScript("data/core/sql/fishing_activities_multiyear.sql")
+  fa_sql <- readSQLScript("data/core/sql/fishing_activities_multiyear.sql",
+                          language = appConfig$language)
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
-}
+} 
 
 #accessFishingTripsFromDB
 accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL){
-  fa_sql <- readSQLScript("data/core/sql/fishing_trips.sql")
+  fa_sql <- readSQLScript("data/core/sql/fishing_trips.sql",language = appConfig$language)
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
   }
@@ -293,7 +315,8 @@ accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL
 
 #accessFishingTripDetailFromDB
 accessFishingTripDetailFromDB <- function(con,trip_id = NULL){
-  fa_sql <- readSQLScript("data/core/sql/fishing_trip_details.sql")
+  fa_sql <- readSQLScript("data/core/sql/fishing_trip_details.sql", 
+                          language = appConfig$language)
   if(!is.null(trip_id)){
     fa_sql <- paste0(fa_sql, " WHERE ft.ID = ", trip_id)
   }
@@ -326,7 +349,7 @@ accessMonthlyFishingActivityFromDB <- function(con){
   sql <- readSQLScript("data/core/sql/fishing_activities_totalbymonth.sql")
   out <- suppressWarnings(dbGetQuery(con, sql))
   return(out)
-}
+} 
 
 
   

@@ -16,7 +16,7 @@ FROM
 (SELECT 
 ft.ID as landing_id, 
 ft.DATE_FROM as dep_datetime, ft.DATE_TO as ret_datetime, year(ft.DATE_TO) as year, month(ft.DATE_TO) as month, yearweek(ft.DATE_TO),
-vt.NAME as vesstype, 
+vt.I18n_DEFAULT as vesstype, 
 fas.QUANTITY as quantity
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
