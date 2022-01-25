@@ -3,8 +3,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
-    text <- paste0("<h2>", i18n("VESSEL_INFO_TITLE"),"</h2><hr>")
-    text <- paste0(text, "<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">",i18n("BACK_TO_LIST_OF_VESSELS"),"</a>")
+    text <- paste0("<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">",i18n("BACK_TO_LIST_OF_VESSELS"),"</a>")
     text
   })
   
@@ -82,8 +81,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     }
     
     #name
-    output$vessel_name <- renderUI({tags$b('Vessel information - ',vessel$NAME)})
-    #output$vessel_name <- renderUI({tags$b(paste0(i18n("VESSEL_INFO_TITLE")," - ",vessel$NAME))}) To be implemented when i18n is in use
+    output$vessel_name <- renderUI({tags$b(paste0(i18n("VESSEL_INFO_TITLE")," - ",vessel$NAME))})
     
     #general description
     output$vessel_description <- renderUI({
@@ -195,7 +193,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         ),
         colnames = c(i18n("HISTORY_TABLE_COLNAME_1"),i18n("HISTORY_TABLE_COLNAME_2"),
                      i18n("HISTORY_TABLE_COLNAME_3"),i18n("HISTORY_TABLE_COLNAME_4"),
-                     i18n("HISTORY_TABLE_COLNAME_1"))
+                     i18n("HISTORY_TABLE_COLNAME_5"))
       )
       
     })
@@ -855,15 +853,15 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     
     output$box_owner <- renderUI({
-      infoBox(i18n("INFOBOX_NUMBER_OF_OWNERS"),icon = icon('user'),vessel_indicators_infos$number_of_owners, fill = TRUE, width = 6)
+      CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_OWNERS"),icon = icon('user'),vessel_indicators_infos$number_of_owners, width = 6)
     })
     
     output$box_license <- renderUI({
-      infoBox(i18n("INFOBOX_NUMBER_OF_LICENSES"),icon = icon('ship'),vessel_indicators_infos$number_of_licenses, fill = TRUE, width = 6)
+      CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LICENSES"),icon = icon('ship'),vessel_indicators_infos$number_of_licenses, width = 6)
     })
     
     output$box_gears <- renderUI({
-      infoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, fill = TRUE, width = 6)
+      CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, width = 6)
     })
     
     output$more_indicators <- renderUI({

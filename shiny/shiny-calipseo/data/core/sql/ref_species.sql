@@ -1,1 +1,3 @@
-select * from cl_ref_species;
+select ID, CODE, RANKING ,I18n_DEFAULT as NAME,
+DESCRIPTION, SCIENTIFIC_NAME, ASFIS_CODE, ASFIS_NAME_EN, FAMILY_NAME_EN,
+ORDER_NAME_EN from cl_ref_species

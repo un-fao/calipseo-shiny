@@ -1,12 +1,12 @@
 SELECT 
 ft.ID,
 ft.DATE_FROM as date_from , ft.DATE_TO as date_to, 
-v.NAME as vessel_name,v.REGISTRATION_NUMBER as reg_number, vt.NAME as vesseltype, 
-fz.NAME as fishing_zone, fz.COORDINATE_LONGITUDE as fz_longitude, fz.COORDINATE_LATITUDE as fz_latitude,
-ls.NAME as landing_site, ls.LONGITUDE as ls_longitude, ls.LATITUDE as ls_latitude,
+v.NAME as vessel_name,v.REGISTRATION_NUMBER as reg_number, vt.I18n_DEFAULT as vesseltype, 
+fz.I18n_DEFAULT as fishing_zone, fz.COORDINATE_LONGITUDE as fz_longitude, fz.COORDINATE_LATITUDE as fz_latitude,
+ls.I18n_DEFAULT as landing_site, ls.LONGITUDE as ls_longitude, ls.LATITUDE as ls_latitude,
 g.NAME as fishing_gear,
-sp.NAME as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, sp.COMMENT as comment, 
-fas.QUANTITY as quantity, uom.CODE as quantity_unit 
+sp.I18n_DEFAULT as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, sp.COMMENT as comment, 
+fas.QUANTITY as quantity, uom.I18n_DEFAULT as quantity_unit 
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_gear as fag ON fa.ID = fag.DT_FISHING_ACTIVITY_ID 
 LEFT JOIN cl_ref_gears as g ON fag.CL_REF_GEAR_ID = g.ID 

@@ -1,1 +1,1 @@
-select NAME from cl_fish_landing_sites ORDER BY NAME;
+select I18n_DEFAULT as NAME from cl_fish_landing_sites ORDER BY I18n_DEFAULT;

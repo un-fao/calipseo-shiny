@@ -1,12 +1,12 @@
 SELECT 
 ft.ID as landing_id, 
 ft.DATE_FROM as dep_datetime, ft.DATE_TO as ret_datetime, 
-v.REGISTRATION_NUMBER as regnum, vt.NAME as vesstype,v.CL_APP_VESSEL_STAT_TYPE_ID as stat_type_id,ft.CREW_NUMBER as crew,
-fz.CODE as gr_f_area_id, fz.NAME as gr_f_area,
-ls.CODE as arrivalport, ls.ID as bch_id, ls.NAME as bch_name,
-g.CODE as f_mthd_id, g.NAME as f_mthd,
-sp.CODE  as species_id, sp.NAME as species_desc,
-fas.QUANTITY as quantity, uom.CODE as quantity_unit, fas.TOTAL_VALUE as value 
+v.REGISTRATION_NUMBER as regnum, vt.I18n_DEFAULT as vesstype,v.CL_APP_VESSEL_STAT_TYPE_ID as stat_type_id,ft.CREW_NUMBER as crew,
+fz.CODE as gr_f_area_id, fz.I18n_DEFAULT as gr_f_area,
+ls.CODE as arrivalport, ls.ID as bch_id, ls.I18n_DEFAULT as bch_name,
+g.CODE as f_mthd_id, g.I18n_DEFAULT as f_mthd,
+sp.CODE  as species_id, sp.I18n_DEFAULT as species_desc,
+fas.QUANTITY as quantity, uom.I18n_DEFAULT as quantity_unit, fas.TOTAL_VALUE as value 
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_gear as fag ON fa.ID = fag.DT_FISHING_ACTIVITY_ID 
 LEFT JOIN cl_ref_gears as g ON fag.CL_REF_GEAR_ID = g.ID 
