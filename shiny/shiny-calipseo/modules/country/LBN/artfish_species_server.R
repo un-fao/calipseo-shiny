@@ -18,7 +18,7 @@ artfish_species_server <- function(input, output, session, pool){
   
   output$species_selector<-renderUI({
     
-    species<-setNames(ref_species$ID,sprintf("%s [%s]",ref_species$I18n_DEFAULT,ref_species$SCIENTIFIC_NAME))
+    species<-setNames(ref_species$ID, sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME))
     
     selectizeInput(ns("species"),"Selection of species",choices=species,multiple = F,selected=NULL,
                    options = list(
@@ -31,6 +31,7 @@ artfish_species_server <- function(input, output, session, pool){
   #Subset data with species
   observeEvent(input$species,{
     
+    print(input$species)
     if(input$species!=""){
       
       selection<-subset(estimate,EST_SPC==input$species)
@@ -49,7 +50,7 @@ artfish_species_server <- function(input, output, session, pool){
         
         ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
-        bg<-setNames(c(0,ref_bg_sp$ID),c("Total",ref_bg_sp$I18n_DEFAULT))
+        bg<-setNames(c(0,ref_bg_sp$ID),c("Total",ref_bg_sp$NAME))
         
         selectizeInput(ns("bg"),"Selection of boat-gear",choices=bg,multiple = F,selected=bg[1],
                        options = list(
@@ -178,10 +179,10 @@ artfish_species_server <- function(input, output, session, pool){
               EST_EFF_EFFORT=sum(EST_EFF_EFFORT,na.rm=T),
               EST_LND_CPUE=mean(EST_LND_CPUE,na.rm=T)
             )%>%
-            left_join(ref_bg_sp%>%select(ID,I18n_DEFAULT),by=c('EST_BGC'='ID'))%>%
+            left_join(ref_bg_sp%>%select(ID,NAME),by=c('EST_BGC'='ID'))%>%
             ungroup()%>%
             mutate(PERCENT=EST_LND_CATCH/sum(EST_LND_CATCH,na.rm=T))%>%
-          plot_ly(labels = ~I18n_DEFAULT, values = ~PERCENT)%>% 
+          plot_ly(labels = ~NAME, values = ~PERCENT)%>% 
             add_pie(hole = 0.6)%>% 
             layout(showlegend = T,
                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
@@ -208,11 +209,11 @@ artfish_species_server <- function(input, output, session, pool){
           
           rank<-rank%>%
             filter(rank%in%c(seq(target_rank-5,target_rank+5,1)))%>%
-            left_join(ref_species%>%select(ID,I18n_DEFAULT),by=c('EST_SPC'='ID'))%>%
+            left_join(ref_species%>%select(ID,NAME),by=c('EST_SPC'='ID'))%>%
             ungroup()
           
           rank%>%
-            plot_ly(y = ~rank, x = ~EST_LND_CATCH, type = "bar",  orientation = "h",color=~factor(color),colors = c("grey","orange"),hoverinfo='none',text = ~I18n_DEFAULT,
+            plot_ly(y = ~rank, x = ~EST_LND_CATCH, type = "bar",  orientation = "h",color=~factor(color),colors = c("grey","orange"),hoverinfo='none',text = ~NAME,
                     textposition = "auto",textfont = list(color = "black")) %>%
               layout(showlegend = FALSE,
                      uniformtext=list(minsize=8, mode='show'),

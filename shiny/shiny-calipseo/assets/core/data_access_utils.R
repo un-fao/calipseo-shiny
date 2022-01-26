@@ -41,14 +41,14 @@ readSQLScript <- function(sqlfile,
 
 #accessRefSpeciesFromDB
 accessRefSpeciesFromDB <- function(con){
-  ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql")
+  ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
   ref_species <- suppressWarnings(dbGetQuery(con, ref_species_sql))
   return(ref_species)
 }  
 
 #accessRefFishingUnitsFromDB
 accessRefFishingUnitsFromDB <- function(con){
-  ref_fishing_units_sql <- readSQLScript("data/core/sql/ref_fishing_units.sql")
+  ref_fishing_units_sql <- readSQLScript("data/core/sql/ref_fishing_units.sql", language = appConfig$language)
   ref_fishing_units <- suppressWarnings(dbGetQuery(con, ref_fishing_units_sql))
   return(ref_fishing_units)
 }
@@ -360,7 +360,7 @@ accessMonthlyFishingActivityFromDB <- function(con){
 
 #accessSurveyDateAndStratumFromDB
 accessSurveyDateAndStratumFromDB <- function(con){
-  sql <- readSQLScript("data/core/sql/survey_date.sql")
+  sql <- readSQLScript("data/core/sql/survey_date.sql", language = appConfig$language)
   out <- suppressWarnings(dbGetQuery(con, sql))
   return(out)
 }

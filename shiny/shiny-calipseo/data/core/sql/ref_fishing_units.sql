@@ -1,1 +1,1 @@
-SELECT * FROM cl_fish_fishing_units;
+SELECT ID, ENABLED, CODE, RANKING, I18n_DEFAULT as NAME FROM cl_fish_fishing_units;

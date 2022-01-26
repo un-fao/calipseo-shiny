@@ -1,0 +1,13 @@
+{
+  /*Home title and subtitle*/
+  "HOME_CALIPSEO_TITLE" : "لوحة القيادة Calipseo R Shiny",
+  "HOME_CALIPSEO_SUBTITLE" : "قم بالوصول إلى الإحصائيات وحسابها عبر نموذج لوحة Calipseo OpenFismis",
+  
+  /*Infoboxes*/
+  "INFOBOX_TITLE_VESSELS" : "أوعية",
+  "INFOBOX_TITLE_VESSEL_OWNERS" : "أصحاب السفن",
+  "INFOBOX_TITLE_VESSEL_CAPTAINS" : "قباطنة السفن",
+  "INFOBOX_TITLE_FISHING_TRIPS" : "رحلات الصيد",
+  "INFOBOX_TITLE_LANDING_SITES" : "مواقع الهبوط",
+  "INFOBOX_TITLE_YEARS_ANALYZED" : "تحليل السنوات"
+}

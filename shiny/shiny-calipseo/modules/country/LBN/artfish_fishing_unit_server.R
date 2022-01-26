@@ -34,7 +34,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         
         ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
-        bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$I18n_DEFAULT))
+        bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$NAME))
         
         selectizeInput(ns("bg"),"Fishing unit :",choices=bg,multiple = F,selected=bg[1])
   })
@@ -87,20 +87,20 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     table<-artfish_year_summary(data=estimate,year=input$year,variable="EST_BGC",value=value)
 
     summary<-table$summary%>%
-      left_join(ref_fishing_units%>%select(ID,I18n_DEFAULT)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
-      relocate(I18n_DEFAULT)%>%
+      left_join(ref_fishing_units%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
+      relocate(NAME)%>%
       mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
       select(-EST_BGC)%>%
-      mutate(I18n_DEFAULT=ifelse(is.na(I18n_DEFAULT),"Total",I18n_DEFAULT))%>%
-      rename(`Fishing Unit`=I18n_DEFAULT)
+      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      rename(`Fishing Unit`=NAME)
     
     rank<-table$rank%>%
-      left_join(ref_fishing_units%>%select(ID,I18n_DEFAULT)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
-      relocate(I18n_DEFAULT)%>%
+      left_join(ref_fishing_units%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
+      relocate(NAME)%>%
       mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
       select(-EST_BGC)%>%
-      mutate(I18n_DEFAULT=ifelse(is.na(I18n_DEFAULT),"Total",I18n_DEFAULT))%>%
-      rename(`Fishing Unit`=I18n_DEFAULT,
+      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      rename(`Fishing Unit`=NAME,
              Rank = rank,
              Percentage = percent,
              `Cumulative percentage` = cum_percent)
@@ -362,18 +362,18 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     table<-artfish_year_summary(data=data,year=input$year,variable="EST_SPC",value=value)
     
     summary<-table$summary%>%
-      left_join(ref_species%>%select(ID,I18n_DEFAULT)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
-      relocate(I18n_DEFAULT)%>%
+      left_join(ref_species%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
+      relocate(NAME)%>%
       select(-EST_SPC)%>%
-      mutate(I18n_DEFAULT=ifelse(is.na(I18n_DEFAULT),"Total",I18n_DEFAULT))%>%
-      rename(`Species`=I18n_DEFAULT)
+      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      rename(`Species`=NAME)
     
     rank<-table$rank%>%
-      left_join(ref_species%>%select(ID,I18n_DEFAULT)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
-      relocate(I18n_DEFAULT)%>%
+      left_join(ref_species%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
+      relocate(NAME)%>%
       select(-EST_SPC)%>%
-      mutate(I18n_DEFAULT=ifelse(is.na(I18n_DEFAULT),"Total",I18n_DEFAULT))%>%
-      rename(`Species`=I18n_DEFAULT,
+      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      rename(`Species`=NAME,
              Rank = rank,
              Percentage = percent,
              `Cumulative percentage` = cum_percent)

@@ -21,7 +21,7 @@ artfish_overview_server <- function(input, output, session, pool){
         
     ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
         
-    bg<-setNames(c(0,ref_bg_sp$ID),c("Total",ref_bg_sp$I18n_DEFAULT))
+    bg<-setNames(c(0,ref_bg_sp$ID),c("Total",ref_bg_sp$NAME))
         
     selectizeInput(ns("bg"),"Selection of boat-gear",choices=bg,multiple = F,selected=bg[1],
                        options = list(
@@ -51,20 +51,20 @@ artfish_overview_server <- function(input, output, session, pool){
     
     data<-data_bg()%>%
      mutate(DATE=as.character(format(as.Date(sprintf("%04d-%02d-01",EST_YEAR,EST_MONTH)),format = "%Y-%m")))%>%
-    left_join(ref_species%>%select(ID,I18n_DEFAULT),by=c('EST_SPC'='ID'))%>%
+    left_join(ref_species%>%select(ID,NAME),by=c('EST_SPC'='ID'))%>%
       ungroup()
     
     data_landing<-data%>%
                   distinct()%>%
                   select(DATE,EST_BGC,EST_EFF_EFFORT,EST_EFF_NBOATS)%>%
-                  left_join(ref_fishing_units%>%select(ID,I18n_DEFAULT),by=c('EST_BGC'='ID'))%>%
+                  left_join(ref_fishing_units%>%select(ID,NAME),by=c('EST_BGC'='ID'))%>%
                   ungroup()
     
-    artfish_line_chart_server("boats", label="Boat-gear",df=data_landing, colDate = "DATE",colTarget="I18n_DEFAULT",colValue="EST_EFF_NBOATS",ylab="Number of boats",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("effort", label="Boat_gear",df=data_landing, colDate = "DATE",colTarget="I18n_DEFAULT",colValue="EST_EFF_EFFORT",ylab="Effort (days)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("catch", label="Species",df=data, colDate = "DATE",colTarget="I18n_DEFAULT",colValue="EST_LND_CATCH",ylab="Catch (kg)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("value", label="Species",df=data, colDate = "DATE",colTarget="I18n_DEFAULT",colValue="EST_LND_VALUE",ylab="Value ($)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("cpue", label="Species",df=data, colDate = "DATE",colTarget="I18n_DEFAULT",colValue="EST_LND_CPUE",ylab="CPUE (kg/day)",levels=c("Global"="global","Detail"="detail"),stat="mean", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("boats", label="Boat-gear",df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_NBOATS",ylab="Number of boats",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("effort", label="Boat_gear",df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_EFFORT",ylab="Effort (days)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("catch", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CATCH",ylab="Catch (kg)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("value", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_VALUE",ylab="Value ($)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("cpue", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CPUE",ylab="CPUE (kg/day)",levels=c("Global"="global","Detail"="detail"),stat="mean", rank=TRUE,mode='plot+table')
     
     output$results<-renderUI({
     tagList(

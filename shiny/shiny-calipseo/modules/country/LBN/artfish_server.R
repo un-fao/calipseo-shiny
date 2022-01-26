@@ -17,6 +17,8 @@ ns<-session$ns
   output$period_selector<-renderUI({
     
     dates<-unique(survey$date)
+    dates<- dates[!startsWith(dates, "2013")] #we exclude 2013 from Flouca historical data
+    #TODO to check what happens with 2014 reports
     
     selectizeInput(ns("period"),"Selection of period",choices=dates,multiple = F,selected=NULL,
                    options = list(

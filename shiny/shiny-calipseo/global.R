@@ -1,6 +1,10 @@
 #options
 #---------------------------------------------------------------------------------------
-options(stringsAsFactors = FALSE, dplyr.summarise.inform = FALSE)
+options(
+  encoding = "UTF-8",
+  stringsAsFactors = FALSE, 
+  dplyr.summarise.inform = FALSE
+)
 
 #config
 #---------------------------------------------------------------------------------------

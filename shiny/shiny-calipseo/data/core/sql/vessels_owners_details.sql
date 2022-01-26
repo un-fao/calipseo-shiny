@@ -1,9 +1,9 @@
 SELECT 
 DISTINCT e.ID,
-g.NAME gender, year(ei.DATE_OF_BIRTH) as year_of_birth,
+g.I18n_DEFAULT as gender, year(ei.DATE_OF_BIRTH) as year_of_birth,
 e.NAME as name,
-et.CODE as type_code, et.DESCRIPTION as type,
-vt.NAME as vesseltype 
+et.CODE as type_code, et.I18n_DEFAULT as type,
+vt.I18n_DEFAULT as vesseltype 
 FROM reg_vessels as v 
 LEFT JOIN reg_entities as e ON v.REG_ENTITY_OWNER_ID = e.ID 
 LEFT JOIN cl_app_entity_types as et ON e.CL_APP_ENTITY_TYPE_ID = et.ID 
