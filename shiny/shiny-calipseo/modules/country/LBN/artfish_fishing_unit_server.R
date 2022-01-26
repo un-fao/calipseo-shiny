@@ -8,6 +8,11 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   sp_summary<-reactiveVal(NULL)
   sp_rank<-reactiveVal(NULL)
   
+  indicator_color<-reactiveVal(NULL)
+  indicator_icon<-reactiveVal(NULL)
+  indicator_unit<-reactiveVal(NULL)
+  indicator_label<-reactiveVal(NULL)
+  
   output$urlPage<-renderUI({
     session$userData$page("artfish-fishing-unit")
     updatePageUrl("artfish-fishing-unit", session)
@@ -46,7 +51,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     selection<-switch(input$indicator,
                       "effort"=c("Days"="base"),
                       "catch"=c("Kilogram (kg)"="base","tonne (t)"="K"),
-                      "value"=c("Dollar ($)"="base","thousand of dollars ($K)"="K"),
+                      "value"=c("Dollar ($)"="base","thousand of dollars ($K)"="K","million of dollars ($M)"="M"),
                       "cpue"=c("Kilogram by day (kg/day)"="base")
                       
                       )
@@ -112,37 +117,64 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         mutate(Total = Total/1000)
     }
     
+    if(input$unit=="M"){
+      summary<-summary%>%
+        mutate(across(where(is.double), ~.x/1000000))
+      rank<-rank%>%
+        mutate(Total = Total/1000000)
+    }
+    
     bg_summary(summary)
     bg_rank(rank)
     
   })
   
+  observe({
+    req(input$indicator)
+    req(input$unit)
+    
+    switch(input$indicator,
+           "effort"={
+             indicator_color("purple")
+             indicator_icon("fas fa-clock")
+             indicator_unit("Days")
+             indicator_label("Total Effort")
+             
+             },
+           "catch"={
+             indicator_color("orange")
+             indicator_icon("fas fa-fish")
+             if(input$unit=="base"){indicator_unit("kg")}else{indicator_unit("t")}
+             indicator_label("Total Catch")
+             },
+           "value" = {
+             indicator_color("blue")
+             indicator_icon("fas fa-dollar-sign")
+             if(input$unit=="base"){indicator_unit("$")}else if(input$unit=="K"){indicator_unit("$K")}else{indicator_unit("$M")}
+             indicator_label("Total Value")
+           },
+           "cpue" = {
+             indicator_color("red")
+             indicator_icon("fas fa-ship")
+             indicator_unit("kg/day")
+             indicator_label("Total CPUE")
+           })
+  })
+  
   output$value<-renderUI({
+    req(input$indicator)
+    req(input$unit)
     if(!is.null(bg_summary())){
       if(input$bg!="0"){
         value<-subset(bg_summary(),target=="target")$Total
       }else{
         value<-subset(bg_summary(),`Fishing Unit`=="Total")$Total
       }
-    valueBox(value=tags$p(input$indicator,style="font-size: 40%"), subtitle=round(value,2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 12,color = "blue" )
+    valueBox(value=tags$p(sprintf("%s (%s)",indicator_label(),indicator_unit()),style="font-size: 40%"), subtitle=round(value,2), icon = tags$i(class = indicator_icon(), style="font-size: 30px"), width = 12,color = indicator_color() )
     }
   })
   
-  output$accuracy<-renderUI({
-    req(input$year)
-    req(input$bg)
-    
-  accuracy<-subset(estimate,EST_YEAR==input$year)
-  if(input$bg!="0"){
-  accuracy<-subset(accuracy,EST_BGC==input$bg)
-  }
-  accuracy<-mean(accuracy$EST_ACCUR,na.rm=T)
-
-  valueBox(value=tags$p("Average Accuracy",style="font-size: 40%"), subtitle=paste(format(round(accuracy*100,1),nsmall=1),"%"), icon = tags$i(class ="fas fa-percent", style="font-size: 30px"), width = 12,color = ifelse(accuracy>=0.9,"green","orange"))
-
-  })
-  
-  output$accuracy2<-renderPlotly({
+  output$accuracy<-renderPlotly({
     req(input$year)
     req(input$bg)
     
@@ -309,7 +341,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
           pivot_longer(!`Fishing Unit`, names_to = "month", values_to = "value")
           
         if(input$bg_level=="global"){
-          p<-data_plot%>%plot_ly(x = ~month,y =~ value, type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Fishing Unit`,month,round(value,1)),name=input$indicator)
+          p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~`Fishing Unit`, colors=indicator_color(),type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Fishing Unit`,month,round(value,1)),name=input$indicator)
         }else{
           p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~`Fishing Unit`, type = 'scatter', mode = 'lines',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Fishing Unit`,month,round(value,1))) 
         }
@@ -324,7 +356,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
           ),
           yaxis = list(
             tickfont = list(size = 10),
-            title = input$indicator,
+            title = sprintf("%s (%s)",indicator_label(),indicator_unit()),
             zeroline = F
           )
         )
@@ -383,6 +415,13 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         mutate(across(where(is.double), ~.x/1000))
       rank<-rank%>%
         mutate(Total = Total/1000)
+    }
+    
+    if(input$unit=="M"){
+      summary<-summary%>%
+        mutate(across(where(is.double), ~.x/1000000))
+      rank<-rank%>%
+        mutate(Total = Total/1000000)
     }
     
     sp_summary(summary)
@@ -521,9 +560,9 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         pivot_longer(!Species, names_to = "month", values_to = "value")
       
       if(input$sp_level=="global"){
-        p<-data_plot%>%plot_ly(x = ~month,y =~ value, type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1)),name=input$indicator)
+        p<-data_plot%>%plot_ly(x = ~month,y =~ value, color= ~Species,colors=indicator_color(),type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1)),name=input$indicator)
       }else{
-        p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~`Species`, type = 'scatter', mode = 'lines',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1))) 
+        p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~Species, type = 'scatter', mode = 'lines',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1))) 
       }
       p%>%layout(
         hovermode ='closest',
@@ -536,7 +575,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         ),
         yaxis = list(
           tickfont = list(size = 10),
-          title = input$indicator,
+          title = sprintf("%s (%s)",indicator_label(),indicator_unit()),
           zeroline = F
         )
       )
