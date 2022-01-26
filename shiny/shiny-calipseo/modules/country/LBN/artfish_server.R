@@ -11,7 +11,7 @@ ns<-session$ns
   survey<-accessSurveyDateAndStratum(pool)
   
   ref_species<-accessRefSpecies(pool)
-  ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$SCIENTIFIC_NAME,ref_species$NAME),ref_species$ID)
+  ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
   ref_species<-subset(ref_species,select=c(ID,Species))
   
   output$period_selector<-renderUI({
