@@ -1,0 +1,1 @@
+SELECT * FROM cl_fish_fishing_units;

@@ -1,6 +1,6 @@
 #options
 #---------------------------------------------------------------------------------------
-options(stringsAsFactors = FALSE)
+options(stringsAsFactors = FALSE, dplyr.summarise.inform = FALSE)
 
 #config
 #---------------------------------------------------------------------------------------
