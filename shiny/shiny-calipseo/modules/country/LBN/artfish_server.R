@@ -20,9 +20,9 @@ ns<-session$ns
     dates<- dates[!startsWith(dates, "2013")] #we exclude 2013 from Flouca historical data
     #TODO to check what happens with 2014 reports
     
-    selectizeInput(ns("period"),"Selection of period",choices=dates,multiple = F,selected=NULL,
+    selectizeInput(ns("period"),"Month :",choices=dates,multiple = F,selected=NULL,
                    options = list(
-                     placeholder = 'select a period',
+                     placeholder = 'select a month',
                      onInitialize = I('function() { this.setValue(""); }')
                      )
                    )
@@ -33,7 +33,7 @@ ns<-session$ns
     output$stratum_selector<-renderUI({
       if(!is.null(input$period))if(input$period!=""){
       stratum<-subset(survey,date==input$period)
-      selectizeInput(ns("stratum"),"Selection of stratum",choices=setNames(stratum$strat_id,stratum$strat_name),multiple = F)
+      selectizeInput(ns("stratum"),"Fishing unit :",choices=setNames(stratum$strat_id,stratum$strat_name),multiple = F)
       }
     })
     
