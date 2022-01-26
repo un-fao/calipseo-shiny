@@ -43,7 +43,8 @@ pool <- pool::dbPool(
   host = appConfig$openfismis$dbi$host,
   port = appConfig$openfismis$dbi$port,
   user = appConfig$openfismis$dbi$user,
-  password = appConfig$openfismis$dbi$password
+  password = appConfig$openfismis$dbi$password,
+  bigint = "numeric" #required otherwise RMariaDB coerces integers as integer64
 )
 
 #global variables / environment
