@@ -46,6 +46,13 @@ accessRefSpeciesFromDB <- function(con){
   return(ref_species)
 }  
 
+#accessRefFishingUnitsFromDB
+accessRefFishingUnitsFromDB <- function(con){
+  ref_fishing_units_sql <- readSQLScript("data/core/sql/ref_fishing_units.sql")
+  ref_fishing_units <- suppressWarnings(dbGetQuery(con, ref_fishing_units_sql))
+  return(ref_fishing_units)
+}
+
 
 #accessSpeciesCatchesYearFromDB
 accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
@@ -351,7 +358,32 @@ accessMonthlyFishingActivityFromDB <- function(con){
   return(out)
 } 
 
+#accessSurveyDateAndStratumFromDB
+accessSurveyDateAndStratumFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/survey_date.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out)
+}
 
+#accessEffortDataFromDB
+accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/effort_data.sql")
+  if(!is.null(month)&!is.null(year)&!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s AND s.CL_FISH_FISHING_UNIT_ID = %s",year,month,fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessLandingDataFromDB
+accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/landing_data.sql")
+  if(!is.null(month)&!is.null(year)&!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s AND l.fishing_unit = %s",year,month,fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
   
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -364,6 +396,10 @@ accessRefSpecies <- function(con){
   accessRefSpeciesFromDB(con)
 }
 
+#accessRefFishingUnits
+accessRefFishingUnits <- function(con){
+  accessRefFishingUnitsFromDB(con)
+}
 
 #accessSpeciesCatchesYear
 accessSpeciesCatchesYear <- function(con, registrationNumber) {
@@ -530,6 +566,21 @@ accessFishingTripDetails <- function(con,trip_id){
 #accessMonthlyFishingActivity
 accessMonthlyFishingActivity <- function(con){
   accessMonthlyFishingActivityFromDB(con)
+}
+
+#accessSurveyDateAndStratum
+accessSurveyDateAndStratum <- function(con){
+  accessSurveyDateAndStratumFromDB(con)
+}
+
+#accessEffortData
+accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessLandingData
+accessLandingData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessLandingDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
 #Country profile
