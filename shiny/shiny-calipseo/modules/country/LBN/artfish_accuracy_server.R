@@ -18,10 +18,10 @@ artfish_accuracy_server <- function(input, output, session, pool){
   
   observeEvent(input$run,{
     pop<-input$boats*input$days
-    SAE<-Spa_Acc(n=input$effort_smp,N=pop)
-    TAE<-Tmp_Acc(n=input$effort_days_smp,N=input$days)
-    SAC<-Spa_Acc(n=input$landing_smp,N=pop)
-    TAC<-Tmp_Acc(n=input$landing_days_smp,N=input$days)
+    SAE<-artfish_accuracy(n=input$effort_smp,N=pop,method="higher")
+    TAE<-1
+    SAC<-artfish_accuracy(n=input$landing_smp,N=pop,method="higher")
+    TAC<-artfish_accuracy(n=input$landing_days_smp,N=input$days,method="higher")
     OAC<-min(SAE,TAE,SAC,TAC)
     output$result<-renderUI({
       tagList(
@@ -80,7 +80,7 @@ artfish_accuracy_server <- function(input, output, session, pool){
 
      output$index<-renderUI({
        tagList(
-          valueBox(index,"Uniformity index",width = 3)
+          valueBox(index,"Uniformity index",icon=icon(ifelse(index<0.6,"exclamation-triangle","check-circle")),color=ifelse(icon<0.6,"orange","green"),width = 3)
        )
      })
   })

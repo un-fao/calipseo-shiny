@@ -1,25 +1,34 @@
-#Non-Probabilistic Temporal Accuracy
-Tmp_Acc<-function(n,N){
-  W=0.75*(1-1/N)
-  a=(2*W*(N^2))/(N-1)^2-(N+1)/(N-1)
-  g=a+(1-a)/N
-  S=(1-a)*(1/log(N)-1/(N*log(N))-1/N)
-  k=(-2/log(N))*log(S/(1-S-g))
-  a2=(1-S-g)^2/(2*S+g-1)
-  a1=g-a2
-  x=log(n)/log(N)
-  A=a1+a2*(N^(-k*x))
-  
-  return(A)
-}
 
-#Pessimistic Spatial Accuracy
-
-Spa_Acc<-function(n,N){
-  R=sqrt((2*N-1)/(6*(N-1))-1/4)
-  A=1-1.96*(R/sqrt(n))*sqrt(1-n/N)
+#ACCURACY
+artfish_accuracy<-function(n,N,method="higher"){
+  #Algebraic approach
+  NP<-function(n,N){
+    W=0.75*(1-1/N)
+    a=(2*W*(N^2))/(N-1)^2-(N+1)/(N-1)
+    g=a+(1-a)/N
+    S=(1-a)*(1/log(N)-1/(N*log(N))-1/N)
+    k=(-2/log(N))*log(S/(1-S-g))
+    a2=(1-S-g)^2/(2*S+g-1)
+    a1=g-a2
+    x=log(n)/log(N)
+    A=a1+a2*(N^(-k*x))
+    
+    return(A)
+  }
   
-  return(A)
+  #Probabilistic approach
+  P<-function(n,N){
+    R=sqrt((2*N-1)/(6*(N-1))-1/4)
+    A=1-1.96*(R/sqrt(n))*sqrt(1-n/N)
+    
+    return(A)
+  }
+  
+  Acc<-switch(method,
+              "algebraic"=NP(n=n,N),
+              "probabilistic"=P(n,N),
+              "higher"=max(NP(n,N),P(n,N)))
+  return(Acc)
 }
 
 #uniformity index
@@ -27,7 +36,7 @@ unif_index<-function(days){
   table<-as.data.frame(table(days))
   mean=mean(table$Freq)
   table$ratio<-ifelse(table$Freq/mean>1,1,table$Freq/mean)
-  index=round(sum(table$ratio),0)/nrow(table)
+  index=mean(table$ratio)
   return(index)
 }
 
@@ -55,8 +64,8 @@ artfish_estimates<-function(con,data_effort,data_landing){
       sd=sd(days_sampled,na.rm=T),
       se=sd/sqrt(EST_EFF_NSMP),
       EST_EFF_CV=se/mean,
-      EST_EFF_SPAACCUR=Spa_Acc(n=EST_EFF_NSMP,N=EST_EFF_NBOATS),
-      EST_EFF_TMPACCUR=Tmp_Acc(n=EST_EFF_NBDAYS,N=EST_EFF_NACT),
+      EST_EFF_SPAACCUR=artfish_accuracy(n=EST_EFF_NSMP,N=EST_EFF_NBOATS*4,method="higher"),
+      EST_EFF_TMPACCUR=1,
       EST_EFF_SUI=unif_index(days)
     )%>%
     select(EST_YEAR,
@@ -117,8 +126,8 @@ artfish_estimates<-function(con,data_effort,data_landing){
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
    mutate(
      EST_LND_CATCH_G=EST_EFF_EFFORT*EST_LND_CPUE_G,
-     EST_LND_SPAACCUR=Spa_Acc(n=EST_LND_NSMP,N=EST_EFF_NBOATS),
-     EST_LND_TMPACCUR=Tmp_Acc(n=EST_LND_NDAYS,N=EST_EFF_NACT),
+     EST_LND_SPAACCUR=artfish_accuracy(n=EST_LND_NSMP,N=EST_EFF_POP,method="higher"),
+     EST_LND_TMPACCUR=artfish_accuracy(n=EST_LND_NDAYS,N=EST_EFF_NACT,method="higher"),
      EST_ACCUR=min(EST_EFF_SPAACCUR,EST_EFF_TMPACCUR,EST_LND_SPAACCUR,EST_LND_TMPACCUR,na.rm=T)
    )
  
