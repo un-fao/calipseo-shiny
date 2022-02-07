@@ -21,13 +21,9 @@ artfish_overview_server <- function(input, output, session, pool){
         
     ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
         
-    bg<-setNames(c(0,ref_bg_sp$ID),c("Total",ref_bg_sp$NAME))
+    bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$NAME))
         
-    selectizeInput(ns("bg"),"Selection of boat-gear",choices=bg,multiple = F,selected=bg[1],
-                       options = list(
-                         placeholder = 'select a boat-gear'
-                       )
-        )
+    selectizeInput(ns("bg"),"Fishing Unit :",choices=bg,multiple = F,selected=bg[1])
     })
   
   observeEvent(input$bg,{
