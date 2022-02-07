@@ -24,6 +24,8 @@ RUN R -e "install.packages(c('testthat'), repos='https://cran.r-project.org/')"
 #shiny
 RUN R -e "install.packages(c('shiny'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('shinydashboard'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('shinydashboardPlus'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('shinyWidgets'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('shinycssloaders'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('shinyjs'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('shinyFiles'), repos='https://cran.r-project.org/')"
@@ -33,6 +35,7 @@ RUN R -e "install.packages(c('openssl'), repos='https://cran.r-project.org/')"
 #dbms
 RUN R -e "install.packages(c('DBI'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('RMySQL'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('RMariaDB'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('pool'), repos='https://cran.r-project.org/')"
 #format bindings
 RUN R -e "install.packages(c('yaml'), repos='https://cran.r-project.org/')"  
@@ -46,6 +49,7 @@ RUN R -e "install.packages(c('sf'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('sp'), repos='https://cran.r-project.org/')" 
 #processing
 RUN R -e "install.packages(c('dplyr'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('tidyr'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('reshape2'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('uuid'), repos='https://cran.r-project.org/')" 
 #ui
