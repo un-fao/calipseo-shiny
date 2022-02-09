@@ -10,6 +10,8 @@ artfish_overview_server <- function(input, output, session, pool){
     updatePageUrl("artfish-overview", session)
   })
   
+  level_choices <- c(i18n("LEVEL_LABLE_GLOBAL"),i18n("LEVEL_LABLE_DETAIL"))
+  
   ref_species<-accessRefSpecies(pool)
   ref_fishing_units<-accessRefFishingUnits(pool)
   
@@ -21,9 +23,9 @@ artfish_overview_server <- function(input, output, session, pool){
         
     ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
         
-    bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$NAME))
+    bg<-setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
         
-    selectizeInput(ns("bg"),"Fishing Unit :",choices=bg,multiple = F,selected=bg[1])
+    selectizeInput(ns("bg"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=bg,multiple = F,selected=bg[1])
     })
   
   observeEvent(input$bg,{
@@ -56,33 +58,33 @@ artfish_overview_server <- function(input, output, session, pool){
                   left_join(ref_fishing_units%>%select(ID,NAME),by=c('EST_BGC'='ID'))%>%
                   ungroup()
     
-    artfish_line_chart_server("boats", label="Boat-gear",df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_NBOATS",ylab="Number of boats",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("effort", label="Boat_gear",df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_EFFORT",ylab="Effort (days)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("catch", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CATCH",ylab="Catch (kg)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("value", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_VALUE",ylab="Value ($)",levels=c("Global"="global","Detail"="detail"),stat="sum", rank=TRUE,mode='plot+table')
-    artfish_line_chart_server("cpue", label="Species",df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CPUE",ylab="CPUE (kg/day)",levels=c("Global"="global","Detail"="detail"),stat="mean", rank=TRUE,mode='plot+table')
+    artfish_line_chart_server("boats", label=i18n("BOAT_GEAR_LABEL"),df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_NBOATS",ylab=i18n("NUMBER_OF_BOATS_LABEL"),levels=level_choices,stat="sum", rank=TRUE,mode='plot+table',prefered_colnames=c(i18n("TABEL_COLNAME_DATE"),i18n("TABEL_COLNAME_AGG"),i18n("TABEL_COLNAME_BOAT_GEAR")))
+    artfish_line_chart_server("effort", label=i18n("BOAT_GEAR_LABEL"),df=data_landing, colDate = "DATE",colTarget="NAME",colValue="EST_EFF_EFFORT",ylab=i18n("EFFORT_DAYS_LABEL"),levels=level_choices,stat="sum", rank=TRUE,mode='plot+table',prefered_colnames=c(i18n("TABEL_COLNAME_DATE"),i18n("TABEL_COLNAME_AGG"),i18n("TABEL_COLNAME_BOAT_GEAR")))
+    artfish_line_chart_server("catch", label=i18n("SPECIES_LABEL"),df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CATCH",ylab=i18n("CATCH_LABEL"),levels=level_choices,stat="sum", rank=TRUE,mode='plot+table',prefered_colnames=c(i18n("TABEL_COLNAME_DATE"),i18n("TABEL_COLNAME_AGG"),i18n("TABEL_COLNAME_SPECIES")))
+    artfish_line_chart_server("value", label=i18n("SPECIES_LABEL"),df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_VALUE",ylab=i18n("VALUE_LABEL"),levels=level_choices,stat="sum", rank=TRUE,mode='plot+table',prefered_colnames=c(i18n("TABEL_COLNAME_DATE"),i18n("TABEL_COLNAME_AGG"),i18n("TABEL_COLNAME_SPECIES")))
+    artfish_line_chart_server("cpue", label=i18n("SPECIES_LABEL"),df=data, colDate = "DATE",colTarget="NAME",colValue="EST_LND_CPUE",ylab=i18n("CPUE_LABEL"),levels=level_choices,stat="mean", rank=TRUE,mode='plot+table',prefered_colnames=c(i18n("TABEL_COLNAME_DATE"),i18n("TABEL_COLNAME_AGG"),i18n("TABEL_COLNAME_SPECIES")))
     
     output$results<-renderUI({
     tagList(
       fluidRow(
         column(6,
-               artfish_line_chart_ui(ns("boats"),title="Cumulate Number of Boats",sliderWidth =25)
+               artfish_line_chart_ui(ns("boats"),title=i18n("TITLE_CUMULATE_NUMBER_OF_BOATS"),sliderWidth =25)
         ),
         column(6,
-               artfish_line_chart_ui(ns("effort"),title="Cumulate Effort",sliderWidth =25)
+               artfish_line_chart_ui(ns("effort"),title=i18n("TITLE_CUMULATE_EFFORT"),sliderWidth =25)
         )
       ),
       fluidRow(
         column(6,
-          artfish_line_chart_ui(ns("catch"),title="Cumulate Catch",sliderWidth =25)
+          artfish_line_chart_ui(ns("catch"),title=i18n("TITLE_CUMULATE_CATCH"),sliderWidth =25)
         ),
         column(6,
-          artfish_line_chart_ui(ns("value"),title="Cumulate Value",sliderWidth =25)
+          artfish_line_chart_ui(ns("value"),title=i18n("TITLE_CUMULATE_VALUE"),sliderWidth =25)
         )
         ),
       fluidRow(
         column(6,        
-          artfish_line_chart_ui(ns("cpue"),title="Average CPUE",sliderWidth =25)
+          artfish_line_chart_ui(ns("cpue"),title=i18n("AVERAGE_CPUE"),sliderWidth =25)
          )  
       )
     )

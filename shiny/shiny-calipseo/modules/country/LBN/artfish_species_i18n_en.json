@@ -1,0 +1,53 @@
+{
+  /* artfish species title*/
+  "ARTFISH_SPECIES_TITLE" : "Detail by Species",
+  
+  /*Species*/
+  
+  "SELECT_INPUT_TITLE_SPECIES" : "Species",
+  
+  "SELECT_INPUT_SPECIES_PLACEHOLDER" : "select a species",
+  
+  /*fishing unit*/
+  
+  "ALL_FISHING_UNITS_LABEL" : "All fishing units",
+  
+  "SELECT_INPUT_TITLE_FISHING_UNIT" : "Fishing Unit",
+  
+  /*labels*/
+  "LABEL_VALUE" : "Value",
+  
+  "VALUE_LABEL_VALUE" : "Value (kg)",
+  
+  "LABEL_CATCH" : "Catch",
+  
+  "VALUE_LABEL_CATCH" : "Catch (kg)",
+  
+  "LABEL_PRICE" : "Price",
+  
+  "VALUE_LABEL_PRICE" : "Price ($/kg)",
+  
+  "LABEL_CPUE" : "CPUE",
+  
+  "VALUE_LABEL_CPUE" : "CPUE (kg/day)",
+  
+  "LABEL_EFFORT" : "Effort",
+  
+  "VALUE_LABEL_EFFORT" : "Effort(days)",
+  
+  /*valuebox*/
+  
+  "VALUEBOX_TITLE_TOTAL_VALUE" : "Total value (kg)",
+  
+  "VALUEBOX_TITLE_TOTAL_CATCH" : "Total catch (kg)",
+  
+  "VALUEBOX_TITLE_AVERAGE_PRICE" : "Average price ($/kg)",
+  
+  "VALUEBOX_TITLE_AVERAGE_CPUE" : "Averge CPUE (kg/day)",
+  
+  "VALUEBOX_TITLE_TOTAL_EFFORT" : "Total effort (days)",
+  
+  /*plotlabel*/
+  
+  "YLAB_TITLE_RANK" : "Rank (by total quantity caugth)"
+}

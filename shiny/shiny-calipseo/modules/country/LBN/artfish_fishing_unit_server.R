@@ -23,11 +23,54 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   
   estimate<-artfish_estimates(data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
   
+  
+  
+  indicator_output <- if(input$indicator==i18n("EFFORT_LABEL")){
+    "effort"
+  }else if(input$indicator==i18n("CATCH_LABEL")){
+    "catch"
+  }else if(input$indicator==i18n("VALUE_LABEL")){
+    "value"
+  }else if(input$indicator==i18n("CPUE_LABEL")){
+    "cpue"
+  }
+  
+  
+  bg_level_output <- if(input$bg_level==i18n("LEVEL_LABLE_GLOBAL")){
+    "global"
+  }else if(input$bg_level==i18n("LEVEL_LABLE_DETAIL")){
+    "detail"
+  }
+  
+ 
+  sp_level_output <- if(input$sp_level==i18n("LEVEL_LABLE_GLOBAL")){
+    "global"
+  }else if(input$sp_level==i18n("LEVEL_LABLE_DETAIL")){
+    "detail"
+  }
+  
+  
+  unit_output_1 <- if(input$unit_1==i18n("KILOGRAM_LABEL")){
+    "base"
+  }else if(input$unit_1==i18n("TONNE_LABEL")){
+    "K"
+  }
+  
+  unit_output_2 <- if(input$unit_2==i18n("DOLLAR_LABEL")){
+    "base"
+  }else if(input$unit_2==i18n("THOUSAND_DOLLAR_LABEL")){
+    "K"
+  }else if(input$unit_2==i18n("MILLION_DOLLAR_LABEL")){
+    "M"
+  }
+  
+  
+  
   output$year_selector<-renderUI({
     
     years<-sort(unique(estimate$EST_YEAR),decreasing = T)
     
-    selectizeInput(ns("year"),"Year :",choices=years,multiple = F,selected=years[1])
+    selectizeInput(ns("year"),paste0(i18n("SELECT_INPUT_TITLE_YEAR")," :"),choices=years,multiple = F,selected=years[1])
   })  
 
   output$fishing_unit_selector<-renderUI({
@@ -39,41 +82,12 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         
         ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
-        bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$NAME))
+        bg<-setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
         
-        selectizeInput(ns("bg"),"Fishing unit :",choices=bg,multiple = F,selected=bg[1])
+        selectizeInput(ns("bg"),paste0(i18n( "SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=bg,multiple = F,selected=bg[1])
   })
   
-  output$unit_selector<-renderUI({
-    
-    req(input$indicator)
-    
-    selection<-switch(input$indicator,
-                      "effort"=c("Days"="base"),
-                      "catch"=c("Kilogram (kg)"="base","tonne (t)"="K"),
-                      "value"=c("Dollar ($)"="base","thousand of dollars ($K)"="K","million of dollars ($M)"="M"),
-                      "cpue"=c("Kilogram by day (kg/day)"="base")
-                      
-                      )
-    
-    selectizeInput(ns("unit"),"Unit :",choices=selection,multiple = F,selected=selection[1])
-  })
-  
-  output$selectors<-renderUI({
-    tagList(
-      fluidRow(
-        column(6,
-               uiOutput(ns("year_selector")),
-               uiOutput(ns("fishing_unit_selector"))
-        ),
-        column(6,
-               selectizeInput(ns("indicator"),"Indicator :",choices=c("Effort"="effort","Catch"="catch","Value"="value","CPUE"="cpue"),multiple = F),
-               uiOutput(ns("unit_selector"))
-        )
-      )
-    )
-  })
-  
+ 
   #Fishing Units Plots and Tables
   
   observe({
@@ -82,7 +96,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     req(input$indicator)
     req(input$unit)
     
-    value<-switch(input$indicator,
+    value<-switch(indicator_output,
                   "effort"="EST_EFF_EFFORT",
                   "catch"="EST_LND_CATCH",
                   "value" = "EST_LND_VALUE",
@@ -133,31 +147,31 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     req(input$indicator)
     req(input$unit)
     
-    switch(input$indicator,
+    switch(indicator_output,
            "effort"={
              indicator_color("purple")
              indicator_icon("fas fa-clock")
-             indicator_unit("Days")
-             indicator_label("Total Effort")
+             indicator_unit(i18n("UNIT_LABEL_DAYS"))
+             indicator_label(i18n("INDICATOR_LABEL_TOTAL_EFFORT"))
              
              },
            "catch"={
              indicator_color("orange")
              indicator_icon("fas fa-fish")
-             if(input$unit=="base"){indicator_unit("kg")}else{indicator_unit("t")}
-             indicator_label("Total Catch")
+             if(unit_output_1=="base"){indicator_unit(i18n("UNIT_LABEL_KILOGRAM"))}else{indicator_unit(i18n("UNIT_LABEL_TONNE"))}
+             indicator_label(i18n("INDICATOR_LABEL_TOTAL_CATCH"))
              },
            "value" = {
              indicator_color("blue")
              indicator_icon("fas fa-dollar-sign")
-             if(input$unit=="base"){indicator_unit("$")}else if(input$unit=="K"){indicator_unit("$K")}else{indicator_unit("$M")}
-             indicator_label("Total Value")
+             if(unit_output_2=="base"){indicator_unit(i18n("UNIT_LABEL_DOLLAR"))}else if(unit_output_2==i18n("UNIT_LABEL_THOUSAND")){indicator_unit(i18n("UNIT_LABEL_THOUSAND_DOLLAR"))}else{indicator_unit(i18n("UNIT_LABEL_MILLION_DOLLAR"))}
+             indicator_label(i18n("INDICATOR_LABEL_TOTAL_VALUE"))
            },
            "cpue" = {
              indicator_color("red")
              indicator_icon("fas fa-ship")
-             indicator_unit("kg/day")
-             indicator_label("Total CPUE")
+             indicator_unit(i18n("UNIT_LABEL_KILOGRAM_DAY"))
+             indicator_label(i18n("INDICATOR_LABEL_TOTAL_CPUE"))
            })
   })
   
@@ -187,7 +201,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     plot_ly(
     domain = list(x = c(0.20, 0.80), y = c(0, 0.90)),
     value = accuracy,
-    title = list(text = "Accuracy (%)"),
+    title = list(text = paste0(i18n( "GUAGE_TITLE_ACCURACY")," (%)")),
     type = "indicator",
     mode = "gauge+number",
     gauge = list(
@@ -205,33 +219,40 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   })
 
   output$bg_sum_table<-DT::renderDT(server = FALSE, {
+    
 
     if(!is.null(bg_summary())){
+      df <- bg_summary()
+      df$`Fishing Unit`[nrow(df)] <- i18n("FISHING_UNIT_TABLE_ROWNAME_9")
+      names(df)[names(df)=='Fishing Unit'] <- i18n("FISHING_UNIT_TABLE_COLNAME_1")
+      names(df)[names(df)=='Total'] <- i18n("FISHING_UNIT_TABLE_ROWNAME_9")
+      
     DT::datatable(
       class = 'cell-border stripe',
-      bg_summary(),
+      df,
       extensions = c("Buttons"),
       escape = FALSE,
       rownames = FALSE,
       options = list(
         dom = 'Bt',
         scrollX=TRUE,
-        pageLength=nrow(bg_summary()),
+        pageLength=nrow(df),
         columnDefs = list(list(visible=FALSE, targets=c(14))),
         buttons = list(
           list(extend = 'copy'),
-          list(extend = 'csv', filename =  sprintf("%s_summary",input$year), title = NULL, header = TRUE),
-          list(extend = 'excel', filename =  sprintf("%s_summary",input$year), title = NULL, header = TRUE),
-          list(extend = "pdf", pageSize = 'A4',filename = sprintf("%s_summary",input$year),
-               title = sprintf("%s_summary",input$year), header = TRUE)
+          list(extend = 'csv', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), title = NULL, header = TRUE),
+          list(extend = 'excel', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), title = NULL, header = TRUE),
+          list(extend = "pdf", pageSize = 'A4',filename = paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")),
+               title = paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), header = TRUE)
         ),
         exportOptions = list(
           modifiers = list(page = "all",selected=TRUE)
-        )
+        ),
+        language = list(url = i18n("TABLE_LANGUAGE"))
       )
     )%>%
-      formatStyle(columns = c("Fishing Unit"), `text-align` = 'right')%>%
-      formatStyle(columns = c("Total"), fontWeight = 'bold', `text-align` = 'left')%>%
+      formatStyle(columns = c(i18n("FISHING_UNIT_TABLE_COLNAME_1")), `text-align` = 'right')%>%
+      formatStyle(columns = c(i18n("FISHING_UNIT_TABLE_ROWNAME_9")), fontWeight = 'bold', `text-align` = 'left')%>%
       formatRound(2:14,digits=1)%>%
       formatStyle("target",target = 'row',backgroundColor = styleEqual(c("target"), c("orange")))
     }
@@ -240,10 +261,16 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
 
   output$bg_rank_table<-DT::renderDT(server = FALSE, {
     
+    df <- bg_rank()
+    names(df) <- c(i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_1"),i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_2"),
+                   i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_3"), i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_4"),
+                   i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_5"), i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_6"))
+    
+    
     if(!is.null(bg_rank())){
       DT::datatable(
         class = 'cell-border stripe',
-        bg_rank(),
+        df,
         extensions = c("Buttons"),
         escape = FALSE,
         rownames = FALSE,
@@ -254,27 +281,28 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
           columnDefs = list(list(visible=FALSE, targets=c(5))),
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf("%s_rank",input$year), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("%s_rank",input$year), title = NULL, header = TRUE),
-            list(extend = "pdf", pageSize = 'A4',filename = sprintf("%s_rank",input$year),
-                 title = sprintf("%s_rank",input$year), header = TRUE)
+            list(extend = 'csv', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), title = NULL, header = TRUE),
+            list(extend = "pdf", pageSize = 'A4',filename = paste0(input$year,"_",i18n("TABLE_TITLE_RANK")),
+                 title = paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
-          )
+          ),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         )
       )%>%
-        formatStyle(columns = c("Fishing Unit"), `text-align` = 'right')%>%
+        formatStyle(columns = c(i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_1")), `text-align` = 'right')%>%
         formatRound(3,digits=1)%>%
         formatPercentage(4:5,digits = 1)%>%
         formatStyle(
-          'Percentage',
+          i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_4"),
           background = styleColorBar(c(0,1), "#029bef",-90),
           backgroundSize = '90% 80%',
           backgroundRepeat = 'no-repeat',
           backgroundPosition = 'left'
         )%>%
-        formatStyle("target",target = 'row',backgroundColor = styleEqual(c("target"), c("orange")))
+        formatStyle(i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_6"),target = 'row',backgroundColor = styleEqual(c(i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_6")), c("orange")))
     }
     
   })
@@ -284,7 +312,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     if(!is.null(bg_rank())){
     rank<-bg_rank()
     
-    value<-switch(input$indicator,
+    value<-switch(indicator_output,
                   "effort"="EST_EFF_EFFORT",
                   "catch"="EST_LND_CATCH",
                   "value" = "EST_LND_VALUE",
@@ -328,7 +356,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
         if(input$bg!="0"){
           data_plot<-data_plot%>%
             filter(target == "target")
-        }else if(input$bg_level=="global"){
+        }else if(bg_level_output=="global"){
           data_plot<-data_plot%>%
             filter(`Fishing Unit` == "Total")
         }else{
@@ -340,7 +368,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
           select(-target)%>%
           pivot_longer(!`Fishing Unit`, names_to = "month", values_to = "value")
           
-        if(input$bg_level=="global"){
+        if(bg_level_output=="global"){
           p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~`Fishing Unit`, colors=indicator_color(),type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Fishing Unit`,month,round(value,1)),name=input$indicator)
         }else{
           p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~`Fishing Unit`, type = 'scatter', mode = 'lines',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Fishing Unit`,month,round(value,1))) 
@@ -374,7 +402,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     req(input$indicator)
     req(input$unit)
     
-    value<-switch(input$indicator,
+    value<-switch(indicator_output,
                   "effort"="EST_EFF_EFFORT",
                   "catch"="EST_LND_CATCH",
                   "value" = "EST_LND_VALUE",
@@ -388,8 +416,6 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
       levels<-input$bg
       data<-subset(estimate,EST_BGC == input$bg)
     }
-    
-    
     
     table<-artfish_year_summary(data=data,year=input$year,variable="EST_SPC",value=value)
     
@@ -431,31 +457,38 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   
   output$sp_sum_table<-DT::renderDT(server = FALSE, {
     
+    df <- sp_summary()
+    df$Species[nrow(df)] <- i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_14")
+    names(df)[names(df)=='Species'] <- i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_1")
+    names(df)[names(df)=='Total'] <- i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_14")
+    
     if(!is.null(sp_summary())){
+      
       DT::datatable(
         class = 'cell-border stripe',
-        sp_summary(),
+        df,
         extensions = c("Buttons"),
         escape = FALSE,
         rownames = FALSE,
         options = list(
           dom = 'Bt',
           scrollX=TRUE,
-          pageLength=nrow(sp_summary()),
+          pageLength=nrow(df),
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf("%s_summary",input$year), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("%s_summary",input$year), title = NULL, header = TRUE),
-            list(extend = "pdf", pageSize = 'A4',filename = sprintf("%s_summary",input$year),
-                 title = sprintf("%s_summary",input$year), header = TRUE)
+            list(extend = 'csv', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), title = NULL, header = TRUE),
+            list(extend = "pdf", pageSize = 'A4',filename = paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")),
+                 title = paste0(input$year,"_",i18n("TABLE_TITLE_SUMMARY")), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
-          )
+          ),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         )
       )%>%
-        formatStyle(columns = c("Species"), `text-align` = 'right')%>%
-        formatStyle(columns = c("Total"), fontWeight = 'bold', `text-align` = 'left')%>%
+        formatStyle(columns = c(i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_1")), `text-align` = 'right')%>%
+        formatStyle(columns = c(i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_14")), fontWeight = 'bold', `text-align` = 'left')%>%
         formatRound(2:14,digits=1)
     }
     
@@ -464,33 +497,39 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   output$sp_rank_table<-DT::renderDT(server = FALSE, {
     
     if(!is.null(sp_rank())){
+      df <- sp_rank()
+      names(df) <- c(i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_1"),i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_2"),
+                     i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_3"), i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_4"),
+                     i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_5"))
+      
       DT::datatable(
         class = 'cell-border stripe',
-        sp_rank(),
+        df,
         extensions = c("Buttons"),
         escape = FALSE,
         rownames = FALSE,
         options = list(
           dom = 'Bt',
           scrollX=TRUE,
-          pageLength=nrow(sp_rank()),
+          pageLength=nrow(df),
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf("%s_rank",input$year), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf("%s_rank",input$year), title = NULL, header = TRUE),
-            list(extend = "pdf", pageSize = 'A4',filename = sprintf("%s_rank",input$year),
-                 title = sprintf("%s_rank",input$year), header = TRUE)
+            list(extend = 'csv', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), title = NULL, header = TRUE),
+            list(extend = "pdf", pageSize = 'A4',filename = paste0(input$year,"_",i18n("TABLE_TITLE_RANK")),
+                 title = paste0(input$year,"_",i18n("TABLE_TITLE_RANK")), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
-          )
+          ),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         )
       )%>%
-        formatStyle(columns = c("Species"), `text-align` = 'right')%>%
+        formatStyle(columns = c(i18n("MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_1")), `text-align` = 'right')%>%
         formatRound(3,digits=1)%>%
         formatPercentage(4:5,digits = 1)%>%
         formatStyle(
-          'Percentage',
+          i18n("TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_4"),
           background = styleColorBar(c(0,1), "#029bef",-90),
           backgroundSize = '90% 80%',
           backgroundRepeat = 'no-repeat',
@@ -505,7 +544,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     if(!is.null(sp_rank())){
       rank<-sp_rank()
       
-      value<-switch(input$indicator,
+      value<-switch(indicator_output,
                     "effort"="EST_EFF_EFFORT",
                     "catch"="EST_LND_CATCH",
                     "value" = "EST_LND_VALUE",
@@ -528,9 +567,9 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
   })
   
   output$sp_number_selector<-renderUI({
-    if(input$sp_level=="global"){NULL}else{
+    if(sp_level_output=="global"){NULL}else{
       max_nb<-nrow(sp_rank())
-      numericInput(ns("sp_number"), "Number of species:", value = if(max_nb<=10){max_nb}else{10}, min = 0, max = max_nb)
+      numericInput(ns("sp_number"), paste0(i18n("NUMERIC_INPUT_TITLE_NUMBER_OF_SPECIES"),":"), value = if(max_nb<=10){max_nb}else{10}, min = 0, max = max_nb)
     }
   })
   
@@ -542,7 +581,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
       data_plot<-data_plot%>%
         select(-Total)
       
-      if(input$sp_level=="global"){
+      if(sp_level_output=="global"){
         data_plot<-data_plot%>%
           filter(Species == "Total")
       }else{
@@ -559,7 +598,7 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
       data_plot<-data_plot%>%
         pivot_longer(!Species, names_to = "month", values_to = "value")
       
-      if(input$sp_level=="global"){
+      if(sp_level_output=="global"){
         p<-data_plot%>%plot_ly(x = ~month,y =~ value, color= ~Species,colors=indicator_color(),type = 'scatter', mode = 'lines',fill = 'tozeroy',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1)),name=input$indicator)
       }else{
         p<-data_plot%>%plot_ly(x = ~month,y =~ value,color= ~Species, type = 'scatter', mode = 'lines',line = list(shape = "spline"),text = ~sprintf("%s[%s]: %s",`Species`,month,round(value,1))) 
@@ -583,87 +622,5 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     
   })
   
-  output$bg_results<-renderUI({
-    tagList(
-      fluidRow(
-      div(
-        class = "col-md-6",
-        box(
-          title="Monthly Repartition By Fishing Units",
-          width = 12,
-          tabsetPanel(type="pills",
-                      tabPanel("Plot",
-                               box(
-                                 title='',
-                                 width = 12,
-                                 sidebar = shinydashboardPlus::boxSidebar(
-                                   id=ns("bg_sum_box"),
-                                   width = 25,
-                                   style = 'font-size:14px;',
-                                   selectizeInput(ns("bg_level"),"Level :",choices=c("Global"="global","Detail"="detail"),multiple = F)
-                                 ),
-                                 plotlyOutput(ns("bg_sum_plot"))%>%withSpinner(type = 4))
-                      ),
-                      tabPanel('Table',DTOutput(ns("bg_sum_table"))%>%withSpinner(type = 4))
-          )
-        )
-      ),
-      div(
-        class = "col-md-6",
-        box(
-          title="Top Ranking Fishing Units",
-          width = 12,
-          tabsetPanel(type="pills",
-                      tabPanel("Plot",plotlyOutput(ns("bg_rank_plot"))%>%withSpinner(type = 4)),
-                      tabPanel('Table',DTOutput(ns("bg_rank_table"))%>%withSpinner(type = 4))
-          )
-        )
-      )
-    )
-    )
-  })
   
-  output$sp_results<-renderUI({
-    req(input$indicator)
-    if(input$indicator!="effort"){
-    tagList(
-      fluidRow(
-        div(
-          class = "col-md-6",
-          box(
-            title="Monthly Repartition By Species",
-            width = 12,
-            tabsetPanel(type="pills",
-                        tabPanel("Plot",
-                                 box(
-                                   title='',
-                                   width = 12,
-                                   sidebar = shinydashboardPlus::boxSidebar(
-                                     id=ns("sp_sum_box"),
-                                     width = 25,
-                                     style = 'font-size:14px;',
-                                     selectizeInput(ns("sp_level"),"Level :",choices=c("Global"="global","Detail"="detail"),selected="detail",multiple = F),
-                                     uiOutput(ns("sp_number_selector"))
-                                   ),
-                                   plotlyOutput(ns("sp_sum_plot"))%>%withSpinner(type = 4))
-                        ),
-                        tabPanel('Table',DTOutput(ns("sp_sum_table"))%>%withSpinner(type = 4))
-            )
-          )
-        ),
-        div(
-          class = "col-md-6",
-          box(
-            title="Top Ranking Species",
-            width = 12,
-            tabsetPanel(type="pills",
-                        tabPanel("Plot",plotlyOutput(ns("sp_rank_plot"))%>%withSpinner(type = 4)),
-                        tabPanel('Table',DTOutput(ns("sp_rank_table"))%>%withSpinner(type = 4))
-            )
-          )
-        )
-      )
-    )
-    }
-  })
 }
