@@ -60,10 +60,6 @@ accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
                                             language = appConfig$language)
 
-  if(!is.null(registrationNumber)){
-    species_catches_year_sql <- paste0(species_catches_year_sql, " GROUP BY sp.NAME, year(ft.DATE_TO);")
-  }
-  
   species_catches_year <- suppressWarnings(dbGetQuery(con,species_catches_year_sql))
   return(species_catches_year)
 }
