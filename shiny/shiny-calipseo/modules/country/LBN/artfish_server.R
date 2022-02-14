@@ -20,9 +20,9 @@ ns<-session$ns
     dates<- dates[!startsWith(dates, "2013")] #we exclude 2013 from Flouca historical data
     #TODO to check what happens with 2014 reports
     
-    selectizeInput(ns("period"),"Month :",choices=dates,multiple = F,selected=NULL,
+    selectizeInput(ns("period"),paste0(i18n("SELECT_INPUT_TITLE_MONTH")," :"),choices=dates,multiple = F,selected=NULL,
                    options = list(
-                     placeholder = 'select a month',
+                     placeholder = i18n("SELECT_INPUT_PLACEHOLDER_MONTH"),
                      onInitialize = I('function() { this.setValue(""); }')
                      )
                    )
@@ -33,13 +33,13 @@ ns<-session$ns
     output$stratum_selector<-renderUI({
       if(!is.null(input$period))if(input$period!=""){
       stratum<-subset(survey,date==input$period)
-      selectizeInput(ns("stratum"),"Fishing unit :",choices=setNames(stratum$strat_id,stratum$strat_name),multiple = F)
+      selectizeInput(ns("stratum"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=setNames(stratum$strat_id,stratum$strat_name),multiple = F)
       }
     })
     
     output$button<-renderUI({
       if(!is.null(input$period))if(input$period!=""){
-        actionButton(ns("btn"),"Submit")
+        actionButton(ns("btn"),i18n("ACTION_BUTTON_TITLE_SUBMIT"))
       }
     })
   })
@@ -60,18 +60,15 @@ ns<-session$ns
     
     output$effort <- DT::renderDT(server = FALSE, {
       
-      codes<-c("(E)","(NB)","(FDM)","(PBA)","(NAD)","(NDE)","(CV)","(SAE)","(TAE)","(SUI)")
+      codes<-c(i18n("EFFORT_CODE_1"),i18n("EFFORT_CODE_2"),i18n("EFFORT_CODE_3"),
+               i18n("EFFORT_CODE_4"),i18n("EFFORT_CODE_5"),i18n("EFFORT_CODE_6"),
+               i18n("EFFORT_CODE_7"),i18n("EFFORT_CODE_8"),i18n("EFFORT_CODE_9"),
+               i18n("EFFORT_CODE_10"))
       
-      labels<-c("Estimated Effort = (PBA)x(NB)x(FDM)",
-                "Number of boats-gears",
-                "Fishing days in month",
-                "Probability Boat Active = (NAD)/(NDE)",
-                "Number of days declared active",
-                "Total number of days examined",
-                "Coefficient of variation",
-                "Spacial Accuracy (effort)",
-                "Temporal Accuracy (effort)",
-                "Sampling Uniformity index (0 - 1)"
+      labels<-c(i18n("EFFORT_LABEL_1"),i18n("EFFORT_LABEL_2"),i18n("EFFORT_LABEL_3"),
+                i18n("EFFORT_LABEL_4"),i18n("EFFORT_LABEL_5"),i18n("EFFORT_LABEL_6"),
+                i18n("EFFORT_LABEL_7"),i18n("EFFORT_LABEL_8"),i18n("EFFORT_LABEL_9"),
+                i18n("EFFORT_LABEL_10")
       )
       
       values<-c(formatC(estimate$EST_EFF_EFFORT[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
@@ -97,23 +94,23 @@ ns<-session$ns
         options = list(
           dom = 't',
           pageLength = 10,
-          headerCallback = JS(headerCallback))
+          headerCallback = JS(headerCallback),
+          language = list(url = i18n("TABLE_LANGUAGE")))
+        
       )  
     })
     
     output$landing<-  DT::renderDT(server = FALSE, {
       
-      codes<-c("","","(SMC)","(SME)","","","(CV)","(SAC)","(TAC)","(SUI)")
-      labels<-c("Estimated catch = Estimated Effort x CPUE",
-                "CPUE = (SMC)/(SME)",
-                "Sample catch",
-                "Sample Effort",
-                "Overall Price (Unit Value)",
-                "Total value",
-                "Coefficient of variation",
-                "Spacial Accuracy (catch)",
-                "Temporal Accuracy (catch)",
-                "Sampling Uniformity index (0 - 1)")
+      codes<-c(i18n("LANDINGSITE_CODE_1"),i18n("LANDINGSITE_CODE_2"),i18n("LANDINGSITE_CODE_3"),
+               i18n("LANDINGSITE_CODE_4"),i18n("LANDINGSITE_CODE_5"),i18n("LANDINGSITE_CODE_6"),
+               i18n("LANDINGSITE_CODE_7"),i18n("LANDINGSITE_CODE_8"),i18n("LANDINGSITE_CODE_9"),
+               i18n("LANDINGSITE_CODE_10"))
+      
+      labels<-c(i18n("LANDINGSITE_LABEL_1"),i18n("LANDINGSITE_LABEL_2"),i18n("LANDINGSITE_LABEL_3"),
+                i18n("LANDINGSITE_LABEL_4"),i18n("LANDINGSITE_LABEL_5"),i18n("LANDINGSITE_LABEL_6"),
+                i18n("LANDINGSITE_LABEL_7"),i18n("LANDINGSITE_LABEL_8"),i18n("LANDINGSITE_LABEL_9"),
+                i18n("LANDINGSITE_LABEL_10"))
       
       values<-c(formatC(estimate$EST_LND_CATCH_G[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
                 formatC(sum(estimate$EST_LND_CPUE,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
@@ -138,14 +135,15 @@ ns<-session$ns
         options = list(
           dom = 't',
           pageLength = 10,
-          headerCallback = JS(headerCallback))
+          headerCallback = JS(headerCallback),
+          language = list(url = i18n("TABLE_LANGUAGE")))
       )  
     })
     
     output$OvAcc<- DT::renderDT(server = FALSE, {
       
       OvAcc<-data.frame(code="",
-                          label="Overall Accuracy = Minimum of TAE, SAE, TAC, SAC",
+                          label=i18n("LABEL_ACCURACY"),
                           value=paste0(format(round(estimate$EST_ACCUR[1]*100,1), nsmall = 1)," %"))
       
       DT::datatable(
@@ -155,47 +153,62 @@ ns<-session$ns
         selection = 'none',
         options = list(
           dom = 't',
-          headerCallback = JS(headerCallback))
+          headerCallback = JS(headerCallback),
+          language = list(url = i18n("TABLE_LANGUAGE")))
       )  
     })
+    
     
     output$species<- DT::renderDT(server = FALSE, {
       
       species<-subset(estimate,select=c(EST_SPC,EST_LND_CATCH,EST_EFF_EFFORT,EST_LND_CPUE,EST_LND_PRICE,EST_LND_VALUE,EST_LND_AVW))
-      names(species)<-c("EST_SPC","Quantity","Effort","CPUE","Price","Value","Aver.weight")
-      species$Quantity<-formatC(species$Quantity,digits = 0, format = "f", big.mark = ",", drop0trailing = F)
-      species$Effort<-formatC(species$Effort,digits = 0, format = "f", big.mark = ",", drop0trailing = F)
-      species$CPUE<-formatC(species$CPUE,digits = 3, format = "f", big.mark = ",", drop0trailing = F)
-      species$Price<-formatC(species$Price,digits = 3, format = "f", big.mark = ",", drop0trailing = F)
-      species$Value<-formatC(species$Value,digits = 0, format = "f", big.mark = ",", drop0trailing = F)
-      
-      species<-species%>%
-        left_join(ref_species,by=c("EST_SPC"="ID"))%>%
-        select(Species,Quantity,Effort,CPUE,Price,Value,Aver.weight)
+      names(species)<-c('NAME',i18n("SPECIES_TABLE_COLNAME_2"),
+                        i18n("SPECIES_TABLE_COLNAME_3"),i18n("SPECIES_TABLE_COLNAME_4"),
+                        i18n("SPECIES_TABLE_COLNAME_5"),i18n("SPECIES_TABLE_COLNAME_6"),
+                        i18n("SPECIES_TABLE_COLNAME_7"))
+     
+      NAME <- paste0(species,"$",i18n("SPECIES_TABLE_COLNAME_1"))
+      # print(species$NAME)
+      # print(ref_species$ID)
+      species<- species%>%
+        left_join(ref_species,by=c('NAME'="ID"))%>%
+        select(Species,i18n("SPECIES_TABLE_COLNAME_2"),i18n("SPECIES_TABLE_COLNAME_3"),
+               i18n("SPECIES_TABLE_COLNAME_4"),i18n("SPECIES_TABLE_COLNAME_5"),
+               i18n("SPECIES_TABLE_COLNAME_6"),i18n("SPECIES_TABLE_COLNAME_7"))
+
+     
       
       DT::datatable(
         species,
         escape = FALSE,
         rownames = FALSE,
+        colnames = c(i18n("SPECIES_TABLE_COLNAME_1"),i18n("SPECIES_TABLE_COLNAME_2"),i18n("SPECIES_TABLE_COLNAME_3"),
+                     i18n("SPECIES_TABLE_COLNAME_4"),i18n("SPECIES_TABLE_COLNAME_5"),
+                     i18n("SPECIES_TABLE_COLNAME_6"),i18n("SPECIES_TABLE_COLNAME_7")),
         selection = 'none',
         options = list(
           dom = 't',
-          pageLength = nrow(species)
+          pageLength = nrow(species),
+          language = list(url = i18n("TABLE_LANGUAGE"))
         )
-      )  
+      ) %>% formatRound(i18n("SPECIES_TABLE_COLNAME_2"), digits=0) %>% 
+        formatRound(i18n("SPECIES_TABLE_COLNAME_3"), digits=0) %>% 
+        formatRound(i18n("SPECIES_TABLE_COLNAME_4"), digits = 3) %>% 
+        formatRound(i18n("SPECIES_TABLE_COLNAME_5"), digits = 3) %>% 
+        formatRound(i18n("SPECIES_TABLE_COLNAME_6"), digits = 0)
     })
     
     output$results<-renderUI({
       tagList(
-      p("Effort"),
+      p(i18n("LABEL_EFFORT")),
       DTOutput(ns("effort"))%>%withSpinner(type = 4),
       br(),
-      p("Landings"),
+      p(i18n("LABEL_LANDINGS")),
       DTOutput(ns("landing"))%>%withSpinner(type = 4),
       br(),
       DTOutput(ns("OvAcc"))%>%withSpinner(type = 4),
       br(),
-      p("Estimated catch by species"),
+      p(i18n("LABEL_ESTIMATED_BY_SPECIES")),
       DTOutput(ns("species"))%>%withSpinner(type = 4),
       )
     })

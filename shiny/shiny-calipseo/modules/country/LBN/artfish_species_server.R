@@ -20,9 +20,9 @@ artfish_species_server <- function(input, output, session, pool){
     
     species<-setNames(ref_species$ID, sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME))
     
-    selectizeInput(ns("species"),"Species :",choices=species,multiple = F,selected=NULL,
+    selectizeInput(ns("species"),paste0(i18n("SELECT_INPUT_TITLE_SPECIES")," :"),choices=species,multiple = F,selected=NULL,
                    options = list(
-                     placeholder = 'select a species',
+                     placeholder = i18n("SELECT_INPUT_SPECIES_PLACEHOLDER"),
                      onInitialize = I('function() { this.setValue(""); }')
                    )
     )
@@ -50,9 +50,9 @@ artfish_species_server <- function(input, output, session, pool){
         
         ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
-        bg<-setNames(c(0,ref_bg_sp$ID),c("All fishing units",ref_bg_sp$NAME))
+        bg<-setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
         
-        selectizeInput(ns("bg"),"Fishing unit :",choices=bg,multiple = F,selected=bg[1])
+        selectizeInput(ns("bg"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=bg,multiple = F,selected=bg[1])
       })
     }
   })
@@ -100,20 +100,20 @@ artfish_species_server <- function(input, output, session, pool){
             )%>%
             ungroup()
           
-          fig1 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_VALUE, type = 'scatter', mode = 'lines',fill = 'tozeroy',name="Value")%>%  
-            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = "Value (kg)", showarrow = F, xref='paper', yref='paper')))
+          fig1 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_VALUE, type = 'scatter', mode = 'lines',fill = 'tozeroy',name=i18n("LABEL_VALUE"))%>%  
+            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_VALUE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig2 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CATCH, type = 'bar',name="Catch")%>%  
-            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = "Catch (kg)", showarrow = F, xref='paper', yref='paper')))
+          fig2 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CATCH, type = 'bar',name=i18n("LABEL_CATCH"))%>%  
+            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_CATCH"), showarrow = F, xref='paper', yref='paper')))
           
-          fig3 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_PRICE, type = 'scatter', mode = 'lines',name="Price")%>%  
-            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = "Price ($/kg)", showarrow = F, xref='paper', yref='paper')))
+          fig3 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_PRICE, type = 'scatter', mode = 'lines',name=i18n("LABEL_PRICE"))%>%  
+            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_PRICE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig4 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CPUE, type = 'scatter', mode = 'lines',name="CPUE")%>%  
-            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = "CPUE (kg/day)", showarrow = F, xref='paper', yref='paper')))
+          fig4 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CPUE, type = 'scatter', mode = 'lines',name=i18n("LABEL_CPUE"))%>%  
+            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_CPUE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig5 <- data%>%plot_ly(x = ~DATE, y = ~EST_EFF_EFFORT, type = 'bar',name="Effort")%>%  
-            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = "Effort(days)", showarrow = F, xref='paper', yref='paper'))) 
+          fig5 <- data%>%plot_ly(x = ~DATE, y = ~EST_EFF_EFFORT, type = 'bar',name=i18n("LABEL_EFFORT"))%>%  
+            layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_EFFORT"), showarrow = F, xref='paper', yref='paper'))) 
   
           fig <- subplot(fig1, fig2, fig3,fig4,fig5, nrows = 5, shareX = TRUE)%>% 
             layout(showlegend=F,
@@ -142,11 +142,11 @@ artfish_species_server <- function(input, output, session, pool){
           
           tagList(
             fluidRow(
-              valueBox(value=tags$p("Total value (kg)",style="font-size: 40%"), subtitle=round(sum(data$EST_LND_VALUE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color = "blue" ),
-              valueBox(value=tags$p("Total catch (kg)",style="font-size: 40%"), subtitle=round(sum(data$EST_LND_CATCH,na.rm=T),2), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 2,color="orange"),
-              valueBox(value=tags$p("Average price ($/kg)",style="font-size: 40%"), subtitle=round(mean(data$EST_LND_PRICE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color="green"),
-              valueBox(value=tags$p("Averge CPUE (kg/day)",style="font-size: 40%"), subtitle=round(mean(data$EST_LND_CPUE,na.rm=T),5), icon = tags$i(class = "fas fa-ship", style="font-size: 30px"), width = 2,color="red"),
-              valueBox(value=tags$p("Total effort (days)",style="font-size: 40%"), subtitle=round(sum(data$EST_EFF_EFFORT,na.rm=T),0), icon = tags$i(class = "fas fa-clock", style="font-size: 30px"), width = 2,color="purple")
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_VALUE"),style="font-size: 40%"), subtitle=round(sum(data$EST_LND_VALUE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color = "blue" ),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_CATCH"),style="font-size: 40%"), subtitle=round(sum(data$EST_LND_CATCH,na.rm=T),2), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 2,color="orange"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_PRICE"),style="font-size: 40%"), subtitle=round(mean(data$EST_LND_PRICE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color="green"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_CPUE"),style="font-size: 40%"), subtitle=round(mean(data$EST_LND_CPUE,na.rm=T),5), icon = tags$i(class = "fas fa-ship", style="font-size: 30px"), width = 2,color="red"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_EFFORT"),style="font-size: 40%"), subtitle=round(sum(data$EST_EFF_EFFORT,na.rm=T),0), icon = tags$i(class = "fas fa-clock", style="font-size: 30px"), width = 2,color="purple")
               )
           )
           
@@ -213,7 +213,7 @@ artfish_species_server <- function(input, output, session, pool){
                     textposition = "auto",textfont = list(color = "black")) %>%
               layout(showlegend = FALSE,
                      uniformtext=list(minsize=8, mode='show'),
-                     yaxis = list(title="Rank (by total quantity caugth)",autorange = "reversed",tickmode = "array", tickvals = unique(rank$rank), ticktext = unique(rank$rank)),
+                     yaxis = list(title=i18n("YLAB_TITLE_RANK"),autorange = "reversed",tickmode = "array", tickvals = unique(rank$rank), ticktext = unique(rank$rank)),
                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE,title = FALSE),
                      plot_bgcolor  = "rgba(0, 0, 0, 0)",
                      paper_bgcolor = "rgba(0, 0, 0, 0)")

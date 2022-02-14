@@ -6,7 +6,7 @@ artfish_overview_ui <- function(id){
   tabItem(tabName = "artfish_overview",
           uiOutput(ns("urlPage")),
           fluidRow(
-            tags$h2("Overview"),
+            tags$h2(i18n("OVERVIEW_TITLE")),
           ),
           uiOutput(ns("fishing_unit_selector")),
           uiOutput(ns("results"))

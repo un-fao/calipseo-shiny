@@ -1,0 +1,131 @@
+{
+  /*artfish accuracy title*/
+  "ARTFISH_TITLE" : "Monthly Reports",
+  
+  "ARTFISH_SUBTITLE" : "Details on estimations and statistical diagnostics",
+  
+  "SELECT_INPUT_TITLE_MONTH" : "Month",
+  
+  "SELECT_INPUT_PLACEHOLDER_MONTH" : "select a month",
+  
+  "SELECT_INPUT_TITLE_FISHING_UNIT" : "Fishing unit",
+  
+  "ACTION_BUTTON_TITLE_SUBMIT" : "Submit",
+  
+  /*codes effort*/
+  
+  "EFFORT_CODE_1" : "(E)",
+  
+  "EFFORT_CODE_2" : "(NB)",
+  
+  "EFFORT_CODE_3" : "(FDM)",
+  
+  "EFFORT_CODE_4" : "(PBA)",
+  
+  "EFFORT_CODE_5" : "(NAD)",
+  
+  "EFFORT_CODE_6" : "(NDE)",
+  
+  "EFFORT_CODE_7" : "(CV)",
+  
+  "EFFORT_CODE_8" : "(SAE)",
+  
+  "EFFORT_CODE_9" : "(TAE)",
+  
+  "EFFORT_CODE_10" : "(SUI)",
+  
+  /*labels effort*/
+  
+  "EFFORT_LABEL_1" : "Estimated Effort = (PBA)x(NB)x(FDM)",
+  
+  "EFFORT_LABEL_2" : "Number of boats-gears",
+  
+  "EFFORT_LABEL_3" :"Fishing days in month",
+                
+  "EFFORT_LABEL_4" : "Probability Boat Active = (NAD)/(NDE)",
+                
+  "EFFORT_LABEL_5" : "Number of days declared active",
+                
+  "EFFORT_LABEL_6" : "Total number of days examined",
+                
+  "EFFORT_LABEL_7" : "Coefficient of variation",
+                
+  "EFFORT_LABEL_8" : "Spacial Accuracy (effort)",
+                
+  "EFFORT_LABEL_9" : "Temporal Accuracy (effort)",
+                
+  "EFFORT_LABEL_10" : "Sampling Uniformity index (0 - 1)",
+  
+  /*codes landingsite*/
+  
+  "LANDINGSITE_CODE_1" : "",
+  
+  "LANDINGSITE_CODE_2" : "",
+  
+  "LANDINGSITE_CODE_3" : "(SMC)",
+  
+  "LANDINGSITE_CODE_4" : "(SME)",
+  
+  "LANDINGSITE_CODE_5" : "",
+  
+  "LANDINGSITE_CODE_6" : "",
+  
+  "LANDINGSITE_CODE_7" : "(CV)",
+  
+  "LANDINGSITE_CODE_8" : "(SAC)",
+  
+  "LANDINGSITE_CODE_9" : "(TAC)",
+  
+  "LANDINGSITE_CODE_10" : "(SUI)",
+  
+  /*label landingsite*/
+  
+  "LANDINGSITE_LABEL_1" : "Estimated catch = Estimated Effort x CPUE",
+  
+  "LANDINGSITE_LABEL_2" : "CPUE = (SMC)/(SME)",
+  
+  "LANDINGSITE_LABEL_3" : "Sample catch",
+  
+  "LANDINGSITE_LABEL_4" : "Sample Effort",
+  
+  "LANDINGSITE_LABEL_5" : "Overall Price (Unit Value)",
+  
+  "LANDINGSITE_LABEL_6" : "Total value",
+                
+  "LANDINGSITE_LABEL_7" : "Coefficient of variation",
+  
+  "LANDINGSITE_LABEL_8" : "Spacial Accuracy (catch)",
+                
+  "LANDINGSITE_LABEL_9" : "Temporal Accuracy (catch)",
+                
+  "LANDINGSITE_LABEL_10" : "Sampling Uniformity index (0 - 1)",
+  
+  "LABEL_ACCURACY" : "Overall Accuracy = Minimum of TAE, SAE, TAC, SAC",
+  
+  /*species*/
+  
+  "SPECIES_TABLE_COLNAME_1" : "Species",
+  
+  "SPECIES_TABLE_COLNAME_2" : "Quantity",
+  
+  "SPECIES_TABLE_COLNAME_3" : "Effort",
+  
+  "SPECIES_TABLE_COLNAME_4" : "CPUE",
+  
+  "SPECIES_TABLE_COLNAME_5" : "Price",
+  
+  "SPECIES_TABLE_COLNAME_6" : "Value",
+  
+  "SPECIES_TABLE_COLNAME_7" : "Aver.weight",
+  
+  "LABEL_EFFORT" : "Effort",
+  
+  "LABEL_LANDINGS" : "Landings",
+  
+  "LABEL_ESTIMATED_BY_SPECIES" : "Estimated catch by species",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+ 
+  
+}

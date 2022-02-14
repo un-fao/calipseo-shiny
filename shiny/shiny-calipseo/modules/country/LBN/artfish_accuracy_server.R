@@ -10,7 +10,7 @@ artfish_accuracy_server <- function(input, output, session, pool){
   
   output$button<-renderUI({
     if(!is.na(input$days)&!is.na(input$boats)&!is.na(input$effort_smp)&!is.na(input$effort_days_smp)&!is.na(input$landing_smp)&!is.na(input$landing_days_smp)){
-    actionButton(ns("run"),"Compute")}else{NULL}
+    actionButton(ns("run"),i18n("ACTIONBUTTON_COMPUTE_LABLE"))}else{NULL}
   })
   
   iconChoice<-function(x){ifelse(x<0.9,"exclamation-triangle","check-circle")}
@@ -26,21 +26,22 @@ artfish_accuracy_server <- function(input, output, session, pool){
     output$result<-renderUI({
       tagList(
         fluidRow(
-          valueBox(paste(format(round(SAE*100,1), nsmall = 1),"%"),"Spatial Accuracy (effort)",width = 3,icon=icon(iconChoice(SAE)),color=colorChoice(SAE)),
-          valueBox(paste(format(round(TAE*100,1), nsmall = 1),"%"),"Temporal Accuracy (effort)",width= 3,icon=icon(iconChoice(TAE)),color=colorChoice(TAE)),
-          valueBox(paste(format(round(SAC*100,1), nsmall = 1),"%"),"Spatial Accuracy (catch)",width=3,icon=icon(iconChoice(SAC)),color=colorChoice(SAC)),
-          valueBox(paste(format(round(TAC*100,1), nsmall = 1),"%"),"Temporal Accuracy (catch)",width=3,icon=icon(iconChoice(TAC)),color=colorChoice(TAC))
+          valueBox(paste(format(round(SAE*100,1), nsmall = 1),"%"),i18n("VALUEBOX_TITLE_SPATIAL_ACCURACY_EFFORT"),width = 3,icon=icon(iconChoice(SAE)),color=colorChoice(SAE)),
+          valueBox(paste(format(round(TAE*100,1), nsmall = 1),"%"),i18n("VALUEBOX_TITLE_TEMPORAL_ACCURACY_EFFORT"),width= 3,icon=icon(iconChoice(TAE)),color=colorChoice(TAE)),
+          valueBox(paste(format(round(SAC*100,1), nsmall = 1),"%"),i18n("VALUEBOX_TITLE_SPATIAL_ACCURACY_CATCH"),width=3,icon=icon(iconChoice(SAC)),color=colorChoice(SAC)),
+          valueBox(paste(format(round(TAC*100,1), nsmall = 1),"%"),i18n("VALUEBOX_TITLE_TEMPORAL_ACCURACY_CATCH"),width=3,icon=icon(iconChoice(TAC)),color=colorChoice(TAC))
         ),
         fluidRow(
-          column(8,offset=4,valueBox(paste(format(round(OAC*100,1), nsmall = 1),"%"),"Overall Accuracy",width=4,icon=icon(iconChoice(OAC)),color=colorChoice(OAC)))
+          column(8,offset=4,valueBox(paste(format(round(OAC*100,1), nsmall = 1),"%"),i18n("VALUEBOX_TITLE_OVERALL_ACCURACY"),width=4,icon=icon(iconChoice(OAC)),color=colorChoice(OAC)))
         )
       )
     })
   })
   
   reactiveData<- reactiveVal()
-  table<-data.table("Day1"=1)
-  row.names(table)<-"samples"
+  Day1 <- paste0(i18n("DAY_LABEL"),'1')
+  table<-data.table(Day1=1)
+  row.names(table)<- i18n("SAMPLES_LABEL")
   reactiveData(table)
   
   observeEvent(input$table_cell_edit, {
@@ -52,7 +53,7 @@ artfish_accuracy_server <- function(input, output, session, pool){
   
   observeEvent(input$addColumn,{
     newData <- reactiveData()
-    newData[[paste0("Day",ncol(newData)+1)]] <- 1
+    newData[[paste0(i18n("DAY_LABEL"),ncol(newData)+1)]] <- 1
     reactiveData(newData)
   })
   
@@ -65,7 +66,8 @@ artfish_accuracy_server <- function(input, output, session, pool){
       editable = 'cell',
       options = list(
         pageLength = 1, dom = 't', 
-        autoWidth = TRUE
+        autoWidth = TRUE,
+        language = list(url = i18n("TABLE_LANGUAGE"))
       )
     )
   })
@@ -80,7 +82,7 @@ artfish_accuracy_server <- function(input, output, session, pool){
 
      output$index<-renderUI({
        tagList(
-          valueBox(index,"Uniformity index",icon=icon(ifelse(index<0.6,"exclamation-triangle","check-circle")),color=ifelse(icon<0.6,"orange","green"),width = 3)
+          valueBox(index,i18n("VALUEBOX_TITLE_UNIFORMITY_INDEX"),icon=icon(ifelse(index<0.6,"exclamation-triangle","check-circle")),color=ifelse(icon<0.6,"orange","green"),width = 3)
        )
      })
   })

@@ -1,0 +1,108 @@
+{
+ /*artfish fishing unit title*/ 
+  
+  "ARTFISH_FISHING_UNIT_TITLE" : "Annual Statistics by Fishing Unit",
+  
+  "SELECT_INPUT_TITLE_YEAR" : "Year",
+  
+  "ALL_FISHING_UNITS_LABEL" : "All fishing units",
+  
+  "SELECT_INPUT_TITLE_FISHING_UNIT" : "Fishing unit",
+  
+  /*labels*/
+  
+  "DAYS_LABEL" : "Days",
+  
+  "KILOGRAM_LABEL" : "Kilogram (kg)",
+  
+  "TONNE_LABEL" : "tonne (t)",
+  
+  "DOLLAR_LABEL" : "Dollar ($)",
+  
+  "THOUSAND_DOLLAR_LABEL" : "thousand of dollars ($K)",
+  
+  "MILLION_DOLLAR_LABEL" : "million of dollars ($M)",
+  
+  "CPUE_KILOGRAM_DAY_LABEL" : "Kilogram by day (kg/day)",
+  
+  "SELECT_INPUT_TITLE_UNIT" : "Unit",
+  
+  /*unit labels*/
+  
+  "UNIT_LABEL_DAYS" : "Days",
+  "UNIT_LABEL_KILOGRAM" : "kg",
+  "UNIT_LABEL_TONNE" : "t",
+  "UNIT_LABEL_DOLLAR" : "$",
+  "UNIT_LABEL_THOUSAND" : "K",
+  "UNIT_LABEL_THOUSAND_DOLLAR" : "$K",
+  "UNIT_LABEL_MILLION_DOLLAR" : "$M",
+  "UNIT_LABEL_KILOGRAM_DAY" : "kg/day",
+  
+  "SELECT_INPUT_TITLE_INDICATOR" : "Indicator",
+  
+  "INDICATOR_LABEL_TOTAL_EFFORT" : "Total Effort",
+  
+  "INDICATOR_LABEL_TOTAL_CATCH" : "Total Catch",
+  
+  "INDICATOR_LABEL_TOTAL_VALUE" : "Total Value",
+  
+  "INDICATOR_LABEL_TOTAL_CPUE" : "Total CPUE",
+  
+  "GUAGE_TITLE_ACCURACY" : "Accuracy",
+  
+  "EFFORT_LABEL" : "Effort",
+  
+  "CATCH_LABEL" : "Catch",
+  
+  "VALUE_LABEL" : "Value",
+  
+  "CPUE_LABEL" : "CPUE",
+  
+  "NUMERIC_INPUT_TITLE_NUMBER_OF_SPECIES" : "Number of species",
+  
+  "BOX_TITLE_MONTHLY_REPARTITION_BY_FISHING_UNITS" : "Monthly Repartition By Fishing Units",
+  
+  "FISHING_UNIT_TABLE_COLNAME_1" : "Fishing Unit",
+  
+  "FISHING_UNIT_TABLE_ROWNAME_9" : "Total",
+  
+  "BOX_TITLE_TOP_RANKING_FISHING_UNITS" : "Top Ranking Fishing Units",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_1" : "Fishing Unit",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_2" : "Rank",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_3" : "Total",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_4" : "Percentage",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_5" : "Cumulative percentage",
+  
+  "TOP_RANKING_FISHING_UNIT_TABLE_COLNAME_6" : "target",
+  
+  "BOX_TITLE_MONTHLY_REPARTITION_BY_SPECIES" : "Monthly Repartition By Species",
+  
+  "MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_1" : "Species",
+  
+  "MONTHLY_REPARTITION_BY_SPECIES_TABLE_COLNAME_14" : "Total",
+  
+  "SELECT_INPUT_TITLE_LEVEL" : "Level",
+  
+  "LEVEL_LABLE_GLOBAL" : "Global",
+  
+  "LEVEL_LABLE_DETAIL" : "Detail",
+  
+  "BOX_TITLE_TOP_RANKING_SPECIES" : "Top Ranking Species",
+  
+  "PLOT_LABEL" : "Plot",
+  
+  "TABLE_LABEL" : "Table",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  
+  "TABLE_TITLE_SUMMARY" : "summary",
+  
+  "TABLE_TITLE_RANK" : "rank"
+  
+  
+}

@@ -9,31 +9,31 @@ artfish_accuracy_ui <- function(id){
             div(
               width = 12, style = "margin:12px;",
               
-              tags$h2("Estimate accuracy and uniformity of sampling strategy"),
+              tags$h2(i18n("ARTFISH_ACCURACY_TITLE")),
             )
           ),
           tabsetPanel(
-            tabPanel("Accuracy",
+            tabPanel(i18n("TABPANEL_ACCURACY"),
               fluidRow(
                 div(
                   class = "col-md-4",
-                  box(id=ns("global_box"),title="Global",width = 12,
-                    numericInputIcon(ns("boats"),"Number of boats",value=NULL,icon=icon("ship")),
-                    numericInputIcon(ns("days"),"Number of fishing days",value=NULL,icon=icon("calendar"))
+                  box(id=ns("global_box"),title=i18n("GLOBAL_BOX_TITLE"),width = 12,
+                    numericInputIcon(ns("boats"),i18n("NUMERIC_INPUT_NUMBER_OF_BOATS_TITLE"),value=NULL,icon=icon("ship")),
+                    numericInputIcon(ns("days"),i18n("NUMERIC_INPUT_NUMBER_OF_FISHING_DAYS_TITLE"),value=NULL,icon=icon("calendar"))
                   )
                 ),
                 div(
                   class = "col-md-4",
-                  box(id=ns("effort_box"),title="Effort",width = 12,
-                    numericInputIcon(ns("effort_smp"),"Number of effort samples",value=NULL,icon=icon("ship")),
-                    numericInputIcon(ns("effort_days_smp"),"Number of days sampled (effort)",value=NULL,icon=icon("calendar"))
+                  box(id=ns("effort_box"),title=i18n("EFFORT_BOX_TITLE"),width = 12,
+                    numericInputIcon(ns("effort_smp"),i18n("NUMERIC_INPUT_NUMBER_OF_EFFORT_SAMPLES_TITLE"),value=NULL,icon=icon("ship")),
+                    numericInputIcon(ns("effort_days_smp"),i18n("NUMERIC_INPUT_NUMBER_OF_DAYS_SAMPLED_EFFORTS_TITLE"),value=NULL,icon=icon("calendar"))
                   )
                 ),
                 div(
                   class = "col-md-4",
-                  box(id=ns("landing_box"),title="Landing",width = 12,
-                    numericInputIcon(ns("landing_smp"),"Number of landing samples",value=NULL,icon=icon("ship")),
-                    numericInputIcon(ns("landing_days_smp"),"Number of days sampled (landing)",value=NULL,icon=icon("calendar"))
+                  box(id=ns("landing_box"),title=i18n("LANDING_BOX_TITLE"),width = 12,
+                    numericInputIcon(ns("landing_smp"),i18n("NUMERIC_INPUT_NUMBER_OF_LANDING_SAMPLES_TITLE"),value=NULL,icon=icon("ship")),
+                    numericInputIcon(ns("landing_days_smp"),i18n("NUMERIC_INPUT_NUMBER_OF_DAYS_SAMPLED_LANDING_TITLE"),value=NULL,icon=icon("calendar"))
                   )
                 )
               ),
@@ -41,12 +41,12 @@ artfish_accuracy_ui <- function(id){
               br(),
               uiOutput(ns("result"))
             ),
-            tabPanel("Uniformity",
+            tabPanel(i18n("TABPANEL_UNIFORMITY"),
               fluidRow(
-                p("Click on 'New Column' to add a day and double click on cell to edit"),
-                actionButton(ns("addColumn"), "New Column"),
+                p(i18n("UNIFORMITY_HINT")),
+                actionButton(ns("addColumn"), i18n("ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABLE")),
                 DTOutput(ns("table")),
-                actionButton(ns("compute"), "Compute")
+                actionButton(ns("compute"), i18n("ACTIONBUTTON_COMPUTE_LABLE"))
               ),
               fluidRow(uiOutput(ns("index")))
             )

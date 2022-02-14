@@ -9,8 +9,8 @@ artfish_ui <- function(id){
             div(
               width = 12, style = "margin:12px;",
               
-              tags$h2("Monthly Reports"),
-              tags$h3("Details on estimations and statistical diagnostics"),
+              tags$h2(i18n("ARTFISH_TITLE")),
+              tags$h3(i18n("ARTFISH_SUBTITLE")),
             )
           ),
           fluidRow(

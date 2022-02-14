@@ -1,0 +1,31 @@
+{
+  /*levels*/
+  "LEVEL_LABLE_GLOBAL" : "Global",
+  
+  "LEVEL_LABLE_DETAIL" : "Detail",
+  
+  /*labels*/
+  
+  "LABEL_PLOT" : "Plot",
+  
+  "LABEL_STATISTICS" : "Statistics",
+  
+  "LABEL_LEVELS" : "Level",
+  
+  /*rank*/
+  
+  "SELECT_INPUT_TITLE_RANK_METHOD" : "Rank method",
+  
+  "RANK_LABEL_TOTAL_CATCH_OVER_THE_PERIOD" : "Total catch over the period",
+  
+  "RANK_LABEL_LAST_YEAR_TOTAL_CATCH" : "Last year total catch",
+  
+  "RANK_LABEL_ANNUAL_CATCH_AVERAGE" : "Annual catch average",
+  
+  "RANK_LABEL" : "Display x most caught",
+  
+  "X_LABEL_TITLE" : "Time",
+  
+   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}
