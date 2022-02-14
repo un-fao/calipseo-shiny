@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.0.5
+FROM rocker/geospatial:4.0.5
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
@@ -6,10 +6,6 @@ MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 #---------------------------------------------------------------------------------------
 RUN apt-get update && apt-get install -y \
     sudo \
-    libudunits2-dev \
-    libproj-dev \
-    libgeos-dev \
-    libgdal-dev \
     libssl-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
@@ -45,8 +41,8 @@ RUN R -e "install.packages(c('readr'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('readxl'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('writexl'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('openxlsx'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('sf'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('sp'), repos='https://cran.r-project.org/')" 
+#RUN R -e "install.packages(c('sf'), repos='https://cran.r-project.org/')"
+#RUN R -e "install.packages(c('sp'), repos='https://cran.r-project.org/')" 
 #processing
 RUN R -e "install.packages(c('dplyr'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('tidyr'), repos='https://cran.r-project.org/')"
