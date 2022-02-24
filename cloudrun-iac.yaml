@@ -23,8 +23,8 @@ spec:
         - containerPort: 3838
         resources:
           limits:
-            cpu: 1000m
-            memory: 1024Mi
+            cpu: 2000m
+            memory: 8Gi
   traffic:
   - percent: 100
     latestRevision: true
