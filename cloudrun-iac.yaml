@@ -12,8 +12,8 @@ spec:
     metadata:
       annotations: 
         autoscaling.knative.dev/maxScale: '20'
-        # run.googleapis.com/cloudsql-instances: $PROJECT_ID:$REGION:$CLOUDSQL_INSTANCE
-        # run.googleapis.com/vpc-access-connector: projects/$PROJECT_ID/locations/$REGION/connectors/$SERVERLESS_CONNECTOR
+        run.googleapis.com/cloudsql-instances: $PROJECT_ID:$REGION:$CLOUDSQL_INSTANCE
+        run.googleapis.com/vpc-access-connector: projects/$PROJECT_ID/locations/$REGION/connectors/$SERVERLESS_CONNECTOR
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
