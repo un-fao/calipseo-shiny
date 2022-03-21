@@ -148,6 +148,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         }
         
         df <- df[,c(3,4,1,2,5)]
+        print(df)
         df$UPDATED_AT <- as.POSIXct(as.character(df$UPDATED_AT))
         attr(df$UPDATED_AT, "tzone") <- appConfig$country_profile$timezone
         df <- df[order(rank(df$UPDATED_AT),decreasing=TRUE),]
@@ -358,10 +359,18 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #catch summary
     if(nrow(vesselCatches)>0){
+      
+      ActualDaysAtSea_df <- distinct(vesselCatches,ret_datetime, .keep_all=TRUE)
+      
+      ActualDaysAtSea_df$daysAtSea = difftime(ActualDaysAtSea_df$ret_datetime,ActualDaysAtSea_df$dep_datetime, units = 'days')
+      
+      ActualDaysAtSea_df$daysAtSea <- round(ActualDaysAtSea_df$daysAtSea, 2)
+      
       vesselCatchSummary <- cbind(
-        aggregate(vesselCatches$daysAtSea, by = list(vesselCatches$year), FUN = sum),
+        aggregate(ActualDaysAtSea_df$daysAtSea, by = list(ActualDaysAtSea_df$year), FUN = sum),
         aggregate(vesselCatches$quantity, by = list(vesselCatches$year), FUN = sum)$x
       )
+     
       colnames(vesselCatchSummary) <- c("year", "daysAtSea", "quantity")
       
     }else{
