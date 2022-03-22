@@ -22,7 +22,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     #vessel owners information
     vessel <- accessVessel(pool, vesselId)
     vesselOwners <- accessVesselOwners(pool, vesselId)
-    vesselOwnerColumnNames <- c("FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
+    vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
     vesselOwners[is.na(vesselOwners)] = '-'
     if(nrow(vesselOwners)>0){
       vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
@@ -202,7 +202,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
     #ownership
     output$vessel_owners <- renderDataTable(server = FALSE,{
-      names(vesselOwners) <- c(i18n("OWNERSHIP_TABLE_COLNAME_1"),i18n("OWNERSHIP_TABLE_COLNAME_2"),
+      names(vesselOwners) <- c(i18n("OWNERSHIP_TABLE_COLNAME_0"),
+                               i18n("OWNERSHIP_TABLE_COLNAME_1"),i18n("OWNERSHIP_TABLE_COLNAME_2"),
                                i18n("OWNERSHIP_TABLE_COLNAME_3"),i18n("OWNERSHIP_TABLE_COLNAME_4"),
                                i18n("OWNERSHIP_TABLE_COLNAME_5"),i18n("OWNERSHIP_TABLE_COLNAME_6"),
                                i18n("OWNERSHIP_TABLE_COLNAME_7"))
