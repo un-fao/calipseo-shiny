@@ -77,10 +77,12 @@ RUN ln -s /root/shiny/shiny-calipseo /srv/shiny-calipseo
 ENV SHINY_CONFIG=""
 RUN mkdir -p /etc/shiny-calipseo
 COPY shinyconfigs/calipseo_shiny_config_TTO.yml /etc/shiny-calipseo/config.yml
+RUN chmod -R a+w /root/shiny/shiny-calipseo
+RUN ls -ls /root/shiny/shiny-calipseo
  
 EXPOSE 3838
 
 RUN apt-get install -y curl
-# CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo', port=3838, host='0.0.0.0')"]
+CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo', port=3838, host='0.0.0.0')"]
 # CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo');options(shiny.port = 3838, shiny.host = '0.0.0.0', shiny.launch.browser = FALSE)"]
-CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo')"]
+# CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo')"]
