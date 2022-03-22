@@ -46,6 +46,7 @@
   
   /*Vertical tab ownership*/
   "VERTICALTABPANEL_OWNERSHIP" : "Ownership",
+  "OWNERSHIP_TABLE_COLNAME_0" : "Entity type",
   "OWNERSHIP_TABLE_COLNAME_1" : "Full Name",
   "OWNERSHIP_TABLE_COLNAME_2" : "Entity Document Number",
   "OWNERSHIP_TABLE_COLNAME_3" : "Address",
