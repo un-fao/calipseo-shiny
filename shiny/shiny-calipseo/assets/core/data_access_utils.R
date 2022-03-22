@@ -116,8 +116,7 @@ accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber)
 #accessVesselOwnersFromDB
 accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
   vessel_owners_sql <- readSQLScript("data/core/sql/vessels_owners.sql",
-                                     key = if(!is.null(registrationNumber)) "vo.REG_VESSEL_ID" else NULL,
-                                     value = if(!is.null(registrationNumber)) paste("'", registrationNumber, "'") else NULL
+                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'")
   )
   vessel_owners <- suppressWarnings(dbGetQuery(con, vessel_owners_sql))
   return(vessel_owners)

@@ -19,11 +19,11 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       }
     }
     
-    #inherit vessel information
+    #vessel owners information
     vessel <- accessVessel(pool, vesselId)
     vesselOwners <- accessVesselOwners(pool, vesselId)
     vesselOwnerColumnNames <- c("FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
-    
+    vesselOwners[is.na(vesselOwners)] = '-'
     if(nrow(vesselOwners)>0){
       vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
         owner <- vesselOwners[i,]
@@ -32,6 +32,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         if(length(owner$NAME)>0) fullname <- paste0(" ", owner$NAME)
         return(fullname)
       })
+      
       vesselOwners <- vesselOwners[,vesselOwnerColumnNames]
     }else{
       vesselOwners <- data.frame(matrix(ncol = length(vesselOwnerColumnNames), nrow = 0))
