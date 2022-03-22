@@ -20,7 +20,7 @@ spec:
       containers:
       - image: gcr.io/$PROJECT_ID/$NAME:$RELEASE_VERSION
         ports:
-        - containerPort: 80
+        - containerPort: 3838
         resources:
           limits:
             cpu: 1000m
