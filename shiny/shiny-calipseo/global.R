@@ -70,6 +70,13 @@ for(country_asset in country_assets){ source(country_asset) }
 appConfig <- loadCountryProfile(appConfig, pool)
 print(appConfig$country_profile$data)
 
+#country parameters
+#---------------------------------------------------------------------------------------
+country_param <- accessCountryParam(pool)
+HAS_REGMANGT <- data.frame(CODE = country_param$CODE,BOOLEAN = country_param$BOOLEAN)
+HAS_REGMANGT <- HAS_REGMANGT %>% dplyr::filter(CODE%in%'REGMANGT')
+HAS_REGMANGT <- dplyr::case_when(HAS_REGMANGT$BOOLEAN == 1 ~ TRUE, HAS_REGMANGT$BOOLEAN == 0 ~ FALSE)
+
 #local datasets
 #---------------------------------------------------------------------------------------
 loadLocalCountryDatasets(appConfig)
