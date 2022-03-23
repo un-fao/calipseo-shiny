@@ -39,6 +39,15 @@ readSQLScript <- function(sqlfile,
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 
+
+#accessCountryParamFromDB
+accessCountryParamFromDB <- function(con){
+  country_param_sql <- readSQLScript("data/core/sql/country_param.sql")
+  country_param <- suppressWarnings(dbGetQuery(con, country_param_sql))
+  return(country_param)
+} 
+
+
 #accessRefSpeciesFromDB
 accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
@@ -386,6 +395,13 @@ accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NU
 #GENERIC DATA ACCESSORS (considering this needs to be replaced later by API calls)
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
+
+
+#accessCountryParamFromDB
+accessCountryParam <- function(con){
+  accessCountryParamFromDB(con)
+}
+
 
 #accessRefSpecies
 accessRefSpecies <- function(con){
