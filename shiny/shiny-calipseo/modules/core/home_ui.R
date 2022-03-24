@@ -12,7 +12,8 @@ home_ui <- function(id){
               tags$h2(i18n("HOME_CALIPSEO_TITLE"),tags$small(i18n("HOME_CALIPSEO_SUBTITLE")))
             )
           ),
-          withSpinner(uiOutput(ns("nb_infos")))
+          withSpinner(uiOutput(ns("nb_infos_1"))),
+          withSpinner(uiOutput(ns("nb_infos_2")))
   )
   
 }
