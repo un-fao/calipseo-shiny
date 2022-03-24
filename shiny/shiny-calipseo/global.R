@@ -72,10 +72,9 @@ print(appConfig$country_profile$data)
 
 #country parameters
 #---------------------------------------------------------------------------------------
-country_param <- accessCountryParam(pool)
-HAS_REGMANGT <- data.frame(CODE = country_param$CODE,BOOLEAN = country_param$BOOLEAN)
-HAS_REGMANGT <- HAS_REGMANGT %>% dplyr::filter(CODE%in%'REGMANGT')
-HAS_REGMANGT <- dplyr::case_when(HAS_REGMANGT$BOOLEAN == 1 ~ TRUE, HAS_REGMANGT$BOOLEAN == 0 ~ FALSE)
+HAS_REGMANGT <- accessCountryParam(pool)[,c('CODE','BOOLEAN')]
+HAS_REGMANGT <- HAS_REGMANGT[HAS_REGMANGT$CODE=='REGMANGT',]
+HAS_REGMANGT <- ifelse(HAS_REGMANGT$BOOLEAN==1,TRUE,FALSE)
 
 #local datasets
 #---------------------------------------------------------------------------------------
