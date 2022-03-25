@@ -17,7 +17,6 @@ config_file <- "/etc/shiny-calipseo/config.yml"
 #CALIPSEO_SHINY_CONFIG=<your config path>
 local_config_file <- Sys.getenv("CALIPSEO_SHINY_CONFIG")
 if(nzchar(local_config_file)) config_file <- local_config_file
-if(!file.exists(config_file)) stop("No configuration file at '/etc/shiny-calipseo/config.yml'")
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
 #language (in case not part of configuration)
@@ -72,9 +71,8 @@ print(appConfig$country_profile$data)
 
 #country parameters
 #---------------------------------------------------------------------------------------
-HAS_REGMANGT <- accessCountryParam(pool)[,c('CODE','BOOLEAN')]
-HAS_REGMANGT <- HAS_REGMANGT[HAS_REGMANGT$CODE=='REGMANGT',]
-HAS_REGMANGT <- ifelse(HAS_REGMANGT$BOOLEAN==1,TRUE,FALSE)
+COUNTRY_PARAMS <- accessCountryParam(pool)
+HAS_REGMANGT <- ifelse(COUNTRY_PARAMS[COUNTRY_PARAMS$CODE=='REGMANGT',]$BOOLEAN == 1, TRUE, FALSE)
 
 #local datasets
 #---------------------------------------------------------------------------------------
