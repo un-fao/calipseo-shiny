@@ -70,6 +70,12 @@ for(country_asset in country_assets){ source(country_asset) }
 appConfig <- loadCountryProfile(appConfig, pool)
 print(appConfig$country_profile$data)
 
+#country parameters
+#---------------------------------------------------------------------------------------
+HAS_REGMANGT <- accessCountryParam(pool)[,c('CODE','BOOLEAN')]
+HAS_REGMANGT <- HAS_REGMANGT[HAS_REGMANGT$CODE=='REGMANGT',]
+HAS_REGMANGT <- ifelse(HAS_REGMANGT$BOOLEAN==1,TRUE,FALSE)
+
 #local datasets
 #---------------------------------------------------------------------------------------
 loadLocalCountryDatasets(appConfig)
