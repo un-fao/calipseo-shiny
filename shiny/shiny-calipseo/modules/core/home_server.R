@@ -24,21 +24,16 @@ home_server <- function(input, output, session, pool){
     if(all(!sapply(reactiveValuesToList(infos), is.null))) infos_fetched(TRUE)
     
     
-    output$nb_infos_1 <- renderUI({
-      if(isTRUE(HAS_REGMANGT)){ 
-        fluidRow(
-          CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship")),
-          CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user")),
-          CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"))
-          
-        )
-      }
-    })
-    
-    
-    output$nb_infos_2 <- renderUI({
-
+    output$nb_infos <- renderUI({
+      
       fluidRow(
+        if(isTRUE(HAS_REGMANGT)){
+          shiny::tagList(
+            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship")),
+            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user")),
+            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"))
+          )
+        },
         CalipseoInfoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), infos$count_fishing_trips, icon = icon("ship")),
         CalipseoInfoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), infos$landing_sites, icon = icon("map-marker")),
         CalipseoInfoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), infos$years, icon = icon("history"))
