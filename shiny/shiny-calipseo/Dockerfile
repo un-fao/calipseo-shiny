@@ -2,6 +2,8 @@ FROM rocker/geospatial:4.0.5
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
+WORKDIR /srv/
+
 # system libraries of general use
 #---------------------------------------------------------------------------------------
 RUN apt-get update && apt-get install -y \
@@ -66,25 +68,20 @@ RUN R -e "install.packages(c('leaflet.minicharts'), repos='https://cran.r-projec
 
 #Git clone shiny app
 #---------------------------------------------------------------------------------------
-# RUN git -C /root/ clone https://bitbucket.org/cioapps/fao-calipseo-stats.git && echo "OK!"
-ADD ./shiny/shiny-calipseo /root/shiny/shiny-calipseo/
-COPY ./country /root/shiny/shiny-calipseo/country
-COPY ./common /root/shiny/shiny-calipseo/common
-COPY ./shinyconfigs /root/shiny/shiny-calipseo/
-RUN ls -ls /root/shiny/shiny-calipseo
-RUN ln -s /root/shiny/shiny-calipseo /srv/shiny-calipseo
+ADD ./shiny/shiny-calipseo /srv/shiny-calipseo/
+#check dir is created
+RUN ls -ls /srv/shiny-calipseo
+#symbolic link
+#RUN ln -s /srv/shiny-calipseo /srv/shiny-calipseo
 
-ENV SHINY_CONFIG=""
 RUN mkdir -p /etc/shiny-calipseo
-COPY shinyconfigs/calipseo_shiny_config_TTO.yml /etc/shiny-calipseo/config.yml
-RUN chmod -R a+w /root/shiny/shiny-calipseo
-RUN ls -ls /root/shiny/shiny-calipseo
+COPY shinyconfigs/calipseo_shiny_config.yml /etc/shiny-calipseo/config.yml
+RUN ls -ls /etc/shiny-calipseo
+RUN chmod -R a+w /srv/shiny-calipseo
+RUN ls -ls /srv/shiny-calipseo
  
 # EXPOSE 3838
 EXPOSE 8080
 
-RUN apt-get install -y curl
+#RUN apt-get install -y curl
 CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo', port=8080, host='0.0.0.0')"]
-# CMD R -e 'shiny::runApp("/srv/shiny-calipseo/app.R", port = 8080, host = "0.0.0.0")'
-# CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo');options(shiny.port = 3838, shiny.host = '0.0.0.0', shiny.launch.browser = FALSE)"]
-# CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo')"]
