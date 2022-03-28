@@ -1,4 +1,4 @@
-FROM rocker/geospatial:4.0.5
+FROM rocker/shiny:4.0.5
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
@@ -11,12 +11,9 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     git 
 
-#Install shiny server
+#Install geospatial deps over shiny server
 #---------------------------------------------------------------------------------------
-ENV S6_VERSION=v2.1.0.2
-ENV SHINY_SERVER_VERSION=latest
-ENV PANDOC_VERSION=default
-RUN ./install_shiny_server.sh #got from rocker/shiny
+RUN ./install_geospatial.sh #got from rocker/geospatial
 RUN chown shiny:shiny /var/lib/shiny-server
 
 # install dependencies of the app
