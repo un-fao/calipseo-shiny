@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 #Install geospatial deps over shiny server
 #---------------------------------------------------------------------------------------
-RUN ./install_geospatial.sh #got from rocker/geospatial
+RUN /install_geospatial.sh
 RUN chown shiny:shiny /var/lib/shiny-server
 
 # install dependencies of the app
