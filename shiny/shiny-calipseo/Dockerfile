@@ -2,7 +2,7 @@ FROM rocker/geospatial:4.0.5
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
-WORKDIR /srv/
+#WORKDIR /srv/
 
 # system libraries of general use
 #---------------------------------------------------------------------------------------
@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libxml2-dev \
     git 
+
+#    
+RUN chown shiny:shiny /var/lib/shiny-server
 
 # install dependencies of the app
 #R CRAN packages
@@ -68,20 +71,20 @@ RUN R -e "install.packages(c('leaflet.minicharts'), repos='https://cran.r-projec
 
 #Git clone shiny app
 #---------------------------------------------------------------------------------------
-ADD ./shiny/shiny-calipseo /srv/shiny-calipseo/
+ADD ./shiny/shiny-calipseo /srv/shiny-server/
 #check dir is created
-RUN ls -ls /srv/shiny-calipseo
-#symbolic link
-#RUN ln -s /srv/shiny-calipseo /srv/shiny-calipseo
+RUN ls -ls /srv/shiny-server
 
-RUN mkdir -p /etc/shiny-calipseo
-COPY shinyconfigs/calipseo_shiny_config.yml /etc/shiny-calipseo/config.yml
-RUN ls -ls /etc/shiny-calipseo
-RUN chmod -R a+w /srv/shiny-calipseo
-RUN ls -ls /srv/shiny-calipseo
+RUN mkdir -p /etc/shiny-server
+COPY shinyconfigs/calipseo_shiny_config.yml /etc/shiny-server/config.yml
+RUN ls -ls /etc/shiny-server
+RUN chmod -R a+w /srv/shiny-server
+COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
+RUN ls -ls /srv/shiny-server
  
 # EXPOSE 3838
 EXPOSE 8080
 
 #RUN apt-get install -y curl
-CMD ["R", "-e shiny::runApp('/srv/shiny-calipseo', port=8080, host='0.0.0.0')"]
+#CMD ["R", "-e shiny::runApp('/srv/shiny-server', port=8080, host='0.0.0.0')"]
+CMD ["/init"] 
