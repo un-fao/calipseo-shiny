@@ -76,7 +76,7 @@ ADD ./shiny/shiny-calipseo /srv/shiny-server/
 RUN ls -ls /srv/shiny-server
 
 RUN mkdir -p /etc/shiny-server
-COPY shinyconfigs/calipseo_shiny_config.yml /etc/shiny-server/config.yml
+COPY shinyconfigs/config.yml /etc/shiny-server/config.yml
 RUN ls -ls /etc/shiny-server
 RUN chmod -R a+w /srv/shiny-server
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
