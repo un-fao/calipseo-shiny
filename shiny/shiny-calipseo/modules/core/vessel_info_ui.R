@@ -31,12 +31,12 @@ vessel_info_ui <- function(id){
                   div(
                     class = "col-md-6",
                     div(class='row', style = "padding: 15px;",
-                      uiOutput(ns('box_status')),
-                      uiOutput(ns('box_owner'))
+                        uiOutput(ns('box_status')),
+                        uiOutput(ns('box_license_status'))
                     ),
                     div(class='row', style = "padding: 15px;",
-                      uiOutput(ns('box_license')),
-                      uiOutput(ns('box_gears'))
+                        uiOutput(ns('box_owner')),
+                        uiOutput(ns('box_license'))
                     )
                   )
               )

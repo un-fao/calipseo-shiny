@@ -112,13 +112,19 @@
   
   /*Information boxes*/
   "INFOBOX_VESSEL_OPERATIONAL_STATUS" : "Vessel Operational Status",
-  "INFOBOX_NUMBER_OF_OWNERS" : "Number of owners",
-  "INFOBOX_NUMBER_OF_LICENSES" : "Number of licenses",
-  "INFOBOX_NUMBER_OF_FISHING_GEARS" : "Number of fishing gears",
+  "INFOBOX_NUMBER_OF_OWNERS" : "Owners",
+  "INFOBOX_NUMBER_OF_LICENSES" : "Licenses",
+  "INFOBOX_NUMBER_OF_FISHING_GEARS" : "Fishing gears",
   "INFOBOX_MEAN_FISHING_TRIPS_YEAR" : "Mean fishing trips/year",
   "INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS" : "Mean days at sea / fishing trip",
-  "INFOBOX_NUMBER_OF_LANDING_SITES" : "Number of landing sites",
-  "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Number of species caught",
+  "INFOBOX_NUMBER_OF_LANDING_SITES" : "Landing sites",
+  "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Species caught",
+  
+  /*License status*/
+  "INFOBOX_LICENSE_STATUS" : "license status",
+  "LICENSE_STATUS_VALID" : "valid",
+  "LICENSE_STATUS_EXPIRED" : "expired",
+  "LICENSE_STATUS_NO_LICENSE" : "no license",
   
   /*Warning message*/
   "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
