@@ -9,7 +9,7 @@ options(
 #config
 #---------------------------------------------------------------------------------------
 #default config_file path for DEPLOYMENT
-config_file <- "/etc/shiny-calipseo/config.yml"
+config_file <- "/etc/shiny-server/config.yml"
 
 #local configuration
 #If you are an R developer, you need to create a .REnviron file (no file extension) in /shiny-calipseo dir
