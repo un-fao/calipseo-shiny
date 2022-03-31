@@ -13,8 +13,12 @@ RUN apt-get update && apt-get install -y \
 
 #Install geospatial deps over shiny server
 #---------------------------------------------------------------------------------------
-RUN /install_geospatial.sh
-RUN chown shiny:shiny /var/lib/shiny-server
+# RUN chown shiny:shiny /var/lib/shiny-server
+COPY install_geospatial.sh /srv/shiny-server/install_geospatial.sh
+RUN ls -ls /srv/shiny-server/
+RUN chmod +x /srv/shiny-server/install_geospatial.sh
+RUN ./srv/shiny-server/install_geospatial.sh
+
 
 # install dependencies of the app
 #R CRAN packages
@@ -69,6 +73,9 @@ RUN R -e "install.packages(c('leaflet.minicharts'), repos='https://cran.r-projec
 #---------------------------------------------------------------------------------------
 #None
 
+# RUN chown shiny:shiny /var/lib/shiny-server
+RUN chown shiny:shiny /srv/shiny-server
+
 #Git clone shiny app
 #---------------------------------------------------------------------------------------
 ADD ./shiny/shiny-calipseo /srv/shiny-server/
@@ -76,7 +83,7 @@ ADD ./shiny/shiny-calipseo /srv/shiny-server/
 RUN ls -ls /srv/shiny-server
 
 RUN mkdir -p /etc/shiny-server
-COPY shinyconfigs/calipseo_shiny_config.yml /etc/shiny-server/config.yml
+COPY shinyconfigs/config.yml /etc/shiny-server/config.yml
 RUN ls -ls /etc/shiny-server
 RUN chmod -R a+w /srv/shiny-server
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
