@@ -19,6 +19,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       }
     }
     
+    if(!is.null(vesselId)){
+    
     #vessel owners information
     vessel <- accessVessel(pool, vesselId)
     vesselOwners <- accessVesselOwners(pool, vesselId)
@@ -924,6 +926,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       )
     })
     
+    }
     
   })
   
