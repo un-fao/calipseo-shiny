@@ -120,6 +120,12 @@
   "INFOBOX_NUMBER_OF_LANDING_SITES" : "Number of landing sites",
   "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Number of species caught",
   
+  /*License status*/
+  "INFOBOX_LICENSE_STATUS" : "license status",
+  "LICENSE_STATUS_VALID" : "valid",
+  "LICENSE_STATUS_EXPIRED" : "expired",
+  "LICENSE_STATUS_NO_LICENSE" : "no license",
+  
   /*Warning message*/
   "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
   

@@ -57,7 +57,7 @@ createBase64Image <- function(src, width = "auto", height = "auto", alt = "image
   }else{
     input <- normalizePath(src, mustWork = TRUE)
   }
- 
+  
   buf <- readBin(input, raw(), file.info(input)$size)
   base64 <- openssl::base64_encode(buf, linebreaks = FALSE)
   out <- sprintf("%s<img src=\"data:image/png;base64,\n%s\" alt=\"%s\" width=\"%s\" height=\"%s\" />%s",
@@ -96,29 +96,31 @@ js_render_for_license_table <- c(
 
 #customeinfobox
 CalipseoInfoBox <- function(title = NULL, value = NULL, icon = NULL,
-                            width=4, color = 'aqua',text_color = 'white',style_title = 'font-size:14px',style_value='font-size:18px') {
+                            width=4,box_width=NULL,color = 'aqua',text_color = 'white',style_title = 'font-size:14px',style_value='font-size:18px',
+                            icon_width = NULL, content_margin_left = NULL) {
   
-  tags$div( class= paste0('col-sm-',width),
-            tags$div(class=paste0('info-box bg-',color),
-                     style=paste0('background-color:',color,';'),
-                     tags$span( class='info-box-icon',
-                                style=paste0("color:",text_color,';'),
-                                
-                                icon),
-                     
-                     tags$div(
-                       class='info-box-content',
-                       style=paste0("color:",text_color,';'),
-                       
-                       tags$span( class='info-box-text',
-                                  tags$span(style=paste0("display:block;white-space:nowrap;",style_title,";"),
-                                            title)),
-                       tags$span(class='info-box-number',
-                                 style=paste0(style_value,";"),
-                                 value)
-                     )
-                     
-            )
+  tags$div(class= paste0('col-sm-',width),
+           style=paste0('width:',box_width,';'),
+           tags$div(class=paste0('info-box bg-',color),
+                    style=paste0('background-color:',color,';'),
+                    tags$span( class='info-box-icon',
+                               style=paste0("color:",text_color,';width:',icon_width,';'),
+                               
+                               icon),
+                    
+                    tags$div(
+                      class='info-box-content',
+                      style=paste0("color:",text_color,';margin-left:',content_margin_left,';'),
+                      
+                      tags$span( class='info-box-text',
+                                 tags$span(style=paste0("display:block;white-space:nowrap;",style_title,";"),
+                                           title)),
+                      tags$span(class='info-box-number',
+                                style=paste0(style_value,";"),
+                                value)
+                    )
+                    
+           )
   )
   
 }

@@ -233,52 +233,75 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     })
     
     #licenses
-    output$license_table <- renderDT(server = FALSE,{
+    
+    license_df <- reactive({
       
       vessellicensepermits <- accessVesselLicensePermit(pool,vesselId)
       
       if(nrow(vessellicensepermits>0)){
         
-        dt <- reactive({
+        unique_permits <- dplyr::distinct(vessellicensepermits, PERMIT_NUMBER,.keep_all = TRUE)
+        
+        unique_gears <- unique(vessellicensepermits$Gears)
+        
+        vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
+        
+        vessellicensepermits$Valid_to_date <- as.Date(vessellicensepermits$Valid_to_date)
+        
+        valid_to_date <- vessellicensepermits$Valid_to_date
+        
+        vessellicensepermits$Validity <- NA
+        
+        for (i in 1:length(valid_to_date)) {
+          validity_status <- Sys.Date()-valid_to_date[i]
           
-          unique_permits <- dplyr::distinct(vessellicensepermits, PERMIT_NUMBER,.keep_all = TRUE)
-          
-          unique_gears <- unique(vessellicensepermits$Gears)
-          
-          vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
-          
-          vessellicensepermits$Valid_to_date <- as.Date(vessellicensepermits$Valid_to_date)
-          
-          valid_to_date <- vessellicensepermits$Valid_to_date
-          
-          vessellicensepermits$Validity <- NA
-          
-          for (i in 1:length(valid_to_date)) {
-            validity_status <- Sys.Date()-valid_to_date[i]
+          if(validity_status<0){
+            vessellicensepermits$Validity[i] <- 'ok'
+          }else{
             
-            if(validity_status<0){
-              vessellicensepermits$Validity[i] <- 'ok'
-            }else{
-              
-              vessellicensepermits$Validity[i] <- 'remove'
-            }
+            vessellicensepermits$Validity[i] <- 'remove'
           }
-          
-          vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
-          
-          names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
-                                          i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
-                                          i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
-                                          i18n("LICENCES_TABLE_COLNAME_7"))
-          vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
-          
-          return(unique(vessellicensepermits))
-          
-        })
+        }
+        
+        vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
+        
+        names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+                                        i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
+                                        i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
+                                        i18n("LICENCES_TABLE_COLNAME_7"))
+        vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
         
         
+      }else{
         
-        DT::datatable(dt(),
+        vessellicensepermits <- data.frame(
+          `Permit Number` = character(0),
+          'Application Date' = character(0),
+          'Permit Date' = character(0),
+          'Valid From (Date)' = character(0),
+          'Valid To (Date)' = character(0),
+          'Validity' = character(0),
+          'Gears' = character(0)
+          
+        )
+        
+        names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+                                        i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
+                                        i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
+                                        i18n("LICENCES_TABLE_COLNAME_7"))
+        
+        
+      }
+      
+      return(unique(vessellicensepermits))
+    })
+    
+    
+    output$license_table <- renderDT(server = FALSE,{
+      
+      if(nrow(license_df()>0)){
+        
+        DT::datatable(license_df(),
                       rownames = FALSE, extensions = c("Select","Buttons"),
                       selection = "none",
                       filter = list(position = 'top', clear = FALSE),
@@ -306,26 +329,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                         language = list(url = i18n("TABLE_LANGUAGE"))
                       ))
         
-        
-        
       }else{
         
-        vessellicensepermits <- data.frame(
-          `Permit Number` = character(0), 
-          'Application Date' = character(0), 
-          'Permit Date' = character(0),
-          'Valid From (Date)' = character(0), 
-          'Valid To (Date)' = character(0), 
-          'Validity' = character(0),
-          'Gears' = character(0)
-          
-        )
-        
-        names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
-                                        i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
-                                        i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
-                                        i18n("LICENCES_TABLE_COLNAME_7"))
-        DT::datatable(vessellicensepermits)
+        DT::datatable(license_df())
         
       }
       
@@ -372,7 +378,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         aggregate(ActualDaysAtSea_df$daysAtSea, by = list(ActualDaysAtSea_df$year), FUN = sum),
         aggregate(vesselCatches$quantity, by = list(vesselCatches$year), FUN = sum)$x
       )
-     
+      
       colnames(vesselCatchSummary) <- c("year", "daysAtSea", "quantity")
       
     }else{
@@ -411,9 +417,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     output$vessel_catch_history <- renderDataTable(server = FALSE,{
       
       names(vesselCatches) <- c(i18n("HISTORY_CATCHES_COLNAME_1"),i18n("HISTORY_CATCHES_COLNAME_2"),i18n("HISTORY_CATCHES_COLNAME_3"),
-        i18n("HISTORY_CATCHES_COLNAME_4"),i18n("HISTORY_CATCHES_COLNAME_5"),i18n("HISTORY_CATCHES_COLNAME_6"),
-        i18n("HISTORY_CATCHES_COLNAME_7"),i18n("HISTORY_CATCHES_COLNAME_8"),i18n("HISTORY_CATCHES_COLNAME_9"),
-        i18n("HISTORY_CATCHES_COLNAME_10"),i18n("HISTORY_CATCHES_COLNAME_11"),i18n("HISTORY_CATCHES_COLNAME_12"))
+                                i18n("HISTORY_CATCHES_COLNAME_4"),i18n("HISTORY_CATCHES_COLNAME_5"),i18n("HISTORY_CATCHES_COLNAME_6"),
+                                i18n("HISTORY_CATCHES_COLNAME_7"),i18n("HISTORY_CATCHES_COLNAME_8"),i18n("HISTORY_CATCHES_COLNAME_9"),
+                                i18n("HISTORY_CATCHES_COLNAME_10"),i18n("HISTORY_CATCHES_COLNAME_11"),i18n("HISTORY_CATCHES_COLNAME_12"))
       
       datatable(vesselCatches,
                 rownames = FALSE,
@@ -744,7 +750,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
     })
     
-  
+    
     SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
     
     fish_group<-getRemoteReferenceDataset("asfis_enrished")
@@ -766,7 +772,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                       colDate = "date", colTarget="ISSCAAP_Group_En",
                       colValue="quantity", rank=FALSE)
     
-   
+    
     
     
     ftpv <- countFishingTripsPerVessel(pool,vesselId)
@@ -855,13 +861,48 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       return(colorlist)
     })
     
+    license_status <- reactive({
+      req(license_df())
+      if(nrow(license_df()>1)){
+        if(license_df()[1,6]=='ok'){
+          i18n("LICENSE_STATUS_VALID")
+        }else if(license_df()[1,6]=='remove'){
+          i18n("LICENSE_STATUS_EXPIRED")
+        }
+      }else{
+        i18n("LICENSE_STATUS_NO_LICENSE")
+      }
+    })
     
+    
+    colRList_license_status <- reactive({
+      req(license_status())
+      
+      if(license_status()==i18n("LICENSE_STATUS_VALID")){
+        
+        colorlist <- c('green','black','check-circle')
+        
+      }else if(license_status()==i18n("LICENSE_STATUS_EXPIRED")){
+        
+        colorlist <- c('red','black','times-circle')
+        
+      }else if(license_status()==i18n("LICENSE_STATUS_NO_LICENSE")){
+        
+        colorlist <- c('#8b0000','black','times-circle')
+        
+      }
+      
+      
+    })
     
     output$box_status <- renderUI({
       
       CalipseoInfoBox(span(i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
     })
     
+    output$box_license_status <- renderUI({
+      CalipseoInfoBox(span(i18n("INFOBOX_LICENSE_STATUS"),style='font-size:11px;'),icon = icon(colRList_license_status()[3]),span(toupper(license_status()),style='font-size:15px;'), width = 6, color=colRList_license_status()[1], text_color=colRList_license_status()[2])
+    })
     
     output$box_owner <- renderUI({
       CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_OWNERS"),icon = icon('user'),vessel_indicators_infos$number_of_owners, width = 6)
@@ -871,21 +912,18 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LICENSES"),icon = icon('ship'),vessel_indicators_infos$number_of_licenses, width = 6)
     })
     
-    output$box_gears <- renderUI({
-      CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, width = 6)
-    })
-    
     output$more_indicators <- renderUI({
       fluidRow(
-        CalipseoInfoBox(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips,width = 3),
-        CalipseoInfoBox(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea,width = 3),
-        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style_title ='font-size:10px;',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites,width = 3),
-        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style_title = 'font-size:10px;',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished,width = 3)
+        CalipseoInfoBox(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips,width = 2, content_margin_left = '60px',icon_width = '60px', box_width = '195px'),
+        CalipseoInfoBox(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea,width = 2, content_margin_left = '60px',icon_width = '60px',box_width = '195px'),
+        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style_title ='font-size:10px;',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites,width = 2, content_margin_left = '60px',icon_width = '60px',box_width = '195px'),
+        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),style_title ='font-size:10px;',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, width = 2, content_margin_left = '60px',icon_width = '60px',box_width = '195px'),
+        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style_title = 'font-size:10px;',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished,width = 2, content_margin_left = '60px',icon_width = '60px',box_width = '195px')
       )
     })
     
     
   })
   
- 
+  
 }
