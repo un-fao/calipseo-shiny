@@ -3,7 +3,18 @@
   "LOGBOOKS_OVERVIEW_TITLE" : "Overview of industrial fishing activities",
   "LOGBOOKS_OVERVIEW_SUBTITLE" : "Based on logbooks monitoring",
   
+    /*Line chart keys on the UI*/
+  "TEMPORAL_RESOLUTION" : "Temporal resolution",
+  "YEARLY" : "Yearly",
+  "MONTHLY" : "Monthly",
+  "WEEKLY" : "Weekly",
+  "GRANU_LABEL_YEAR" : "Year",
+  "GRANU_LABEL_MONTH" : "Month",
+  "GRANU_LABEL_WEEK" : "Week",
+  
   /*Information boxes*/
+  "VERTICALTABPANEL_GLOBAL_VESSEL" : "Global vessel",
+  "VERTICALTABPANEL_GLOBAL_QUANTITY" : "Global quantity",
   "VERTICALTABPANEL_BREAKDOWN_BY_VESSEL_TYPES" : "Breakdown by vessel types",
   "VERTICALTABPANEL_BREAKDOWN_BY_GEAR_TYPES" : "Breakdown by gear types",
   
@@ -19,12 +30,24 @@
   "INFOBOX_OVERVIEW_TOTAL_QUANTITY" : "Total quantity",
   "TOTAL_QUANTITY_UNITS" : "tons",
   "INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE" : "Logbook reporting percentage",
+  "INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS" : "Total participating vessels",
+  "GLOBAL_VESSEL_LABEL" : "Number of vessels",
+  "GLOBAL_QUANTITY_LABEL" : "Global quantity",
   "VESSEL_TYPE_LABEL" : "Vessel type",
   "GEAR_TYPE_LABEL" : "Gear type",
   "SPECIES_LABEL" : "Species",
   "FISHING_GEAR_LABEL" : "Fishing gear",
   "LANDING_SITES_LABEL" : "Landing site",
-  "FISHING_ZONE_LABEL" : "Fishing zone"
- 
+  "FISHING_ZONE_LABEL" : "Fishing zone",
+  "GLOBAL_VESSEL_PLOT_XLAB" : "Time",
+  "GLOBAL_VESSEL_PLOT_YLAB" : "Number of vessels",
+  "GLOBAL_VESSEL_PLOT_UNIT" : "vessels",
   
+    /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistics",
+  "TABPANEL_PLOT" : "Plot",
+  
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "%s_%s_statistics",
+  "STATISTIC_PDF_TITLE" : "Statistics by %s - %s"
 }
