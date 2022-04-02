@@ -13,8 +13,8 @@
   "GRANU_LABEL_WEEK" : "Week",
   
   /*Information boxes*/
-  "VERTICALTABPANEL_GLOBAL_VESSEL" : "Global vessel",
-  "VERTICALTABPANEL_GLOBAL_QUANTITY" : "Global quantity",
+  "VERTICALTABPANEL_GLOBAL_VESSEL" : "Total participating vessels",
+  "VERTICALTABPANEL_GLOBAL_QUANTITY" : "Total quantity",
   "VERTICALTABPANEL_BREAKDOWN_BY_VESSEL_TYPES" : "Breakdown by vessel types",
   "VERTICALTABPANEL_BREAKDOWN_BY_GEAR_TYPES" : "Breakdown by gear types",
   
