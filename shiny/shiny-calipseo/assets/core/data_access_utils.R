@@ -48,6 +48,14 @@ accessCountryParamFromDB <- function(con){
 } 
 
 
+#accessIndividualDetailsFromDB
+accessIndividualDetailsFromDB <- function(con){
+  individual_details_sql <- readSQLScript("data/core/sql/individual_details.sql")
+  individual_details <- suppressWarnings(dbGetQuery(con, individual_details_sql))
+  return(individual_details)
+} 
+
+
 #accessRefSpeciesFromDB
 accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
@@ -399,6 +407,12 @@ accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NU
 #accessCountryParamFromDB
 accessCountryParam <- function(con){
   accessCountryParamFromDB(con)
+}
+
+
+#accessIndividualDetailsFromDB
+accessIndividualDetails <- function(con){
+  accessIndividualDetailsFromDB(con)
 }
 
 
