@@ -1,0 +1,17 @@
+{
+  /*individual list title and subtitle*/
+  "INDIVIDUAL_LIST_TITLE" : "List of individuals",
+  "INDIVIDUAL_LIST_SUBTITLE": "Access information on individuals",
+  "INDIVIDUALS": "Individuals",
+  
+  
+   /*Individual list table*/
+  "INDIVIDUAL_LIST_TABLE_COLNAME_1": "Salutation",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_2": "First Name",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_3": "Middle Name",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_4": "Suffix Name",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_5": "Last Name",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_6": "Gender",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}
