@@ -1,0 +1,3 @@
+SELECT 'to_check' AS ACTION, count(*) AS COUNT FROM reg_vessels WHERE NAME LIKE '%NAME%'
+UNION 
+SELECT 'ok' AS ACTION, count(*) AS COUNT FROM reg_vessels WHERE NAME NOT LIKE '%NAME%'

@@ -56,6 +56,31 @@ accessIndividualDetailsFromDB <- function(con){
 } 
 
 
+#accessVesselQaNamesFromDB
+accessVesselQaNamesFromDB <- function(con){
+  vessel_qa_names_sql <- readSQLScript("data/core/sql/vessel_qa_names.sql")
+  vessel_qa_names <- suppressWarnings(dbGetQuery(con, vessel_qa_names_sql))
+  return(vessel_qa_names)
+} 
+
+
+
+#accessVesselQaHomeportFromDB
+accessVesselQaHomeportFromDB <- function(con){
+  vessel_qa_homeport_sql <- readSQLScript("data/core/sql/vessel_qa_homeport.sql")
+  vessel_qa_homeport <- suppressWarnings(dbGetQuery(con, vessel_qa_homeport_sql))
+  return(vessel_qa_homeport)
+} 
+
+
+#accessVesselQaRegportFromDB
+accessVesselQaRegportFromDB <- function(con){
+  vessel_qa_regport_sql <- readSQLScript("data/core/sql/vessel_qa_regport.sql")
+  vessel_qa_regport <- suppressWarnings(dbGetQuery(con, vessel_qa_regport_sql))
+  return(vessel_qa_regport)
+} 
+
+
 #accessRefSpeciesFromDB
 accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
@@ -413,6 +438,24 @@ accessCountryParam <- function(con){
 #accessIndividualDetailsFromDB
 accessIndividualDetails <- function(con){
   accessIndividualDetailsFromDB(con)
+}
+
+
+#accessVesselQaNamesFromDB
+accessVesselQaNames <- function(con){
+  accessVesselQaNamesFromDB(con)
+}
+
+
+#accessVesselQaHomeportFromDB
+accessVesselQaHomeport <- function(con){
+  accessVesselQaHomeportFromDB(con)
+}
+
+
+#accessVesselQaRegportFromDB
+accessVesselQaRegport <- function(con){
+  accessVesselQaRegportFromDB(con)
 }
 
 
