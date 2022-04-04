@@ -1,4 +1,11 @@
 #General helpers
+logger <- function(type, txt, ...){
+  log_txt <- sprintf(txt, ...)
+  cat(sprintf("[shiny-calipseo][%s] %s \n", type, log_txt))
+}
+INFO <- function(txt, ...){logger("INFO", txt, ...)}
+WARN <- function(txt, ...){logger("WARN", txt, ...)}
+ERROR <- function(txt, ...){logger("ERROR", txt, ...)}
 
 #round2
 round2 <- function(x, n=0) {scale<-10^n; trunc(x*scale+sign(x)*0.5)/scale}

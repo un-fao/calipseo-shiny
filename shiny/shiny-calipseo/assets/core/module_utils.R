@@ -32,11 +32,12 @@ loadModuleScripts <- function(config){
     has_config = !is.null(module_config)
     if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
     if(enabled){
-      message(sprintf("Loading shiny module '%s' scripts...", module$name))
+      print(module$name)
+      INFO("Loading shiny module '%s' scripts...", module$name)
       source(file.path(module$dirname, paste0(module$name, "_server.R")))
       source(file.path(module$dirname, paste0(module$name, "_ui.R")))
     }else{
-      message(sprintf("Shiny module '%s' is disabled!", module$name))
+      WARN("Shiny module '%s' is disabled!", module$name)
     }
   }
 }
@@ -80,13 +81,16 @@ loadModuleServers <- function(config, pool){
       has_config = !is.null(module_config)
       if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
       if(enabled){
-        message(sprintf("Loading shiny module '%s' server functions...", module))
+        INFO("Loading shiny module '%s' server functions...", module)
         server_fun_name <- paste0(module, "_server")
         server_fun <- try(eval(expr = parse(text = server_fun_name)))
         if(!is(server_fun, "try-error")){
-          shiny::callModule(server_fun, module, pool)
+          called <- try(shiny::callModule(server_fun, module, pool))
+          if(is(called, "try-error")){
+            ERROR("Error while calling shiny module '%s'", module)
+          }
         }else{
-          message(sprintf("Error while evaluating server function '%s'", server_fun_name))
+          ERROR("Error while evaluating server function '%s'", server_fun_name)
         }
       }
     }
@@ -106,13 +110,13 @@ loadModuleUIs <- function(config){
       has_config = !is.null(module_config)
       if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
       if(enabled){
-        message(sprintf("Loading shiny module '%s' UI functions...", module))
+        INFO("Loading shiny module '%s' UI functions...", module)
         ui_fun_name <- paste0(module, "_ui")
         ui_fun <- try(eval(expr = parse(text = ui_fun_name)))
         if(!is(ui_fun, "try-error")){
           out <- ui_fun(module)
         }else{
-          message(sprintf("Error while evaluating UI function '%s'", ui_fun_name))
+          ERROR("Error while evaluating UI function '%s'", ui_fun_name)
         }
       }
     }
