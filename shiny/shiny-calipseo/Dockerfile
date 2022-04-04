@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y \
 #Install geospatial deps over shiny server
 #---------------------------------------------------------------------------------------
 # RUN chown shiny:shiny /var/lib/shiny-server
-COPY install_geospatial.sh /srv/shiny-server/install_geospatial.sh
-RUN ls -ls /srv/shiny-server/
-RUN chmod +x /srv/shiny-server/install_geospatial.sh
-RUN ./srv/shiny-server/install_geospatial.sh
-
+#COPY install_geospatial.sh /srv/shiny-server/install_geospatial.sh
+#RUN ls -ls /srv/shiny-server/
+#RUN chmod +x /srv/shiny-server/install_geospatial.sh
+#RUN ./srv/shiny-server/install_geospatial.sh
+RUN /rocker_scripts/install_geospatial.sh
 
 # install dependencies of the app
 #R CRAN packages
