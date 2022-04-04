@@ -1,0 +1,20 @@
+{
+  /*vessel_qa title and subtitle*/
+  "VESSEL_QA_TITLE" : "Vessel quality assessment",
+  "VESSEL_QA_SUBTITLE": "Access quaility assessment indicators on the vessel registry",
+  
+  /*vessel_qa titles*/ 
+"VESSEL_QA_TITLE_NAMES": "Quality assessment on vessel home port",
+"VESSEL_QA_TITLE_HOMEPORT": "Quality assessment on vessel home port",
+"VESSEL_QA_TITLE_REGPORT": "Quality assessment on vessel registration port",
+  
+  /*vessel_qa verticalpanels*/
+  "VERTICALTABPANEL_VESSEL_QA_NAMES": "Vessel Names",
+  "VERTICALTABPANEL_VESSEL_QA_PORTS": "Vessel Ports",
+  
+  /*vessel_qa table*/
+  "VESSEL_QA_TABLE_COLNAME_1": "ACTION",
+  "VESSEL_QA_TABLE_COLNAME_2": "COUNT",
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+}
