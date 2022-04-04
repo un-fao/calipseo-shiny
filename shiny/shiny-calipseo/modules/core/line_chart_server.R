@@ -21,7 +21,7 @@
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("PLOT_XLAB"),ylab=i18n("PLOT_YLAB"), rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot") {
+line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("PLOT_XLAB"),ylab=i18n("PLOT_YLAB"),valueUnit=i18n("CATCH_UNIT"), rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
    
@@ -146,7 +146,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         
         df<-df%>%
           mutate(date = as.character(format(as.Date(date),format = format_date)))%>%
-          mutate(value=value/1000)%>%
+          #mutate(value=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
           summarise(sum_by_trip = sum(value))%>%
           group_by(date,target,text)%>%
@@ -195,10 +195,10 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
           }else{
             if(plotType=="line"){
               p<-p%>%    
-               add_trace(type="scatter",mode="lines+markers",y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",i18n("CATCH_UNIT")),text,date,round(get(stat_output),2)))
+               add_trace(type="scatter",mode="lines+markers",y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",valueUnit),text,date,round(get(stat_output),2)))
             }else{
               p<-p%>%    
-                add_bars(y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",i18n("CATCH_UNIT")),text,date,round(get(stat_output),2))) 
+                add_bars(y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",valueUnit),text,date,round(get(stat_output),2))) 
             }
           }
                           
@@ -266,13 +266,9 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     
     if(isTRUE(data_ready())){
      
-      granu<-switch(format_date,"%Y"="Year",
-                    "%Y-%m"="Month",
-                    "%Y-%U"="Week")
-      
-      granu_label<-switch(granu,"Year"= i18n("GRANU_LABEL_YEAR"),
-                    "Month"= i18n("GRANU_LABEL_MONTH"),
-                    "Week"= i18n("GRANU_LABEL_WEEK"))
+      granu<-switch(format_date,"%Y"=i18n("GRANU_LABEL_YEAR"),
+                    "%Y-%m"=i18n("GRANU_LABEL_MONTH"),
+                    "%Y-%U"=i18n("GRANU_LABEL_WEEK"))
       
       df <- data_formated()%>%
         select(-text)%>%
@@ -280,7 +276,6 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         rename(!!label:=target)%>%
         mutate(!!label:=as.factor(!!sym(label)))
       
-      colnames(df)[1] <- i18n("STATISTIC_TABLE_COLNAME_1")
       colnames(df)[4] <- i18n("STATISTIC_TABLE_COLNAME_4")
       colnames(df)[5] <- i18n("STATISTIC_TABLE_COLNAME_5")
       colnames(df)[6] <- i18n("STATISTIC_TABLE_COLNAME_6")
@@ -298,10 +293,10 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
           orientation ='landscape',
           buttons = list(
             list(extend = 'copy'),
-            list(extend = 'csv', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu_label), title = NULL, header = TRUE),
-            list(extend = 'excel', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu_label), title = NULL, header = TRUE),
+            list(extend = 'csv', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu), title = NULL, header = TRUE),
             list(extend = "pdf", pageSize = 'A4',orientation = 'landscape',filename = sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),label,granu), 
-            title = sprintf(i18n("STATISTIC_PDF_TITLE"), label,granu_label), header = TRUE)
+            title = sprintf(i18n("STATISTIC_PDF_TITLE"), label,granu), header = TRUE)
           ),
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)

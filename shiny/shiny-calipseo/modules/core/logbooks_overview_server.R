@@ -15,6 +15,8 @@ logbooks_overview_server <- function(input, output, session, pool){
   infos <- reactiveValues(
     currentyear = currentyear,
     lastyear = lastyear,
+    nb_active_vessel_lastyear = NULL,
+    nb_active_vessel_currentyear = NULL,
     total_lastyear = NULL,
     total_currentyear = NULL,
     stats_by_type_lastyear = NULL,
@@ -24,68 +26,70 @@ logbooks_overview_server <- function(input, output, session, pool){
     data_logbooks = NULL
   )
   
-  #functions
-  #mean quantities by vessel type
-  compute_stats_by_vessel_type = function(data){
-    if(nrow(data)==0){
-      return(data.frame(
-        vesstype = character(0),
-        sum = character(0),
-        mean = character(0),
-        sd = character(0),
-        q1 = character(0),
-        median = character(0),
-        q3 = character(0),
-        stringsAsFactors = FALSE
-      ))
-    }
-    logbooks_sum_by_trip = aggregate(
-      data$quantity,
-      by = list(
-        landing_id = data$landing_id,
-        vesstype = data$vesstype
-      ),
-      sum
-    )
-    colnames(logbooks_sum_by_trip)[3] <- "quantity"
-    logbooks_stats_by_type = do.call(data.frame, aggregate(
-      logbooks_sum_by_trip$quantity, 
-      by = list(
-        vesstype = logbooks_sum_by_trip$vesstype
-      ),
-      FUN = function(x){
-        x<-x/1000
-        list(
-          sum = round(sum(x, na.rm = TRUE),2),
-          mean = round(mean(x, na.rm = TRUE),2),
-          sd = round(sd(x, na.rm = TRUE),2),
-          q1 = round(quantile(x, probs = 0.25, na.rm = TRUE, names = FALSE),2),
-          median = round(median(x, na.rm = TRUE),2),
-          q3 = round(quantile(x, probs = 0.75, na.rm = TRUE, names = FALSE),2)
-        )
-      }))
-    colnames(logbooks_stats_by_type)[2:7] <- c("sum", "mean", "sd", "q1", "median", "q3") 
-    return(logbooks_stats_by_type)
-  }
+  # #functions
+  # #mean quantities by vessel type
+  # compute_stats_by_vessel_type = function(data){
+  #   if(nrow(data)==0){
+  #     return(data.frame(
+  #       vesstype = character(0),
+  #       sum = character(0),
+  #       mean = character(0),
+  #       sd = character(0),
+  #       q1 = character(0),
+  #       median = character(0),
+  #       q3 = character(0),
+  #       stringsAsFactors = FALSE
+  #     ))
+  #   }
+  #   logbooks_sum_by_trip = aggregate(
+  #     data$quantity,
+  #     by = list(
+  #       landing_id = data$landing_id,
+  #       vesstype = data$vesstype
+  #     ),
+  #     sum
+  #   )
+  #   colnames(logbooks_sum_by_trip)[3] <- "quantity"
+  #   logbooks_stats_by_type = do.call(data.frame, aggregate(
+  #     logbooks_sum_by_trip$quantity, 
+  #     by = list(
+  #       vesstype = logbooks_sum_by_trip$vesstype
+  #     ),
+  #     FUN = function(x){
+  #       x<-x/1000
+  #       list(
+  #         sum = round(sum(x, na.rm = TRUE),2),
+  #         mean = round(mean(x, na.rm = TRUE),2),
+  #         sd = round(sd(x, na.rm = TRUE),2),
+  #         q1 = round(quantile(x, probs = 0.25, na.rm = TRUE, names = FALSE),2),
+  #         median = round(median(x, na.rm = TRUE),2),
+  #         q3 = round(quantile(x, probs = 0.75, na.rm = TRUE, names = FALSE),2)
+  #       )
+  #     }))
+  #   colnames(logbooks_stats_by_type)[2:7] <- c("sum", "mean", "sd", "q1", "median", "q3") 
+  #   return(logbooks_stats_by_type)
+  # }
   
   observe({
     
     #logbooks data
     logbooks_lastyear <- accessLogBooks(pool, lastyear)
     logbooks_currentyear <- accessLogBooks(pool, currentyear)
-    #vessels counting by stat type
-    vessel_count = accessVesselsCountByStatType(pool)
-    vessel_count = vessel_count[!is.na(vessel_count$ID) & vessel_count$ID == 2,]$COUNT
+    infos$nb_active_vessel_lastyear<-length(unique(logbooks_lastyear$regnum))
+    infos$nb_active_vessel_currentyear<-length(unique(logbooks_currentyear$regnum))
+    # #vessels counting by stat type
+    # vessel_count = accessVesselsCountByStatType(pool)
+    # vessel_count = vessel_count[!is.na(vessel_count$ID) & vessel_count$ID == 2,]$COUNT
     #infos counting
     infos$total_lastyear <- sum(logbooks_lastyear$quantity) #assumes all units = KG
     infos$total_currentyear <- sum(logbooks_currentyear$quantity) #assumes all units = KG
-    #stats by type
-    infos$stats_by_type_lastyear <- compute_stats_by_vessel_type(logbooks_lastyear)
-    infos$stats_by_type_currentyear <- compute_stats_by_vessel_type(logbooks_currentyear)
-    #ratios reporting
-    infos$ratio_reporting_lastyear <- paste0(if(length(unique(logbooks_lastyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_lastyear$regnum))/vessel_count*100, 2)},"%")
-    infos$ratio_reporting_currentyear <- paste0(if(length(unique(logbooks_currentyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_currentyear$regnum))/vessel_count*100, 2)},"%")
-  })
+  #   #stats by type
+  #   infos$stats_by_type_lastyear <- compute_stats_by_vessel_type(logbooks_lastyear)
+  #   infos$stats_by_type_currentyear <- compute_stats_by_vessel_type(logbooks_currentyear)
+  #   #ratios reporting
+  #   infos$ratio_reporting_lastyear <- paste0(if(length(unique(logbooks_lastyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_lastyear$regnum))/vessel_count*100, 2)},"%")
+  #   infos$ratio_reporting_currentyear <- paste0(if(length(unique(logbooks_currentyear$regnum))/vessel_count*100<0.01){"<0.01"}else{round(length(unique(logbooks_currentyear$regnum))/vessel_count*100, 2)},"%")
+   })
   
   observe({
     
@@ -109,7 +113,8 @@ logbooks_overview_server <- function(input, output, session, pool){
               title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
               width = 12,
               CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(infos$total_lastyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$ratio_reporting_lastyear, icon = icon("percent"), width = 6)
+             #CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$ratio_reporting_lastyear, icon = icon("percent"), width = 6)
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$nb_active_vessel_lastyear, icon = icon("ship"), width = 6)
             )
           ),
           div(
@@ -118,7 +123,8 @@ logbooks_overview_server <- function(input, output, session, pool){
               title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
               width = 12,
               CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(infos$total_currentyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$ratio_reporting_currentyear, icon = icon("percent"), width = 6)
+             #CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$ratio_reporting_currentyear, icon = icon("percent"), width = 6)
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$nb_active_vessel_currentyear, icon = icon("ship"), width = 6)
             )
           )
         )
@@ -178,10 +184,114 @@ logbooks_overview_server <- function(input, output, session, pool){
 #Plots
 
   data_logbooks <- accessLogBooksMultiyear(pool)  
+  data_logbooks$quantity<-data_logbooks$quantity/1000
   
   fish_group<-getRemoteReferenceDataset("asfis_enrished")
   fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
   names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
+  
+  line_chart_server("gq", label=i18n("GLOBAL_QUANTITY_LABEL"),
+                    df=data_logbooks%>%
+                      mutate(label="Total")
+                      , colDate = "date",colTarget="label",colValue="quantity", rank=FALSE,mode='plot+table')
+  
+  gv_data_formated<-reactiveVal(NULL)
+  gv_data_ready<-reactiveVal(FALSE)
+  
+  gv_format_date <- if(input$gv_granu==i18n("YEARLY")){
+    "%Y"
+  }else if(input$gv_granu==i18n("MONTHLY")){
+    "%Y-%m"
+  }else if(input$gv_granu==i18n("WEEKLY")){
+    "%Y-%U"
+  }
+  
+  gv_data_formating<-eventReactive(input$gv_granu,{
+    df<-data_logbooks%>%
+      mutate(date = as.character(format(as.Date(date),format = gv_format_date)))%>%
+      group_by(date)%>%
+      summarise(nb_vessel=length(unique(regnum)))%>%
+      ungroup()
+    
+    gv_data_formated(df)
+    gv_data_ready(TRUE)
+  }
+  )
+  
+  output$gv_plot<-renderPlotly({
+    gv_data_formating()
+    
+    if(isTRUE(gv_data_ready())){
+    
+      p<-gv_data_formated()%>%plot_ly(x = ~date)
+      p<-p%>%    
+          add_trace(type="scatter",mode="lines+markers",y =~nb_vessel,line = list(simplyfy = F),text = ~sprintf(paste("%s: %s",i18n("GLOBAL_VESSEL_PLOT_UNIT")),date,round(nb_vessel)))
+      
+        p%>%layout(
+          showlegend=F,
+          hovermode ='closest',
+          xaxis = list(
+            titlefont = list(size = 10), 
+            tickfont = list(size = 10),
+            title = i18n("GLOBAL_VESSEL_PLOT_XLAB"),
+            zeroline = F
+          ),
+          yaxis = list(
+            titlefont = list(size = 10), 
+            tickfont = list(size = 10),
+            title = i18n("GLOBAL_VESSEL_PLOT_YLAB"),
+            zeroline = F
+          )
+        )
+    }
+  })
+  
+  output$gv_table<-DT::renderDT(server = FALSE, {
+    
+    gv_data_formating()
+    
+    if(isTRUE(gv_data_ready())){
+      
+      granu<-switch(gv_format_date,"%Y"=i18n("GRANU_LABEL_YEAR"),
+                    "%Y-%m"=i18n("GRANU_LABEL_MONTH"),
+                    "%Y-%U"=i18n("GRANU_LABEL_WEEK"))
+      
+    dt<-gv_data_formated()%>%
+      rename(!!granu:=date,
+             !!i18n("GLOBAL_VESSEL_LABEL"):=nb_vessel)
+      
+      DT::datatable(
+        dt,
+        extensions = c("Buttons"),
+        escape = FALSE,
+        filter = list(position = 'top',clear =FALSE),
+        options = list(
+          dom = 'Bfrtip',
+          scrollX=TRUE,
+          pageLength=5,
+          orientation ='landscape',
+          buttons = list(
+            list(extend = 'copy'),
+            list(extend = 'csv', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),i18n("GLOBAL_VESSEL_LABEL"),granu), title = NULL, header = TRUE),
+            list(extend = 'excel', filename =  sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),i18n("GLOBAL_VESSEL_LABEL"),granu), title = NULL, header = TRUE),
+            list(extend = "pdf", pageSize = 'A4',orientation = 'landscape',filename = sprintf(i18n("STATISTIC_DATA_EXPORT_FILENAME"),i18n("GLOBAL_VESSEL_LABEL"),granu), 
+                 title = sprintf(i18n("STATISTIC_PDF_TITLE"), i18n("GLOBAL_VESSEL_LABEL"),granu), header = TRUE)
+          ),
+          exportOptions = list(
+            modifiers = list(page = "all",selected=TRUE)
+          ),
+          language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+        )
+      )
+    }
+  })
+  
+  output$gv_result<-renderUI({
+             tabsetPanel(
+               tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("gv_plot"))%>%withSpinner(type = 4)),
+               tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("gv_table"))%>%withSpinner(type = 4))
+             )
+  })
   
   line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE,mode='plot+table')
   line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE,mode='plot+table')

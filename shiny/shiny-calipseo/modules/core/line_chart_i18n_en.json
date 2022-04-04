@@ -8,9 +8,9 @@
   "TOTAL" : "Total",
   "AVERAGE" : "Average",
   "MEDIAN" : "Median",
-  "GRANU_LABEL_YEAR" : "year",
-  "GRANU_LABEL_MONTH" : "month",
-  "GRANU_LABEL_WEEK" : "week",
+  "GRANU_LABEL_YEAR" : "Year",
+  "GRANU_LABEL_MONTH" : "Month",
+  "GRANU_LABEL_WEEK" : "Week",
   
   
   /*Line chart keys on the SERVER*/
