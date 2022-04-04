@@ -15,6 +15,10 @@
   /*vessel_qa table*/
   "VESSEL_QA_TABLE_COLNAME_1": "ACTION",
   "VESSEL_QA_TABLE_COLNAME_2": "COUNT",
+  
+  /*vessel_qa status*/
+  "VESSEL_QA_STATUS_VALID": "Valid",
+  "VESSEL_QA_STATUS_TOCHECK": "To check",
  
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }
