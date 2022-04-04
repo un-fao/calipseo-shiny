@@ -10,6 +10,8 @@ individual_list_server <- function(input, output, session, pool) {
   
   #individual list
   ind <- accessIndividualDetails(pool)
+  ind$Salutation <- as.factor(ind$Salutation)
+  ind$Gender <- as.factor(ind$Gender)
  
   names(ind) <- c(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_1"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_2"),
                  i18n("INDIVIDUAL_LIST_TABLE_COLNAME_3"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_4"),
