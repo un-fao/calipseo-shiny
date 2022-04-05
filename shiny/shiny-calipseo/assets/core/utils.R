@@ -1,7 +1,7 @@
 #General helpers
 logger <- function(type, txt, ...){
   log_txt <- sprintf(txt, ...)
-  cat(sprintf("[shiny-calipseo][%s] %s \n", type, log_txt))
+  cat(sprintf("[shiny-calipseo][%s] %s \n", type, log_txt), file = stderr())
 }
 INFO <- function(txt, ...){logger("INFO", txt, ...)}
 WARN <- function(txt, ...){logger("WARN", txt, ...)}
