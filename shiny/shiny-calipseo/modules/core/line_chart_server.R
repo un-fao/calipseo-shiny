@@ -27,23 +27,26 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
    
     data_formated<-reactiveVal(NULL)
     data_ready<-reactiveVal(FALSE)
-    
-    format_date <- if(input$granu==i18n("YEARLY")){
-      "%Y"
-    }else if(input$granu==i18n("MONTHLY")){
-      "%Y-%m"
-    }else if(input$granu==i18n("WEEKLY")){
-      "%Y-%U"
+
+    getDateFormat <- function(granu){
+      if(granu==i18n("YEARLY")){
+        "%Y"
+      }else if(granu==i18n("MONTHLY")){
+        "%Y-%m"
+      }else if(granu==i18n("WEEKLY")){
+        "%Y-%U"
+      }
     }
     
-    stat_output <- if(input$stat==i18n("TOTAL")){
-      "sum"
-    }else if(input$stat==i18n("AVERAGE")){
-      "mean"
-    }else if(input$stat==i18n("MEDIAN")){
-      "median"
+    getStatOutput <- function(stat){
+      if(stat==i18n("TOTAL")){
+        "sum"
+      }else if(stat==i18n("AVERAGE")){
+        "mean"
+      }else if(stat==i18n("MEDIAN")){
+        "median"
+      }
     }
-    
     
     rank_method_choices <- c(i18n("TOTAL_CATCH_OVER_THE_PERIOD"),i18n("LAST_YEAR_TOTAL_CATCH"),i18n("ANNUAL_CATCH_AVERAGE"))
     witherror_choices <- c(i18n("NONE"),i18n("STANDARD_DEVIATION"),i18n("STANDARD_ERROR"),
@@ -67,6 +70,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     
     observeEvent(input$stat,{
       output$additional<-renderUI({
+        stat_output <- getStatOutput(input$stat)
         if(stat_output=="mean"){
           selectInput(ns("witherror"),paste0(i18n("PROJECTION_VARIATION")," :"),choices= witherror_choices)
           
@@ -145,7 +149,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         }
         
         df<-df%>%
-          mutate(date = as.character(format(as.Date(date),format = format_date)))%>%
+          mutate(date = as.character(format(as.Date(date),format = getDateFormat(input$granu))))%>%
           #mutate(value=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
           summarise(sum_by_trip = sum(value))%>%
@@ -189,8 +193,10 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
             x = ~date
             
           )
+          
+          stat_output <- getStatOutput(input$stat)
                           
-          if(isTRUE(input$withquartile)&stat_output=="median"){
+          if(isTRUE(input$withquartile) & stat_output=="median"){
             p<-p%>%add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
           }else{
             if(plotType=="line"){
@@ -266,7 +272,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
     
     if(isTRUE(data_ready())){
      
-      granu<-switch(format_date,"%Y"=i18n("GRANU_LABEL_YEAR"),
+      granu<-switch(getDateFormat(input$granu),"%Y"=i18n("GRANU_LABEL_YEAR"),
                     "%Y-%m"=i18n("GRANU_LABEL_MONTH"),
                     "%Y-%U"=i18n("GRANU_LABEL_WEEK"))
       
