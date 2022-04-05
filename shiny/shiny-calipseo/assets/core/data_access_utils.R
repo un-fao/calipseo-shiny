@@ -78,6 +78,14 @@ accessVesselQaRegportFromDB <- function(con){
   vessel_qa_regport_sql <- readSQLScript("data/core/sql/vessel_qa_regport.sql")
   vessel_qa_regport <- suppressWarnings(dbGetQuery(con, vessel_qa_regport_sql))
   return(vessel_qa_regport)
+}
+
+
+#accessVesselQaCharacteristicsFromDB
+accessVesselQaCharacteristicsFromDB <- function(con){
+  vessel_qa_characteristics_sql <- readSQLScript("data/core/sql/vessel_qa_characteristics.sql")
+  vessel_qa_characteristics <- suppressWarnings(dbGetQuery(con, vessel_qa_characteristics_sql))
+  return(vessel_qa_characteristics)
 } 
 
 
@@ -456,6 +464,12 @@ accessVesselQaHomeport <- function(con){
 #accessVesselQaRegportFromDB
 accessVesselQaRegport <- function(con){
   accessVesselQaRegportFromDB(con)
+}
+
+
+#accessVesselQaCharacteristicsFromDB
+accessVesselQaCharacteristics <- function(con){
+  accessVesselQaCharacteristicsFromDB(con)
 }
 
 
