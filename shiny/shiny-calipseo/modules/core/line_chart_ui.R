@@ -16,7 +16,7 @@ line_chart_ui <- function(id,sliderWidth = 25) {
   stat_choices <- c(i18n("TOTAL"),i18n("AVERAGE"),i18n("MEDIAN"))
   
   tagList(
-    box(
+    shinydashboardPlus::box(
       title="",
       width = 12,
       sidebar = shinydashboardPlus::boxSidebar(
@@ -26,8 +26,9 @@ line_chart_ui <- function(id,sliderWidth = 25) {
         uiOutput(ns("rank_params")),
         selectInput(ns("granu"),label = paste0(i18n("TEMPORAL_RESOLUTION")," :"), choices = granu_choices),
         selectInput(ns("stat"),label = paste0(i18n("STATISTIC")," :"),choices=stat_choices),
-        uiOutput(ns("additional"))),
-        uiOutput(ns("result"))
+        uiOutput(ns("additional"))
+      ),
+      uiOutput(ns("result"))
     )
     )
   
