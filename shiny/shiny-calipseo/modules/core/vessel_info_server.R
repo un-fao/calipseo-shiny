@@ -273,6 +273,10 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                                         i18n("LICENCES_TABLE_COLNAME_7"))
         vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
         
+        vessellicensepermits$Validity[vessellicensepermits$Validity=='ok'] <- paste(tags$span(title=i18n("LICENSE_STATUS_VALID_TOOLTIP"),style = 'color:green;font-size:18px;',icon("ok",lib = "glyphicon")))
+        
+        vessellicensepermits$Validity[vessellicensepermits$Validity=='remove'] <- paste(tags$span(title=i18n("LICENSE_STATUS_EXPIRED_TOOLTIP"),style = 'color:red;font-size:18px;',icon("remove",lib = "glyphicon")))
+        
         
       }else{
         
@@ -307,7 +311,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                       rownames = FALSE, extensions = c("Select","Buttons"),
                       selection = "none",
                       filter = list(position = 'top', clear = FALSE),
-                      
+                      escape = FALSE,
                       options = list(
                         autoWidth = TRUE,
                         dom = 'Bfrtip',
@@ -324,10 +328,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
                           modifiers = list(page = "all", selected = TRUE)
                         ),
                         
-                        
-                        columnDefs = list(
-                          list(targets = 5, render = JS(js_render_for_license_table)) 
-                        ),
                         language = list(url = i18n("TABLE_LANGUAGE"))
                       ))
         
