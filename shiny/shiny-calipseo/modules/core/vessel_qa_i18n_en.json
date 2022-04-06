@@ -4,9 +4,8 @@
   "VESSEL_QA_SUBTITLE": "Access quaility assessment indicators on the vessel registry",
   
   /*vessel_qa titles*/ 
-"VESSEL_QA_TITLE_NAMES": "Quality assessment on vessel home port",
-"VESSEL_QA_TITLE_HOMEPORT": "Quality assessment on vessel home port",
-"VESSEL_QA_TITLE_REGPORT": "Quality assessment on vessel registration port",
+"VESSEL_QA_TITLE_NAMES": "Quality assessment on vessel names",
+"VESSEL_QA_TITLE_PORTS": "Quality assessment on vessel home port and registration port",
 "VESSEL_QA_TITLE_CHARACTERISTICS": "Quality assessment on vessel characteristics",
   
   /*vessel_qa verticalpanels*/
@@ -17,6 +16,11 @@
   /*vessel_qa table*/
   "VESSEL_QA_TABLE_COLNAME_1": "ACTION",
   "VESSEL_QA_TABLE_COLNAME_2": "COUNT",
+  
+  /*vessel_qa_ports table*/
+  "VESSEL_QA_TABLE_PORT_COLNAME_1": "ACTION",
+  "VESSEL_QA_TABLE_PORT_COLNAME_2": "HOME PORT",
+  "VESSEL_QA_TABLE_PORT_COLNAME_3": "REGISTRATION PORT",
   
   /*vessel_qa_characteristics table*/
   "VESSEL_QA_TABLE_CHAR_COLNAME_1": "ACTION",
