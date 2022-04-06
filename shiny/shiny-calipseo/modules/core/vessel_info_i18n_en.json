@@ -1,28 +1,28 @@
 {
   /*Vessel title*/
-  "VESSEL_INFO_TITLE" : "Vessel information",
+    "VESSEL_INFO_TITLE" : "Vessel information",
   
   /*Link back to vessel list*/
-  "BACK_TO_LIST_OF_VESSELS" : "<< Back to list of vessels",
+    "BACK_TO_LIST_OF_VESSELS" : "<< Back to list of vessels",
   
   /*Vessel Finder*/
-  "VESSEL_FINDER" : "VesselFinder",
+    "VESSEL_FINDER" : "VesselFinder",
   "IMAGE_SOURCE" : "Image source",
   
   /*Information tab*/
-  "TABPANEL_INFO" : "Info",
+    "TABPANEL_INFO" : "Info",
   "VESSEL_NAME" : "Vessel name",
   "VESSEL_TYPE" : "Vessel type",
   "VESSEL_STAT_TYPE" : "Vessel stat type",
   "HOME_PORT" : "Home port: ",
   
   /*Registration tab*/
-  "TABPANEL_REGISTRATION" : "Registration",
+    "TABPANEL_REGISTRATION" : "Registration",
   "REGISTRATION_NUMBER" : "Registration Number",
   "REGISTRATION_PORT" : "Registration Port",
   
   /*Characteristics tab*/
-  "TABPANEL_CHARACTERISTICS" : "Characteristics",
+    "TABPANEL_CHARACTERISTICS" : "Characteristics",
   "CALIPSEO_DATA_COLNAME" : "Calipseo",
   "VESSEL_FINDER_DATA_COLNAME" : "VesselFinder*",
   "LENGTH_OVERALL" : "Length Overall (m)",
@@ -35,7 +35,7 @@
   "POWER" : "Power",
   
   /*Vertical tab history*/
-  "VERTICALTABPANEL_HISTORY" : "History",
+    "VERTICALTABPANEL_HISTORY" : "History",
   "HISTORY_TABLE_COLNAME_1" : "Type",
   "HISTORY_TABLE_COLNAME_2" : "Description",
   "HISTORY_TABLE_COLNAME_3" : "Old Value",
@@ -45,7 +45,7 @@
   "HISTORY_PDF_TITLE" : "Vessel '%s' (%s) Historical Characteristics",
   
   /*Vertical tab ownership*/
-  "VERTICALTABPANEL_OWNERSHIP" : "Ownership",
+    "VERTICALTABPANEL_OWNERSHIP" : "Ownership",
   "OWNERSHIP_TABLE_COLNAME_0" : "Entity type",
   "OWNERSHIP_TABLE_COLNAME_1" : "Full Name",
   "OWNERSHIP_TABLE_COLNAME_2" : "Entity Document Number",
@@ -58,7 +58,7 @@
   "OWNERSHIP_PDF_TITLE" : "Vessel '%s' (%s) ownership",
   
   /*Vertical tab licenses*/
-  "VERTICALTABPANEL_LICENCES" : "Licenses",
+    "VERTICALTABPANEL_LICENCES" : "Licenses",
   "LICENCES_TABLE_COLNAME_1" : "Permit Number",
   "LICENCES_TABLE_COLNAME_2" : "Application Date",
   "LICENCES_TABLE_COLNAME_3" : "Permit Date",
@@ -66,18 +66,19 @@
   "LICENCES_TABLE_COLNAME_5" : "Valid To (Date)",
   "LICENCES_TABLE_COLNAME_6" : "Gears",
   "LICENCES_TABLE_COLNAME_7" : "Validity",
+  "LICENCES_TABLE_COLNAME_8" : "Validity Status",
   "LICENCES_DATA_EXPORT_FILENAME" : "vessel_license_permits_%s",
   "LICENCES_PDF_TITLE" : "Vessel '%s' (%s) License Permits (as of %s)",
   
   
   /*Vertical tab fishing trips*/
-  "VERTICALTABPANEL_FISHING_TRIPS" : "Fishing Trips",
+    "VERTICALTABPANEL_FISHING_TRIPS" : "Fishing Trips",
   
   
   /*Vertical tab catches and its dependent tabpanels*/
-  "VERTICALTABPANEL_CATCHES" : "Catches",
+    "VERTICALTABPANEL_CATCHES" : "Catches",
   /*Summary tabpanel*/
-  "TABPANEL_SUMMARY" : "Summary",
+    "TABPANEL_SUMMARY" : "Summary",
   "SUMMARY_CATCHES_COLNAME_1" : "Year",
   "SUMMARY_CATCHES_COLNAME_2" : "Days At Sea",
   "SUMMARY_CATCHES_COLNAME_3" : "Quantity",
@@ -85,7 +86,7 @@
   "SUMMARY_CATCHES_PDF_TITLE" : "Vessel '%s' (%s) Catch summary (as of %s)",
   
   /*History tabpanel*/
-  "TABPANEL_HISTORY" : "History",
+    "TABPANEL_HISTORY" : "History",
   "HISTORY_CATCHES_COLNAME_1" : "Year",
   "HISTORY_CATCHES_COLNAME_2" : "Departure Datetime",
   "HISTORY_CATCHES_COLNAME_3" : "Return Datetime",
@@ -102,16 +103,16 @@
   "HISTORY_CATCHES_PDF_TITLE" : "Vessel '%s' (%s) Catch history (as of %s)",
   
   /*Breakdown by species tabpanel*/
-  "TABPANEL_BREAKDOWN_BY_SPECIES" : "Breakdown by Species",
+    "TABPANEL_BREAKDOWN_BY_SPECIES" : "Breakdown by Species",
   "TABPANEL_SPECIES" : "Species",
   "TABPANEL_SPECIES_GROUPS" : "Species groups",
   
   /*Catches data sources*/
-  "CATCHES_DATA_SOURCE_ART" : "From sample-based survey",
+    "CATCHES_DATA_SOURCE_ART" : "From sample-based survey",
   "CATCHES_DATA_SOURCE_INDUS" : "From logbooks",
   
   /*Information boxes*/
-  "INFOBOX_VESSEL_OPERATIONAL_STATUS" : "Vessel Operational Status",
+    "INFOBOX_VESSEL_OPERATIONAL_STATUS" : "Vessel Operational Status",
   "INFOBOX_NUMBER_OF_OWNERS" : "Owners",
   "INFOBOX_NUMBER_OF_LICENSES" : "Licenses",
   "INFOBOX_NUMBER_OF_FISHING_GEARS" : "Fishing gears",
@@ -121,17 +122,17 @@
   "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Species caught",
   
   /*License status*/
-  "INFOBOX_LICENSE_STATUS" : "license status",
+    "INFOBOX_LICENSE_STATUS" : "license status",
   "LICENSE_STATUS_VALID" : "valid",
   "LICENSE_STATUS_EXPIRED" : "expired",
   "LICENSE_STATUS_NO_LICENSE" : "no license",
   
   /*License status tooltip*/
-  "LICENSE_STATUS_VALID_TOOLTIP": "The license is valid",
+    "LICENSE_STATUS_VALID_TOOLTIP": "The license is valid",
   "LICENSE_STATUS_EXPIRED_TOOLTIP": "The license is expired",
   
   /*Warning message*/
-  "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
+    "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
   
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }
