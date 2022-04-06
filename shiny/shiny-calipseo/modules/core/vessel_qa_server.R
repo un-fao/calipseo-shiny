@@ -11,34 +11,47 @@ vessel_qa_server <- function(input, output, session, pool) {
   
   #vessel_qa_data
   vessel_qa_names_df <- accessVesselQaNames(pool)
-  vessel_qa_homeport_df <- accessVesselQaHomeport(pool)
-  vessel_qa_regport_df <- accessVesselQaRegport(pool)
+  vessel_qa_ports_df <- accessVesselQaPorts(pool)
   vessel_qa_characteristics_df <- accessVesselQaCharacteristics(pool)
   
-  vessel_qa_characteristics_df <- reshape(vessel_qa_characteristics_df, direction = 'wide', timevar = 'CHARA',idvar = 'ACTION')
   
-  names(vessel_qa_characteristics_df) <- gsub("COUNT.", "", names(vessel_qa_characteristics_df), fixed = TRUE)
-  
-  
-  vessel_qa <- function(data){
-    
-    if(ncol(data)>2){
-      
-      data$ACTION[data$ACTION=='ok'] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),i18n("VESSEL_QA_STATUS_CHAR_VALID"))
-      
-      data$ACTION[data$ACTION=='to_check'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')),i18n("VESSEL_QA_STATUS_CHAR_TOCHECK"))
-      
-      
-      names(data) <- c(i18n("VESSEL_QA_TABLE_CHAR_COLNAME_1"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_2"),
-                       i18n("VESSEL_QA_TABLE_CHAR_COLNAME_3"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_4"),
-                       i18n("VESSEL_QA_TABLE_CHAR_COLNAME_5"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_6"))
-    }else{
+  vessel_qa <- function(data){ 
+    if(ncol(data)==2){
       
       data$ACTION[data$ACTION=='ok'] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),i18n("VESSEL_QA_STATUS_VALID"))
       
       data$ACTION[data$ACTION=='to_check'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')),i18n("VESSEL_QA_STATUS_TOCHECK"))
       
       names(data) <- c(i18n("VESSEL_QA_TABLE_COLNAME_1"),i18n("VESSEL_QA_TABLE_COLNAME_2")) 
+      
+    }else{
+      
+      data <- reshape(data, direction = 'wide', timevar = 'CHARA',idvar = 'ACTION')
+      
+      names(data) <- gsub("COUNT.", "", names(data), fixed = TRUE)
+      
+      if(ncol(data)==3){
+        
+        data$ACTION[data$ACTION=='ok'] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),i18n("VESSEL_QA_STATUS_VALID"))
+        
+        data$ACTION[data$ACTION=='to_check'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')),i18n("VESSEL_QA_STATUS_TOCHECK"))
+        
+        names(data) <- c(i18n("VESSEL_QA_TABLE_PORT_COLNAME_1"),i18n("VESSEL_QA_TABLE_PORT_COLNAME_2"),i18n("VESSEL_QA_TABLE_PORT_COLNAME_3")) 
+        
+      }else if(ncol(data)>4){
+        
+        data$ACTION[data$ACTION=='ok'] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),i18n("VESSEL_QA_STATUS_CHAR_VALID"))
+        
+        data$ACTION[data$ACTION=='to_check'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')),i18n("VESSEL_QA_STATUS_CHAR_TOCHECK"))
+        
+        
+        names(data) <- c(i18n("VESSEL_QA_TABLE_CHAR_COLNAME_1"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_2"),
+                         i18n("VESSEL_QA_TABLE_CHAR_COLNAME_3"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_4"),
+                         i18n("VESSEL_QA_TABLE_CHAR_COLNAME_5"),i18n("VESSEL_QA_TABLE_CHAR_COLNAME_6"))
+        
+        
+      }
+      
     }
     
     
@@ -53,6 +66,7 @@ vessel_qa_server <- function(input, output, session, pool) {
                          ))
     
     return(out)
+    
   }
   
   
@@ -63,19 +77,13 @@ vessel_qa_server <- function(input, output, session, pool) {
   }) 
   
   
-  #vessel_qa_homeport
-  output$vessel_homeport <- renderDataTable({
+  #vessel_qa_ports
+  output$vessel_ports <- renderDataTable({
     
-    vessel_qa(vessel_qa_homeport_df)
+    vessel_qa(vessel_qa_ports_df)
     
   }) 
   
-  #vessel_qa_regport
-  output$vessel_regport <- renderDataTable({
-    
-    vessel_qa(vessel_qa_regport_df)
-    
-  })
   
   #vessel_qa_characteristics
   output$vessel_characteristics <- renderDataTable({

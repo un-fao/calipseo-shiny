@@ -65,20 +65,12 @@ accessVesselQaNamesFromDB <- function(con){
 
 
 
-#accessVesselQaHomeportFromDB
-accessVesselQaHomeportFromDB <- function(con){
-  vessel_qa_homeport_sql <- readSQLScript("data/core/sql/vessel_qa_homeport.sql")
-  vessel_qa_homeport <- suppressWarnings(dbGetQuery(con, vessel_qa_homeport_sql))
-  return(vessel_qa_homeport)
+#accessVesselQPortsFromDB
+accessVesselQaPortsFromDB <- function(con){
+  vessel_qa_ports_sql <- readSQLScript("data/core/sql/vessel_qa_ports.sql")
+  vessel_qa_ports <- suppressWarnings(dbGetQuery(con, vessel_qa_ports_sql))
+  return(vessel_qa_ports)
 } 
-
-
-#accessVesselQaRegportFromDB
-accessVesselQaRegportFromDB <- function(con){
-  vessel_qa_regport_sql <- readSQLScript("data/core/sql/vessel_qa_regport.sql")
-  vessel_qa_regport <- suppressWarnings(dbGetQuery(con, vessel_qa_regport_sql))
-  return(vessel_qa_regport)
-}
 
 
 #accessVesselQaCharacteristicsFromDB
@@ -109,7 +101,7 @@ accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
   species_catches_year_sql <- readSQLScript("data/core/sql/fish_species_catches_totalbyyear.sql",
                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
                                             language = appConfig$language)
-
+  
   species_catches_year <- suppressWarnings(dbGetQuery(con,species_catches_year_sql))
   return(species_catches_year)
 }
@@ -157,8 +149,8 @@ accessVesselFromDB <- function(con, registrationNumber){
 #accessVesselHistoricalCharacteristicsFromDB
 accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber){
   vessel_historical_char_sql <- readSQLScript("data/core/sql/vessel_historical_characteristics.sql", 
-                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
-                                     language = appConfig$language)
+                                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                              language = appConfig$language)
   vessel_historical_char <- suppressWarnings(dbGetQuery(con, vessel_historical_char_sql))
   return(vessel_historical_char)
 }
@@ -429,7 +421,7 @@ accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NU
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
 }
-  
+
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 #GENERIC DATA ACCESSORS (considering this needs to be replaced later by API calls)
@@ -455,15 +447,9 @@ accessVesselQaNames <- function(con){
 }
 
 
-#accessVesselQaHomeportFromDB
-accessVesselQaHomeport <- function(con){
-  accessVesselQaHomeportFromDB(con)
-}
-
-
-#accessVesselQaRegportFromDB
-accessVesselQaRegport <- function(con){
-  accessVesselQaRegportFromDB(con)
+#accessVesselQaPortsFromDB
+accessVesselQaPorts <- function(con){
+  accessVesselQaPortsFromDB(con)
 }
 
 
@@ -638,7 +624,7 @@ accessLogBooksTrips <- function(con){
 
 #accessFishingTrips
 accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL)
-accessFishingTripsFromDB(con,vessel_stat_type,vesselId)
+  accessFishingTripsFromDB(con,vessel_stat_type,vesselId)
 
 #accessFishingTripDetails
 accessFishingTripDetails <- function(con,trip_id){
@@ -685,8 +671,8 @@ loadLocalDataset <- function(filename){
   filesplits <- unlist(strsplit(filename, "/"))
   objectname <- unlist(strsplit(filesplits[length(filesplits)], "\\."))[1]
   data <- switch(mime::guess_type(filename),
-    "application/json" = jsonlite::read_json(filename),
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
+                 "application/json" = jsonlite::read_json(filename),
+                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
   )
   assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
 }
