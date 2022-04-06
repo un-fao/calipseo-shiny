@@ -1,6 +1,13 @@
 
 #UI helpers
 
+#footer
+footer <- function(id, version, date){
+  tags$div(
+    tags$p(sprintf("%s - v%s (%s)", id, version, date), style = "float:left;color:white;")
+  )
+}
+
 #shinyInput
 shinyInput <- function(FUN, len, indexes = NULL, id, ns, ...) {
   inputs <- character(len)

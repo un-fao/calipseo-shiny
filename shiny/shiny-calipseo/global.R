@@ -6,6 +6,12 @@ options(
   dplyr.summarise.inform = FALSE
 )
 
+
+#packages
+#---------------------------------------------------------------------------------------
+source("assets/core/package_utils.R")
+loadAppPackages()
+
 #config
 #---------------------------------------------------------------------------------------
 #default config_file path for DEPLOYMENT
@@ -22,17 +28,6 @@ appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
 
-#packages
-#---------------------------------------------------------------------------------------
-#To be installed on server before (not at shiny runtime)
-#CRAN packages
-list_of_packages <- appConfig$r_packages
-invisible(lapply(list_of_packages, function(x) {
-  if(!require(x,character.only = TRUE, quietly = TRUE)){
-    install.packages(x,repos = "https://cran.rstudio.com/")
-    require(x,character.only = TRUE, quietly = TRUE)
-  }
-}))
 
 #DB connections
 #---------------------------------------------------------------------------------------

@@ -20,59 +20,9 @@ RUN apt-get update && apt-get install -y \
 #RUN ./srv/shiny-server/install_geospatial.sh
 RUN /rocker_scripts/install_geospatial.sh
 
-# install dependencies of the app
-#R CRAN packages
-#---------------------------------------------------------------------------------------
-#dev
-RUN R -e "install.packages(c('remotes'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('testthat'), repos='https://cran.r-project.org/')"
-#shiny
-RUN R -e "install.packages(c('shiny'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinydashboard'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinydashboardPlus'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinyWidgets'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinycssloaders'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinyjs'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('shinyFiles'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('htmltools'), repos='https://cran.r-project.org/')"
-#sys
-RUN R -e "install.packages(c('openssl'), repos='https://cran.r-project.org/')"
-#dbms
-RUN R -e "install.packages(c('DBI'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('RMySQL'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('RMariaDB'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('pool'), repos='https://cran.r-project.org/')"
-#format bindings
-RUN R -e "install.packages(c('yaml'), repos='https://cran.r-project.org/')"  
-RUN R -e "install.packages(c('mime'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('jsonlite'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('readr'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('readxl'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('writexl'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('openxlsx'), repos='https://cran.r-project.org/')"
-#RUN R -e "install.packages(c('sf'), repos='https://cran.r-project.org/')"
-#RUN R -e "install.packages(c('sp'), repos='https://cran.r-project.org/')" 
-#processing
-RUN R -e "install.packages(c('dplyr'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('tidyr'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('reshape2'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('uuid'), repos='https://cran.r-project.org/')" 
-#ui
-RUN R -e "install.packages(c('RColorBrewer'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('data.table'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('DT'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('plotly'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('leaflet'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('leaflet.minicharts'), repos='https://cran.r-project.org/')" 
 
-#R GitHub packages (with release in CRAN, but not re-published yet)
+#R shiny server
 #---------------------------------------------------------------------------------------
-#None
-
-#R GitHub packages (not yet released in CRAN)
-#---------------------------------------------------------------------------------------
-#None
-
 # RUN chown shiny:shiny /var/lib/shiny-server
 RUN chown shiny:shiny /srv/shiny-server
 
@@ -88,6 +38,14 @@ RUN ls -ls /etc/shiny-server
 RUN chmod -R a+w /srv/shiny-server
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 RUN ls -ls /srv/shiny-server
+
+#R packages
+#---------------------------------------------------------------------------------------
+# install R core package dependencies
+RUN install2.r --error --skipinstalled --ncpus -1 httpuv
+RUN R -e "install.packages(c('remotes','testthat','jsonlite','yaml'), repos='https://cran.r-project.org/')"
+# install dependencies of the app
+RUN R -e "source('./srv/shiny-server/install.R')"
  
 # EXPOSE 3838
 EXPOSE 8080
