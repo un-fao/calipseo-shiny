@@ -7,11 +7,13 @@
 "VESSEL_QA_TITLE_NAMES": "Quality assessment on vessel names",
 "VESSEL_QA_TITLE_PORTS": "Quality assessment on vessel home port and registration port",
 "VESSEL_QA_TITLE_CHARACTERISTICS": "Quality assessment on vessel characteristics",
+"VESSEL_QA_TITLE_LICENSE": "Quality assessment on vessel with no or expired license current year",
   
   /*vessel_qa verticalpanels*/
   "VERTICALTABPANEL_VESSEL_QA_NAMES": "Vessel Names",
   "VERTICALTABPANEL_VESSEL_QA_PORTS": "Vessel Ports",
   "VERTICALTABPANEL_VESSEL_QA_CHARACTERISTICS": "Vessel Characteristics",
+  "VERTICALTABPANEL_VESSEL_QA_LICENSE": "Vessel License",
   
   /*vessel_qa table*/
   "VESSEL_QA_TABLE_COLNAME_1": "ACTION",
@@ -33,6 +35,15 @@
   /*vessel_qa status*/
   "VESSEL_QA_STATUS_VALID": "Valid",
   "VESSEL_QA_STATUS_TOCHECK": "To check",
+  
+  /*vessel_qa_license status*/
+  "VESSEL_QA_LICENSE_STATUS_VALID": "Valid",
+  "VESSEL_QA_LICENSE_STATUS_NOTCOMPLETED": "Not completed",
+  "VESSEL_QA_LICENSE_STATUS_EXPIRED": "Expired",
+  
+  /*vessel_qa_license table*/
+  "VESSEL_QA_TABLE_LICENSE_COLNAME_1": "LICENSE STATUS",
+  "VESSEL_QA_TABLE_LICENSE_COLNAME_2": "COUNT",
   
   /*vessel_qa_characteristics status*/
   "VESSEL_QA_STATUS_CHAR_VALID": "Completed",
