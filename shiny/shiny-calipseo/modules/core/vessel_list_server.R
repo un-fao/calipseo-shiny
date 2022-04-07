@@ -27,10 +27,20 @@ vessel_list_server <- function(input, output, session, pool) {
 
   df <- df$data[,-which(endsWith(colnames(df$data), "_CODE"))]
   names(df) <- gsub("_", " ", names(df))
-  names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME PORT/LANDING SITE"
-  names(df)[names(df)=="REG PORT LANDING SITE"] <- "REGISTRATION PORT/LANDING SITE"
+  names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME_PORT"
+  names(df)[names(df)=="REG PORT LANDING SITE"] <- "REG_PORT"
+  names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
   names(df)[names(df)=="Details"] <- "" 
   df <- df[,c(1,2,3,4,5,6,7,16)]
+  
+  
+  df$HOME_PORT <- as.character(df$HOME_PORT)
+  df$REG_PORT <- as.character(df$REG_PORT)
+  df$OP_STATUS <- as.character(df$OP_STATUS)
+  df$NAME[tolower(df$NAME)=="name to be completed"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:darkorange;')),span("NAME TO BE COMPLETED",style='color:darkorange;'))
+  df$HOME_PORT[tolower(df$HOME_PORT)=="unknown"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:darkorange;')),span("Unknown",style='color:darkorange;'))
+  df$REG_PORT[tolower(df$REG_PORT)=="unknown"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:darkorange;')),span("Unknown",style='color:darkorange;'))
+  df$OP_STATUS[tolower(df$OP_STATUS)=="unknown"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:darkorange;')),span("Unknown",style='color:darkorange;'))
   names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_1"),i18n("VESSEL_LIST_TABLE_COLNAME_2"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_3"),i18n("VESSEL_LIST_TABLE_COLNAME_4"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_5"),i18n("VESSEL_LIST_TABLE_COLNAME_6"),
