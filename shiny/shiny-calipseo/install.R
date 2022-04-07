@@ -1,3 +1,5 @@
+#!/usr/bin/env r
+
 package <- jsonlite::read_json('./srv/shiny-server/package.json')
 invisible(lapply(package$dependencies, function(pkg){
   from <- 'cran'

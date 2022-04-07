@@ -40,7 +40,7 @@ RUN ls -ls /srv/shiny-server
 RUN install2.r --error --skipinstalled --ncpus -1 httpuv
 RUN R -e "install.packages(c('remotes','testthat','jsonlite','yaml'), repos='https://cran.r-project.org/')"
 # install dependencies of the app
-RUN R -e "source('./srv/shiny-server/install.R')"
+RUN ./srv/shiny-server/install.R
  
 # EXPOSE 3838
 EXPOSE 8080
