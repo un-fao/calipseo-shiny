@@ -13,11 +13,6 @@ RUN apt-get update && apt-get install -y \
 
 #Install geospatial deps over shiny server
 #---------------------------------------------------------------------------------------
-# RUN chown shiny:shiny /var/lib/shiny-server
-#COPY install_geospatial.sh /srv/shiny-server/install_geospatial.sh
-#RUN ls -ls /srv/shiny-server/
-#RUN chmod +x /srv/shiny-server/install_geospatial.sh
-#RUN ./srv/shiny-server/install_geospatial.sh
 RUN /rocker_scripts/install_geospatial.sh
 
 
@@ -45,7 +40,7 @@ RUN ls -ls /srv/shiny-server
 RUN install2.r --error --skipinstalled --ncpus -1 httpuv
 RUN R -e "install.packages(c('remotes','testthat','jsonlite','yaml'), repos='https://cran.r-project.org/')"
 # install dependencies of the app
-RUN R -e "source('./srv/shiny-server/install.R')"
+RUN ./srv/shiny-server/install.R
  
 # EXPOSE 3838
 EXPOSE 8080
