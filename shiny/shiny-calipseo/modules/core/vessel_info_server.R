@@ -266,7 +266,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           }
           
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
-          
+          vessellicensepermits <- vessellicensepermits[,-7]
           names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
                                           i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
                                           i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
