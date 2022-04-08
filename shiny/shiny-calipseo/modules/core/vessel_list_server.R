@@ -66,7 +66,7 @@ vessel_list_server <- function(input, output, session, pool) {
   df <- df[,c(1,2,3,4,5,6,7,16)]
   df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
   df <- dplyr::distinct(df,REGISTRATION_NUMBER,.keep_all = TRUE)
-  names(df)[names(df)=="Details"] <- "" 
+  df$Validity[is.na(df$Validity)] <- 'missing license'
   
   df <- df[,c(1,2,3,4,5,6,7,15,8)]
   
