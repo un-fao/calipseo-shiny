@@ -8,12 +8,14 @@
 "VESSEL_QA_TITLE_PORTS": "Quality assessment on vessel home port and registration port",
 "VESSEL_QA_TITLE_CHARACTERISTICS": "Quality assessment on vessel characteristics",
 "VESSEL_QA_TITLE_LICENSE": "Quality assessment on vessel with no or expired license current year",
+"VESSEL_QA_TITLE_VOP_STATUS": "Quality assessment on vessel operational status",
   
   /*vessel_qa verticalpanels*/
   "VERTICALTABPANEL_VESSEL_QA_NAMES": "Vessel Names",
   "VERTICALTABPANEL_VESSEL_QA_PORTS": "Vessel Ports",
   "VERTICALTABPANEL_VESSEL_QA_CHARACTERISTICS": "Vessel Characteristics",
   "VERTICALTABPANEL_VESSEL_QA_LICENSE": "Vessel License",
+  "VERTICALTABPANEL_VESSEL_QA_VOP_STATUS": "Vessel Operational Status",
   
   /*vessel_qa table*/
   "VESSEL_QA_TABLE_COLNAME_1": "ACTION",
@@ -31,6 +33,10 @@
   "VESSEL_QA_TABLE_CHAR_COLNAME_4": "GT",
   "VESSEL_QA_TABLE_CHAR_COLNAME_5": "SPEED",
   "VESSEL_QA_TABLE_CHAR_COLNAME_6": "POWER",
+  
+  /*vessel_qa_operational_status table*/
+  "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_1": "OPERATIONAL STATUS",
+  "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_2": "COUNT",
   
   /*vessel_qa status*/
   "VESSEL_QA_STATUS_VALID": "Valid",
