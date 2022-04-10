@@ -67,6 +67,8 @@ vessel_list_server <- function(input, output, session, pool) {
   df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
   df <- dplyr::distinct(df,REGISTRATION_NUMBER,.keep_all = TRUE)
   df$Validity[is.na(df$Validity)] <- 'missing license'
+  df$HOME_PORT[is.na(df$HOME_PORT)] <- 'unknown'
+  df$REG_PORT[is.na(df$REG_PORT)] <- 'unknown'
   
   df <- df[,c(1,2,3,4,5,6,7,15,8)]
   
@@ -81,6 +83,8 @@ vessel_list_server <- function(input, output, session, pool) {
   df$Validity[tolower(df$Validity)=="valid"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),span("Valid",style='color:green;'))
   df$Validity[tolower(df$Validity)=="expired"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')),span("Expired",style='color:red;'))
   df$Validity[tolower(df$Validity)=="missing license"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')),span("Missing license",style='color:red;'))
+  
+  df[,1:8] <- lapply(df[,1:8],as.factor)
   
   
   names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_1"),i18n("VESSEL_LIST_TABLE_COLNAME_2"),
