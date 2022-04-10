@@ -11,12 +11,6 @@ vessel_list_server <- function(input, output, session, pool) {
   outp <- accessVessels(pool)
   ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
   
-  #factorize types for access to codelists
-  outp$VESSEL_TYPE <- as.factor(outp$VESSEL_TYPE)
-  outp$VESSEL_OPERATIONAL_STATUS <- as.factor(outp$VESSEL_OPERATIONAL_STATUS)
-  outp$VESSEL_STAT_TYPE <- as.factor(outp$VESSEL_STAT_TYPE)
-  outp$HOME_PORT_LANDING_SITE <- as.factor(outp$HOME_PORT_LANDING_SITE)
-  outp$REG_PORT_LANDING_SITE <- as.factor(outp$REG_PORT_LANDING_SITE)
   
   #TODO add buttons
   outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
@@ -84,6 +78,7 @@ vessel_list_server <- function(input, output, session, pool) {
   df$Validity[tolower(df$Validity)=="expired"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')),span("Expired",style='color:red;'))
   df$Validity[tolower(df$Validity)=="missing license"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')),span("Missing license",style='color:red;'))
   
+  #factorize types for access to codelists
   df[,1:8] <- lapply(df[,1:8],as.factor)
   
   
