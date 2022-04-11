@@ -14,6 +14,15 @@ vessel_qa_server <- function(input, output, session, pool) {
   vessel_qa_ports_df <- accessVesselQaPorts(pool)
   vessel_qa_characteristics_df <- accessVesselQaCharacteristics(pool)
   vessel_qa_license_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
+  vessel_qa_vop_status <- data.frame(VOP_STATUS = accessVessels(pool)$VESSEL_OPERATIONAL_STATUS)
+  
+  
+  vessel_qa_vop_status$VOP_STATUS <- as.factor(vessel_qa_vop_status$VOP_STATUS)
+  
+  vessel_qa_vop_status <- count(vessel_qa_vop_status,VOP_STATUS,name = 'Count')
+  vessel_qa_vop_status$VOP_STATUS <- as.character( vessel_qa_vop_status$VOP_STATUS)
+  vessel_qa_vop_status$VOP_STATUS[tolower(vessel_qa_vop_status$VOP_STATUS)=="unknown"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:darkorange;')),span("UNKNOWN",style='color:darkorange;'))
+  names(vessel_qa_vop_status) <- c(i18n("VESSEL_QA_TABLE_VOP_STATUS_COLNAME_1"),i18n("VESSEL_QA_TABLE_VOP_STATUS_COLNAME_2"))
   
   
   vessel_qa <- function(data){ 
@@ -139,6 +148,21 @@ vessel_qa_server <- function(input, output, session, pool) {
   output$vessel_license <- renderDataTable({
     
     DT::datatable(license_df,
+                  escape = FALSE,
+                  rownames = FALSE,
+                  
+                  options = list(
+                    searching = FALSE,
+                    dom = 't',
+                    language = list(url = i18n("TABLE_LANGUAGE"))
+                  ))
+    
+  })
+  
+  #vessel_qa_operational_status
+  output$vessel_operational_status <- renderDataTable({
+    
+    DT::datatable(vessel_qa_vop_status,
                   escape = FALSE,
                   rownames = FALSE,
                   
