@@ -8,7 +8,10 @@ vessel_list_server <- function(input, output, session, pool) {
     text
   })
   
+  INFO("vessel-list server: Fetching vessel list data")
   outp <- accessVessels(pool)
+  
+  INFO("vessel-list server: Fetching license permits data on vessels")
   ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
   
   
@@ -34,6 +37,8 @@ vessel_list_server <- function(input, output, session, pool) {
   
   ls_permits$Validity <- NA
   
+  INFO("vessel-list server: Computing valid and expired license permits")
+  
   for (i in 1:length(valid_to_date)) {
     validity_status <- Sys.Date()-valid_to_date[i]
     
@@ -56,6 +61,8 @@ vessel_list_server <- function(input, output, session, pool) {
   names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME_PORT"
   names(df)[names(df)=="REG PORT LANDING SITE"] <- "REG_PORT"
   names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
+  
+  INFO("vessel-list server: Joining vessle list data and license permits data")
   
   df <- df[,c(1,2,3,4,5,6,7,16)]
   df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
