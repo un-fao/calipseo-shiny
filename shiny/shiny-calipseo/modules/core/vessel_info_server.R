@@ -49,7 +49,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       vesselCatches <- accessVesselCatches(pool, vesselId)
       INFO("vessel-info server: Fetching vessel catches data with rows '%s'", nrow(vesselCatches))
       if(nrow(vesselCatches)>0){
-      INFO("vessel-info server: Converting timedate to country's timezone and calculating days at sea")
+        INFO("vessel-info server: Converting timedate to country's timezone and calculating days at sea")
         vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime)) 
         attr(vesselCatches$dep_datetime, "tzone") <- appConfig$country_profile$timezone
         vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime))
@@ -119,13 +119,13 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       historical_df <- reactive({
         historical_data <- accessVesselHistoricalCharacteristics(pool,vesselId)
-      INFO("vessel-info server: Fetching vessel historical data with rows '%s'", nrow(historical_data))
+        INFO("vessel-info server: Fetching vessel historical data with rows '%s'", nrow(historical_data))
         if(nrow(historical_data)>0){
           
           const_data <- historical_data[,c(1,10,11)]
           
           var_data <-  historical_data[,c(2:9)]
-        INFO("vessel-info server: Tracking change in the old and new vessel data") 
+          INFO("vessel-info server: Tracking change in the old and new vessel data") 
           old_data <- var_data[,c(1,3,5,7)]
           new_data <- var_data[,-c(1,3,5,7)]
           
@@ -143,7 +143,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
             return(data)
           }
           
-        INFO("vessel-info server: Creating a dataframe with old and new vessel data and the changes") 
+          INFO("vessel-info server: Creating a dataframe with old and new vessel data and the changes") 
           cl_df <- data.frame(
             old=cl_data(old_data),
             new=cl_data(new_data)
