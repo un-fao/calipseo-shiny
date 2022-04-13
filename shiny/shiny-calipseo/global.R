@@ -52,6 +52,7 @@ source("assets/core/utils.R")
 source("assets/core/module_utils.R")
 source("assets/core/data_access_utils.R")
 source("assets/core/ui_utils.R")
+source("assets/core/js_utils.R")
 source("assets/core/vessel_utils.R")
 
 #country R script utils

@@ -114,8 +114,9 @@ vessel_list_server <- function(input, output, session, pool) {
         modifiers = list(page = "all", selected = TRUE)
       ),
       language = list(url = i18n("TABLE_LANGUAGE")),
-      
-      pageLength = 10
+      pageLength = 10,
+      orderCellsTop = TRUE,
+      initComplete = JS(js_select2_filter_provider)
     )
     
   )
