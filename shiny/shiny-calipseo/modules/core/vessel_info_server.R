@@ -16,6 +16,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       if(!is.null(query[["registrationNumber"]])) {
         cat(sprintf("Selecting vessel '%s'\n", query[["registrationNumber"]]))
         vesselId <- query[["registrationNumber"]]
+        INFO("Displaying info on vessel registration number '%s'", vesselId)
       }
     }
     
@@ -37,6 +38,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         
         vesselOwners <- vesselOwners[,vesselOwnerColumnNames]
       }else{
+        
+        INFO("Returning NULL dataframe for vesselOwners")
+        
         vesselOwners <- data.frame(matrix(ncol = length(vesselOwnerColumnNames), nrow = 0))
         colnames(vesselOwners) <- vesselOwnerColumnNames
       }
@@ -66,6 +70,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         vesselCatches <- vesselCatches[order(vesselCatches$ret_datetime, decreasing = TRUE),]
         
       }else{
+        
+        INFO("Returning NULL dataframe for vesselcatches")
+        
         vesselCatches <- data.frame(
           year = character(0),
           dep_datetime = character(0),
@@ -158,6 +165,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           df$UPDATED_AT <- as.character.Date(df$UPDATED_AT)
           
         }else{
+          
+          INFO("Returning NULL dataframe for historical data")
           
           df <- data.frame(
             Type = character(0),
@@ -281,6 +290,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           
         }else{
+          INFO("Returning NULL dataframe for vessel license permits")
           
           vessellicensepermits <- data.frame(
             `Permit Number` = character(0),
@@ -475,6 +485,9 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
         vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">",paste0(i18n("IMAGE_SOURCE"),":"),"<a href=",vessel_found$Value[1], " target=\"_blank\" a>",i18n("VESSEL_FINDER"),"</a></div>"))
       }else{
+        
+        INFO("Returning Placeholder image for vessel")
+        
         vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
       }
       
@@ -541,6 +554,8 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         df_vesselfinder_char <- vessel_found[c(3:10),2]
         
         if(!is.null(df_vesselfinder_char)){
+          
+          INFO("Returning Calipseo and VesselFinder data on vessel characteristics")
           df <- cbind(df_calipseo_char,df_vesselfinder_char)
           names(df) <- c('Description','Calipseo','VesselFinder')
           
@@ -659,6 +674,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           
         }else{
+          INFO("Returning Calipseo data on vessel characteristics")
           
           tags$table(class="table table-striped", style="font-size:80% !important;",
                      tags$thead(
