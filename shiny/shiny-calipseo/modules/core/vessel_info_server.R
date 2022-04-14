@@ -16,7 +16,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       if(!is.null(query[["registrationNumber"]])) {
         cat(sprintf("Selecting vessel '%s'\n", query[["registrationNumber"]]))
         vesselId <- query[["registrationNumber"]]
-        INFO("Displaying info on vessel registration number '%s'", vesselId)
+        INFO("vessel-info server: Displaying info on vessel registration number '%s'", vesselId)
       }
     }
     
@@ -24,10 +24,13 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       #vessel owners information
       vessel <- accessVessel(pool, vesselId)
+      INFO("vessel-info server: Fetching vessel info data with rows '%s'", nrow(vessel))
       vesselOwners <- accessVesselOwners(pool, vesselId)
+      INFO("vessel-info server: Fetching vessel owners data with rows '%s'", nrow(vesselOwners))
       vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
       vesselOwners[is.na(vesselOwners)] = '-'
       if(nrow(vesselOwners)>0){
+        INFO("vessel-info server: Getting the full vessel owner names")
         vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
           owner <- vesselOwners[i,]
           fullname <- owner$FIRSTNAME
@@ -39,15 +42,14 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         vesselOwners <- vesselOwners[,vesselOwnerColumnNames]
       }else{
         
-        INFO("Returning NULL dataframe for vesselOwners")
-        
         vesselOwners <- data.frame(matrix(ncol = length(vesselOwnerColumnNames), nrow = 0))
         colnames(vesselOwners) <- vesselOwnerColumnNames
       }
       
       vesselCatches <- accessVesselCatches(pool, vesselId)
-      
+      INFO("vessel-info server: Fetching vessel catches data with rows '%s'", nrow(vesselCatches))
       if(nrow(vesselCatches)>0){
+        INFO("vessel-info server: Converting timedate to country's timezone and calculating days at sea")
         vesselCatches$dep_datetime <- as.POSIXct(as.character(vesselCatches$dep_datetime)) 
         attr(vesselCatches$dep_datetime, "tzone") <- appConfig$country_profile$timezone
         vesselCatches$ret_datetime <- as.POSIXct(as.character(vesselCatches$ret_datetime))
@@ -70,8 +72,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         vesselCatches <- vesselCatches[order(vesselCatches$ret_datetime, decreasing = TRUE),]
         
       }else{
-        
-        INFO("Returning NULL dataframe for vesselcatches")
         
         vesselCatches <- data.frame(
           year = character(0),
@@ -119,13 +119,13 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       historical_df <- reactive({
         historical_data <- accessVesselHistoricalCharacteristics(pool,vesselId)
-        
+        INFO("vessel-info server: Fetching vessel historical data with rows '%s'", nrow(historical_data))
         if(nrow(historical_data)>0){
           
           const_data <- historical_data[,c(1,10,11)]
           
           var_data <-  historical_data[,c(2:9)]
-          
+          INFO("vessel-info server: Tracking change in the old and new vessel data") 
           old_data <- var_data[,c(1,3,5,7)]
           new_data <- var_data[,-c(1,3,5,7)]
           
@@ -143,7 +143,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
             return(data)
           }
           
-          
+          INFO("vessel-info server: Creating a dataframe with old and new vessel data and the changes") 
           cl_df <- data.frame(
             old=cl_data(old_data),
             new=cl_data(new_data)
@@ -166,8 +166,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
         }else{
           
-          INFO("Returning NULL dataframe for historical data")
-          
           df <- data.frame(
             Type = character(0),
             Description = character(0),
@@ -179,7 +177,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         return(df)
       })
       
-      
+      INFO("vessel-info server: Rendering the vessel history data to the table")
       output$vessel_history <- renderDataTable(server = FALSE,{
         datatable(
           historical_df(),
@@ -212,6 +210,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       })
       
       #ownership
+      INFO("vessel-info server: Rendering the vessel owners data to the table")
       output$vessel_owners <- renderDataTable(server = FALSE,{
         names(vesselOwners) <- c(i18n("OWNERSHIP_TABLE_COLNAME_0"),
                                  i18n("OWNERSHIP_TABLE_COLNAME_1"),i18n("OWNERSHIP_TABLE_COLNAME_2"),
@@ -248,11 +247,11 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       license_df <- reactive({
         
         vessellicensepermits <- accessVesselLicensePermit(pool,vesselId)
-        
+        INFO("vessel-info server: Fetching license permits data with rows '%s'", nrow(vessellicensepermits))
         if(nrow(vessellicensepermits>0)){
           
           unique_permits <- dplyr::distinct(vessellicensepermits, PERMIT_NUMBER,.keep_all = TRUE)
-          
+          INFO("vessel-info server: Vessel has number of permit(s) '%s'", nrow(unique_permits))
           unique_gears <- unique(vessellicensepermits$Gears)
           
           vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
@@ -262,7 +261,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           valid_to_date <- vessellicensepermits$Valid_to_date
           
           vessellicensepermits$Validity <- NA
-          
+          INFO("vessel-info server: Computing valid and expired license permits")
           for (i in 1:length(valid_to_date)) {
             validity_status <- Sys.Date()-valid_to_date[i]
             
@@ -273,7 +272,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
               vessellicensepermits$Validity[i] <- 'remove'
             }
           }
-          
+          INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
           vessellicensepermits <- vessellicensepermits[,-7]
           names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
@@ -290,7 +289,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           
         }else{
-          INFO("Returning NULL dataframe for vessel license permits")
           
           vessellicensepermits <- data.frame(
             `Permit Number` = character(0),
@@ -314,7 +312,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         return(unique(vessellicensepermits))
       })
       
-      
+      INFO("vessel-info server: Rendering the vessel license permits data to the table")
       output$license_table <- renderDT(server = FALSE,{
         
         if(nrow(license_df()>0)){
@@ -355,6 +353,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       warning_msg <- reactive({
         if(nrow(vesselCatches)>0){
           if(accessVesselCatches(pool, vesselId)$stat_type_id=='1'){
+            INFO("vessel-info server: Displaying warning message when stat_type_id is 1")
             div(class="alert alert-warning", role="alert",style='font-size:90%;',
                 icon("warning", "fa-2x"), tags$em(i18n("WARNING_MESSAGE"))  
             )
@@ -381,7 +380,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       #catch summary
       if(nrow(vesselCatches)>0){
-        
+        INFO("vessel-info server: Computing catches summary")
         ActualDaysAtSea_df <- distinct(vesselCatches,ret_datetime, .keep_all=TRUE)
         
         ActualDaysAtSea_df$daysAtSea = difftime(ActualDaysAtSea_df$ret_datetime,ActualDaysAtSea_df$dep_datetime, units = 'days')
@@ -400,7 +399,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         
       }
       
-      
+      INFO("vessel-info server: Rendering the vessel catches summary data to the table")
       output$vessel_catch_summary <- renderDataTable(server = FALSE,{
         names(vesselCatchSummary) <- c(i18n("SUMMARY_CATCHES_COLNAME_1"),i18n("SUMMARY_CATCHES_COLNAME_2"),
                                        i18n("SUMMARY_CATCHES_COLNAME_3"))
@@ -428,6 +427,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       })
       
       #catch history
+      INFO("vessel-info server: Rendering the vessel catch history data to the table")
       output$vessel_catch_history <- renderDataTable(server = FALSE,{
         
         names(vesselCatches) <- c(i18n("HISTORY_CATCHES_COLNAME_1"),i18n("HISTORY_CATCHES_COLNAME_2"),i18n("HISTORY_CATCHES_COLNAME_3"),
@@ -469,6 +469,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       })
       
       #catch data source
+      INFO("vessel-info server: Rendering the vessel catch source of data")
       output$vessel_catch_datasource <- renderUI({
         tags$small(switch(vessel$VESSEL_STAT_TYPE_CODE,
                           "ART" = i18n("CATCHES_DATA_SOURCE_ART"),
@@ -482,11 +483,12 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       
       if(nrow(vessel_found)>0){
+        INFO("vessel-info server: Returning vessel image from vesselfinder")
         vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
         vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">",paste0(i18n("IMAGE_SOURCE"),":"),"<a href=",vessel_found$Value[1], " target=\"_blank\" a>",i18n("VESSEL_FINDER"),"</a></div>"))
       }else{
         
-        INFO("Returning Placeholder image for vessel")
+        INFO("vessel-info server: Returning Placeholder image for vessel")
         
         vessel_picture_html <- HTML(createPlaceholderImage("vessel"))
       }
@@ -498,7 +500,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       })
       
       #vesselcharacteristics
-      
+      INFO("vessel-info server: Gathering vessel characteristics and descriptions")
       df_characteristics <- reactive({
         
         descr_calipseo <- vessel[,c(11:16)]
@@ -555,7 +557,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
         
         if(!is.null(df_vesselfinder_char)){
           
-          INFO("Returning Calipseo and VesselFinder data on vessel characteristics")
           df <- cbind(df_calipseo_char,df_vesselfinder_char)
           names(df) <- c('Description','Calipseo','VesselFinder')
           
@@ -674,7 +675,6 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           
         }else{
-          INFO("Returning Calipseo data on vessel characteristics")
           
           tags$table(class="table table-striped", style="font-size:80% !important;",
                      tags$thead(
@@ -772,7 +772,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       
       SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
-      
+      INFO("vessel-info server: Fetching species catches year data with rows '%s'", nrow(SpeciesCatchesYear))
       fish_group<-getRemoteReferenceDataset("asfis_enrished")
       fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
       names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
@@ -796,7 +796,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       
       ftpv <- countFishingTripsPerVessel(pool,vesselId)
-      
+      INFO("vessel-info server: Fetching fishingtrips per vessel data with rows '%s'", nrow(ftpv))
       if(nrow(ftpv)>0){
         ftpv$No_years_trips_made <- nrow(ftpv)
         ftpv$sum_no_trips_per_year <- sum(ftpv$sum_no_trips_per_year)
@@ -815,7 +815,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       
       vesselDaysATSea <- countVesselDaysAtSea(pool,vesselId)
-      
+      INFO("vessel-info server: Fetching vessel days at sea data with rows '%s'", nrow(vesselDaysATSea))
       for (i in 2:ncol(vesselDaysATSea)) {
         vesselDaysATSea[,i] <- as.POSIXct(as.character(vesselDaysATSea[,i]))
         attr(vesselDaysATSea[,i], "tzone") <- appConfig$country_profile$timezone
@@ -856,7 +856,7 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
       
       if(all(!sapply(reactiveValuesToList(vessel_indicators_infos), is.null))) vessel_infos_fetched(TRUE)
       
-      
+      INFO("vessel-info server: Applying font colour and icon to the desired columns")
       colRList <- reactive({
         
         if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION'){
