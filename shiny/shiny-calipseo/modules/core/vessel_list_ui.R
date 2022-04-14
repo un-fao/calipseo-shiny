@@ -11,7 +11,7 @@ vessel_list_ui <- function(id){
             )
           ),
           fluidRow(
-            box(width = 12, DT::dataTableOutput(ns("vessel_list")))
+            box(width = 12, withSpinner(DT::dataTableOutput(ns("vessel_list"))))
           )
   )
   

@@ -1,26 +1,11 @@
+#js_generic_handler
+js_generic_handler <- function(filename, ...){
+  jscode <- paste(suppressWarnings(readLines(filename)), collapse="\n")
+  jscode <- JS(sprintf(jscode, ...))
+  return(jscode)
+}
+
 #js_select2_filter_provider (for enabling Select2.js in DT filter dropdown)
-js_select2_filter_provider <- c(
-  "function(){", 
-  "  this.api().columns().every(function(i){",
-  "    var column = this;",
-  "    var select = $('<select multiple=\"multiple\"><option value=\"\"></option></select>')",
-  "      .appendTo( $('#th'+i).empty() )", 
-  "      .on('change', function(){",
-  "        var vals = $('option:selected', this).map(function(index,element){",
-  "          return $.fn.dataTable.util.escapeRegex($(element).val());",
-  "        }).toArray().join('|');",
-  "        column.search(vals.length > 0 ? '^('+vals+')$' : '', true, false).draw();",
-  "      });",
-  "    var data = column.data();",
-  "    if(i == 0){",
-  "      data.each(function(d, j){",
-  "        select.append('<option value=\"'+d+'\">'+d+'</option>');",
-  "      });",
-  "    }else{",
-  "      data.unique().sort().each(function(d, j){",
-  "        select.append('<option value=\"'+d+'\">'+d+'</option>');",
-  "      });",
-  "    }",
-  "    select.select2({width: '100%', closeOnSelect: false});",
-  "  });",
-  "}")
+js_select2_filter_provider <- function(id){
+ js_generic_handler(file.path(getwd(), "assets/core/js/js_select2_filter_provider.js"), id)
+}

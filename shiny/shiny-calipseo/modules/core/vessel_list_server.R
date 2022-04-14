@@ -1,6 +1,8 @@
 #vessel_list_server
 vessel_list_server <- function(input, output, session, pool) {
   
+  ns <- session$ns
+  
   output$vessel_list_info <- renderText({
     session$userData$page("vessel-list")
     updatePageUrl("vessel-list", session)
@@ -95,14 +97,14 @@ vessel_list_server <- function(input, output, session, pool) {
                  i18n("VESSEL_LIST_TABLE_COLNAME_7"),i18n("VESSEL_LIST_TABLE_COLNAME_8"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_9"))
   
-  output$vessel_list <- renderDataTable(
+  output$vessel_list <- DT::renderDT(
     df,
+    container = initDTContainer(df),
     escape = FALSE,
     rownames = FALSE,
     server = FALSE,
     extensions = c("Buttons"),
     filter = list(position = 'top', clear = FALSE),
-    
     options = list(
       autoWidth = FALSE,
       dom = 'Bfrtip',
@@ -122,8 +124,7 @@ vessel_list_server <- function(input, output, session, pool) {
       ),
       language = list(url = i18n("TABLE_LANGUAGE")),
       pageLength = 10,
-      orderCellsTop = TRUE,
-      initComplete = JS(js_select2_filter_provider)
+      initComplete = js_select2_filter_provider(ns("vessel_list"))
     )
     
   )
