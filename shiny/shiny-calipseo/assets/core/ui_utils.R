@@ -116,3 +116,19 @@ CalipseoInfoBox <- function(title = NULL, value = NULL, icon = NULL,
   )
   
 }
+
+#initDTContainer
+initDTContainer <- function(df){
+  tags$table(
+    tags$thead(
+      tags$tr(
+        lapply(names(df), tags$th),
+        role = "row"
+      ),
+      tags$tr(
+        lapply(names(df), function(x){tags$td()}),
+        role = "row"
+      )
+    )
+  )
+}
