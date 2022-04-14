@@ -151,9 +151,11 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
           
           df <- cbind(cl_df,const_data)
           
-          for (i in 1:ncol(df)) {
+          for (i in 1:4) {
             
             df[,i][df[,i]==""] <- 'NULL'
+            
+            df[,i][df[,i]=='N/AN/A'] <- 'N/A'
             
           }
           
