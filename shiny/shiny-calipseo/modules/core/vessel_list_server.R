@@ -10,11 +10,11 @@ vessel_list_server <- function(input, output, session, pool) {
     text
   })
   
-  INFO("vessel-list server: Fetching vessel list data")
   outp <- accessVessels(pool)
+  INFO("vessel-list server: Fetching vessel list data with rows '%s'", nrow(outp))
   
-  INFO("vessel-list server: Fetching license permits data on vessels")
   ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
+  INFO("vessel-list server: Fetching license permits data with rows '%s'", nrow(ls_permits))
   
   
   #TODO add buttons
@@ -25,13 +25,14 @@ vessel_list_server <- function(input, output, session, pool) {
   
   
   not_complete_ls_permits <- ls_permits[is.na(ls_permits$PERMIT_NUMBER),]
+  INFO("vessel-list server: Vessels with no permit numbers '%s'", nrow(not_complete_ls_permits))
   
   not_complete_ls_permits$Validity <- 'missing license'
   
   ls_permits <- ls_permits[!is.na(ls_permits$PERMIT_NUMBER),]
   
   ls_permits <- dplyr::distinct(ls_permits, PERMIT_NUMBER,.keep_all = TRUE)
-  
+  INFO("vessel-list server: Vessels with permit numbers '%s'", nrow(ls_permits))
   
   ls_permits$Valid_to_date <- as.Date(ls_permits$Valid_to_date)
   
@@ -52,6 +53,7 @@ vessel_list_server <- function(input, output, session, pool) {
     }
   }
   
+  INFO("vessel-list server: Joining vessles with license permits and those without license permits")
   ls_permits <- rbind(ls_permits,not_complete_ls_permits)
   
   
@@ -59,6 +61,7 @@ vessel_list_server <- function(input, output, session, pool) {
   
   df <- df$data[,-which(endsWith(colnames(df$data), "_CODE"))]
   names(df) <- gsub("_", " ", names(df))
+  INFO("vessel-list server: Renaming vessel list data columns")
   names(df)[names(df)=="REGISTRATION NUMBER"] <- "REGISTRATION_NUMBER"
   names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME_PORT"
   names(df)[names(df)=="REG PORT LANDING SITE"] <- "REG_PORT"
@@ -75,7 +78,7 @@ vessel_list_server <- function(input, output, session, pool) {
   
   df <- df[,c(1,2,3,4,5,6,7,15,8)]
   
-  
+  INFO("vessel-list server: Applying font colour and icon to the desired columns")
   df$HOME_PORT <- as.character(df$HOME_PORT)
   df$REG_PORT <- as.character(df$REG_PORT)
   df$OP_STATUS <- as.character(df$OP_STATUS)
@@ -90,13 +93,14 @@ vessel_list_server <- function(input, output, session, pool) {
   #factorize types for access to codelists
   df[,1:8] <- lapply(df[,1:8],as.factor)
   
-  
+  INFO("vessel-list server: Applying the I18n_terms to the vessel list columns")
   names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_1"),i18n("VESSEL_LIST_TABLE_COLNAME_2"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_3"),i18n("VESSEL_LIST_TABLE_COLNAME_4"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_5"),i18n("VESSEL_LIST_TABLE_COLNAME_6"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_7"),i18n("VESSEL_LIST_TABLE_COLNAME_8"),
                  i18n("VESSEL_LIST_TABLE_COLNAME_9"))
   
+  INFO("vessel-list server: Rendering the vessel list data to the table")
   output$vessel_list <- DT::renderDT(
     df,
     container = initDTContainer(df),
