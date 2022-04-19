@@ -2,7 +2,13 @@
 #==========================================================================================
 ui <- shiny::tagList(
   dashboardPage(
-    dashboardHeader(title = dbHeader),
+    dashboardHeader(title = tags$div(
+      tags$a(
+        href=appConfig$country_profile$website,
+        HTML(createBase64Image(src = appConfig$country_profile$logo, width = '50px', alt = 'Logo'))
+      ),
+      tags$span("Calipseo Dashboard", style = "font-size:80%;")
+    )),
     dashboardSidebar(
       sidebarMenuFromModules(appConfig)
     ),

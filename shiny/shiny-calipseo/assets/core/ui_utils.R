@@ -116,15 +116,3 @@ CalipseoInfoBox <- function(title = NULL, value = NULL, icon = NULL,
   )
   
 }
-
-#dashboardHeader logo size optimization
-dbHeader <- tags$div(tags$span(class = "logo hidden-xs",
-                               tags$div(
-                                 tags$a(
-                                   href=appConfig$country_profile$website,
-                                   HTML(createBase64Image(src = appConfig$country_profile$logo, width = '100', height = '50', alt = 'Logo'))
-                                 ),tags$span("Calipseo Dashboard", style = "font-size:80%;")
-                               )),tags$div(tags$a(
-                                 href=appConfig$country_profile$website,
-                                 HTML(createBase64Image(src = appConfig$country_profile$logo, width = '50', height = '50', alt = 'Logo'))
-                               ),tags$span("Calipseo Dashboard", style = "font-size:80%;")))
