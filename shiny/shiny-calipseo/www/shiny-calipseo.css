@@ -1,3 +1,7 @@
+.main-header .logo {
+  padding: 0px !important;
+}
+
 footer{
   position:fixed;
   bottom:0;
