@@ -9,12 +9,14 @@
 "VESSEL_QA_TITLE_CHARACTERISTICS": "Quality assessment on vessel characteristics",
 "VESSEL_QA_TITLE_LICENSE": "Quality assessment on vessel with no or expired license current year",
 "VESSEL_QA_TITLE_VOP_STATUS": "Quality assessment on vessel operational status",
+"VESSEL_QA_TITLE_ACTIVITY": "Quality assessment on vessel with or without fishing trip activities",
   
   /*vessel_qa verticalpanels*/
   "VERTICALTABPANEL_VESSEL_QA_NAMES": "Vessel Names",
   "VERTICALTABPANEL_VESSEL_QA_PORTS": "Vessel Ports",
   "VERTICALTABPANEL_VESSEL_QA_CHARACTERISTICS": "Vessel Characteristics",
   "VERTICALTABPANEL_VESSEL_QA_LICENSE": "Vessel License",
+  "VERTICALTABPANEL_VESSEL_QA_ACTIVITY": "Vessel Activity",
   "VERTICALTABPANEL_VESSEL_QA_VOP_STATUS": "Vessel Operational Status",
   
   /*vessel_qa table*/
@@ -37,6 +39,15 @@
   /*vessel_qa_operational_status table*/
   "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_1": "OPERATIONAL STATUS",
   "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_2": "COUNT",
+  
+  /*vessel_qa_fishingtrips table*/
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_1": "Activity Status",
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_2": "Historical Period",
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_3": "Current Year",
+  
+  /*vessel_qa_fishingtrip status*/
+  "VESSEL_QA_STATUS_INACTIVITY": "In activity",
+  "VESSEL_QA_STATUS_NOACTIVITY": "No activity",
   
   /*vessel_qa status*/
   "VESSEL_QA_STATUS_VALID": "Valid",
