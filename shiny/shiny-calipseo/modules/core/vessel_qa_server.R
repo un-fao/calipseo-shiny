@@ -155,6 +155,8 @@ vessel_qa_server <- function(input, output, session, pool) {
   invalid_category <- vessel_qa_license_permits[is.na(vessel_qa_license_permits$PERMIT_NUMBER),]
   invalid_category$Validity <- 'notcompleted'
   
+  invalid_category <- dplyr::distinct(invalid_category, REGISTRATION_NUMBER,.keep_all = TRUE)
+  
   invalid_category <- count(invalid_category,Validity,name = 'Count')
   
   valid_categories <- dplyr::distinct(valid_categories, PERMIT_NUMBER,.keep_all = TRUE)
@@ -176,6 +178,14 @@ vessel_qa_server <- function(input, output, session, pool) {
       valid_categories$Validity[i] <- 'expired'
     }
   }
+  
+  valid_dates <- valid_categories[valid_categories['Validity']=='ok',]
+  invalid_dates <- valid_categories[valid_categories['Validity']=='expired',]
+  valid_dates <- dplyr::distinct(valid_dates, REGISTRATION_NUMBER,.keep_all = TRUE)
+  invalid_dates <- dplyr::distinct(invalid_dates, REGISTRATION_NUMBER,.keep_all = TRUE)
+  valid_categories <- rbind(valid_dates,invalid_dates)
+  valid_categories <- dplyr::distinct(valid_categories,REGISTRATION_NUMBER,.keep_all = TRUE)
+  
   
   valid_categories <- count(valid_categories,Validity,name = 'Count')
   
