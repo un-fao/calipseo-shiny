@@ -86,6 +86,8 @@ vessel_qa_server <- function(input, output, session, pool) {
   invalid_category <- vessel_qa_license_permits[is.na(vessel_qa_license_permits$PERMIT_NUMBER),]
   invalid_category$Validity <- 'notcompleted'
   
+  invalid_category <- dplyr::distinct(invalid_category, REGISTRATION_NUMBER,.keep_all = TRUE)
+  
   invalid_category <- count(invalid_category,Validity,name = 'Count')
   
   valid_categories <- dplyr::distinct(valid_categories, PERMIT_NUMBER,.keep_all = TRUE)
