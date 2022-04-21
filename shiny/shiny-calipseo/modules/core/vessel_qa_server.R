@@ -15,8 +15,8 @@ vessel_qa_server <- function(input, output, session, pool) {
   vessel_qa_characteristics_df <- accessVesselQaCharacteristics(pool)
   vessel_qa_license_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
   vessel_qa_vop_status <- data.frame(VOP_STATUS = accessVessels(pool)$VESSEL_OPERATIONAL_STATUS)
-  ftpv_activity_count <- countVesselsWithOrWithoutFishingTrips(pool, ftpv_activity_year = format(Sys.Date(), "%Y"))
-  ftpv_GrandTotal <- nrow(countVesselsWithOrWithoutFishingTrips(pool,ftpv_activity_year = NULL))
+  ftpv_activity_count <- dplyr::distinct(countVesselsWithOrWithoutFishingTrips(pool, ftpv_activity_year = format(Sys.Date(), "%Y")), REGISTRATION_NUMBER,.keep_all = TRUE)
+  ftpv_GrandTotal <- nrow(dplyr::distinct(countVesselsWithOrWithoutFishingTrips(pool,ftpv_activity_year = NULL), REGISTRATION_NUMBER,.keep_all = TRUE))
   ftpv_GrandTotal_active <- nrow(ftpv_activity_count)
   ftpv_GrandTotal_inactive <- ftpv_GrandTotal - ftpv_GrandTotal_active
   
