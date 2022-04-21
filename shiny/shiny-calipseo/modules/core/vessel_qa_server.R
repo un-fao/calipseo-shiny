@@ -15,6 +15,75 @@ vessel_qa_server <- function(input, output, session, pool) {
   vessel_qa_characteristics_df <- accessVesselQaCharacteristics(pool)
   vessel_qa_license_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
   vessel_qa_vop_status <- data.frame(VOP_STATUS = accessVessels(pool)$VESSEL_OPERATIONAL_STATUS)
+  ftpv_activity_count <- countVesselsWithOrWithoutFishingTrips(pool, ftpv_activity_year = format(Sys.Date(), "%Y"))
+  ftpv_GrandTotal <- nrow(countVesselsWithOrWithoutFishingTrips(pool,ftpv_activity_year = NULL))
+  ftpv_GrandTotal_active <- nrow(ftpv_activity_count)
+  ftpv_GrandTotal_inactive <- ftpv_GrandTotal - ftpv_GrandTotal_active
+  
+  hist_ftpv <- data.frame(Validity = c('active_hist', 'inactive_hist'),
+                          Count = c(ftpv_GrandTotal_active,ftpv_GrandTotal_inactive))
+  
+  
+  if(nrow(ftpv_activity_count)>0){
+    ftpv_activity_count$DATE_TO <- as.Date(ftpv_activity_count$DATE_TO)
+    
+    active_to_date <- ftpv_activity_count$DATE_TO
+    
+    ftpv_activity_count$Validity <- NA
+    
+    for (i in 1:length(active_to_date)) {
+      active_status <- Sys.Date()-active_to_date[i]
+      
+      if(active_status<0){
+        ftpv_activity_count$Validity[i] <- 'active'
+      }else{
+        
+        ftpv_activity_count$Validity[i] <- 'inactive'
+      }
+    }
+    
+    
+    ftpv_activity_count <- count(ftpv_activity_count, Validity, name = 'Count')
+    
+    if(nrow(ftpv_activity_count)<2){
+      
+      if(ftpv_activity_count$Validity=="active"){
+        
+        count_inactive <- data.frame(Validity = 'inactive', Count = 0)
+        
+        ftpv_activity_count <- rbind(ftpv_activity_count,count_inactive)
+        
+      }else{
+        
+        count_active <- data.frame(Validity = 'active', Count = 0)
+        
+        ftpv_activity_count <- rbind(ftpv_activity_count,count_active)
+        
+      }
+    }
+    
+  }else{
+    
+    ftpv_activity_count <- data.frame(
+      Validity = c('active', 'inactive'),
+      Count = c(0,0)
+    )
+  }
+  
+  ftpv_activity_count <- rbind(hist_ftpv,ftpv_activity_count)
+  
+  
+  ftpv_activity_count <- data.frame(
+    Status = c('In_activity', 'No_activity'),
+    History = c(ftpv_activity_count$Count[1],(ftpv_activity_count$Count[2])),
+    Current = c(ftpv_activity_count$Count[3],(ftpv_activity_count$Count[4]))
+  )
+  
+  
+  ftpv_activity_count$Status[ftpv_activity_count$Status=='In_activity'] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')),i18n("VESSEL_QA_STATUS_INACTIVITY"))
+  ftpv_activity_count$Status[ftpv_activity_count$Status=='No_activity'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:red;')),i18n("VESSEL_QA_STATUS_NOACTIVITY"))
+  names(ftpv_activity_count) <- c(i18n("VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_1"),i18n("VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_2"),i18n("VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_3")) 
+  
   
   
   vessel_qa_vop_status$VOP_STATUS <- as.factor(vessel_qa_vop_status$VOP_STATUS)
@@ -173,6 +242,23 @@ vessel_qa_server <- function(input, output, session, pool) {
   output$vessel_operational_status <- renderDataTable({
     
     DT::datatable(vessel_qa_vop_status,
+                  escape = FALSE,
+                  rownames = FALSE,
+                  
+                  options = list(
+                    searching = FALSE,
+                    dom = 't',
+                    language = list(url = i18n("TABLE_LANGUAGE"))
+                  ))
+    
+  })
+  
+  
+  #vessel_qa_fishing_activity_count
+  output$vessel_activity <- renderDataTable({
+    
+    
+    DT::datatable(ftpv_activity_count,
                   escape = FALSE,
                   rownames = FALSE,
                   

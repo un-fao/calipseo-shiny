@@ -296,6 +296,20 @@ countFishingTripsPerVesselFromDB <- function(con, registrationNumber){
 }
 
 
+#countVesselsWithOrWithoutFishingTripsFromDB
+countVesselsWithOrWithoutFishingTripsFromDB <- function(con, ftpv_activity_year = NULL){
+  
+  VesselsWithOrWithoutFishingTrips_sql <- readSQLScript("data/core/sql/count_vessels_with_or_without_fishing_trips.sql")
+  if(!is.null(ftpv_activity_year)){
+    VesselsWithOrWithoutFishingTrips_sql <- paste0(VesselsWithOrWithoutFishingTrips_sql, " WHERE year(ft.DATE_FROM) = '", ftpv_activity_year, "'") 
+  }
+  
+  
+  VesselsWithOrWithoutFishingTrips <- suppressWarnings(dbGetQuery(con, VesselsWithOrWithoutFishingTrips_sql))
+  
+  return(VesselsWithOrWithoutFishingTrips)
+}  
+
 
 #countVesselFishingGearsFromDB
 countVesselFishingGearsFromDB <- function(con, registrationNumber){
@@ -591,6 +605,12 @@ countFishingTrips <- function(con){
 #countFishingTripPerVessel
 countFishingTripsPerVessel <- function(con, registrationNumber){
   countFishingTripsPerVesselFromDB(con, registrationNumber)
+}
+
+
+#countVesselsWithOrWithoutFishingTripsFromDB
+countVesselsWithOrWithoutFishingTrips <- function(con, ftpv_activity_year){
+  countVesselsWithOrWithoutFishingTripsFromDB(con, ftpv_activity_year)
 }
 
 
