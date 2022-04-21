@@ -108,6 +108,14 @@ vessel_qa_server <- function(input, output, session, pool) {
     }
   }
   
+  valid_dates <- valid_categories[valid_categories['Validity']=='ok',]
+  invalid_dates <- valid_categories[valid_categories['Validity']=='expired',]
+  valid_dates <- dplyr::distinct(valid_dates, REGISTRATION_NUMBER,.keep_all = TRUE)
+  invalid_dates <- dplyr::distinct(invalid_dates, REGISTRATION_NUMBER,.keep_all = TRUE)
+  valid_categories <- rbind(valid_dates,invalid_dates)
+  valid_categories <- dplyr::distinct(valid_categories,REGISTRATION_NUMBER,.keep_all = TRUE)
+  
+  
   valid_categories <- count(valid_categories,Validity,name = 'Count')
   
   license_df <- rbind(valid_categories,invalid_category)
