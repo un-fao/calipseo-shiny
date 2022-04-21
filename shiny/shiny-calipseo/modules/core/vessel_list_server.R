@@ -54,6 +54,9 @@ vessel_list_server <- function(input, output, session, pool) {
   }
   
   INFO("vessel-list server: Joining vessles with license permits and those without license permits")
+  valid_dates <- ls_permits[ls_permits['Validity']=='valid',]
+  invalid_dates <- ls_permits[ls_permits['REGISTRATION_NUMBER'] != valid_dates$REGISTRATION_NUMBER,]
+  ls_permits <- rbind(valid_dates,invalid_dates)
   ls_permits <- rbind(ls_permits,not_complete_ls_permits)
   
   
