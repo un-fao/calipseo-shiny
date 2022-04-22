@@ -1,5 +1,7 @@
 #logbooks_details_server
-logbooks_details_server <- function(input, output, session, pool){
+logbooks_details_server <- function(id, pool){
+ 
+ moduleServer(id, function(input, output, session) {  
   
   output$urlPage<-renderUI({
     session$userData$page("logbooks-details")
@@ -360,5 +362,5 @@ logbooks_details_server <- function(input, output, session, pool){
     )
   )
   
-  
+ }) 
 }

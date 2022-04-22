@@ -1,5 +1,7 @@
 #logbooks_upload_server
-logbooks_upload_server <- function(input, output, session, pool) {
+logbooks_upload_server <- function(id, pool) {
+  
+ moduleServer(id, function(input, output, session){  
   
   ns <- session$ns
 
@@ -158,4 +160,6 @@ logbooks_upload_server <- function(input, output, session, pool) {
     output$generate_SQL_btn<-renderUI(NULL)
   })
 
+ })
+  
 }

@@ -1,5 +1,7 @@
 #individual_list_server
-individual_list_server <- function(input, output, session, pool) {
+individual_list_server <- function(id, pool) {
+  
+ moduleServer(id, function(input, output, session) {
   
   output$individual_list_info <- renderText({
     session$userData$page("individual-list")
@@ -45,5 +47,7 @@ individual_list_server <- function(input, output, session, pool) {
       pageLength = 10
     )
   )
+ 
+ })
   
 }

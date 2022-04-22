@@ -1,7 +1,7 @@
 #vessel_breakdown_server
-vessel_breakdown_server <- function(input, output, session, pool) {
+vessel_breakdown_server <- function(id, pool) {
   
- 
+ moduleServer(id, function(input, output, session) {  
   
   output$vessel_breakdown_info <- renderText({
     session$userData$page("vessel-breakdown")
@@ -9,9 +9,6 @@ vessel_breakdown_server <- function(input, output, session, pool) {
     text <- paste0("<h2>", i18n("VESSEL_BREAKDOWN_TITLE")," <small>", i18n("VESSEL_BREAKDOWN_SUBTITLE"),"</small></h2><hr>")
     text
   })
-  
-  
-  
   
   #vessels breakdown by type (pie chart)
   output$rep_vessels <- renderPlotly({
@@ -177,6 +174,6 @@ vessel_breakdown_server <- function(input, output, session, pool) {
                     )
   })
 
-  
+ }) 
 }
 

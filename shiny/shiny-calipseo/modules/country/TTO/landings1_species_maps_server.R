@@ -1,5 +1,7 @@
 #landings1_species_maps_server
-landings1_species_maps_server <- function(input, output, session, pool){
+landings1_species_maps_server <- function(id, pool){
+  
+ moduleServer(id, function(input, output, session){  
   
   output$landings1_species_maps_info <- renderText({
     session$userData$page("landings1-species-maps")
@@ -122,5 +124,7 @@ landings1_species_maps_server <- function(input, output, session, pool){
   output$map_species_VAL <- renderLeaflet({
     mapDescriptorYearSpecies(tsr$data, input$year_map_species, "VAL", 15)
   })
+  
+ })
   
 }

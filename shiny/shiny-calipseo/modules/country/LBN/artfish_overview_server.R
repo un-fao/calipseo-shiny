@@ -1,6 +1,8 @@
 #artfish_overview_server
-artfish_overview_server <- function(input, output, session, pool){
-  
+artfish_overview_server <- function(id, pool){
+
+ moduleServer(id, function(input, output, session){   
+    
   ns<-session$ns
   
   data_bg<-reactiveVal(NULL)
@@ -91,4 +93,6 @@ artfish_overview_server <- function(input, output, session, pool){
     })
     })
   
-    }
+ })
+  
+}

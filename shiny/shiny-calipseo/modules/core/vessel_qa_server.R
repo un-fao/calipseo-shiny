@@ -1,7 +1,8 @@
 #vessel_qa_server
-vessel_qa_server <- function(input, output, session, pool) {
+vessel_qa_server <- function(id, pool) {
   
-  
+ moduleServer(id, function(input, output, session) {
+    
   output$vessel_qa_info <- renderText({
     session$userData$page("vessel-qa")
     updatePageUrl("vessel-qa", session)
@@ -269,6 +270,7 @@ vessel_qa_server <- function(input, output, session, pool) {
                   ))
     
   })
-  
+ 
+ }) 
   
 }

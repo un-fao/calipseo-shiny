@@ -1,6 +1,8 @@
 #artfish_accuracy_server
-artfish_accuracy_server <- function(input, output, session, pool){
-  
+artfish_accuracy_server <- function(id, pool){
+ 
+ moduleServer(id, function(input, output, session){   
+   
   ns<-session$ns
   
   output$urlPage<-renderUI({
@@ -86,4 +88,6 @@ artfish_accuracy_server <- function(input, output, session, pool){
        )
      })
   })
+  
+ })
 }

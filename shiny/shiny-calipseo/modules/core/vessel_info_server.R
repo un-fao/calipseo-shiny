@@ -1,5 +1,7 @@
 #vessel_info_server
-vessel_info_server <- function(input, output, session, pool, lastETLJob) {
+vessel_info_server <- function(id, pool) {
+  
+ moduleServer(id, function(input, output, session) {
   
   output$vessel_header <- renderText({
     session$userData$page("vessel-info")
@@ -950,5 +952,5 @@ vessel_info_server <- function(input, output, session, pool, lastETLJob) {
     
   })
   
-  
+ })
 }

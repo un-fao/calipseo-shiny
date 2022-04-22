@@ -85,7 +85,7 @@ loadModuleServers <- function(config, pool){
         server_fun_name <- paste0(module, "_server")
         server_fun <- try(eval(expr = parse(text = server_fun_name)))
         if(!is(server_fun, "try-error")){
-          called <- try(shiny::callModule(server_fun, module, pool))
+          called <- try(server_fun(module, pool))
           if(is(called, "try-error")){
             ERROR("Error while calling shiny module '%s'", module)
           }

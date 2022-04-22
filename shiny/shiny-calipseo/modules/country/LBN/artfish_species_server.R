@@ -1,6 +1,8 @@
 #artfish_species_server
-artfish_species_server <- function(input, output, session, pool){
-  
+artfish_species_server <- function(id, pool){
+ 
+ moduleServer(id, function(input, output, session){   
+   
   ns<-session$ns
   
   data_sp<-reactiveVal(NULL)
@@ -221,6 +223,7 @@ artfish_species_server <- function(input, output, session, pool){
         })
         
   })
-  
+
+ })  
   
 }

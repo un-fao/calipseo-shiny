@@ -1,5 +1,7 @@
 #vessel_list_server
-vessel_list_server <- function(input, output, session, pool) {
+vessel_list_server <- function(id, pool) {
+  
+ moduleServer(id, function(input, output, session) {  
   
   ns <- session$ns
   
@@ -135,5 +137,5 @@ vessel_list_server <- function(input, output, session, pool) {
     )
     
   )
-  
+ }) 
 }

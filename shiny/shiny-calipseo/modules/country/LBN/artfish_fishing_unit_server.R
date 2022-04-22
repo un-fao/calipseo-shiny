@@ -1,6 +1,8 @@
 #artfish_fishing_unit_server
-artfish_fishing_unit_server <- function(input, output, session, pool){
-  
+artfish_fishing_unit_server <- function(id, pool){
+
+ moduleServer(id, function(input, output, session){   
+    
   ns<-session$ns
   
   bg_summary<-reactiveVal(NULL)
@@ -622,5 +624,6 @@ artfish_fishing_unit_server <- function(input, output, session, pool){
     
   })
   
+ })  
   
 }

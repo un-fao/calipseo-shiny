@@ -1,6 +1,8 @@
 #logbooks_overview_server
-logbooks_overview_server <- function(input, output, session, pool){
-  
+logbooks_overview_server <- function(id, pool){
+ 
+ moduleServer(id, function(input, output, session) {  
+   
   ns<-session$ns
   
   output$urlPage<-renderUI({
@@ -301,4 +303,6 @@ logbooks_overview_server <- function(input, output, session, pool){
   line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE,mode='plot+table')
   line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE,mode='plot+table')
 
+ })
+  
 }

@@ -1,5 +1,7 @@
 #home_ui
-home_server <- function(input, output, session, pool){
+home_server <- function(id, pool){
+  
+ moduleServer(id, function(input, output, session) {
   
   infos_fetched <- reactiveVal(FALSE)
   infos <- reactiveValues(
@@ -50,4 +52,6 @@ home_server <- function(input, output, session, pool){
     #})
     
   })
+  
+ })
 }

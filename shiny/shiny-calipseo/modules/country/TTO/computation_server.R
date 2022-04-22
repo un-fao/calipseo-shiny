@@ -1,5 +1,7 @@
 #computation_server
-computation_server <- function(input, output, session, pool) {
+computation_server <- function(id, pool) {
+
+ moduleServer(id, function(input, output, session){  
   
   ns <- session$ns
   print(names(session))
@@ -449,4 +451,6 @@ computation_server <- function(input, output, session, pool) {
       }
     })
   })
+  
+ })
 }

@@ -1,7 +1,9 @@
 #artfish_server
-artfish_server <- function(input, output, session, pool){
+artfish_server <- function(id, pool){
 
-ns<-session$ns
+ moduleServer(id, function(input, output, session){   
+  
+  ns<-session$ns
   
   output$urlPage<-renderUI({
     session$userData$page("artfish")
@@ -213,4 +215,6 @@ ns<-session$ns
       )
     })
   })
+  
+ })
 }

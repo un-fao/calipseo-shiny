@@ -1,5 +1,7 @@
 #landings1_maps_server
-landings1_maps_server <- function(input, output, session, pool){
+landings1_maps_server <- function(id, pool){
+  
+ moduleServer(id, function(input, output, session){  
   
   output$landings1_maps_info <- renderText({
     session$userData$page("landings1-maps")
@@ -85,5 +87,6 @@ landings1_maps_server <- function(input, output, session, pool){
     mapDescriptorTotal(tsr$data, input$year_map_total, "P/K", "#e6550d")
   })
   
+ })
   
 }

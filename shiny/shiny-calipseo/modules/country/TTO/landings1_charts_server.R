@@ -1,6 +1,8 @@
 #landings1_charts_server
-landings1_charts_server <- function(input, output, session, pool){
-  
+landings1_charts_server <- function(id, pool){
+
+ moduleServer(id, function(input, output, session){    
+    
   output$landings1_charts_info <- renderText({
     session$userData$page("landings1-charts")
     updatePageUrl("landings1-charts", session)
@@ -59,4 +61,6 @@ landings1_charts_server <- function(input, output, session, pool){
     d <- event_data("plotly_hover")
     if (is.null(d)) i18n("HOVER_ON_POINT_LABEL") else d
   })
+  
+ })
 }
