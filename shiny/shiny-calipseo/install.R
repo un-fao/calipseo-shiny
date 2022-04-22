@@ -1,4 +1,4 @@
-package <- jsonlite::read_json('./srv/shiny-server/package.json')
+package <- jsonlite::read_json(file.path(getwd(), "package.json"))
 invisible(lapply(package$dependencies, function(pkg){
   from <- 'cran'
   pkg_installer <- remotes::install_version
