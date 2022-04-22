@@ -18,11 +18,12 @@ vessel_qa_server <- function(id, pool) {
   vessel_qa_vop_status <- data.frame(VOP_STATUS = accessVessels(pool)$VESSEL_OPERATIONAL_STATUS)
   ftpv_activity_count <- dplyr::distinct(countVesselsWithOrWithoutFishingTrips(pool, ftpv_activity_year = format(Sys.Date(), "%Y")), REGISTRATION_NUMBER,.keep_all = TRUE)
   ftpv_GrandTotal <- nrow(dplyr::distinct(countVesselsWithOrWithoutFishingTrips(pool,ftpv_activity_year = NULL), REGISTRATION_NUMBER,.keep_all = TRUE))
-  ftpv_GrandTotal_active <- nrow(ftpv_activity_count)
-  ftpv_GrandTotal_inactive <- ftpv_GrandTotal - ftpv_GrandTotal_active
+  GrandTotal_vessels <- as.numeric(accessVesselsCount(pool))
+  ftpv_GrandTotal_inactive <- GrandTotal_vessels - ftpv_GrandTotal
+  
   
   hist_ftpv <- data.frame(Validity = c('active_hist', 'inactive_hist'),
-                          Count = c(ftpv_GrandTotal_active,ftpv_GrandTotal_inactive))
+                          Count = c(ftpv_GrandTotal,ftpv_GrandTotal_inactive))
   
   
   if(nrow(ftpv_activity_count)>0){
@@ -50,13 +51,13 @@ vessel_qa_server <- function(id, pool) {
       
       if(ftpv_activity_count$Validity=="active"){
         
-        count_inactive <- data.frame(Validity = 'inactive', Count = 0)
+        count_inactive <- data.frame(Validity = 'inactive', Count = GrandTotal_vessels-ftpv_activity_count$Count)
         
         ftpv_activity_count <- rbind(ftpv_activity_count,count_inactive)
         
       }else{
         
-        count_active <- data.frame(Validity = 'active', Count = 0)
+        count_active <- data.frame(Validity = 'active', Count = GrandTotal_vessels-ftpv_activity_count$Count)
         
         ftpv_activity_count <- rbind(ftpv_activity_count,count_active)
         
@@ -67,7 +68,7 @@ vessel_qa_server <- function(id, pool) {
     
     ftpv_activity_count <- data.frame(
       Validity = c('active', 'inactive'),
-      Count = c(0,0)
+      Count = c(0,GrandTotal_vessels)
     )
   }
   
