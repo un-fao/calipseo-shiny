@@ -51,13 +51,13 @@ vessel_qa_server <- function(id, pool) {
       
       if(ftpv_activity_count$Validity=="active"){
         
-        count_inactive <- data.frame(Validity = 'inactive', Count = ftpv_GrandTotal-ftpv_activity_count$Count)
+        count_inactive <- data.frame(Validity = 'inactive', Count = GrandTotal_vessels-ftpv_activity_count$Count)
         
         ftpv_activity_count <- rbind(ftpv_activity_count,count_inactive)
         
       }else{
         
-        count_active <- data.frame(Validity = 'active', Count = ftpv_GrandTotal-ftpv_activity_count$Count)
+        count_active <- data.frame(Validity = 'active', Count = GrandTotal_vessels-ftpv_activity_count$Count)
         
         ftpv_activity_count <- rbind(ftpv_activity_count,count_active)
         
