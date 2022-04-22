@@ -68,7 +68,7 @@ vessel_qa_server <- function(id, pool) {
     
     ftpv_activity_count <- data.frame(
       Validity = c('active', 'inactive'),
-      Count = c(0,ftpv_GrandTotal)
+      Count = c(0,GrandTotal_vessels)
     )
   }
   
