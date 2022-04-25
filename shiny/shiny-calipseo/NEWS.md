@@ -1,3 +1,12 @@
+# shiny-calipseo v1.0.0.9999 (DEV)
+
+##New features
+
+##Enhancements
+
+##Corrections
+
+* [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
 
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
