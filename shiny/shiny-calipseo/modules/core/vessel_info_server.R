@@ -4,7 +4,6 @@ vessel_info_server <- function(id, pool) {
  moduleServer(id, function(input, output, session) {
   
   output$vessel_header <- renderText({
-    session$userData$page("vessel-info")
     text <- paste0("<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">",i18n("BACK_TO_LIST_OF_VESSELS"),"</a>")
     text
   })

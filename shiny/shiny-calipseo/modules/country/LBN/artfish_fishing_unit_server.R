@@ -15,11 +15,6 @@ artfish_fishing_unit_server <- function(id, pool){
   indicator_unit<-reactiveVal(NULL)
   indicator_label<-reactiveVal(NULL)
   
-  output$urlPage<-renderUI({
-    session$userData$page("artfish-fishing-unit")
-    updatePageUrl("artfish-fishing-unit", session)
-  })
-  
   ref_species<-accessRefSpecies(pool)
   ref_fishing_units<-accessRefFishingUnits(pool)
   

@@ -11,8 +11,6 @@ computation_server <- function(id, pool) {
   print(names(DATASETS))
   
   output$computation_info <- renderText({
-    session$userData$page("computation")
-    updatePageUrl("computation", session)
     text <- paste0("<h2>", i18n("COMPUTATION_TITLE")," <small>", i18n("COMPUTATION_SUBTITLE"),
                    userTooltip("This section lets you compute the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
                                style = "font-size: 75%;"),"</small></h2><hr>")
