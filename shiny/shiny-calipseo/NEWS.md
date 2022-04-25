@@ -7,6 +7,7 @@
 ##Corrections
 
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
+* [CALR-92](https://sdlc.review.fao.org/jira/browse/CALR-92) Vessel-info-module Number-of-license-infobox-display-more-counts
 
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
