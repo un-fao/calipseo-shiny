@@ -12,10 +12,6 @@ logbooks_upload_server <- function(id, pool) {
     valid=NULL
   )
   
-  output$urlPage<-renderUI({
-    session$userData$page("logbooks-upload")
-    updatePageUrl("logbooks-upload", session)
-  })
   
   #Validity to file in input
   output$validity_btn<-renderUI({

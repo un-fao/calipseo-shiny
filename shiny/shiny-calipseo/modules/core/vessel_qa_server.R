@@ -4,8 +4,6 @@ vessel_qa_server <- function(id, pool) {
  moduleServer(id, function(input, output, session) {
     
   output$vessel_qa_info <- renderText({
-    session$userData$page("vessel-qa")
-    updatePageUrl("vessel-qa", session)
     text <- paste0("<h2>", i18n("VESSEL_QA_TITLE")," <small>", i18n("VESSEL_QA_SUBTITLE"),"</small></h2><hr>")
     text
   })

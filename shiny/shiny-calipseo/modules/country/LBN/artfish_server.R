@@ -5,11 +5,6 @@ artfish_server <- function(id, pool){
   
   ns<-session$ns
   
-  output$urlPage<-renderUI({
-    session$userData$page("artfish")
-    updatePageUrl("artfish", session)
-  })
-  
   survey<-accessSurveyDateAndStratum(pool)
   
   ref_species<-accessRefSpecies(pool)

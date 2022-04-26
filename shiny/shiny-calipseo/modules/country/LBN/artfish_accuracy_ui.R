@@ -4,7 +4,6 @@ artfish_accuracy_ui <- function(id){
   ns <- NS(id)
   
   tabItem(tabName = "artfish_accuracy",
-          uiOutput(ns("urlPage")),
           fluidRow(
             div(
               width = 12, style = "margin:12px;",

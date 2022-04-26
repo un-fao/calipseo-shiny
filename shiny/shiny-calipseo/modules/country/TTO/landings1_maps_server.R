@@ -4,8 +4,6 @@ landings1_maps_server <- function(id, pool){
  moduleServer(id, function(input, output, session){  
   
   output$landings1_maps_info <- renderText({
-    session$userData$page("landings1-maps")
-    updatePageUrl("landings1-maps", session)
     text <- paste0("<h2>", i18n("LANDINGS1_MAPS_TITLE")," <small>", i18n("LANDINGS1_MAPS_SUBTITLE"),
                    userTooltip("These maps represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
                                style = "font-size: 75%;"),"</small></h2><hr>")

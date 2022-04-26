@@ -7,11 +7,6 @@ artfish_overview_server <- function(id, pool){
   
   data_bg<-reactiveVal(NULL)
   
-  output$urlPage<-renderUI({
-    session$userData$page("artfish-overview")
-    updatePageUrl("artfish-overview", session)
-  })
-  
   level_choices <- c(i18n("LEVEL_LABLE_GLOBAL"),i18n("LEVEL_LABLE_DETAIL"))
   
   ref_species<-accessRefSpecies(pool)

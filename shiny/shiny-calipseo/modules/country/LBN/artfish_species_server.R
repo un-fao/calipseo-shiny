@@ -8,10 +8,6 @@ artfish_species_server <- function(id, pool){
   data_sp<-reactiveVal(NULL)
   data_sp_bg<-reactiveVal(NULL)
   
-  output$urlPage<-renderUI({
-    session$userData$page("artfish-species")
-    updatePageUrl("artfish-species", session)
-  })
   
   ref_species<-accessRefSpecies(pool)
   ref_fishing_units<-accessRefFishingUnits(pool)

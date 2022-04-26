@@ -4,7 +4,6 @@ artfish_species_ui <- function(id){
   ns <- NS(id)
   
   tabItem(tabName = "artfish_species",
-          uiOutput(ns("urlPage")),
             div(class="row",
             column(3,
               tags$h2(i18n("ARTFISH_SPECIES_TITLE")),

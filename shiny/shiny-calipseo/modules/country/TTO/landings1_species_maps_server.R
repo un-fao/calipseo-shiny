@@ -4,8 +4,6 @@ landings1_species_maps_server <- function(id, pool){
  moduleServer(id, function(input, output, session){  
   
   output$landings1_species_maps_info <- renderText({
-    session$userData$page("landings1-species-maps")
-    updatePageUrl("landings1-species-maps", session)
     text <- paste0("<h2>", i18n("LANDINGS1_SPECIES_MAPS_TITLE")," <small>", i18n("LANDINGS1_SPECIES_MAPS_SUBTITLE"),
                    userTooltip("These maps represent the different landings by yearincluding the 1st raised landings (LAN), value (VAL) by landing site and giving proportions by the main species.",
                                style = "font-size: 75%;"),"</small></h2><hr>")

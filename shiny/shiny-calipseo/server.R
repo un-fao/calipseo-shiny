@@ -29,4 +29,14 @@ server <- function(input, output, session) {
     loadModuleServers(appConfig, pool)
   })
   
+  
+  observe({
+    #Update PageUrl
+    if(!input$`calipseo-tabs` == "home"){
+      PageUrl <- gsub('_', '-', input$`calipseo-tabs`)
+      session$userData$page(PageUrl)
+      updatePageUrl(PageUrl, session)
+    }
+  })
+  
 }
