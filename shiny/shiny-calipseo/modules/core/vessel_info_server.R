@@ -505,7 +505,7 @@ vessel_info_server <- function(id, pool) {
       #vesselcharacteristics
       INFO("vessel-info server: Gathering vessel characteristics and descriptions")
       df_characteristics <- reactive({
-        
+        if(nrow(vessel)>0){
         descr_calipseo <- vessel[,c(11:16)]
         
         descr_calipseo$id <- row.names(descr_calipseo)
@@ -547,6 +547,18 @@ vessel_info_server <- function(id, pool) {
         df_calipseo$Description[6] <- i18n("SPEED")
         df_calipseo$Description[7] <- i18n("TRAWLING_SPEED")
         df_calipseo$Description[8] <- i18n("POWER")
+        
+        }else{
+          
+          df_calipseo <- data.frame(
+            Description = c(i18n("LENGTH_OVERALL"),i18n("DRAUGHT"),i18n("BEAM"),
+                            i18n("GROSS TONNAGE"),i18n("SUMMER_DEADWEIGHT"),
+                            i18n("SPEED"),i18n("TRAWLING_SPEED"),i18n("POWER")),
+            Calipseo = c(NA,NA,NA,NA,NA,NA,NA,NA)
+          )
+          
+        }
+        
         return(df_calipseo)
         
       })
