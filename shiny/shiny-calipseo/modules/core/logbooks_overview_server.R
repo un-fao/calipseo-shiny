@@ -5,11 +5,6 @@ logbooks_overview_server <- function(id, pool){
    
   ns<-session$ns
   
-  output$urlPage<-renderUI({
-    session$userData$page("logbooks-overview")
-    updatePageUrl("logbooks-overview", session)
-  })
-  
   currentyear <- as.integer(format(Sys.Date(),"%Y"))
   lastyear <- currentyear-1
   

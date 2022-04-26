@@ -5,10 +5,6 @@ artfish_accuracy_server <- function(id, pool){
    
   ns<-session$ns
   
-  output$urlPage<-renderUI({
-    session$userData$page("artfish-accuracy")
-    updatePageUrl("artfish-accuracy", session)
-  })
   
   output$button<-renderUI({
     if(!is.na(input$days)&!is.na(input$boats)&!is.na(input$effort_smp)&!is.na(input$effort_days_smp)&!is.na(input$landing_smp)&!is.na(input$landing_days_smp)){

@@ -4,8 +4,6 @@ individual_list_server <- function(id, pool) {
  moduleServer(id, function(input, output, session) {
   
   output$individual_list_info <- renderText({
-    session$userData$page("individual-list")
-    updatePageUrl("individual-list", session)
     text <- paste0("<h2>", i18n("INDIVIDUAL_LIST_TITLE")," <small>", i18n("INDIVIDUAL_LIST_SUBTITLE"),"</small></h2><hr>")
     text
   })

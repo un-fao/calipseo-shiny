@@ -4,8 +4,6 @@ vessel_breakdown_server <- function(id, pool) {
  moduleServer(id, function(input, output, session) {  
   
   output$vessel_breakdown_info <- renderText({
-    session$userData$page("vessel-breakdown")
-    updatePageUrl("vessel-breakdown", session)
     text <- paste0("<h2>", i18n("VESSEL_BREAKDOWN_TITLE")," <small>", i18n("VESSEL_BREAKDOWN_SUBTITLE"),"</small></h2><hr>")
     text
   })

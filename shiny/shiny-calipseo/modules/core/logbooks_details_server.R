@@ -3,10 +3,6 @@ logbooks_details_server <- function(id, pool){
  
  moduleServer(id, function(input, output, session) {  
   
-  output$urlPage<-renderUI({
-    session$userData$page("logbooks-details")
-    updatePageUrl("logbooks-details", session)
-  })
   
   emptyDataFrame <- function(){
     data.frame(year = integer(0), quantity = integer(0), stringsAsFactors = FALSE)

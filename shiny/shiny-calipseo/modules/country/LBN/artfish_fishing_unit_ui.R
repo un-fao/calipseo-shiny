@@ -23,7 +23,7 @@ artfish_fishing_unit_ui <- function(id){
 
   
   tabItem(tabName = "artfish_fishing_unit",
-          uiOutput(ns("urlPage")),
+          
           fluidRow(
             tags$h2(i18n("ARTFISH_FISHING_UNIT_TITLE"))
           ),
