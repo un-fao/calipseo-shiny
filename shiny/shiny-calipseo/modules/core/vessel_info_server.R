@@ -861,7 +861,7 @@ vessel_info_server <- function(id, pool) {
       
       INFO("vessel-info server: Applying font colour and icon to the desired columns")
       colRList <- reactive({
-        
+        if(length(vessel_indicators_infos$vessel_operational_status)>0){
         if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION'){
           
           colorlist <- c('green','black','check-circle')
@@ -877,10 +877,15 @@ vessel_info_server <- function(id, pool) {
         }else if(vessel_indicators_infos$vessel_operational_status=='LAID UP'){
           
           colorlist <- c('orange', 'black','anchor')
+        
         }else{
-          
           colorlist <- c('purple', 'black','ban')
         }
+        
+        
+      }else{
+        colorlist <- c('white', 'black','ban')
+      }
         return(colorlist)
       })
       
