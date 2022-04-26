@@ -12,9 +12,15 @@
 
 ** Module corrections**
 
+_Individuals -list_
+
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
+
+_Vessels - details (info)_
+
 * [CALR-92](https://sdlc.review.fao.org/jira/browse/CALR-92) Vessel-info-module Number-of-license-infobox-display-more-counts
 * [CALR-93](https://sdlc.review.fao.org/jira/browse/CALR-93) Vessel-info-module Removing extra column name from dataframe
+* [CALR-94](https://sdlc.review.fao.org/jira/browse/CALR-94) Vessel-info-module Vessel Operational Status infobox throws error when invalide registration number is input
 
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
