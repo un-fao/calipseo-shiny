@@ -1,10 +1,16 @@
 # shiny-calipseo v1.0.0.9999 (DEV)
 
-##New features
+## New features
 
-##Enhancements
+## Enhancements
 
-##Corrections
+## Corrections
+
+** Core corrections**
+
+* [CALR-67](https://sdlc.review.fao.org/jira/browse/CALR-67) Routes do not work systematically
+
+** Module corrections**
 
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
 * [CALR-92](https://sdlc.review.fao.org/jira/browse/CALR-92) Vessel-info-module Number-of-license-infobox-display-more-counts
@@ -92,7 +98,7 @@ _Artfish_
 
 ## Enhancements
 
-**Core enhancemnts**
+**Core enhancements**
 
 * [CALR-16](https://sdlc.review.fao.org/jira/browse/CALR-16) Evaluate needs to add 'shinydashboardplus' to improve user-friendliness
 * [CALR-28](https://sdlc.review.fao.org/jira/browse/CALR-28) Load ASFIS reference dataset enriched with ISSCAAP groups at app starting
