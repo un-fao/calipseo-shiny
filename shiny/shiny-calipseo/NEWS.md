@@ -8,6 +8,7 @@
 
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
 * [CALR-92](https://sdlc.review.fao.org/jira/browse/CALR-92) Vessel-info-module Number-of-license-infobox-display-more-counts
+* [CALR-93](https://sdlc.review.fao.org/jira/browse/CALR-93) Vessel-info-module Removing extra column name from dataframe
 
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
