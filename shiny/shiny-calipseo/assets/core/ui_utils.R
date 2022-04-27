@@ -35,7 +35,7 @@ downloadButtonCustom <- function (outputId, label = "Download", class = NULL, hr
 
 
 #gicon
-gicon <- function(x) as.character(icon(x, lib = "glyphicon"))
+gicon <- function(x, style = NULL) as.character(icon(x, lib = "glyphicon", style = style))
 
 #userTooltip
 userTooltip <- function(text, style = ""){
