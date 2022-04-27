@@ -4,6 +4,8 @@
 
 ## Enhancements
 
+* [CALR-96](https://sdlc.review.fao.org/jira/browse/CALR-96) Adopting a function to determine vessel license validity across vessel list module and vessel info module
+
 ## Corrections
 
 ** Core corrections**
