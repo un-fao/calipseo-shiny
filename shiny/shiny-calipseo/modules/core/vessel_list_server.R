@@ -57,14 +57,17 @@ vessel_list_server <- function(id, pool) {
   
   INFO("vessel-list server: Joining vessle list data and license permits data")
   
-  df <- df[,c(1,2,3,4,5,6,7,16)]
+  df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+              "HOME_PORT","REG_PORT","Details")]
+  
   df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
   df <- dplyr::distinct(df,REGISTRATION_NUMBER,.keep_all = TRUE)
   df$Validity[is.na(df$Validity)] <- 'missing license'
   df$HOME_PORT[is.na(df$HOME_PORT)] <- 'unknown'
   df$REG_PORT[is.na(df$REG_PORT)] <- 'unknown'
   
-  df <- df[,c(1,2,3,4,5,6,7,15,8)]
+  df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+              "HOME_PORT","REG_PORT","Validity","Details")]
   
   INFO("vessel-list server: Applying font colour and icon to the desired columns")
   df$HOME_PORT <- as.character(df$HOME_PORT)
