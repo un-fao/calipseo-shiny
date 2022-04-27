@@ -259,22 +259,9 @@ vessel_info_server <- function(id, pool) {
           
           vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
           
-          vessellicensepermits$Valid_to_date <- as.Date(vessellicensepermits$Valid_to_date)
-          
-          valid_to_date <- vessellicensepermits$Valid_to_date
-          
-          vessellicensepermits$Validity <- NA
           INFO("vessel-info server: Computing valid and expired license permits")
-          for (i in 1:length(valid_to_date)) {
-            validity_status <- Sys.Date()-valid_to_date[i]
-            
-            if(validity_status<0){
-              vessellicensepermits$Validity[i] <- 'ok'
-            }else{
-              
-              vessellicensepermits$Validity[i] <- 'remove'
-            }
-          }
+          vessellicensepermits <- LicenseValidity(vessellicensepermits, validity_names = c('ok', 'remove'))
+          
           INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
           vessellicensepermits <- vessellicensepermits[,-7]

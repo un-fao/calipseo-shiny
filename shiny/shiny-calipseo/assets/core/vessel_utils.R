@@ -51,3 +51,28 @@ vesselFindeR <- function(name, flag_iso2){
   })
 }
 
+
+#LicenseValidity
+LicenseValidity <- function(ls_data, validity_names = c('valid', 'expired')){
+  ls_data$Valid_to_date <- as.Date(ls_data$Valid_to_date)
+  
+  valid_to_date <- ls_data$Valid_to_date
+  
+  ls_data$Validity <- NA
+  
+  for (i in 1:length(valid_to_date)) {
+    validity_status <- Sys.Date()-valid_to_date[i]
+    
+    if(validity_status<0){
+      ls_data$Validity[i] <- validity_names[1]
+    }else{
+      
+      ls_data$Validity[i] <- validity_names[2]
+    }
+  }
+  
+  return(ls_data)
+}
+
+
+

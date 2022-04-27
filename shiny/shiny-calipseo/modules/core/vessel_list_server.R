@@ -33,25 +33,10 @@ vessel_list_server <- function(id, pool) {
   
   ls_permits <- dplyr::distinct(ls_permits, PERMIT_NUMBER,.keep_all = TRUE)
   INFO("vessel-list server: Vessels with permit numbers '%s'", nrow(ls_permits))
-  
-  ls_permits$Valid_to_date <- as.Date(ls_permits$Valid_to_date)
-  
-  valid_to_date <- ls_permits$Valid_to_date
-  
-  ls_permits$Validity <- NA
+
   
   INFO("vessel-list server: Computing valid and expired license permits")
-  
-  for (i in 1:length(valid_to_date)) {
-    validity_status <- Sys.Date()-valid_to_date[i]
-    
-    if(validity_status<0){
-      ls_permits$Validity[i] <- 'valid'
-    }else{
-      
-      ls_permits$Validity[i] <- 'expired'
-    }
-  }
+  ls_permits <- LicenseValidity(ls_permits)
   
   INFO("vessel-list server: Joining vessles with license permits and those without license permits")
   valid_dates <- ls_permits[ls_permits['Validity']=='valid',]
