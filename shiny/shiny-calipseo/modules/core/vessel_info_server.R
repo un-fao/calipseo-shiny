@@ -123,19 +123,19 @@ vessel_info_server <- function(id, pool) {
         INFO("vessel-info server: Fetching vessel historical data with rows '%s'", nrow(historical_data))
         if(nrow(historical_data)>0){
           
-          const_data <- historical_data[,c(1,10,11)]
+          const_data <- historical_data[c("Type_char", "DESCRIPTION", "UPDATED_AT")]
+          var_data <- historical_data[, -which(names(historical_data) %in% c("Type_char", "DESCRIPTION", "UPDATED_AT"))]
           
-          var_data <-  historical_data[,c(2:9)]
           INFO("vessel-info server: Tracking change in the old and new vessel data") 
-          old_data <- var_data[,c(1,3,5,7)]
-          new_data <- var_data[,-c(1,3,5,7)]
+          old_data <- var_data[,c("OLD_VALUE_DATE","OLD_VALUE_FLOAT","OLD_ID_LABEL","OLD_VALUE_STRING")]
+          new_data <- var_data[, -which(names(var_data) %in% c("OLD_VALUE_DATE","OLD_VALUE_FLOAT","OLD_ID_LABEL","OLD_VALUE_STRING"))]
           
           
           old_data <- within(old_data,  value <- paste(OLD_VALUE_FLOAT,OLD_ID_LABEL,OLD_VALUE_STRING,OLD_VALUE_DATE, sep=""))
           new_data <- within(new_data,  value <- paste(NEW_VALUE_FLOAT,NEW_ID_LABEL,NEW_VALUE_STRING,NEW_VALUE_DATE, sep=""))
           
-          old_data <- old_data[,5]
-          new_data <- new_data[,5]
+          old_data <- old_data[,"value"]
+          new_data <- new_data[,"value"]
           
           cl_data <- function(data){
             data <- gsub('NA', '',data)
@@ -160,8 +160,8 @@ vessel_info_server <- function(id, pool) {
             
           }
           
-          df <- df[,c(3,4,1,2,5)]
-          print(df)
+          
+          df <- df[,c("Type_char","DESCRIPTION","old", "new", "UPDATED_AT")]
           df$UPDATED_AT <- as.POSIXct(as.character(df$UPDATED_AT))
           attr(df$UPDATED_AT, "tzone") <- appConfig$country_profile$timezone
           df <- df[order(rank(df$UPDATED_AT),decreasing=TRUE),]
@@ -264,12 +264,14 @@ vessel_info_server <- function(id, pool) {
           
           INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
-          vessellicensepermits <- vessellicensepermits[,-7]
+          vessellicensepermits <- vessellicensepermits[, -which(names(vessellicensepermits) %in% c("REGISTRATION_NUMBER"))]
           names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
                                           i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
                                           i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
                                           i18n("LICENCES_TABLE_COLNAME_7"))
-          vessellicensepermits <- vessellicensepermits[,c(1,2,3,4,5,7,6)]
+          vessellicensepermits <- vessellicensepermits[,c("Permit Number", "Application Date", "Permit Date", 
+                                                          "Valid From (Date)", "Valid To (Date)", "Validity", 
+                                                          "Gears")]
           
           vessellicensepermits$Validity_status <- vessellicensepermits$Validity
           
@@ -493,7 +495,7 @@ vessel_info_server <- function(id, pool) {
       INFO("vessel-info server: Gathering vessel characteristics and descriptions")
       df_characteristics <- reactive({
         if(nrow(vessel)>0){
-        descr_calipseo <- vessel[,c(11:16)]
+        descr_calipseo <- vessel[,c("LOA", "DRA", "GT", "SPEED", "TRAWLING_SPEED", "POWER")]
         
         descr_calipseo$id <- row.names(descr_calipseo)
         
@@ -522,7 +524,10 @@ vessel_info_server <- function(id, pool) {
         
         df_calipseo <- rbind(descr_calipseo,extra_calipseo)
         
-        df_calipseo <- df_calipseo[c(1,2,7,3,8,4,5,6),]
+        df_calipseo <-  df_calipseo[c(df_calipseo$Description =="Length Overall (m)" | df_calipseo$Description == "Draught (m)" 
+                                      | df_calipseo$Description == "Beam (m)" | df_calipseo$Description == "Gross Tonnage" 
+                                      | df_calipseo$Description == "Summer Deadweight (t)" | df_calipseo$Description == "Speed" 
+                                      | df_calipseo$Description == "Trawling Speed" | df_calipseo$Description == "Power"),]
         
         
         names(df_calipseo) <- c('Description','Calipseo')
@@ -555,7 +560,10 @@ vessel_info_server <- function(id, pool) {
       output$vessel_characteristics <- renderUI({
         
         df_calipseo_char <- df_characteristics()
-        df_vesselfinder_char <- vessel_found[c(3:10),2]
+        df_vesselfinder_char <- vessel_found[c(vessel_found$Description =="Length Overall (m)" | vessel_found$Description == "Draught (m)" 
+                                               | vessel_found$Description == "Beam (m)" | vessel_found$Description == "Gross Tonnage" 
+                                               | vessel_found$Description == "Summer Deadweight (t)" | vessel_found$Description == "Speed" 
+                                               | vessel_found$Description == "Trawling Speed" | vessel_found$Description == "Power"),2]
         
         if(!is.null(df_vesselfinder_char)){
           
@@ -811,7 +819,7 @@ vessel_info_server <- function(id, pool) {
       }
       
       ftpv$Mean <- ftpv$sum_no_trips_per_year/ftpv$No_years_trips_made
-      ftpv <- ftpv[,c(1,4)]
+      ftpv <- ftpv[,c("Year","Mean")]
       ftpv$Mean <- round(ftpv$Mean, digits = 2)
       
       
