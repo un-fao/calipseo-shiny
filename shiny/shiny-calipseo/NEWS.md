@@ -6,6 +6,7 @@
 
 * [CALR-96](https://sdlc.review.fao.org/jira/browse/CALR-96) Adopting a function to determine vessel license validity across vessel list module and vessel info module
 * [CALR-97](https://sdlc.review.fao.org/jira/browse/CALR-97) Refractoring Vessel list module-moving from using column indexes to column names
+* [CALR-98](https://sdlc.review.fao.org/jira/browse/CALR-98) Using the gicon calipseo function to handle glyphicon icons in vessel list module
 
 ## Corrections
 
