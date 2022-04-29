@@ -14,6 +14,7 @@
 ** Core corrections**
 
 * [CALR-67](https://sdlc.review.fao.org/jira/browse/CALR-67) Routes do not work systematically
+* [CALR-100](https://sdlc.review.fao.org/jira/browse/CALR-100) vessel license permits data not accurate
 
 ** Module corrections**
 
@@ -27,7 +28,7 @@ _Vessels - details (info)_
 * [CALR-93](https://sdlc.review.fao.org/jira/browse/CALR-93) Vessel-info-module Removing extra column name from dataframe
 * [CALR-94](https://sdlc.review.fao.org/jira/browse/CALR-94) Vessel-info-module Vessel Operational Status infobox throws error when invalide registration number is input
 * [CALR-95](https://sdlc.review.fao.org/jira/browse/CALR-95) Vessel-info-module vessel characteristics tab throws error when invalide registration number is input
-
+* [CALR-101](https://sdlc.review.fao.org/jira/browse/CALR-101) VesselFindeR returns unstandard data without image link for some vessels
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
 
