@@ -40,6 +40,11 @@ vesselFindeR <- function(name, flag_iso2){
       
       df <- rbind(df,extra_vessel_finder)
       df <- rbind(c('link',link), df)
+    }else{
+      
+      df <- data.frame(
+        Value = c(NA,"./assets/img/placeholders/vessel.png")
+      )
     }
     
     return(df)
