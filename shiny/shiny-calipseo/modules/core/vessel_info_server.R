@@ -472,12 +472,15 @@ vessel_info_server <- function(id, pool) {
       
       vessel_found <- vesselFindeR(vessel$NAME, appConfig$country_profile$data$ISO_2_CODE)
       
-      
-      
       if(nrow(vessel_found)>0){
-        INFO("vessel-info server: Returning vessel image from vesselfinder")
-        vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
-        vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">",paste0(i18n("IMAGE_SOURCE"),":"),"<a href=",vessel_found$Value[1], " target=\"_blank\" a>",i18n("VESSEL_FINDER"),"</a></div>"))
+        if(!is.na(vessel_found$Value[1])){
+          INFO("vessel-info server: Returning vessel image from vesselfinder")
+          vessel_picture_html <- createBase64Image(src = vessel_found$Value[2], width = "180px", alt = vessel$NAME)
+          vessel_picture_html <- HTML(vessel_picture_html,paste0("<div style=\"font-size:80%\">",paste0(i18n("IMAGE_SOURCE"),":"),"<a href=",vessel_found$Value[1], " target=\"_blank\" a>",i18n("VESSEL_FINDER"),"</a></div>"))
+        }else{
+          vessel_picture_html <- HTML(createBase64Image(src = vessel_found$Value[2], height = "150px", alt = vessel$NAME))
+        }
+        
       }else{
         
         INFO("vessel-info server: Returning Placeholder image for vessel")
