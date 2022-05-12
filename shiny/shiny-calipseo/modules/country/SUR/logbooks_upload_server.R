@@ -151,20 +151,8 @@ logbooks_upload_server <- function(id, pool) {
           }
         )
         
-      }else{
-        
-        output$upload_error_message <- renderUI({
-          fluidRow(
-            if(is.null(out$result)){
-              shiny::tagList(
-                div(class="alert alert-warning", role="alert",style='font-size:90%;',
-                    icon("warning", "fa-2x"), tags$em(i18n("LOGBOOK_UPLOAD_MESSAGE"))  
-                ))
-              }
-            )
-          })
-        }
-      })
+      }
+    })
     
     
     observeEvent(input$file_to_upload, {

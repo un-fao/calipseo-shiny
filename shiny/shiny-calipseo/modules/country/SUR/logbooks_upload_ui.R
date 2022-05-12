@@ -19,6 +19,7 @@ logbooks_upload_ui <- function(id){
       )
     ),
     tags$h2(i18n("LOGBOOKS_UPLOAD_TITLE")),
+    uiOutput(ns("urlPage")),
     fluidRow(
       column(3,
              fileInput(inputId = ns("file_to_upload"), label = paste0(i18n("LOGBOOK_UPLOAD_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))),
@@ -29,7 +30,6 @@ logbooks_upload_ui <- function(id){
     ),
     fluidRow(
       uiOutput(ns("generate_SQL_btn"))
-    ),
-    uiOutput(ns("upload_error_message"))
+    )
   )
 }
