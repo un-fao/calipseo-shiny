@@ -31,6 +31,8 @@
   "ERROR_TABLE_COLNAME_5" : "Description",
   "ERROR_TABLE_DATA_FILENAME" : "errors_",
   
+  "LOGBOOK_UPLOAD_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
+  
   /*sql file*/
   
   "GENERATE_SQL_FILE" : "Generate SQL file",
