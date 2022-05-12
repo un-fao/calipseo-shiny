@@ -167,9 +167,12 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     }
     
     if(length(unique(trip$departure_date))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="date issue",message="multiple departure date for a same trip. first selected"))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="multiple departure date for a same trip"))
     }
     
+    if(trip$departure_date[1]>Sys.Date()){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="departure date is after present day"))
+    }
     
     
     #Arrival Date
@@ -181,7 +184,11 @@ convertTripToSQL <- function(filename, pool,monitor=NULL){
     }
     
     if(length(unique(trip$arrival_date))>1){
-      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="WARNING",category="date issue",message="multiple arrival date for a same trip. first selected"))
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="multiple arrival date for a same trip"))
+    }
+    
+    if(trip$arrival_date[1]>Sys.Date()){
+      errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="arrival date is after present day"))
     }
     
     #Trip duration
