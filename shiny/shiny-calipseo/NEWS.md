@@ -18,6 +18,10 @@
 
 ** Module corrections**
 
+** Miscs **
+
+* [CALR-106](https://sdlc.review.fao.org/jira/browse/CALR-106) Fix logbook SQL generation function for Suriname logbook data
+
 _Individuals -list_
 
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
