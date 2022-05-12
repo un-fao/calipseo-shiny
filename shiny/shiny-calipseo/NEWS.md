@@ -4,10 +4,20 @@
 
 ## Enhancements
 
+** Module enhancements **
+
+_Vessels - list / details_
+
+
 * [CALR-96](https://sdlc.review.fao.org/jira/browse/CALR-96) Adopting a function to determine vessel license validity across vessel list module and vessel info module
 * [CALR-97](https://sdlc.review.fao.org/jira/browse/CALR-97) Refractoring Vessel list module-moving from using column indexes to column names
 * [CALR-98](https://sdlc.review.fao.org/jira/browse/CALR-98) Using the gicon calipseo function to handle glyphicon icons in vessel list module
 * [CALR-99](https://sdlc.review.fao.org/jira/browse/CALR-99) Refractoring Vessel info module-moving from using column indexes to column names
+
+_Logbook validation (Suriname)_
+
+* [CALR-107](https://sdlc.review.fao.org/jira/browse/CALR-107) Rename module for more clarity on business processes (validation, SQL generation) vs. upload
+* [CALR-108](https://sdlc.review.fao.org/jira/browse/CALR-108) Increase validation rules for Logbook upload modules
 
 ## Corrections
 
