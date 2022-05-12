@@ -18,10 +18,6 @@
 
 ** Module corrections**
 
-** Miscs **
-
-* [CALR-106](https://sdlc.review.fao.org/jira/browse/CALR-106) Fix logbook SQL generation function for Suriname logbook data
-
 _Individuals -list_
 
 * [CALR-91](https://sdlc.review.fao.org/jira/browse/CALR-91) individuals list - Wrong SQL join with reg_entities
@@ -33,6 +29,10 @@ _Vessels - details (info)_
 * [CALR-94](https://sdlc.review.fao.org/jira/browse/CALR-94) Vessel-info-module Vessel Operational Status infobox throws error when invalide registration number is input
 * [CALR-95](https://sdlc.review.fao.org/jira/browse/CALR-95) Vessel-info-module vessel characteristics tab throws error when invalide registration number is input
 * [CALR-101](https://sdlc.review.fao.org/jira/browse/CALR-101) VesselFindeR returns unstandard data without image link for some vessels
+
+** Miscs **
+
+* [CALR-106](https://sdlc.review.fao.org/jira/browse/CALR-106) Fix logbook SQL generation function for Suriname logbook data
 
 # shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
 
