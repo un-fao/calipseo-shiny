@@ -39,7 +39,7 @@ logbooks_upload_server <- function(id, pool) {
         max=1,
         message = i18n("UPLOAD_PROGRESS_MESSAGE"),
         detail = "" , 
-        convertTripToSQL(file,pool,monitor=shinyMonitor)
+        validateLogbookFile(file,pool,monitor=shinyMonitor)
       )
       
       if(!is.null(outt$result)){
