@@ -1,9 +1,9 @@
-#' @name convertTripToSQL
-#' @aliases convertTripToSQL
-#' @title convertTripToSQL
-#' @description \code{convertTripToSQL} validate and convert data to upload (excel format) to sql file ready to upload
+#' @name validateLogbookFile
+#' @aliases validateLogbookFile
+#' @title validateLogbookFile
+#' @description \code{validateLogbookFile} validate and convert data to upload (excel format) to sql file ready to upload
 #'
-#' @usage convertTripToSQL(filename, pool,ft_idx,fa_idx,fag_idx,fas_idx)
+#' @usage validateLogbookFile(filename, pool,ft_idx,fa_idx,fag_idx,fas_idx)
 #'                 
 #' @param filename the file path to the dataset
 #' @param pool the db connection to access to the table
@@ -14,7 +14,7 @@
 #'
 #'    
 
-convertTripToSQL <- function(filename, pool,monitor=NULL){
+validateLogbookFile <- function(filename, pool,monitor=NULL){
   
   ft_idx = 0
   last_ft = dbGetQuery(pool, "SELECT * FROM dt_fishing_trip")
