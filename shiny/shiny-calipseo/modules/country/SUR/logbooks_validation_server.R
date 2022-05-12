@@ -1,5 +1,5 @@
-#logbooks_upload_server
-logbooks_upload_server <- function(id, pool) {
+#logbooks_validation_server
+logbooks_validation_server <- function(id, pool) {
   
   moduleServer(id, function(input, output, session){  
     
@@ -15,7 +15,7 @@ logbooks_upload_server <- function(id, pool) {
     
     #Validity to file in input
     output$validity_btn<-renderUI({
-      if(!is.null(input$file_to_upload)){
+      if(!is.null(input$file_to_validate)){
         actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY"),style = "color:green; background-color:#b8efa0")
       }else{
         disabled(actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY")))
@@ -24,20 +24,20 @@ logbooks_upload_server <- function(id, pool) {
     
     shinyMonitor = function(value,step,max,trip_id){
       shiny::setProgress(value = value, 
-                         message = i18n("UPLOAD_PROGRESS_MESSAGE"),
-                         detail = sprintf(paste0(i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPID"),": %s - [%s ",i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_ON")," %s ",i18n("UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPS"),"]"),trip_id,step,max))
+                         message = i18n("VALIDATION_PROGRESS_MESSAGE"),
+                         detail = sprintf(paste0(i18n("VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPID"),": %s - [%s ",i18n("VALIDATION_PROGRESS_MESSAGE_LABEL_ON")," %s ",i18n("VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPS"),"]"),trip_id,step,max))
     }
     
     #Validity to content
     observeEvent(input$check_validity,{
-      file<-input$file_to_upload
+      file<-input$file_to_validate
       print(file$name)
       
       outt<-shiny::withProgress(
         value = 0,
         min=0,
         max=1,
-        message = i18n("UPLOAD_PROGRESS_MESSAGE"),
+        message = i18n("VALIDATION_PROGRESS_MESSAGE"),
         detail = "" , 
         validateLogbookFile(file,pool,monitor=shinyMonitor)
       )
@@ -95,7 +95,7 @@ logbooks_upload_server <- function(id, pool) {
                 scrollX=TRUE,
                 pageLength=5,
                 buttons = list(
-                  list(extend = 'csv', filename =  paste0(i18n("REFERENTIAL_TABLE_DATA_FILENAME"),strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
+                  list(extend = 'csv', filename =  paste0(i18n("REFERENTIAL_TABLE_DATA_FILENAME"),strsplit(input$file_to_validate$name,".xlsx")[[1]]), title = NULL, header = TRUE)
                 ),
                 exportOptions = list(
                   modifiers = list(page = "all",selected=TRUE)
@@ -123,7 +123,7 @@ logbooks_upload_server <- function(id, pool) {
                 scrollX=TRUE,
                 pageLength=5,
                 buttons = list(
-                  list(extend = 'csv', filename =  paste0(i18n("ERROR_TABLE_DATA_FILENAME"),strsplit(input$file_to_upload$name,".xlsx")[[1]]), title = NULL, header = TRUE)
+                  list(extend = 'csv', filename =  paste0(i18n("ERROR_TABLE_DATA_FILENAME"),strsplit(input$file_to_validate$name,".xlsx")[[1]]), title = NULL, header = TRUE)
                 ),
                 exportOptions = list(
                   modifiers = list(page = "all",selected=TRUE)
@@ -145,7 +145,7 @@ logbooks_upload_server <- function(id, pool) {
         #Download SQL
         output$generate_SQL <- downloadHandler(
           filename = function(){ 
-            paste0(strsplit(input$file_to_upload$name,".xlsx")[[1]],".sql")  },
+            paste0(strsplit(input$file_to_validate$name,".xlsx")[[1]],".sql")  },
           content = function(file){
             writeLines(out$result,file)
           }
@@ -155,7 +155,7 @@ logbooks_upload_server <- function(id, pool) {
     })
     
     
-    observeEvent(input$file_to_upload, {
+    observeEvent(input$file_to_validate, {
       output$validity_result<-renderUI(NULL)
       output$generate_SQL_btn<-renderUI(NULL)
     })

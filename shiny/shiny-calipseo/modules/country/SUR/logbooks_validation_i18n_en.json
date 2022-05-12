@@ -1,12 +1,12 @@
 {
-  /*Logbook upload title*/
-  "LOGBOOKS_UPLOAD_TITLE" : "Upload Logbooks",
-  "LOGBOOK_UPLOAD_FILEINPUT_LABEL_TITLE" : "Import a logbook data file",
+  /*Logbook validation title*/
+  "LOGBOOKS_VALIDATION_TITLE" : "Validate Logbooks",
+  "LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE" : "Import a logbook data file",
   "ACTIONBUTTON_LABEL_TEST_VALIDITY" : "Test file validity",
-  "UPLOAD_PROGRESS_MESSAGE" : "Dataset validation in progress ... ",
-  "UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPID" : "Trip ID",
-  "UPLOAD_PROGRESS_MESSAGE_LABEL_ON" : "on",
-  "UPLOAD_PROGRESS_MESSAGE_LABEL_TRIPS" : "trips",
+  "VALIDATION_PROGRESS_MESSAGE" : "Dataset validation in progress ... ",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPID" : "Trip ID",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_ON" : "on",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPS" : "trips",
   
   /*Referentials*/
   "REFERENTIAL_UPDATE_LABEL" : "Referential(s) to update",
@@ -31,7 +31,7 @@
   "ERROR_TABLE_COLNAME_5" : "Description",
   "ERROR_TABLE_DATA_FILENAME" : "errors_",
   
-  "LOGBOOK_UPLOAD_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
+  "LOGBOOK_VALIDATION_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
   
   /*sql file*/
   

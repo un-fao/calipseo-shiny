@@ -2,6 +2,6 @@
   "type": "subitem",
   "parent": "logbooks",
   "rank": 4,
-  "title": "Logbooks upload",
-  "icon": "upload"
+  "title": "Logbooks validation",
+  "icon": "check"
 }
