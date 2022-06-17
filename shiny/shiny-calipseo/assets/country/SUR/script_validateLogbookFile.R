@@ -336,6 +336,27 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
         errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="species issue",message=sprintf("Missing quantity value for species '%s'",sp_name)))
       }
       
+      #test processing code presence
+      
+      processing_id<-1
+      
+      if(!"processing"%in%names(sp)){
+        errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="WARNING",category="processing issue",message="Missing information about processing on species, no coefficient apply"))
+        sp$landed_weight_kg_equivalent<-as.numeric(sp$landed_weight_kg[1])*1
+      }else if(is.na(sp$processing[1])|sp$processing[1]==""){
+          errors<<-rbind(errors,data.frame(trip_id=sp$`trip_#`[1],vessel_registration=sp$vessel_registration[1],type="WARNING",category="processing issue",message="Missing information about processing on species, no coefficient apply"))
+          sp$landed_weight_kg_equivalent<-as.numeric(sp$landed_weight_kg[1])*1
+      }else{
+        processing_coef<-dbGetQuery(pool, sprintf("SELECT ID,COEFFICIENT_LIVE_WEIGHT FROM surcalipseo.cl_ref_fishery_products where CODE = '%s'",sp$processing))
+        if(nrow(processing_coef)==0){
+          referentials<<-rbind(referentials,data.frame(table="cl_ref_fishery_products",value=sp$processing[1],type="ERROR",description=sprintf("Missing referential data for species processing '%s'",sp$processing[1])))
+          sp$landed_weight_kg_equivalent<-as.numeric(sp$landed_weight_kg[1])*1
+        }else{
+          sp$landed_weight_kg_equivalent<-as.numeric(sp$landed_weight_kg[1])*processing_coef$COEFFICIENT_LIVE_WEIGHT
+          processing_id<-processing_coef$ID
+        }
+      }
+      
       #Validate species in referential
       
       #test if species is already in table
@@ -401,17 +422,19 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
       FAS_CL_APP_QUANTITY_UNIT_ID = 7
       FAS_TOTAL_VALUE = "null"
       FAS_UPDATER_ID = 2
-      FAS_COMMENT = paste0(comment,ifelse(any("processing"%in%names(sp)),paste0(";processing:",tolower(sp$processing)),""))
+      #FAS_COMMENT = paste0(comment,ifelse(any("processing"%in%names(sp)),paste0(";processing:",tolower(sp$processing)),""))
+      FAS_COMMENT = comment
       FAS_CREATED_AT = now
       FAS_UPDATED_AT = now
       FAS_CATCH_NUMBER = "null"
+      FAS_CL_REF_FISHERY_PRODUCT_ID = processing_id
       FAS_CL_REF_SPECIES_SIZE_ID = "null"
-      FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT = sp$landed_weight_kg
+      FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT = sp$landed_weight_kg_equivalent
       FAS_DISCARD_QUANTITY = "null"
       FAS_CL_APP_DISCARD_QUANTITY_UNIT_ID = "null"
       FAS_TOTAL_VALUE_CURRENCY = "null"
       
-      sql_fas_ind = sprintf("INSERT INTO dt_fishing_activities_species (`ID`,`DT_FISHING_ACTIVITY_ID`,`CL_REF_SPECIES_ID`,`QUANTITY`,`CL_APP_QUANTITY_UNIT_ID`,`TOTAL_VALUE`,`UPDATER_ID`,`COMMENT`,`CREATED_AT`,`UPDATED_AT`,`CATCH_NUMBER`,`CL_REF_SPECIES_SIZE_ID`,`CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT`,`DISCARD_QUANTITY`,`CL_APP_DISCARD_QUANTITY_UNIT_ID`,`TOTAL_VALUE_CURRENCY`) VALUES (%s,%s,%s,%s,%s,%s,%s,'%s','%s','%s',%s,%s,%s,%s,%s,%s);\n",FAS_ID, FAS_DT_FISHING_ACTIVITY_ID, FAS_CL_REF_SPECIES_ID, FAS_QUANTITY, FAS_CL_APP_QUANTITY_UNIT_ID,FAS_TOTAL_VALUE,FAS_UPDATER_ID,FAS_COMMENT,FAS_CREATED_AT,FAS_UPDATED_AT,FAS_CATCH_NUMBER,FAS_CL_REF_SPECIES_SIZE_ID,FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT,FAS_DISCARD_QUANTITY,FAS_CL_APP_DISCARD_QUANTITY_UNIT_ID,FAS_TOTAL_VALUE_CURRENCY)
+      sql_fas_ind = sprintf("INSERT INTO dt_fishing_activities_species (`ID`,`DT_FISHING_ACTIVITY_ID`,`CL_REF_SPECIES_ID`,`QUANTITY`,`CL_APP_QUANTITY_UNIT_ID`,`TOTAL_VALUE`,`UPDATER_ID`,`COMMENT`,`CREATED_AT`,`UPDATED_AT`,`CATCH_NUMBER`,`CL_REF_FISHERY_PRODUCT_ID`,`CL_REF_SPECIES_SIZE_ID`,`CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT`,`DISCARD_QUANTITY`,`CL_APP_DISCARD_QUANTITY_UNIT_ID`,`TOTAL_VALUE_CURRENCY`) VALUES (%s,%s,%s,%s,%s,%s,%s,'%s','%s','%s',%s,%s,%s,%s,%s,%s);\n",FAS_ID, FAS_DT_FISHING_ACTIVITY_ID, FAS_CL_REF_SPECIES_ID, FAS_QUANTITY, FAS_CL_APP_QUANTITY_UNIT_ID,FAS_TOTAL_VALUE,FAS_UPDATER_ID,FAS_COMMENT,FAS_CREATED_AT,FAS_UPDATED_AT,FAS_CATCH_NUMBER,FAS_CL_REF_FISHERY_PRODUCT_ID,FAS_CL_REF_SPECIES_SIZE_ID,FAS_CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT,FAS_DISCARD_QUANTITY,FAS_CL_APP_DISCARD_QUANTITY_UNIT_ID,FAS_TOTAL_VALUE_CURRENCY)
       
       return(sql_fas_ind)
     }),collapse='\n')
