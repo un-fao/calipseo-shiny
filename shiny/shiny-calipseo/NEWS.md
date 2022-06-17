@@ -1,4 +1,4 @@
-# shiny-calipseo v1.0.0.9999 (DEV)
+# shiny-calipseo [v1.1.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.0.zip) - 2022-05-12
 
 ## New features
 
