@@ -1,7 +1,7 @@
 {
   /*Home title and subtitle*/
   "HOME_CALIPSEO_TITLE" : "Calipseo R Shiny Dashboard",
-  "HOME_CALIPSEO_SUBTITLE" : "Access and compute statistics over the Calipseo OpenFismis plateform",
+  "HOME_CALIPSEO_SUBTITLE" : "Access and compute statistics over the Calipseo OpenFismis platform",
   
   /*Infoboxes*/
   "INFOBOX_TITLE_VESSELS" : "Vessels",
