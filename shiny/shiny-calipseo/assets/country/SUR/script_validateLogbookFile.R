@@ -193,6 +193,7 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
     
     #Trip duration
     trip_duration<-as.numeric(difftime(trip$arrival_date[1], trip$departure_date[1], units = "days"))
+    trip_duration<-trip_duration+1
     
     if(trip_duration<0){
       errors<<-rbind(errors,data.frame(trip_id=trip$`trip_#`[1],vessel_registration=trip$vessel_registration[1],type="ERROR",category="date issue",message="Arrival date must be greater than departure date"))
