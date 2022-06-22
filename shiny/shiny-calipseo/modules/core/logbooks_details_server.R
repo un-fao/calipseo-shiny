@@ -311,10 +311,10 @@ logbooks_details_server <- function(id, pool){
       scroll = FALSE,
       buttons = list(
         list(extend = 'copy'),
-        list(extend = 'csv', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_total), 
-             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE")," - %s"), input$year_map_total), header = TRUE)
+        list(extend = 'csv', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_year), title = NULL, header = TRUE),
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_year), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_year), 
+             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE")," - %s"), input$logbooks_year), header = TRUE)
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
@@ -347,9 +347,9 @@ logbooks_details_server <- function(id, pool){
       buttons = list(
         list(extend = 'copy'),
         list(extend = 'csv', filename =  sprintf("me %s", input$year_map_species), title = NULL, header = TRUE),
-        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_species), title = NULL, header = TRUE),
-        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$year_map_species), 
-             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE")," - %s"), input$year_map_species), header = TRUE, orientation = "landscape")
+        list(extend = 'excel', filename =  sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_year), title = NULL, header = TRUE),
+        list(extend = "pdf", filename = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME"),"_%s"), input$logbooks_year), 
+             title = sprintf(paste0(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE")," - %s"), input$logbooks_year), header = TRUE, orientation = "landscape")
       ),
       exportOptions = list(
         modifiers = list(page = "all", selected = TRUE)
