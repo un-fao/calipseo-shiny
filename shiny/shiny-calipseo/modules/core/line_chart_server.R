@@ -218,7 +218,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
               "se"
             }else if(input$witherror==i18n("CONFIDENCE_INTERVAL_QUANTILE_METHOD")){
               "ci-q"
-            }else if(input$witherror==i18n(i18n("CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION"))){
+            }else if(input$witherror==i18n("CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION")){
               "ci-n"
             }else if(input$witherror==i18n("CONFIDENCE_INTERVAL_T_DISTRIBUTION")){
               "ci-t"
