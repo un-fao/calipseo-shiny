@@ -278,7 +278,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             ungroup()%>%
             mutate(Percent=quantity/sum(quantity))%>%
             arrange(-quantity)%>%
-            mutate(Quantity= sprintf("%s %s",quantity,tolower(quantity_unit)))%>%
+            mutate(Quantity= sprintf("%s %s",round(quantity,0),tolower(quantity_unit)))%>%
             select(Species,Quantity,Percent)
           
           names(species) <- c(i18n("TRIP_TABLE_COLNAME_1"),i18n("TRIP_TABLE_COLNAME_2"),
@@ -391,7 +391,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               ),
               uiOutput(ns('map')),
               fluidRow(
-                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(sum(trip$quantity)/1000, i18n("LABEL_QUANTITY_CAUGHT_SUBTITLE")), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/1000,2), i18n("LABEL_QUANTITY_CAUGHT_SUBTITLE")), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
                 valueBox(value=tags$p(i18n("LABEL_CONTENT"),style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),i18n("LABEL_CONTENT_SUBTITLE")), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
                 valueBox(value=tags$p(i18n("LABEL_GLOBAL_CPUE"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0), i18n("LABEL_GLOBAL_CPUE_SUBTITLE")), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
               ),
