@@ -1,3 +1,13 @@
+# shiny-calipseo [v1.1.2](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.2.zip) - 2022-06-24
+
+## Corrections
+
+**Module corrections**
+
+_Logbook validation (Suriname)_
+
+* [CALR-110](https://sdlc.review.fao.org/jira/browse/CALR-110) Logbooks validation / SQL - add inclusion of fishery products - **Fix regression with SQL**
+
 # shiny-calipseo [v1.1.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.1.zip) - 2022-06-22
 
 ## Enhancements
