@@ -1,10 +1,38 @@
+# shiny-calipseo [v1.1.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.1.zip) - 2022-06-22
+
+## Enhancements
+
+**Module enhancements**
+
+_Fishing trips_
+
+* [CALR-115](https://sdlc.review.fao.org/jira/browse/CALR-115) Fishing trips - detail by vessel - need to round (2 digits) quantities
+
+_Logbook validation (Suriname)_
+
+* [CALR-110](https://sdlc.review.fao.org/jira/browse/CALR-110) Logbooks validation / SQL - add inclusion of fishery products
+* [CALR-116](https://sdlc.review.fao.org/jira/browse/CALR-116) Logbook validation (Suriname) - implement RD-DD+1 rule for fishing trip duration
+
+## Corrections
+
+**Module corrections**
+
+_Logbook overview_
+
+* [CALR-111](https://sdlc.review.fao.org/jira/browse/CALR-111) Logbooks overview - CI intervals with normal and student dists
+
+_Logbook details_
+
+* [CALR-113](https://sdlc.review.fao.org/jira/browse/CALR-113) Logbooks - details - download buttons do not work in "By landing site" tab tables
+
+
 # shiny-calipseo [v1.1.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.0.zip) - 2022-05-12
 
 ## New features
 
 ## Enhancements
 
-** Module enhancements **
+**Module enhancements**
 
 _Vessels - list / details_
 
@@ -21,7 +49,7 @@ _Logbook validation (Suriname)_
 
 ## Corrections
 
-** Core corrections**
+**Core corrections**
 
 * [CALR-67](https://sdlc.review.fao.org/jira/browse/CALR-67) Routes do not work systematically
 * [CALR-100](https://sdlc.review.fao.org/jira/browse/CALR-100) vessel license permits data not accurate
@@ -40,7 +68,7 @@ _Vessels - details (info)_
 * [CALR-95](https://sdlc.review.fao.org/jira/browse/CALR-95) Vessel-info-module vessel characteristics tab throws error when invalide registration number is input
 * [CALR-101](https://sdlc.review.fao.org/jira/browse/CALR-101) VesselFindeR returns unstandard data without image link for some vessels
 
-** Miscs **
+**Miscs**
 
 * [CALR-106](https://sdlc.review.fao.org/jira/browse/CALR-106) Fix logbook SQL generation function for Suriname logbook data
 
