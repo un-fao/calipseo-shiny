@@ -44,11 +44,11 @@ unif_index<-function(days){
 artfish_estimates<-function(con,data_effort,data_landing){
   
   effort<-data_effort%>%
-    rename(EST_YEAR=year,
+    dplyr::rename(EST_YEAR=year,
            EST_MONTH=month,
            EST_BGC=fishing_unit)%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
-    summarise(
+    dplyr::summarise(
       EST_EFF_NSMP=length(days_sampled),
       EST_EFF_NBDAYS=length(unique(days)),
       EST_EFF_SRVTYPE=as.integer(unique(effort_type)),
@@ -91,14 +91,14 @@ artfish_estimates<-function(con,data_effort,data_landing){
  ####Landing
  
  landing<-data_landing%>%
-   rename(EST_YEAR=year,
+   dplyr::rename(EST_YEAR=year,
           EST_MONTH=month,
           EST_BGC=fishing_unit)%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC,days,id)%>%
-   summarise(quantity=sum(quantity,na.rm = T),value=sum(value,na.rm=T),price=mean(price,na.rm=T))%>%
+   dplyr::summarise(quantity=sum(quantity,na.rm = T),value=sum(value,na.rm=T),price=mean(price,na.rm=T))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
-   mutate(quantity = replace(quantity,is.na(quantity), 0))%>%
-   summarise(
+   dplyr::mutate(quantity = replace(quantity,is.na(quantity), 0))%>%
+   dplyr::summarise(
      EST_LND_NDAYS=length(unique(days)),
      EST_LND_SMPCATCH=sum(quantity),
      EST_LND_NSMP=length(quantity),
@@ -124,7 +124,7 @@ artfish_estimates<-function(con,data_effort,data_landing){
  estimate<-effort%>%
    left_join(landing)%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
-   mutate(
+   dplyr::mutate(
      EST_LND_CATCH_G=EST_EFF_EFFORT*EST_LND_CPUE_G,
      EST_LND_SPAACCUR=artfish_accuracy(n=EST_LND_NSMP,N=EST_EFF_POP,method="higher"),
      EST_LND_TMPACCUR=artfish_accuracy(n=EST_LND_NDAYS,N=EST_EFF_NACT,method="higher"),
@@ -132,19 +132,19 @@ artfish_estimates<-function(con,data_effort,data_landing){
    )
  
  estimate<-data_landing%>%
-   rename(EST_YEAR=year,
+   dplyr::rename(EST_YEAR=year,
           EST_MONTH=month,
           EST_BGC=fishing_unit,
           EST_SPC=species)%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
    filter(!is.na(EST_SPC))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_SPC)%>%
-   summarise(n=sum(quantity),EST_LND_NOFISH=sum(number),EST_LND_PRICE=mean(price))%>%
+   dplyr::summarise(n=sum(quantity),EST_LND_NOFISH=sum(number),EST_LND_PRICE=mean(price))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
-   mutate(sum=sum(n),ratio=n/sum,EST_NOSPE=length(unique(EST_SPC)))%>%
+   dplyr::mutate(sum=sum(n),ratio=n/sum,EST_NOSPE=length(unique(EST_SPC)))%>%
    select(-n,-sum)%>%
    left_join(estimate)%>%
-   mutate(EST_LND_CPUE=EST_LND_CPUE_G*ratio,
+   dplyr::mutate(EST_LND_CPUE=EST_LND_CPUE_G*ratio,
           EST_LND_CATCH=EST_EFF_EFFORT*EST_LND_CPUE,
           EST_LND_VALUE=EST_LND_CATCH*EST_LND_PRICE,
           EST_LND_AVW=EST_LND_CATCH/EST_LND_NOFISH)%>%
@@ -172,27 +172,27 @@ artfish_year_summary<-function(data,year=NULL,variable,value,levels=NULL){
   summary<-summary%>%
     select(!!sym(variable),EST_MONTH,!!sym(value)) %>%
     group_by(!!sym(variable),EST_MONTH)%>%
-    summarise(!!value:=sum(!!sym(value),na.rm=T))%>%
-    mutate(EST_MONTH=sprintf('%02d',EST_MONTH),
+    dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T))%>%
+    dplyr::mutate(EST_MONTH=sprintf('%02d',EST_MONTH),
            !!variable:= as.character(!!sym(variable))) %>%
+    ungroup() %>% 
     complete(nesting(!!sym(variable)),EST_MONTH=c("01","02","03","04","05","06","07","08","09","10","11","12"))%>%
-               ungroup() %>% 
-               bind_rows(group_by(.,!!sym(variable)) %>%
-                           summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
-                           mutate(EST_MONTH='Total')) %>%
-               bind_rows(group_by(.,EST_MONTH) %>%
-                           summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
-                           mutate(!!variable:='Total')) %>%
-               pivot_wider(names_from = EST_MONTH, values_from = !!sym(value))%>%
-               select(!!sym(variable),`01`,`02`,`03`,`04`,`05`,`06`,`07`,`08`,`09`,`10`,`11`,`12`,"Total")
+   bind_rows(group_by(.,!!sym(variable)) %>%
+               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
+               dplyr::mutate(EST_MONTH='Total')) %>%
+   bind_rows(group_by(.,EST_MONTH) %>%
+               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
+               dplyr::mutate(!!variable:='Total')) %>%
+   pivot_wider(names_from = EST_MONTH, values_from = !!sym(value))%>%
+   select(!!sym(variable),`01`,`02`,`03`,`04`,`05`,`06`,`07`,`08`,`09`,`10`,`11`,`12`,"Total")
              
   rank<-summary%>%
     select(!!sym(variable),Total)%>%
     filter(!!sym(variable)!="Total")%>%
-    mutate(rank=rank(-Total))%>%
-    mutate(percent=Total/sum(Total))%>%
+    dplyr::mutate(rank=rank(-Total))%>%
+    dplyr::mutate(percent=Total/sum(Total))%>%
     arrange(-percent)%>%
-    mutate(cum_percent=cumsum(percent))%>%
+    dplyr::mutate(cum_percent=cumsum(percent))%>%
     select(!!sym(variable),rank,Total,percent,cum_percent)
              
   return(list(accuracy=accuracy,summary=summary,rank=rank))

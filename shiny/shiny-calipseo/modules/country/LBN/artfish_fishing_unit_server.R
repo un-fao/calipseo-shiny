@@ -103,36 +103,36 @@ artfish_fishing_unit_server <- function(id, pool){
     table<-artfish_year_summary(data=estimate,year=input$year,variable="EST_BGC",value=value)
 
     summary<-table$summary%>%
-      left_join(ref_fishing_units%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
+      left_join(ref_fishing_units%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
       relocate(NAME)%>%
-      mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
+      dplyr::mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
       select(-EST_BGC)%>%
-      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
-      rename(`Fishing Unit`=NAME)
+      dplyr::mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      dplyr::rename(`Fishing Unit`=NAME)
     
     rank<-table$rank%>%
-      left_join(ref_fishing_units%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
+      left_join(ref_fishing_units%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
       relocate(NAME)%>%
-      mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
+      dplyr::mutate(target=ifelse(EST_BGC == input$bg,"target","other"))%>%
       select(-EST_BGC)%>%
-      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
-      rename(`Fishing Unit`=NAME,
+      dplyr::mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      dplyr::rename(`Fishing Unit`=NAME,
              Rank = rank,
              Percentage = percent,
              `Cumulative percentage` = cum_percent)
     
     if(input$unit=="K"){
       summary<-summary%>%
-        mutate(across(where(is.double), ~.x/1000))
+        dplyr::mutate(across(where(is.double), ~.x/1000))
       rank<-rank%>%
-        mutate(Total = Total/1000)
+        dplyr::mutate(Total = Total/1000)
     }
     
     if(input$unit=="M"){
       summary<-summary%>%
-        mutate(across(where(is.double), ~.x/1000000))
+        dplyr::mutate(across(where(is.double), ~.x/1000000))
       rank<-rank%>%
-        mutate(Total = Total/1000000)
+        dplyr::mutate(Total = Total/1000000)
     }
     
     bg_summary(summary)
@@ -417,34 +417,34 @@ artfish_fishing_unit_server <- function(id, pool){
     table<-artfish_year_summary(data=data,year=input$year,variable="EST_SPC",value=value)
     
     summary<-table$summary%>%
-      left_join(ref_species%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
+      left_join(ref_species%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
       relocate(NAME)%>%
       select(-EST_SPC)%>%
-      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
-      rename(`Species`=NAME)
+      dplyr::mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      dplyr::rename(`Species`=NAME)
     
     rank<-table$rank%>%
-      left_join(ref_species%>%select(ID,NAME)%>%mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
+      left_join(ref_species%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
       relocate(NAME)%>%
       select(-EST_SPC)%>%
-      mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
-      rename(`Species`=NAME,
+      dplyr::mutate(NAME=ifelse(is.na(NAME),"Total",NAME))%>%
+      dplyr::rename(`Species`=NAME,
              Rank = rank,
              Percentage = percent,
              `Cumulative percentage` = cum_percent)
     
     if(input$unit=="K"){
       summary<-summary%>%
-        mutate(across(where(is.double), ~.x/1000))
+        dplyr::mutate(across(where(is.double), ~.x/1000))
       rank<-rank%>%
-        mutate(Total = Total/1000)
+        dplyr::mutate(Total = Total/1000)
     }
     
     if(input$unit=="M"){
       summary<-summary%>%
-        mutate(across(where(is.double), ~.x/1000000))
+        dplyr::mutate(across(where(is.double), ~.x/1000000))
       rank<-rank%>%
-        mutate(Total = Total/1000000)
+        dplyr::mutate(Total = Total/1000000)
     }
     
     sp_summary(summary)
