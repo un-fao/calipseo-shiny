@@ -1,3 +1,14 @@
+# shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13
+
+## Corrections
+
+**Module corrections**
+
+_Artfish method (summary by fishing units)_
+
+* [CALR-117](https://sdlc.review.fao.org/jira/browse/CALR-117) bugs in calculation break the "By fishing unit' module  
+
+
 # shiny-calipseo [v1.1.2](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.2.zip) - 2022-06-24
 
 ## Corrections
