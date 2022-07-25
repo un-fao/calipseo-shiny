@@ -88,8 +88,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
      
 
       shinyWidgets::pickerInput(ns("vesseltype"),paste(i18n("VESSEL TYPE"),":"),choices=vesseltypeList,selected=NULL,multiple=T,width = 'fit',
-                                options = pickerOptions(title = "All",selectedTextFormat = "static")
-                                )
+                                options = pickerOptions(title = "All"))
      
     })
     
@@ -101,8 +100,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       }
       vesselList<-unique(vesselList$vesselname)
       shinyWidgets::pickerInput(ns("vesselname"),paste(i18n("PICKER_LABEL_VESSELS"),":"),choices=vesselList,selected=NULL,multiple=T,width = 'fit',
-                                options = pickerOptions(title = "All",maxOptions = 5,maxOptionsText = i18n("PICKER_LABEL_VESSELS_HINT"),selectedTextFormat = "static")
-                                )
+                                options = pickerOptions(title = "All",maxOptions = 5,maxOptionsText = i18n("PICKER_LABEL_VESSELS_HINT")))
     })
 
     output$nbByPage_select<-renderUI({
