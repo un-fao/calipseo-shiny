@@ -1,3 +1,13 @@
+# shiny-calipseo [v1.1.4](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.4.zip) - 2022-07-26
+
+## Corrections
+
+**Module corrections**
+
+_Logbook trips_
+
+* [CALR-118](https://sdlc.review.fao.org/jira/browse/CALR-118) Logbook trips-select inputs do not respond
+
 # shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13
 
 ## Corrections
