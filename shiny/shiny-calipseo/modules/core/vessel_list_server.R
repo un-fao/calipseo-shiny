@@ -88,7 +88,7 @@ vessel_list_server <- function(id, pool) {
       
     }else{
       
-      df$Validity <- 'No License'
+      df$Validity <- paste(span("No License",style='color:darkred;font-weight:bold;'))
       
       df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                   "HOME_PORT","REG_PORT","Validity","Details")]
