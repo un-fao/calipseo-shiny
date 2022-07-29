@@ -9,7 +9,7 @@ individual_list_server <- function(id, pool) {
   })
   
   #individual list
-  ind <- accessIndividualDetails(pool)
+  ind <- accessIndividualDetails(pool)[,c("Salutation","FIRST_NAME","MIDDLE_NAME","SUFFIX_NAME","NAME","Gender")]
   ind$Salutation <- as.factor(ind$Salutation)
   ind$Gender <- as.factor(ind$Gender)
  
