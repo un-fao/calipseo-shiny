@@ -26,16 +26,16 @@ individual_breakdown_server <- function(id, pool) {
     
     age_gender <- accessIndividualDetails(pool)[,c("Gender","DOB")]
     
-    age_gender <- age_gender[age_gender$Gender!='Unspecified',]
+    age_gender <- age_gender[age_gender$Gender==c('Male', 'Female') & !is.na(age_gender$DOB),]
     
     age_gender$DOB <- as.Date(age_gender$DOB)
     
     age_gender$Age = round(as.numeric(difftime(Sys.Date(),age_gender$DOB, units = "weeks"))/52.25, digits = 0)
     
-    age_gender <- age_gender[,-2]%>% filter(!is.na(Age))
-    
     
     pyramid_df <- function(data, subset = NULL){
+      
+      data <- data[,-2]
       
       subset <- data[which(data$Gender == subset),names(data) %in% c("Gender","Age")]
       
