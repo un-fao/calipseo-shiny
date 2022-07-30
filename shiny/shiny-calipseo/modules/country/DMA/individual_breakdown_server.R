@@ -26,7 +26,7 @@ individual_breakdown_server <- function(id, pool) {
     
     age_gender <- accessIndividualDetails(pool)[,c("Gender","DOB")]
     
-    age_gender <- age_gender[age_gender$Gender==c('Male', 'Female') & !is.na(age_gender$DOB),]
+    age_gender <- age_gender[(age_gender$Gender=='Male' | age_gender$Gender=='Female') & !is.na(age_gender$DOB),]
     
     age_gender$DOB <- as.Date(age_gender$DOB)
     
