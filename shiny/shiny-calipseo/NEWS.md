@@ -20,6 +20,10 @@ _Vessel list_
 
 * [CALR-119](https://sdlc.review.fao.org/jira/browse/CALR-119) Vessel-list enable vessel list table combine with license permit table with no data
 
+_Vessel details_
+
+* [CALR-123](https://sdlc.review.fao.org/jira/browse/CALR-123) Vessel-info make an expection for Vessel Operational Status for dominica
+
 # New features
 
 **Core features**
