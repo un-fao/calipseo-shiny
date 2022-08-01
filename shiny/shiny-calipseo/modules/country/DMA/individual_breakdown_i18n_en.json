@@ -1,0 +1,9 @@
+{ 
+  /*Main title and subtitle*/
+  "INDIVIDUAL_BREAKDOWN_TITLE" : "Breakdown of individuals",
+  "INDIVIDUAL_BREAKDOWN_SUBTITLE" : "Visualize the breakdown of individuals",
+  
+  "BREAKDOWN_INDIVIDUAL_TITLE_PIECHART" : "Breakdown of individuals in %s by gender",
+  "BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID" : "Breakdown of individuals in %s by age & gender"
+  
+}
