@@ -8,6 +8,10 @@ _Logbook trips_
 
 * [CALR-118](https://sdlc.review.fao.org/jira/browse/CALR-118) Logbook trips-select inputs do not respond
 
+_Vessel details_
+
+* [CALR-121](https://sdlc.review.fao.org/jira/browse/CALR-121) Vessel QA-handle vessels with no license
+
 # Improvements
 
 **Module enhancements**
