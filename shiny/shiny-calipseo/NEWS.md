@@ -10,7 +10,7 @@ _Logbook trips_
 
 _Vessel details_
 
-* [CALR-121](https://sdlc.review.fao.org/jira/browse/CALR-121) Vessel QA-handle vessels with no license
+* [CALR-122](https://sdlc.review.fao.org/jira/browse/CALR-122) Vessel QA-handle vessels with no license
 
 # Improvements
 
