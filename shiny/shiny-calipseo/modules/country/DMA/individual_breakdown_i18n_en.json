@@ -3,7 +3,23 @@
   "INDIVIDUAL_BREAKDOWN_TITLE" : "Breakdown of individuals",
   "INDIVIDUAL_BREAKDOWN_SUBTITLE" : "Visualize the breakdown of individuals",
   
-  "BREAKDOWN_INDIVIDUAL_TITLE_PIECHART" : "Breakdown of individuals in %s by gender",
-  "BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID" : "Breakdown of individuals in %s by age & gender"
+    
+   /*individual_breakdown gender titles*/ 
+"INDIVIDUAL_BREAKDOWN_TITLE_GENDER": "Quality assessment on individual breakdown by age and gender",
+
+ "BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER" : "Breakdown of individuals in %s by gender",
+  "BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID" : "Breakdown of individuals in %s by age and gender",
+  
+   /*individual_breakdown education titles*/ 
+"INDIVIDUAL_BREAKDOWN_TITLE_EDUCATION": "Quality assessment on individual breakdown by educational level",
+
+ "BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_EDUCATION" : "Breakdown of individuals in %s by educational level",
+
+
+ /*individual_breakdown verticalpanels*/
+  "VERTICALTABPANEL_INDIVIDUAL_BREAKDOWN_GENDER": "Breakdown by gender",
+  "VERTICALTABPANEL_INDIVIDUAL_BREAKDOWN_EDUCATION" : "Breakdown by educational level"
+  
+  
   
 }

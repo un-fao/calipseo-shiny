@@ -10,13 +10,22 @@ individual_breakdown_ui <- function(id){
               htmlOutput(ns("individual_breakdown_info"))
             )
           ),
-          fluidRow(
-            
-            box(width = 6, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("individual_gender"))),
-            
-            box(width = 6, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("individual_age_gender")))
-          )
           
+          div(class='row',style = "margin:0px;", id='vertical-panels-individual-breakdown',
+              shinyWidgets::verticalTabsetPanel(
+                shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_INDIVIDUAL_BREAKDOWN_GENDER"),box_height='70px',
+                                               div(h4(i18n("INDIVIDUAL_BREAKDOWN_TITLE_GENDER")),
+                                                   box(width = 12, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("individual_gender"))),
+                                                   box(width = 12, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("individual_age_gender"))))),
+                shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_INDIVIDUAL_BREAKDOWN_EDUCATION"),box_height='70px',
+                                               div(h4(i18n("INDIVIDUAL_BREAKDOWN_TITLE_EDUCATION")),
+                                                   box(width = 12, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_EDUCATION"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE, plotlyOutput(ns("individual_edulevel")))
+                                                   
+                                               )
+                )
+                
+                
+              ))
   )
   
 }

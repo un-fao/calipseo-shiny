@@ -188,6 +188,14 @@ accessIndividualCountByGenderFromDB <- function(con){
   suppressWarnings(dbGetQuery(con, individualgender_count_sql))
 }
 
+
+#accessIndividualCountByEdulevelFromDB
+accessIndividualCountByEdulevelFromDB <- function(con){
+  individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
+                                                language = appConfig$language)
+  suppressWarnings(dbGetQuery(con, individualedulevel_count_sql))
+}
+
 #accessVesselsCountByStatTypeFromDB
 accessVesselsCountByStatTypeFromDB <- function(con){
   vesselstattypes_count_sql <- readSQLScript("data/core/sql/vessels_stat_types_count.sql",
@@ -561,6 +569,13 @@ accessVesselsCountByStatType <- function(con){
 accessIndividualCountByGender <- function(con){
   accessIndividualCountByGenderFromDB(con)
 }
+
+
+#accessIndividualCountByEdulevel
+accessIndividualCountByEdulevel <- function(con){
+  accessIndividualCountByEdulevelFromDB(con)
+}
+
 
 #accessVesselLicensePermitFromDB
 accessVesselLicensePermit <- function(con, registrationNumber){
