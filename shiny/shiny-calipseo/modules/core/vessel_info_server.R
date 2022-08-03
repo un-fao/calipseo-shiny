@@ -138,10 +138,11 @@ vessel_info_server <- function(id, pool) {
           new_data <- new_data[,"value"]
           
           cl_data <- function(data){
-            data <- gsub('NA', '',data)
-            data <- gsub("[ \t](2,)", "", data)
-            data<- gsub("^\\s+|\\s+$", "", data)
-            return(data)
+            ReplaceString <- c("NA","[ \t](2,)","^\\s+|\\s+$")
+            for (i in 1) {
+              prep_data <- gsub(ReplaceString[i], '', data)
+            }
+            return(prep_data)
           }
           
           INFO("vessel-info server: Creating a dataframe with old and new vessel data and the changes") 
@@ -872,30 +873,30 @@ vessel_info_server <- function(id, pool) {
       INFO("vessel-info server: Applying font colour and icon to the desired columns")
       colRList <- reactive({
         if(length(vessel_indicators_infos$vessel_operational_status)>0){
-        if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION'){
+          if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION' || vessel_indicators_infos$vessel_operational_status== 'Active'){
+            
+            colorlist <- c('green','black','check-circle')
+          }else if(vessel_indicators_infos$vessel_operational_status=='UNKNOWN' || vessel_indicators_infos$vessel_operational_status== 'Unknown'){
+            
+            colorlist <- c('lightgray', 'black','') 
+          }else if(vessel_indicators_infos$vessel_operational_status=='TOTAL LOSS' || vessel_indicators_infos$vessel_operational_status== 'Destroyed'){
+            
+            colorlist <- c('black','white','calendar-times')
+          }else if(vessel_indicators_infos$vessel_operational_status=='BROKEN UP' || vessel_indicators_infos$vessel_operational_status== 'Repair'){
+            
+            colorlist <- c('darkred', 'wheat','crutch')
+          }else if(vessel_indicators_infos$vessel_operational_status=='LAID UP' || vessel_indicators_infos$vessel_operational_status== 'Inactive'){
+            
+            colorlist <- c('orange', 'black','anchor')
+            
+          }else{
+            colorlist <- c('purple', 'black','ban')
+          }
           
-          colorlist <- c('green','black','check-circle')
-        }else if(vessel_indicators_infos$vessel_operational_status=='UNKNOWN'){
           
-          colorlist <- c('lightgray', 'black','') 
-        }else if(vessel_indicators_infos$vessel_operational_status=='TOTAL LOSS'){
-          
-          colorlist <- c('black','white','calendar-times')
-        }else if(vessel_indicators_infos$vessel_operational_status=='BROKEN UP'){
-          
-          colorlist <- c('darkred', 'wheat','crutches')
-        }else if(vessel_indicators_infos$vessel_operational_status=='LAID UP'){
-          
-          colorlist <- c('orange', 'black','anchor')
-        
         }else{
-          colorlist <- c('purple', 'black','ban')
+          colorlist <- c('white', 'black','ban')
         }
-        
-        
-      }else{
-        colorlist <- c('white', 'black','ban')
-      }
         return(colorlist)
       })
       

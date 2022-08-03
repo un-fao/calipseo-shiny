@@ -1,0 +1,25 @@
+{
+  /*individual qa title and subtitle*/
+  "INDIVIDUAL_QA_TITLE" : "Individuals Quality Assessment",
+  "INDIVIDUAL_QA_SUBTITLE": "Access information on individuals",
+  
+   /*individual_qa titles*/ 
+"INDIVIDUAL_QA_TITLE_DOB": "Quality assessment on individual date of birth",
+
+ /*individual_qa verticalpanels*/
+  "VERTICALTABPANEL_INDIVIDUAL_QA_DOB": "Individual Date Of Birth",
+  
+ /*individual_qa status*/ 
+"INDIVIDUAL_QA_STATUS_VALID": "Available",
+"INDIVIDUAL_QA_STATUS_TOCHECK": "Missing",
+ 
+  /*individual_qa table*/
+  "INDIVIDUAL_QA_TABLE_COLNAME_1": "STATUS",
+  "INDIVIDUAL_QA_TABLE_COLNAME_2": "COUNT",
+  
+  
+   /*Individual qa table*/
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}

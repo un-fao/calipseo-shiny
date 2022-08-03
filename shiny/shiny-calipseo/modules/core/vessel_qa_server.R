@@ -161,7 +161,8 @@ vessel_qa_server <- function(id, pool) {
   
   valid_categories <- dplyr::distinct(valid_categories, PERMIT_NUMBER,.keep_all = TRUE)
   
-  
+  if(nrow(valid_categories)>0){
+    
   valid_categories$Valid_to_date <- as.Date(valid_categories$Valid_to_date)
   
   valid_to_date <- valid_categories$Valid_to_date
@@ -196,6 +197,11 @@ vessel_qa_server <- function(id, pool) {
   license_df$Validity[license_df$Validity=='notcompleted'] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')),i18n("VESSEL_QA_LICENSE_STATUS_NOTCOMPLETED"))
   
   license_df$Validity[license_df$Validity=='expired'] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')),i18n("VESSEL_QA_LICENSE_STATUS_EXPIRED"))
+  
+ }else{
+   license_df <- data.frame(License_status=character(0),
+                            Count=character(0))
+ }
   
   names(license_df) <- c(i18n("VESSEL_QA_TABLE_LICENSE_COLNAME_1"),i18n("VESSEL_QA_TABLE_LICENSE_COLNAME_2"))
   

@@ -8,6 +8,29 @@ _Logbook trips_
 
 * [CALR-118](https://sdlc.review.fao.org/jira/browse/CALR-118) Logbook trips-select inputs do not respond
 
+_Vessel details_
+
+* [CALR-122](https://sdlc.review.fao.org/jira/browse/CALR-122) Vessel QA-handle vessels with no license
+
+# Improvements
+
+**Module enhancements**
+
+_Vessel list_
+
+* [CALR-119](https://sdlc.review.fao.org/jira/browse/CALR-119) Vessel-list enable vessel list table combine with license permit table with no data
+
+_Vessel details_
+
+* [CALR-123](https://sdlc.review.fao.org/jira/browse/CALR-123) Vessel-info make an expection for Vessel Operational Status for dominica
+
+# New features
+
+**Core features**
+
+* [CALR-120](https://sdlc.review.fao.org/jira/browse/CALR-120) New module for individuals QA
+
+
 # shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13
 
 ## Corrections

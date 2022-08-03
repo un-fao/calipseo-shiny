@@ -81,6 +81,14 @@ accessVesselQaCharacteristicsFromDB <- function(con){
 } 
 
 
+#accessIndividualQaDOBFromDB
+accessIndividualQaDOBFromDB <- function(con){
+  individual_qa_dob_sql <- readSQLScript("data/core/sql/individual_qa_dob.sql")
+  individual_qa_dob_sql <- suppressWarnings(dbGetQuery(con, individual_qa_dob_sql))
+  return(individual_qa_dob_sql)
+} 
+
+
 #accessRefSpeciesFromDB
 accessRefSpeciesFromDB <- function(con){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
@@ -495,6 +503,12 @@ accessVesselQaPorts <- function(con){
 #accessVesselQaCharacteristicsFromDB
 accessVesselQaCharacteristics <- function(con){
   accessVesselQaCharacteristicsFromDB(con)
+}
+
+
+#accessIndividualQaDOBFromDB
+accessIndividualQaDOB <- function(con){
+  accessIndividualQaDOBFromDB(con)
 }
 
 
