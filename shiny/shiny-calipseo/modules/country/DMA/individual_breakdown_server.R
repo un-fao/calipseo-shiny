@@ -62,12 +62,12 @@ individual_breakdown_server <- function(id, pool) {
         mutate(number = ifelse(Gender == "Male", yes = -Freq, no = Freq))%>%
         mutate(abs_num = abs(number)) %>%
         plot_ly(x= ~number, y=~Age, color=~Gender,text = ~abs_num,colors = c('orange', '#1f77b4'),
-                hovertemplate = paste("Age : %{y:}<br>","Individual(s) : %{text}")) %>% 
+                hovertemplate = paste(i18n("AGE_LABEL"),": %{y:}<br>",i18n("INDIVIDUALS_LABEL"),": %{text}")) %>% 
         add_bars(orientation = 'h') %>%
         layout(bargap = 0.1, barmode = 'overlay',
-               xaxis = list(title = 'Number of individuals',tickmode = 'array', tickvals = c(-1000,-100,-90,-80,-70,-60,-50,-40,-30,-20, -10, -5, 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000),
-                            ticktext = c('1000','100','90','80','70','60','50','40','30','20', '10', '5', '0', '5', '10', '20', '30', '40', '50', '60', '70', '80', '90','100','1000')))
-      
+               xaxis = list(title = i18n("NUMBER_OF_INDIVIDUALS_TITLE"),tickmode = 'array', tickvals = c(-1000,-100,-90,-80,-70,-60,-50,-40,-30,-20, -10, -5, 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000),
+                            ticktext = c('1000','100','90','80','70','60','50','40','30','20', '10', '5', '0', '5', '10', '20', '30', '40', '50', '60', '70', '80', '90','100','1000')),
+               yaxis = list(title = i18n("AGE_LABEL")))
       
       
     })
