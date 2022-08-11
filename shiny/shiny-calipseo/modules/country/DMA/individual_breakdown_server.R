@@ -80,7 +80,8 @@ individual_breakdown_server <- function(id, pool) {
       
       plot_ly(individual_breakdown_edulevel, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
         layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               legend = list(x = 0.35, y = -0.5))
       
     })
     
