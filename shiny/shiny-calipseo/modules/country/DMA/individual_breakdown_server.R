@@ -76,11 +76,38 @@ individual_breakdown_server <- function(id, pool) {
     
     #individual breakdown by education level (pie chart)
     output$individual_edulevel <- renderPlotly({
-      individual_breakdown_edulevel = accessIndividualCountByEdulevel(pool)
+      individual_breakdown_edulevel = accessIndividualCountByEdulevel(pool, gender_id = "All")
       
       plot_ly(individual_breakdown_edulevel, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
         layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               legend = list(x = 0.35, y = -0.5))
+      
+    })
+    
+    
+    
+    #individual breakdown by education level Male (pie chart)
+    output$individual_edulevel_male <- renderPlotly({
+      individual_breakdown_edulevel_male = accessIndividualCountByEdulevel(pool, gender_id = 1)
+      
+      plot_ly(individual_breakdown_edulevel_male, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+        layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               legend = list(x = 0.35, y = -0.5))
+      
+    })
+    
+    
+    
+    #individual breakdown by education level Female (pie chart)
+    output$individual_edulevel_female <- renderPlotly({
+      individual_breakdown_edulevel_female = accessIndividualCountByEdulevel(pool, gender_id = 2)
+      
+      plot_ly(individual_breakdown_edulevel_female, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+        layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               legend = list(x = 0.35, y = -0.5))
       
     })
     
