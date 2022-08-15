@@ -1,0 +1,15 @@
+{
+  /*individual title*/
+    "INDIVIDUAL_INFO_TITLE" : "Individual information",
+  
+  /*Link back to individual list*/
+   "BACK_TO_LIST_OF_INDIVIDUALS" : "Back to list of vessels",
+   
+  /*individual labels*/
+  "INDIVIDUAL_NAME" : "Name",
+  "INDIVIDUAL_AGE" : "Age",
+  "INDIVIDUAL_GENDER" : "Gender",
+  "INDIVIDUAL_EDUCATIONAL_LEVEL" : "Educational level",
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+}

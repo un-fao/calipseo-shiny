@@ -80,6 +80,35 @@ createBase64Image <- function(src, width = "auto", height = "auto", alt = "image
 
 
 
+#Age computation
+Age_comp <- function(data, Prep = TRUE){
+  
+  if(Prep != TRUE){
+    
+    if(data$DOB!=""){
+      data <- data[(data$Gender=='Male' | data$Gender=='Female'),]
+      
+      data$DOB <- as.Date(data$DOB)
+      
+      data$Age = round(as.numeric(difftime(Sys.Date(),data$DOB, units = "weeks"))/52.25, digits = 0)
+      
+    }else{data$Age <- ""}
+    
+  }else{
+    
+    data <- data[(data$Gender=='Male' | data$Gender=='Female') & !is.na(data$DOB),]
+    
+    data$DOB <- as.Date(data$DOB)
+    
+    data$Age = round(as.numeric(difftime(Sys.Date(),data$DOB, units = "weeks"))/52.25, digits = 0)
+    
+  }
+  
+  return(data)
+  
+}
+
+
 #createplaceholderImage
 createPlaceholderImage <- function(id){
   createBase64Image(src = sprintf("./assets/img/placeholders/%s.png", id), height = '150px')
