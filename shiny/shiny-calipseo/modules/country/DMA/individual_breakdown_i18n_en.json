@@ -10,6 +10,11 @@
  "BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER" : "Breakdown of individuals in %s by gender",
   "BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID" : "Breakdown of individuals in %s by age and gender",
   
+  /*individual_breakdown labels*/ 
+  "AGE_LABEL" : "Age",
+  "INDIVIDUALS_LABEL" : "Individual(s)",
+  "NUMBER_OF_INDIVIDUALS_TITLE" : "Number of individuals",
+  
    /*individual_breakdown education titles*/ 
 "INDIVIDUAL_BREAKDOWN_TITLE_EDUCATION": "Quality assessment on individual breakdown by educational level",
 
