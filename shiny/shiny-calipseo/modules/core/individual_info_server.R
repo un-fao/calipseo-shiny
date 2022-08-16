@@ -85,10 +85,16 @@ individual_info_server <- function(id, pool) {
         
         ind_roles$status <- NA
         
-        for (i in 1:length(fishing_roles)) ind_roles[ind_roles$FSH_CODE==fishing_roles[i],"status"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')))
-        
-        
-        ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')))
+        if(!is.na(fishing_roles)){
+          
+          for (i in 1:length(fishing_roles)) ind_roles[ind_roles$FSH_CODE==fishing_roles[i],"status"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')))
+          
+          
+          ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')))
+          
+        }else{
+          ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')))
+        }
         
         ind_roles <- ind_roles[,c("FSH_ROLE","status")]
         
