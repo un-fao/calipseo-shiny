@@ -22,32 +22,35 @@ individual_breakdown_server <- function(id, pool) {
     
     
     #individual breakdown by age and gender (pyramid)
+    age_gender <- accessIndividualDetails(pool)[,c("Gender","DOB")]
+    
+    age_gender <- age_gender[(age_gender$Gender=='Male' | age_gender$Gender=='Female') & !is.na(age_gender$DOB),]
+    
+    age_gender$DOB <- as.Date(age_gender$DOB)
+    
+    age_gender$Age = round(as.numeric(difftime(Sys.Date(),age_gender$DOB, units = "weeks"))/52.25, digits = 0)
+    
+    
+    pyramid_df <- function(data, subset = NULL){
+      
+      data <- data[,-2]
+      
+      subset <- data[which(data$Gender == subset),names(data) %in% c("Gender","Age")]
+      
+      subset$Age <- as.factor(subset$Age)
+      
+      Pop_subset <- as.data.frame(table(subset$Age, dnn = c("Age")))
+      
+      df <- unique(left_join(Pop_subset,subset,  by = "Age"))
+      
+      return(df)
+      
+    }
+    
+    
+    
     output$individual_age_gender <- renderPlotly({
       
-      age_gender <- accessIndividualDetails(pool)[,c("Gender","DOB")]
-      
-      age_gender <- age_gender[(age_gender$Gender=='Male' | age_gender$Gender=='Female') & !is.na(age_gender$DOB),]
-      
-      age_gender$DOB <- as.Date(age_gender$DOB)
-      
-      age_gender$Age = round(as.numeric(difftime(Sys.Date(),age_gender$DOB, units = "weeks"))/52.25, digits = 0)
-      
-      
-      pyramid_df <- function(data, subset = NULL){
-        
-        data <- data[,-2]
-        
-        subset <- data[which(data$Gender == subset),names(data) %in% c("Gender","Age")]
-        
-        subset$Age <- as.factor(subset$Age)
-        
-        Pop_subset <- as.data.frame(table(subset$Age, dnn = c("Age")))
-        
-        df <- unique(left_join(Pop_subset,subset,  by = "Age"))
-        
-        return(df)
-        
-      }
       
       Male <- pyramid_df(age_gender, subset = 'Male')
       Female <- pyramid_df(age_gender, subset = 'Female')
@@ -69,6 +72,43 @@ individual_breakdown_server <- function(id, pool) {
                             ticktext = c('1000','100','90','80','70','60','50','40','30','20', '10', '5', '0', '5', '10', '20', '30', '40', '50', '60', '70', '80', '90','100','1000')),
                yaxis = list(title = i18n("AGE_LABEL")))
       
+    })
+    
+    
+    male_df <- pyramid_df(age_gender, subset = 'Male')
+    male_df$Age <- as.numeric(male_df$Age)
+    female_df <- pyramid_df(age_gender, subset = 'Female')
+    female_df$Age <- as.numeric(female_df$Age)
+    
+    
+    num_males <- nrow(male_df)
+    num_females <- nrow(female_df)
+    total_all <- num_males+num_females
+    age_sum_male <- sum(male_df[,'Age'], na.rm = TRUE)
+    age_sum_female <- sum(female_df[,'Age'], na.rm = TRUE)
+    age_sum_all <- age_sum_male+age_sum_female
+    mean_age_male <- age_sum_male/num_males
+    mean_age_female <- age_sum_female/num_females
+    mean_age_all <- age_sum_all/total_all
+    
+    
+    output$total_mean_age <- renderText({
+      
+      sprintf(paste0(i18n("MEAN_AGE_TOTAL"),": %s"), round(mean_age_all, digits = 3))
+      
+    })
+    
+    
+    output$male_mean_age <- renderText({
+      
+      sprintf(paste0(i18n("MEAN_AGE_MALE"),": %s"), round(mean_age_male, digits = 3))
+      
+    })
+    
+    
+    output$female_mean_age <- renderText({
+      
+      sprintf(paste0(i18n("MEAN_AGE_FEMALE"),": %s"), round(mean_age_female, digits = 3))
       
     })
     
@@ -76,7 +116,18 @@ individual_breakdown_server <- function(id, pool) {
     
     #individual breakdown by education level (pie chart)
     output$individual_edulevel <- renderPlotly({
-      individual_breakdown_edulevel = accessIndividualCountByEdulevel(pool, gender_id = "All")
+      individual_breakdown_edulevel = accessIndividualCountByEdulevel(pool)
+      
+      plot_ly(individual_breakdown_edulevel, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+        layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+      
+    })
+    
+    
+    #individual breakdown by education level (pie chart)
+    output$individual_edulevel <- renderPlotly({
+      individual_breakdown_edulevel = accessIndividualCountByEdulevel(pool, gender_id = 'All')
       
       plot_ly(individual_breakdown_edulevel, labels = ~NAME, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
         layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
