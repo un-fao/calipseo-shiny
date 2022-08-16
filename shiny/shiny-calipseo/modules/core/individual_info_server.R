@@ -109,6 +109,7 @@ individual_info_server <- function(id, pool) {
                         options = list(
                           searching = FALSE,
                           dom = 't',
+                          pageLength = 18,
                           language = list(url = i18n("TABLE_LANGUAGE"))
                         ))
           
