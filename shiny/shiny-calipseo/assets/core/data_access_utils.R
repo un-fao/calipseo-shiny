@@ -155,10 +155,16 @@ accessVesselFromDB <- function(con, registrationNumber){
 
 
 #accessIndividualFromDB
-accessIndividualFromDB <- function(con, individualNumber){
-  individual_sql <- readSQLScript("data/core/sql/individuals.sql", 
-                                  key = "ind.REG_ENTITY_ID", value = paste0("'", individualNumber, "'"), 
-                                  language = appConfig$language)
+accessIndividualFromDB <- function(con, individualNumber = NULL){
+  
+  if(!is.null(individualNumber)){
+    individual_sql <- readSQLScript("data/core/sql/individuals.sql", 
+                                    key = "ind.REG_ENTITY_ID", value = paste0("'", individualNumber, "'"), 
+                                    language = appConfig$language)
+  }else{
+    individual_sql <- readSQLScript("data/core/sql/individuals.sql",
+                                    language = appConfig$language)
+  }
   individuals <- suppressWarnings(dbGetQuery(con, individual_sql))
   return(individuals)
 } 
@@ -581,7 +587,7 @@ accessVessel <- function(con, registrationNumber){
 
 
 #accessIndividual
-accessIndividual <- function(con, individualNumber){
+accessIndividual <- function(con, individualNumber = NULL){
   accessIndividualFromDB(con, individualNumber)
 }
 
