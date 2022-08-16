@@ -52,8 +52,9 @@ individual_info_server <- function(id, pool) {
           individual <- Age_comp(individual, Prep = FALSE)
           
           for (i in 1:ncol(individual)){
-            individual[,i] <- as.character(individual[,i]) 
-            individual[,i][individual[,i]== ""] <- "-"}
+            individual[,i] <- as.character(individual[,i])
+            if(i>5)individual[,i][individual[,i]== ""] <- "-"
+          }
           
           
           tags$ul(style = "margin-top:10px;",
