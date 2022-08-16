@@ -85,7 +85,7 @@ individual_info_server <- function(id, pool) {
         
         ind_roles$status <- NA
         
-        if(!is.na(fishing_roles)){
+        if(!is.na(fishing_roles[1])){
           
           for (i in 1:length(fishing_roles)) ind_roles[ind_roles$FSH_CODE==fishing_roles[i],"status"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')))
           
