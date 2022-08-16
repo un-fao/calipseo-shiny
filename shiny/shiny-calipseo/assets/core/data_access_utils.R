@@ -198,10 +198,26 @@ accessIndividualCountByGenderFromDB <- function(con){
 
 
 #accessIndividualCountByEdulevelFromDB
-accessIndividualCountByEdulevelFromDB <- function(con){
-  individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
-                                                language = appConfig$language)
-  suppressWarnings(dbGetQuery(con, individualedulevel_count_sql))
+accessIndividualCountByEdulevelFromDB <- function(con, gender_id = NULL){
+  
+  if(gender_id=="All"){
+    
+    individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
+                                                  language = appConfig$language)
+    
+    individualedulevel_count_sql <- paste0(individualedulevel_count_sql, " GROUP BY edu.CL_APP_EDUCATION_LEVEL_ID;")
+    
+  }else{
+    
+    individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
+                                                  key = "gend.ID", value = paste0("'", gender_id, "'"),
+                                                  language = appConfig$language)
+    
+    individualedulevel_count_sql <- paste0(individualedulevel_count_sql, " GROUP BY edu.CL_APP_EDUCATION_LEVEL_ID;")
+    
+  }
+  
+  individualedulevel_count_sql <- suppressWarnings(dbGetQuery(con, individualedulevel_count_sql)) 
 }
 
 #accessVesselsCountByStatTypeFromDB
@@ -586,8 +602,8 @@ accessIndividualCountByGender <- function(con){
 
 
 #accessIndividualCountByEdulevel
-accessIndividualCountByEdulevel <- function(con){
-  accessIndividualCountByEdulevelFromDB(con)
+accessIndividualCountByEdulevel <- function(con, gender_id){
+  accessIndividualCountByEdulevelFromDB(con, gender_id)
 }
 
 
