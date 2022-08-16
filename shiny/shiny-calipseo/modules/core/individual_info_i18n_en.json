@@ -10,6 +10,18 @@
   "INDIVIDUAL_AGE" : "Age",
   "INDIVIDUAL_GENDER" : "Gender",
   "INDIVIDUAL_EDUCATIONAL_LEVEL" : "Educational level",
+  
+  /*verticaltab roles*/
+  
+  "VERTICALTABPANEL_INDIVIDUAL_ROLES" : "Roles",
+  
+  "INDIVIDUAL_ROLES_TITLE" : "Individuals' roles in fishery",
+  
+  /*status fishing role*/
+  
+  "INDIVIDUAL_ROLE_TABLE_COLNAME_1" : "Role",
+  
+  "INDIVIDUAL_ROLE_TABLE_COLNAME_2" : "Status",
  
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }
