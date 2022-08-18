@@ -1,4 +1,4 @@
-# shiny-calipseo [v1.1.4](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.4.zip) - 2022-07-26
+# shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-08-18
 
 ## Corrections
 
@@ -14,6 +14,10 @@ _Vessel details_
 
 # Improvements
 
+**Core enhancements**
+
+* [CALR-127](https://sdlc.review.fao.org/jira/browse/CALR-127) VesselFindeR - add type to restrain search to fishing vessels
+
 **Module enhancements**
 
 _Vessel list_
@@ -28,7 +32,12 @@ _Vessel details_
 
 **Core features**
 
+**Module features**
+
 * [CALR-120](https://sdlc.review.fao.org/jira/browse/CALR-120) New module for individuals QA
+* [CALR-121](https://sdlc.review.fao.org/jira/browse/CALR-121) New module for individuals breakdown
+* [CALR-124](https://sdlc.review.fao.org/jira/browse/CALR-124) Individual breakdown: Breaking down educational level by gender
+* [CALR-125](https://sdlc.review.fao.org/jira/browse/CALR-125) New module for individuals details
 
 
 # shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13
