@@ -25,6 +25,8 @@ vessel_info_server <- function(id, pool) {
       
       #vessel owners information
       vessel <- accessVessel(pool, vesselId)
+      INFO("vessel-info server: Fetching vessel info data with rows '%s'", nrow(vessel))
+      vesselOwners <- accessVesselOwners(pool, vesselId)
       INFO("vessel-info server: Fetching vessel owners data with rows '%s'", nrow(vesselOwners))
       vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
       vesselOwners[is.na(vesselOwners)] = ""
