@@ -30,17 +30,13 @@ vessel_info_server <- function(id, pool) {
       INFO("vessel-info server: Fetching vessel owners data with rows '%s'", nrow(vesselOwners))
       vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
       vesselOwners[is.na(vesselOwners)] = ""
-      print(vesselOwners)
       if(nrow(vesselOwners)>0){
         INFO("vessel-info server: Getting the full vessel owner names")
         vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
           owner <- vesselOwners[i,]
           fullname <- owner$FIRST_NAME
-          print(fullname)
           if(length(owner$MIDDLE_NAME)>0) fullname <- paste(fullname, owner$MIDDLE_NAME)
-          print(fullname)
           if(length(owner$NAME)>0) fullname <- paste(fullname, owner$NAME)
-          print(fullname)
           return(fullname)
         })
         
@@ -578,6 +574,9 @@ vessel_info_server <- function(id, pool) {
                                                | vessel_found$Description == "Trawling Speed" | vessel_found$Description == "Power"),2]
         
         if(!is.null(df_vesselfinder_char)){
+          no_column_add <- 8-length(df_vesselfinder_char)
+          add_column <- rep("-", no_column_add)
+          df_vesselfinder_char <- c(df_vesselfinder_char,add_column)
           
           df <- cbind(df_calipseo_char,df_vesselfinder_char)
           names(df) <- c('Description','Calipseo','VesselFinder')
