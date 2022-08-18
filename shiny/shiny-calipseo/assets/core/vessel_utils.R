@@ -3,7 +3,7 @@ vesselFindeR <- function(name, flag_iso2){
   
   tryCatch({
     
-    html = httr::content(httr::GET(sprintf("https://www.vesselfinder.com/vessels?name=%s&flag=%s", name, flag_iso2), httr::add_headers("User-Agent" = "vesselFindeR")))
+    html = httr::content(httr::GET(sprintf("https://www.vesselfinder.com/vessels?name=%s&flag=%s&type=5", name, flag_iso2), httr::add_headers("User-Agent" = "vesselFindeR")))
     
     #links
     alinks = xml2::xml_find_all(html, ".//a")
