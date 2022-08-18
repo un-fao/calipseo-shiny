@@ -2,6 +2,10 @@
 
 ## Corrections
 
+**Core corrections**
+
+* [CALR-128](https://sdlc.review.fao.org/jira/browse/CALR-128) Vessel-info vesselfinder returns less variables
+
 **Module corrections**
 
 _Logbook trips_
