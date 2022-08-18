@@ -24,12 +24,7 @@ individual_breakdown_server <- function(id, pool) {
     #individual breakdown by age and gender (pyramid)
     age_gender <- accessIndividualDetails(pool)[,c("Gender","DOB")]
     
-    age_gender <- age_gender[(age_gender$Gender=='Male' | age_gender$Gender=='Female') & !is.na(age_gender$DOB),]
-    
-    age_gender$DOB <- as.Date(age_gender$DOB)
-    
-    age_gender$Age = round(as.numeric(difftime(Sys.Date(),age_gender$DOB, units = "weeks"))/52.25, digits = 0)
-    
+    age_gender <- Age_comp(age_gender, Prep = TRUE)
     
     pyramid_df <- function(data, subset = NULL){
       
@@ -73,8 +68,7 @@ individual_breakdown_server <- function(id, pool) {
                yaxis = list(title = i18n("AGE_LABEL")))
       
     })
-    
-    
+
     male_df <- pyramid_df(age_gender, subset = 'Male')
     male_df$Age <- as.numeric(male_df$Age)
     female_df <- pyramid_df(age_gender, subset = 'Female')

@@ -151,7 +151,24 @@ accessVesselFromDB <- function(con, registrationNumber){
                               language = appConfig$language)
   vessel <- suppressWarnings(dbGetQuery(con, vessel_sql))
   return(vessel)
+}
+
+
+#accessIndividualFromDB
+accessIndividualFromDB <- function(con, individualNumber = NULL){
+  
+  if(!is.null(individualNumber)){
+    individual_sql <- readSQLScript("data/core/sql/individuals.sql", 
+                                    key = "ind.REG_ENTITY_ID", value = paste0("'", individualNumber, "'"), 
+                                    language = appConfig$language)
+  }else{
+    individual_sql <- readSQLScript("data/core/sql/individuals.sql",
+                                    language = appConfig$language)
+  }
+  individuals <- suppressWarnings(dbGetQuery(con, individual_sql))
+  return(individuals)
 } 
+
 
 
 #accessVesselHistoricalCharacteristicsFromDB
@@ -566,6 +583,12 @@ accessVesselsCount <- function(con){
 #accessVessel
 accessVessel <- function(con, registrationNumber){
   accessVesselFromDB(con, registrationNumber)
+}
+
+
+#accessIndividual
+accessIndividual <- function(con, individualNumber = NULL){
+  accessIndividualFromDB(con, individualNumber)
 }
 
 

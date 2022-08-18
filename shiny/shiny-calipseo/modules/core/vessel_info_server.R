@@ -25,18 +25,20 @@ vessel_info_server <- function(id, pool) {
       
       #vessel owners information
       vessel <- accessVessel(pool, vesselId)
-      INFO("vessel-info server: Fetching vessel info data with rows '%s'", nrow(vessel))
-      vesselOwners <- accessVesselOwners(pool, vesselId)
       INFO("vessel-info server: Fetching vessel owners data with rows '%s'", nrow(vesselOwners))
       vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
-      vesselOwners[is.na(vesselOwners)] = '-'
+      vesselOwners[is.na(vesselOwners)] = ""
+      print(vesselOwners)
       if(nrow(vesselOwners)>0){
         INFO("vessel-info server: Getting the full vessel owner names")
         vesselOwners$FULL_NAME <- sapply(1:nrow(vesselOwners), function(i){
           owner <- vesselOwners[i,]
-          fullname <- owner$FIRSTNAME
-          if(length(owner$MIDDLE_NAME)>0) fullname <- paste0(" ", owner$MIDDLE_NAME)
-          if(length(owner$NAME)>0) fullname <- paste0(" ", owner$NAME)
+          fullname <- owner$FIRST_NAME
+          print(fullname)
+          if(length(owner$MIDDLE_NAME)>0) fullname <- paste(fullname, owner$MIDDLE_NAME)
+          print(fullname)
+          if(length(owner$NAME)>0) fullname <- paste(fullname, owner$NAME)
+          print(fullname)
           return(fullname)
         })
         
@@ -46,6 +48,10 @@ vessel_info_server <- function(id, pool) {
         vesselOwners <- data.frame(matrix(ncol = length(vesselOwnerColumnNames), nrow = 0))
         colnames(vesselOwners) <- vesselOwnerColumnNames
       }
+      
+      for (i in 1:ncol(vesselOwners)){
+        vesselOwners[,i] <- as.character(vesselOwners[,i])
+        if(i>2)vesselOwners[,i][vesselOwners[,i]== ""] <- "-"}
       
       vesselCatches <- accessVesselCatches(pool, vesselId)
       INFO("vessel-info server: Fetching vessel catches data with rows '%s'", nrow(vesselCatches))

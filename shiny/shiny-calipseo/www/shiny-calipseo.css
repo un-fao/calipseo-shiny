@@ -47,6 +47,8 @@ hr {border-top: 1px solid #aaa; margin-top: 4px; margin-bottom: 4px;}
 
 a[data-value=vessel_info] { display:none !important; }
 
+a[data-value=individual_info] { display:none !important; }
+
 ul.vessel {
     list-style-type: none;
     display: inline-flex;

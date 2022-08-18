@@ -12,6 +12,7 @@
   "INDIVIDUAL_LIST_TABLE_COLNAME_4": "Suffix Name",
   "INDIVIDUAL_LIST_TABLE_COLNAME_5": "Last Name",
   "INDIVIDUAL_LIST_TABLE_COLNAME_6": "Gender",
+  "INDIVIDUAL_LIST_TABLE_COLNAME_7": "Details",
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
   
 }
