@@ -1,4 +1,4 @@
-# shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-08-18
+# **shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-08-18**
 
 ## Corrections
 
@@ -16,7 +16,7 @@ _Vessel details_
 
 * [CALR-122](https://sdlc.review.fao.org/jira/browse/CALR-122) Vessel QA-handle vessels with no license
 
-# Improvements
+## Improvements
 
 **Core enhancements**
 
@@ -32,7 +32,7 @@ _Vessel details_
 
 * [CALR-123](https://sdlc.review.fao.org/jira/browse/CALR-123) Vessel-info make an expection for Vessel Operational Status for dominica
 
-# New features
+## New features
 
 **Core features**
 
@@ -44,7 +44,7 @@ _Vessel details_
 * [CALR-125](https://sdlc.review.fao.org/jira/browse/CALR-125) New module for individuals details
 
 
-# shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13
+# **shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13**
 
 ## Corrections
 
@@ -55,7 +55,7 @@ _Artfish method (summary by fishing units)_
 * [CALR-117](https://sdlc.review.fao.org/jira/browse/CALR-117) bugs in calculation break the "By fishing unit' module  
 
 
-# shiny-calipseo [v1.1.2](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.2.zip) - 2022-06-24
+# **shiny-calipseo [v1.1.2](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.2.zip) - 2022-06-24**
 
 ## Corrections
 
@@ -65,7 +65,7 @@ _Logbook validation (Suriname)_
 
 * [CALR-110](https://sdlc.review.fao.org/jira/browse/CALR-110) Logbooks validation / SQL - add inclusion of fishery products - **Fix regression with SQL**
 
-# shiny-calipseo [v1.1.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.1.zip) - 2022-06-22
+# **shiny-calipseo [v1.1.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.1.zip) - 2022-06-22**
 
 ## Enhancements
 
@@ -93,7 +93,7 @@ _Logbook details_
 * [CALR-113](https://sdlc.review.fao.org/jira/browse/CALR-113) Logbooks - details - download buttons do not work in "By landing site" tab tables
 
 
-# shiny-calipseo [v1.1.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.0.zip) - 2022-05-12
+# **shiny-calipseo [v1.1.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.0.zip) - 2022-05-12**
 
 ## New features
 
@@ -139,7 +139,7 @@ _Vessels - details (info)_
 
 * [CALR-106](https://sdlc.review.fao.org/jira/browse/CALR-106) Fix logbook SQL generation function for Suriname logbook data
 
-# shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22
+# **shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22**
 
 ## New features
 
@@ -271,12 +271,12 @@ _Linechart module (internal)_
 
 ## Corrections
 
-** Core corrections**
+**Core corrections**
 
 * [CALR-9](https://sdlc.review.fao.org/jira/browse/CALR-) Fix hrefs to shiny module relative paths
 * [CALR-18](https://sdlc.review.fao.org/jira/browse/CALR-) Add missing URL params for modules without paging
 
-** Module corrections**
+**Module corrections**
 
 _Vessels - list_
 
