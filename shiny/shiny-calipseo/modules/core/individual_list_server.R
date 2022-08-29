@@ -11,7 +11,7 @@ individual_list_server <- function(id, pool) {
     })
     
     ind <- accessIndividualDetails(pool)
-    
+    INFO("individual-list server: Fetching individual list data with rows '%s'", nrow(ind))
     
     #individual list
     ind$Salutation <- as.factor(ind$Salutation)
@@ -21,6 +21,10 @@ individual_list_server <- function(id, pool) {
       
       if(appConfig[["country_profile"]]$data$CODE=="DM"){
         
+        INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
+        
+        INFO("individual-list server: Indiviadual list filtered by individual roles '%s'", input$filter_individual_roles)
+        
         
         ind$Details <- sapply(ind$individualNumber, function(x){
           ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
@@ -29,12 +33,15 @@ individual_list_server <- function(id, pool) {
         
         
         ind <- ind[,c("Salutation","FIRST_NAME","MIDDLE_NAME","SUFFIX_NAME","NAME","Gender","Details")]
-        
+        INFO("individual-list server: Applying the I18n_terms to the individual list columns")
         names(ind) <- c(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_1"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_2"),
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_3"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_4"),
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_5"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_6"),"")
         
       }else{
+        
+        INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
+        
         ind <- ind[,c("Salutation","FIRST_NAME","MIDDLE_NAME","SUFFIX_NAME","NAME","Gender")]
         
         names(ind) <- c(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_1"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_2"),
@@ -42,6 +49,8 @@ individual_list_server <- function(id, pool) {
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_5"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_6"))
       }   
       
+      
+      NFO("indiviadual-list server: Rendering the individual list data to the table") 
       output$individual_list <- renderDataTable(
         ind,
         server = FALSE,

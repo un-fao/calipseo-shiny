@@ -26,6 +26,7 @@ individual_info_server <- function(id, pool) {
       if(!is.null(individualId)){
         
         individual <- accessIndividual(pool,individualId)
+        INFO("individual-info server: Fetching individual info data with rows '%s'", nrow(individual))
         
         fishing_roles <- individual$FSH_CODE
         
@@ -53,14 +54,14 @@ individual_info_server <- function(id, pool) {
         
         #general individual description
         output$individual_description <- renderUI({
-          
+          INFO("individual-info server: Computing age of individuals from date of birth")  
           individual <- Age_comp(individual, Prep = FALSE)
           
           for (i in 1:ncol(individual)){
             individual[,i] <- as.character(individual[,i])
             if(i>5)individual[,i][individual[,i]== ""] <- "-"}
           
-          
+          INFO("indiviadual-info server: Rendering the individual info data for the ID")
           tags$ul(style = "margin-top:10px;",
                   tags$li(paste0(i18n("INDIVIDUAL_NAME"),": "), tags$b(individual$Salutation,individual$FULL_NAME)),
                   tags$li(paste0(i18n("INDIVIDUAL_AGE"),": "), tags$b(individual$Age)),
@@ -72,7 +73,7 @@ individual_info_server <- function(id, pool) {
         
         
         output$individual_picture <- renderUI({
-          
+          INFO("individual-info server: Returning Placeholder image for individual")
           individual_picture_html <- HTML(createPlaceholderImage("individual"))
           
           individual_picture_html
@@ -80,6 +81,8 @@ individual_info_server <- function(id, pool) {
         })
         
         ind_roles <- accessIndividual(pool,individualNumber = NULL)[,c("FSH_CODE","FSH_ROLE")]
+        
+        INFO("individual-info server: Fetching entire individual info data and their fishing roles with rows '%s'", nrow(ind_roles))
         
         ind_roles <- unique(ind_roles[!is.na(ind_roles$FSH_CODE),])
         
@@ -97,8 +100,10 @@ individual_info_server <- function(id, pool) {
         }
         
         ind_roles <- ind_roles[,c("FSH_ROLE","status")]
-        
+        INFO("individual-info server: Applying the I18n_terms to the individual info columns")
         names(ind_roles) <- c(i18n("INDIVIDUAL_ROLE_TABLE_COLNAME_1"),i18n("INDIVIDUAL_ROLE_TABLE_COLNAME_2"))
+        
+        INFO("indiviadual-info server: Rendering the individual info fishing role data to the table") 
         
         output$individual_roles <- renderDataTable({
           
