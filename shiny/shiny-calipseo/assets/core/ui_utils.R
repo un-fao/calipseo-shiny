@@ -118,20 +118,22 @@ createPlaceholderImage <- function(id){
 #customeinfobox
 CalipseoInfoBox <- function(title = NULL, value = NULL, icon = NULL,
                             width=4,box_width=NULL,color = 'aqua',text_color = 'white',style_title = 'font-size:14px',style_value='font-size:18px',
-                            icon_width = NULL, content_margin_left = NULL) {
+                            icon_width = NULL, content_margin_left = NULL,Use_icon = TRUE,
+                            infobox_extra_style = NULL, infobox_icon_extra_style = NULL,infobox_content_extra_style = NULL) {
   
   tags$div(class= paste0('col-sm-',width),
            style=paste0('width:',box_width,';'),
            tags$div(class=paste0('info-box bg-',color),
-                    style=paste0('background-color:',color,';'),
-                    tags$span( class='info-box-icon',
-                               style=paste0("color:",text_color,';width:',icon_width,';'),
-                               
-                               icon),
+                    style=paste0('background-color:',color,';',infobox_extra_style),
+                    if(isTRUE(Use_icon)){
+                      tags$span( class='info-box-icon',
+                                 style=paste0("color:",text_color,';width:',icon_width,';',infobox_icon_extra_style),
+                                 
+                                 icon)},
                     
                     tags$div(
                       class='info-box-content',
-                      style=paste0("color:",text_color,';margin-left:',content_margin_left,';'),
+                      style=paste0("color:",text_color,';margin-left:',content_margin_left,';',infobox_content_extra_style),
                       
                       tags$span( class='info-box-text',
                                  tags$span(style=paste0("display:block;white-space:nowrap;",style_title,";"),
