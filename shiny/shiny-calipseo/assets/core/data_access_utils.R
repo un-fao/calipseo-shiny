@@ -222,15 +222,11 @@ accessIndividualCountByEdulevelFromDB <- function(con, gender_id = NULL){
     individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
                                                   language = appConfig$language)
     
-    individualedulevel_count_sql <- paste0(individualedulevel_count_sql, " GROUP BY edu.CL_APP_EDUCATION_LEVEL_ID;")
-    
   }else{
     
     individualedulevel_count_sql <- readSQLScript("data/core/sql/individual_edulevel_count.sql",
                                                   key = "gend.ID", value = paste0("'", gender_id, "'"),
                                                   language = appConfig$language)
-    
-    individualedulevel_count_sql <- paste0(individualedulevel_count_sql, " GROUP BY edu.CL_APP_EDUCATION_LEVEL_ID;")
     
   }
   

@@ -10,7 +10,7 @@ individual_info_server <- function(id, pool) {
     
     
     observe({
-      
+
       individualId <- NULL
       #inherit individual Id
       query <- parseQueryString(session$clientData$url_search)
@@ -33,9 +33,9 @@ individual_info_server <- function(id, pool) {
         individual <- individual[1,]
         
         
-        for (i in 1:ncol(individual))individual[,i] <- as.character(individual[,i])
-        individual[is.na(individual)] = ""
-        
+         for (i in 1:ncol(individual))individual[,i] <- as.character(individual[,i])
+         individual[is.na(individual)] = ""
+
         if(nrow(individual)>0){
           INFO("individual-info server: Getting the full individual names")
           individual$FULL_NAME <- sapply(1:nrow(individual), function(i){
@@ -54,25 +54,29 @@ individual_info_server <- function(id, pool) {
         
         #general individual description
         output$individual_description <- renderUI({
-          INFO("individual-info server: Computing age of individuals from date of birth")  
+        INFO("individual-info server: Computing age of individuals from date of birth")  
           individual <- Age_comp(individual, Prep = FALSE)
           
           for (i in 1:ncol(individual)){
             individual[,i] <- as.character(individual[,i])
-            if(i>5)individual[,i][individual[,i]== ""] <- "-"}
-          
-          INFO("indiviadual-info server: Rendering the individual info data for the ID")
+            if(i>5 & i!=15)individual[,i][individual[,i]== ""] <- "-"}
+          ifelse(individual$Age=="","",individual$Age <- paste0("'Age: ",individual$Age,"'"))
+  
+        INFO("indiviadual-info server: Rendering the individual info data for the ID")     
           tags$ul(style = "margin-top:10px;",
                   tags$li(paste0(i18n("INDIVIDUAL_NAME"),": "), tags$b(individual$Salutation,individual$FULL_NAME)),
-                  tags$li(paste0(i18n("INDIVIDUAL_AGE"),": "), tags$b(individual$Age)),
+                  tags$li(paste0(i18n("INDIVIDUAL_DOB"),": "), tags$b(individual$DOB),individual$Age),
                   tags$li(paste0(i18n("INDIVIDUAL_GENDER"),": "), tags$b(individual$Gender)),
-                  tags$li(paste0(i18n("INDIVIDUAL_EDUCATIONAL_LEVEL"),": "), tags$b(individual$EDULEVEL))
+                  tags$li(paste0(i18n("INDIVIDUAL_EDUCATIONAL_LEVEL"),": "), tags$b(individual$EDULEVEL)),
+                  tags$li(paste0(i18n("INDIVIDUAL_ENT_DOC_TYPE"),": "), tags$b(individual$ENT_DOC_NAME)),
+                  tags$li(paste0(i18n("INDIVIDUAL_ENT_DOC_NUMBER"),": "), tags$b(individual$ENT_DOC_NUMBER))
                   
           )
         })
         
         
         output$individual_picture <- renderUI({
+          
           INFO("individual-info server: Returning Placeholder image for individual")
           individual_picture_html <- HTML(createPlaceholderImage("individual"))
           
@@ -83,27 +87,30 @@ individual_info_server <- function(id, pool) {
         ind_roles <- accessIndividual(pool,individualNumber = NULL)[,c("FSH_CODE","FSH_ROLE")]
         
         INFO("individual-info server: Fetching entire individual info data and their fishing roles with rows '%s'", nrow(ind_roles))
-        
+
         ind_roles <- unique(ind_roles[!is.na(ind_roles$FSH_CODE),])
-        
+       
+
         ind_roles$status <- NA
         
         if(!is.na(fishing_roles[1])){
-          
-          for (i in 1:length(fishing_roles)) ind_roles[ind_roles$FSH_CODE==fishing_roles[i],"status"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')))
-          
-          
-          ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')))
-          
-        }else{
-          ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')))
-        }
+
+        for (i in 1:length(fishing_roles)) ind_roles[ind_roles$FSH_CODE==fishing_roles[i],"status"] <- paste(as.character(icon("ok",lib = "glyphicon",style = 'color:green;')))
         
+       
+        ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("remove",lib = "glyphicon",style = 'color:red;')))
+        
+        }else{
+          
+          ind_roles[is.na(ind_roles$status),"status"] <- paste(as.character(icon("alert",lib = "glyphicon",style = 'color:orange;')))
+          
+        }
+
         ind_roles <- ind_roles[,c("FSH_ROLE","status")]
-        INFO("individual-info server: Applying the I18n_terms to the individual info columns")
+      INFO("individual-info server: Applying the I18n_terms to the individual info columns")
         names(ind_roles) <- c(i18n("INDIVIDUAL_ROLE_TABLE_COLNAME_1"),i18n("INDIVIDUAL_ROLE_TABLE_COLNAME_2"))
         
-        INFO("indiviadual-info server: Rendering the individual info fishing role data to the table") 
+      INFO("indiviadual-info server: Rendering the individual info fishing role data to the table") 
         
         output$individual_roles <- renderDataTable({
           

@@ -10,27 +10,32 @@ individual_list_server <- function(id, pool) {
       text
     })
     
+    
     ind <- accessIndividualDetails(pool)
     INFO("individual-list server: Fetching individual list data with rows '%s'", nrow(ind))
     
-    #individual list
-    ind$Salutation <- as.factor(ind$Salutation)
-    ind$Gender <- as.factor(ind$Gender)
+    for (i in 1:ncol(ind)) {
+      ind[,i] <- as.factor(ind[,i])
+    }
+    
+    updateSelectizeInput(session, "filter_individual_roles", choices = fishing_roles(), options = list(create = TRUE, placeholder = 'All'))
+    
     
     observe({
-      
       if(appConfig[["country_profile"]]$data$CODE=="DM"){
         
         INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
         
         INFO("individual-list server: Indiviadual list filtered by individual roles '%s'", input$filter_individual_roles)
         
+        ind <- ind_roles_filter(ind,input$filter_individual_roles,grouping = FALSE)
         
         ind$Details <- sapply(ind$individualNumber, function(x){
           ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
           return(ind_outhtml)
         })
         
+        ind <- ind[!is.na(ind$FSH_ROLE),]
         
         ind <- ind[,c("Salutation","FIRST_NAME","MIDDLE_NAME","SUFFIX_NAME","NAME","Gender","Details")]
         INFO("individual-list server: Applying the I18n_terms to the individual list columns")
@@ -38,20 +43,23 @@ individual_list_server <- function(id, pool) {
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_3"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_4"),
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_5"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_6"),"")
         
+        
+        
       }else{
         
         INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
         
         ind <- ind[,c("Salutation","FIRST_NAME","MIDDLE_NAME","SUFFIX_NAME","NAME","Gender")]
         
+        INFO("individual-list server: Applying the I18n_terms to the individual list columns")
         names(ind) <- c(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_1"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_2"),
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_3"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_4"),
                         i18n("INDIVIDUAL_LIST_TABLE_COLNAME_5"),i18n("INDIVIDUAL_LIST_TABLE_COLNAME_6"))
-      }   
+      }
       
+      INFO("indiviadual-list server: Rendering the individual list data to the table") 
       
-      NFO("indiviadual-list server: Rendering the individual list data to the table") 
-      output$individual_list <- renderDataTable(
+      output$individual_list <- renderDT(
         ind,
         server = FALSE,
         escape = FALSE,
