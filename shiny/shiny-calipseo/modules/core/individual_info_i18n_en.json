@@ -3,11 +3,11 @@
     "INDIVIDUAL_INFO_TITLE" : "Individual information",
   
   /*Link back to individual list*/
-   "BACK_TO_LIST_OF_INDIVIDUALS" : "Back to list of vessels",
+   "BACK_TO_LIST_OF_INDIVIDUALS" : "Back to list of individuals",
    
   /*individual labels*/
   "INDIVIDUAL_NAME" : "Name",
-  "INDIVIDUAL_DOB" : "DOB",
+  "INDIVIDUAL_DOB" : "Birth Date",
   "INDIVIDUAL_GENDER" : "Gender",
   "INDIVIDUAL_EDUCATIONAL_LEVEL" : "Educational level",
   "INDIVIDUAL_ENT_DOC_TYPE" : "Entity Document Type",

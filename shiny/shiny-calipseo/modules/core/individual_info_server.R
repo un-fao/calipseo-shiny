@@ -60,7 +60,7 @@ individual_info_server <- function(id, pool) {
           for (i in 1:ncol(individual)){
             individual[,i] <- as.character(individual[,i])
             if(i>5 & i!=15)individual[,i][individual[,i]== ""] <- "-"}
-          ifelse(individual$Age=="","",individual$Age <- paste0("'Age: ",individual$Age,"'"))
+          ifelse(individual$Age=="","",individual$Age <- sprintf('(%s y/o)',individual$Age))#paste0("'Age: ",individual$Age,"'"))
   
         INFO("indiviadual-info server: Rendering the individual info data for the ID")     
           tags$ul(style = "margin-top:10px;",
