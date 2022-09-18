@@ -269,27 +269,56 @@ individual_overview_server <- function(id, pool) {
       
      
       names(df)[-3] <- c(i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"), i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"), i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"))
-     
-      p <- ggplot(data = df, aes(x = `Age group`, fill = `Education level`, 
-                                 text = paste0(i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"),": ",Gender))) +
-        geom_bar(data = df[df$Gender == "Male",],
+      
+      df$`Education level` <- as.factor(df$`Education level`)
+      category_edu <- levels(df$`Education level`)
+      
+      orig_cat <- c("None","Primary","Secondary/High School","College/University" )
+      
+      
+      if(length(category_edu)<4){
+        
+        for (i in 1:length(orig_cat)) {
+          catg<- match(orig_cat[i],category_edu)
+          if(is.na(catg)){
+            
+            x <- data.frame(Agegroup='100+',Educationlevel=orig_cat[i],Gender=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"),Individual=0)
+            
+            names(x) <- c(i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"),i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"),i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"))
+            df <- rbind(df,x)
+            
+            
+          }
+          
+        }
+        
+      }
+      
+      
+      
+      df$`Education level` <- factor(df$`Education level`, levels=c(i18n("INDIVIDUAL_OVERVIEW_LABEL_NONE"),i18n("INDIVIDUAL_OVERVIEW_LABEL_PRIMARY"),i18n("INDIVIDUAL_OVERVIEW_LABEL_SECONDARY"),i18n("INDIVIDUAL_OVERVIEW_LABEL_UNIVERSITY")))
+      
+      p <- ggplot(data = df[order(df$`Education level`, decreasing = T),], aes(x = `Age group`, fill = `Education level`, 
+                                                                       text = paste0('Gender: ',Gender))) +
+        geom_bar(data = df[df$Gender == i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"),],
                  stat = "identity", aes(y = Individual)) +
-        geom_bar(data = df[df$Gender == "Female",],
+        geom_bar(data = df[df$Gender == i18n( "INDIVIDUAL_OVERVIEW_LABEL_FEMALE"),],
                  stat = "identity",aes(y = -Individual)) +
         geom_hline(yintercept=-0, colour="white", lwd=1)+
-        coord_flip()+scale_y_reverse()
-        #scale_fill_manual(values =  c('coral','maroon','orange',"seagreen"))
+        coord_flip()+scale_y_reverse()+
+        scale_fill_manual(aesthetics = 'fill',values =  c('lightblue','maroon','orange',"seagreen"),drop = FALSE, name='Education Level')
       
       
-      p <- ggplotly(p) %>% 
+      q <- ggplotly(p) %>% 
         layout(legend = list(orientation = 'h', y=-0.2),plot_bgcolor= '#fff',
                yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
+      q$x$data[[7]]$text <- NULL
       
-      return(p)
+      return(q)
     }
     
-    
+   
     output$fisher_age_gender <- renderPlotly({plot_df(fisher)})
     
     output$non_fisher_age_gender <- renderPlotly({plot_df(non_fisher)})
