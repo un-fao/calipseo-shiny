@@ -1,7 +1,7 @@
 {
   "type": "subitem",
   "parent": "individuals",
-  "rank": 2,
-  "title": "Breakdown of individuals",
+  "rank": 3,
+  "title": "Breakdown of fishers",
   "icon": "pie-chart"
 }
