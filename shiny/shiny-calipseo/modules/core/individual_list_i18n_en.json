@@ -4,8 +4,6 @@
   "INDIVIDUAL_LIST_SUBTITLE": "Access information on individuals",
   "INDIVIDUALS": "Individuals",
   
-   /*individual list labels*/
-  "SELECT_INDIVIDUAL_ROLES" : "Select Roles",
   
    /*Individual list table*/
   "INDIVIDUAL_LIST_TABLE_COLNAME_1": "Salutation",

@@ -9,46 +9,34 @@ individual_overview_server <- function(id, pool) {
       
       data <- data[!is.na(data[,column_index]),]
       data <- as.data.frame(table(data[,column_index]))
-      names(data) <-  c(paste(column_name),'Count')
+      names(data) <-  c(paste(column_name),"Count")
       data$Per <- round(prop.table(data[,2])*100,digits = 1)
       if(column_name!='Gender'){
         dat <- data[order(data[, "Count"], decreasing = TRUE),c(1,3)]
         dat <- sprintf(paste(dat[,1],"(%s%s)"), dat[,2],"%")
         dat <- head(dat,1)
       }else{
+        
         data$Per <- sprintf('(%s%s)',data$Per,'%')
         dat <- data[order(data[, "Count"], decreasing = TRUE),c(1,3)]
         dat <- dat[dat$Gender==gender_filter,]}
       return(dat)
     }
-
-
- 
-    fisher <- ind_overview[ind_overview$Category=='fisher',]
-    fisher$individualNumber <- as.factor(fisher$individualNumber)
-    fisher <- distinct(fisher, individualNumber, .keep_all = TRUE)
+    
+    fs_df <- fisher_nonfisher(ind_overview)
+    non_fisher <- fs_df[fs_df$Category =='nonfisher',]
+    fisher <- fs_df[fs_df$Category =='fisher',]
+    Owner <- fs_df[fs_df$Category ==i18n("INDIVIDUAL_OVERVIEW_LABEL_OWNER"),]
+    Captain <- fs_df[fs_df$Category ==i18n("INDIVIDUAL_OVERVIEW_LABEL_CAPTAIN"),]
+    Fisher_ID <- fs_df[fs_df$Category == i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHER_ID"),]
+    Fisher_license <- fs_df[fs_df$Category == i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHING_LICENSE"),]
+    
     fisher_male <- fisher[fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"),]
     fisher_female <- fisher[fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"),]
     
-    non_fisher <- ind_overview[ind_overview$Category =='nonfisher',]
-    non_fisher$individualNumber <- as.factor(non_fisher$individualNumber)
-    non_fisher <- dplyr::filter(non_fisher,!individualNumber%in%fisher$individualNumber)
-    non_fisher <- distinct(non_fisher, individualNumber, .keep_all = TRUE)
     non_fisher_male <- non_fisher[non_fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"),]
     non_fisher_female <- non_fisher[non_fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"),]
     non_fisher_unspecified <- non_fisher[non_fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_UNSPECIFIED"),]
-   
-
-   
-    
-    Owner <- Category_fishery(fisher, code = 'OWN', category_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_OWNER"))
-    Captain <- Category_fishery(fisher, code = 'CAP', category_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_CAPTAIN"))
-    Fisher_ID <- Category_fishery(fisher, code = 'FIS', category_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHER_ID"))
-    Fisher_ID <- Fisher_ID[Fisher_ID$FSH_CODE!='CAP' & Fisher_ID$FSH_CODE!='OWN',]
-    Fisher_license <- Category_fishery(fisher, category_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHING_LICENSE"))
-    Fisher_license <- Fisher_license[Fisher_license$FSH_CODE!='CAP' & Fisher_license$FSH_CODE!='OWN' & Fisher_license$FSH_CODE!='FIS',]
-    Fisher_license <- Fisher_license[!is.na(Fisher_license$Category),]
-    
     
     
     main_edu_owner <- main_category(Owner,column_index = 4, column_name = 'Edulevel')
@@ -73,7 +61,7 @@ individual_overview_server <- function(id, pool) {
     nonfisher_per_female <- main_category(non_fisher,column_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"), column_index = 2, gender_filter = i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"))$Per
     nonfisher_per_unspecified <- main_category(non_fisher,column_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"), column_index = 2, gender_filter = i18n("INDIVIDUAL_OVERVIEW_LABEL_UNSPECIFIED"))$Per
     
-  
+    
     age_fisher <- Age_comp(fisher[,c('Gender','DOB')], Prep = TRUE)
     age_non_fisher <- Age_comp(non_fisher[,c('Gender','DOB')], Prep = TRUE)
     age_owner <- Age_comp(Owner[,c('Gender','DOB')], Prep = TRUE)
@@ -81,7 +69,7 @@ individual_overview_server <- function(id, pool) {
     age_fishing_ls <- Age_comp(Fisher_license[,c('Gender','DOB')], Prep = TRUE)
     age_fisher_id <- Age_comp(Fisher_ID[,c('Gender','DOB')], Prep = TRUE)
     
-
+    
     Category_fishery_df <- data.frame(
       Category = c(i18n("INDIVIDUAL_OVERVIEW_LABEL_OWNER"), i18n("INDIVIDUAL_OVERVIEW_LABEL_CAPTAIN"), i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHER_ID"), i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHING_LICENSE"), i18n("INDIVIDUAL_OVERVIEW_LABEL_NON_FISHER")),
       Total_number = c(nrow(Owner), nrow(Captain), nrow(Fisher_ID), nrow(Fisher_license),nrow(non_fisher)),
@@ -91,7 +79,7 @@ individual_overview_server <- function(id, pool) {
       min_age = c(min(age_owner$Age),min(age_captain$Age),min(age_fisher_id$Age),min(age_fishing_ls$Age),min(age_non_fisher$Age)),
       max_age = c(max(age_owner$Age),max(age_captain$Age),max(age_fisher_id$Age),max(age_fishing_ls$Age),max(age_non_fisher$Age)),
       median_age = c(median(age_owner$Age),median(age_captain$Age),median(age_fisher_id$Age),median(age_fishing_ls$Age),median(age_non_fisher$Age)),
-      main_edu = c(main_edu_owner,main_edu_captain,main_edu_fisher_id,main_edu_fishing_ls,main_edu_non_fisher)
+      main_edu =c(main_edu_owner,main_edu_captain,main_edu_fisher_id,main_edu_fishing_ls,main_edu_non_fisher)
     )
     
     
@@ -141,7 +129,7 @@ individual_overview_server <- function(id, pool) {
       
     }
     
-  
+    
     
     output$individual_overview_info <- renderText({
       paste0("<h2>", i18n("INDIVIDUAL_OVERVIEW_TITLE")," <small>", i18n("INDIVIDUAL_OVERVIEW_SUBTITLE"))
@@ -152,12 +140,12 @@ individual_overview_server <- function(id, pool) {
     output$descrip_title <- renderText({
       
       paste0(span(i18n("INDIVIDUAL_OVERVIEW_TITLE_INDIVIDUAL_PROFIL"),style='font-size: 18px;margin: 0;'))
-                     
+      
     })
     
     
     output$fisher_dash <- renderUI({
-    
+      
       individual_profile(dash_title = i18n("INDIVIDUAL_OVERVIEW_TITLE_FISHER"),dash_icon = icon('fish'), total_number = nrow(fisher),number_males = nrow(fisher_male),
                          number_females = nrow(fisher_female), min_age = min(age_fisher$Age), median_age = median(age_fisher$Age), 
                          max_age = max(age_fisher$Age), main_edu_level = main_edu_fisher)#sprintf(paste(edu_fisher$Edulevel,"(%s%s)"), edu_fisher$Per,"%"))
@@ -177,9 +165,9 @@ individual_overview_server <- function(id, pool) {
     output$category_fishery_dt <- renderDataTable({
       
       names(Category_fishery_df) <- c(i18n("INDIVIDUAL_OVERVIEW_COLNAME_1"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_2"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_3"),
-                                i18n("INDIVIDUAL_OVERVIEW_COLNAME_4"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_5"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_6"),
-                                i18n("INDIVIDUAL_OVERVIEW_COLNAME_7"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_8"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_9"))
-
+                                      i18n("INDIVIDUAL_OVERVIEW_COLNAME_4"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_5"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_6"),
+                                      i18n("INDIVIDUAL_OVERVIEW_COLNAME_7"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_8"),i18n("INDIVIDUAL_OVERVIEW_COLNAME_9"))
+      
       datatable(Category_fishery_df,
                 rownames = FALSE,
                 extensions = c("Buttons"),
@@ -201,13 +189,16 @@ individual_overview_server <- function(id, pool) {
                   ),
                   language = list(url = i18n("TABLE_LANGUAGE"))
                 ))
-
-
+      
+      
     })
-   
+    
+    
+    
     output$fisher_age_gender <- renderPlotly({plot_df(fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))})
     
     output$non_fisher_age_gender <- renderPlotly({plot_df(non_fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))})
+    
     
     
   }
