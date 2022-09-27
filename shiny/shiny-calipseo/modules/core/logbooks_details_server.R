@@ -35,6 +35,7 @@ logbooks_details_server <- function(id, pool){
         return(df)
       }))
       if(!is.null(data_for_vessel)){
+        data_for_vessel<-data_for_vessel[order(data_for_vessel$year),]
         ctrl$data_for_vessel <- data_for_vessel
       }else{
         ctrl$data_for_vessel <- emptyDataFrame()
@@ -91,6 +92,7 @@ logbooks_details_server <- function(id, pool){
         return(df)
       }))
       if(!is.null(data_for_vessel_owner)){
+        data_for_vessel_owner<-data_for_vessel_owner[order(data_for_vessel_owner$year),]
         ctrl$data_for_vessel_owner <- data_for_vessel_owner
       }else{
         ctrl$data_for_vessel_owner <- emptyDataFrame()
