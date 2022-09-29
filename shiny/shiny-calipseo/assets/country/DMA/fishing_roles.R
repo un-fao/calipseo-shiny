@@ -17,22 +17,19 @@ Category_fishery <- function(data, code = NULL, category_name) {
 
 fisher_nonfisher <- function(data){
   
-  
+  data <- unique(data[data$individualNumber,])
   fisher <- data[data$Category=='fisher',]
-  fisher$individualNumber <- as.factor(fisher$individualNumber)
-  fisher <- distinct(fisher, individualNumber, .keep_all = TRUE)
-  
   non_fisher <- data[data$Category =='nonfisher',]
-  non_fisher$individualNumber <- as.factor(non_fisher$individualNumber)
-  non_fisher <- dplyr::filter(non_fisher,!individualNumber%in%fisher$individualNumber)
-  non_fisher <- distinct(non_fisher, individualNumber, .keep_all = TRUE)
   
-  Owner <- Category_fishery(fisher, code = 'OWN', category_name = i18n("INDIVIDUAL_LABEL_OWNER"))
+  
+  Owner <- Category_fishery(fisher, code = 'OWN', category_name =  i18n("INDIVIDUAL_LABEL_OWNER"))
   Captain <- Category_fishery(fisher, code = 'CAP', category_name = i18n("INDIVIDUAL_LABEL_CAPTAIN"))
   Fisher_ID <- Category_fishery(fisher, code = 'FIS', category_name = i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_ID"))
+  Fisher_ID <- Fisher_ID[!is.na(Fisher_ID$FSH_CODE),]
   Fisher_ID <- Fisher_ID[Fisher_ID$FSH_CODE!='CAP' & Fisher_ID$FSH_CODE!='OWN',]
   Fisher_license <- Category_fishery(fisher, category_name = i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_LICENSE"))
-  Fisher_license <- Fisher_license[Fisher_license$FSH_CODE!='CAP' & Fisher_license$FSH_CODE!='OWN' & Fisher_license$FSH_CODE!='FIS',]
+  Fisher_license <- Fisher_license[!is.na(Fisher_license$PERMIT_NUMBER),]
+  Fisher_license <- Fisher_license[(Fisher_license$FSH_CODE!='OWN' & Fisher_license$FSH_CODE!='CAP' & Fisher_license$FSH_CODE!='FIS'),]
   Fisher_license <- Fisher_license[!is.na(Fisher_license$Category),]
   
   
