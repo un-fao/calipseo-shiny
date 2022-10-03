@@ -349,7 +349,7 @@ vessel_info_server <- function(id, pool) {
       #warnings
       warning_msg <- reactive({
         if(nrow(vesselCatches)>0){
-          if(accessVesselCatches(pool, vesselId)$stat_type_id=='1'){
+          if(accessVessel(pool, vesselId)$VESSEL_STAT_TYPE_ID=='1'){
             INFO("vessel-info server: Displaying warning message when stat_type_id is 1")
             div(class="alert alert-warning", role="alert",style='font-size:90%;',
                 icon("warning", "fa-2x"), tags$em(i18n("WARNING_MESSAGE"))  
