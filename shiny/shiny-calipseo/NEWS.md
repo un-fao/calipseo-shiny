@@ -8,6 +8,14 @@
 
 **Module corrections**
 
+_Individual Breakdown and List_
+
+* [CALR-133](https://sdlc.review.fao.org/jira/browse/CALR-133) Modify list of items used like fisher/non fisher roles
+
+_Vessels - list / details_
+
+* [CALR-137](https://sdlc.review.fao.org/jira/browse/CALR-137) Modify query to search fishing type of vessel
+
 _Logbook trips_
 
 * [CALR-118](https://sdlc.review.fao.org/jira/browse/CALR-118) Logbook trips-select inputs do not respond
@@ -23,6 +31,28 @@ _Vessel details_
 * [CALR-127](https://sdlc.review.fao.org/jira/browse/CALR-127) VesselFindeR - add type to restrain search to fishing vessels
 
 **Module enhancements**
+
+_Individual Info_
+
+* [CALR-129](https://sdlc.review.fao.org/jira/browse/CALR-129) Add information about age and entity document of individu profil card
+
+_Individual List_
+
+* [CALR-126](https://sdlc.review.fao.org/jira/browse/CALR-126) Add dropdown list for filter individuals based on fishery roles
+
+* [CALR-131](https://sdlc.review.fao.org/jira/browse/CALR-131) Use INFO function
+
+_Individual Breakdown_
+
+* [CALR-130](https://sdlc.review.fao.org/jira/browse/CALR-130) Add dropdown list for filter individuals based on fishery roles
+
+_Individual Quality Assessment_
+
+* [CALR-134](https://sdlc.review.fao.org/jira/browse/CALR-134) Add quality information for gender and educational level
+
+_Logbook details_
+
+* [CALR-136](https://sdlc.review.fao.org/jira/browse/CALR-136) Force to organize years and connect dots in chronological order on plot 
 
 _Vessel list_
 
@@ -42,7 +72,7 @@ _Vessel details_
 * [CALR-121](https://sdlc.review.fao.org/jira/browse/CALR-121) New module for individuals breakdown
 * [CALR-124](https://sdlc.review.fao.org/jira/browse/CALR-124) Individual breakdown: Breaking down educational level by gender
 * [CALR-125](https://sdlc.review.fao.org/jira/browse/CALR-125) New module for individuals details
-
+* [CALR-132](https://sdlc.review.fao.org/jira/browse/CALR-132) New module for individuals overview
 
 # **shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13**
 
