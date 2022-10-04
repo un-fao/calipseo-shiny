@@ -18,27 +18,33 @@ individual_list_server <- function(id, pool) {
     INFO("individual-list server: Fetching individual list data with rows '%s'", nrow(ind))
     
     
+    
+    
+    
+    
     observe({
+      
       if(appConfig[["country_profile"]]$data$CODE=="DM"){
         
-        observeEvent(input$fisher_chck,{if(isTRUE(input$fisher_chck))updateCheckboxInput(session,"nonfisher_chck",value = FALSE)})
+        observeEvent(input$fisher_chck_list,{if(isTRUE(input$fisher_chck_list))updateCheckboxInput(session,"nonfisher_chck_list",value = FALSE)})
         
-        fisher_nonfisher_df <- fisher_nonfisher(ind)
+        
+        
         
         
         
         observeEvent({
           
-          input$nonfisher_chck
+          input$nonfisher_chck_list
           input$filter_fisher_category_list
           
         },
         {
-          if(isFALSE(input$nonfisher_chck)){
-            updateCheckboxInput(session,"fisher_chck",value = TRUE)
+          if(isFALSE(input$nonfisher_chck_list)){
+            updateCheckboxInput(session,"fisher_chck_list",value = TRUE)
             category <- i18n("INDIVIDUAL_BREAKDOWN_LABEL_FISHER")
           }else {
-            updateCheckboxInput(session,"fisher_chck",value = FALSE)
+            updateCheckboxInput(session,"fisher_chck_list",value = FALSE)
             category <- i18n("INDIVIDUAL_BREAKDOWN_LABEL_NONFISHER")
             
           }
@@ -46,16 +52,15 @@ individual_list_server <- function(id, pool) {
           
           if(category==i18n("INDIVIDUAL_BREAKDOWN_LABEL_FISHER")){
             
-            ind <- fisher_nonfisher_df %>% dplyr::filter(Category%in%input$filter_fisher_category_list)
             
-            ind$individualNumber <- as.factor(ind$individualNumber)
-            ind <- distinct(ind, individualNumber, .keep_all = TRUE)
+            ind <- filter_category(data = ind,input = input$filter_fisher_category_list,column_indexes = c(10:13))
+            
             
             INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
             
             INFO("individual-list server: Indiviadual list filtered by individual roles '%s'", input$filter_fisher_category_list)
             
-            ind$Details <- sapply(ind$individualNumber, function(x){
+            ind$Details <- sapply(ind$IndividualNumber, function(x){
               ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
               return(ind_outhtml)
             })
@@ -95,17 +100,14 @@ individual_list_server <- function(id, pool) {
                 
                 pageLength = 10
               )
-            ) 
+            )
             
             
           }else{
-            ind <- fisher_nonfisher_df %>% dplyr::filter(Category%in%'nonfisher')
             
-            ind$individualNumber <- as.factor(ind$individualNumber)
-            ind <- distinct(ind, individualNumber, .keep_all = TRUE)
+            ind <- ind %>% dplyr::filter(Category%in%'nonfisher')
             
-            
-            ind$Details <- sapply(ind$individualNumber, function(x){
+            ind$Details <- sapply(ind$IndividualNumber, function(x){
               ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
               return(ind_outhtml)
             })
@@ -155,8 +157,6 @@ individual_list_server <- function(id, pool) {
         
       }else{
         
-        ind$individualNumber <- as.factor(ind$individualNumber)
-        ind <- distinct(ind, individualNumber, .keep_all = TRUE)
         
         INFO("individual-list server: Country choosen is '%s'",appConfig[["country_profile"]]$data$NAME)
         

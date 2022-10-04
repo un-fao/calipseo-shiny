@@ -1,15 +1,10 @@
 #individual_breakdown_server
 individual_breakdown_server <- function(id, pool) {
   
-  moduleServer(id, function(input, output, session) { 
+  moduleServer(id, function(input, output, session) {
     
-    fisher_nonfisher_df <- fisher_nonfisher(accessIndividualOverview(pool))
-    
-    fisher_nonfisher_df$Category <- as.factor(fisher_nonfisher_df$Category)
-    
-    non_fisher <- fisher_nonfisher_df[fisher_nonfisher_df$Category =='nonfisher',]
-    
-    
+    ind_overview <- accessIndividualOverview(pool)
+    non_fisher <- ind_overview[ind_overview$Category =='nonfisher',]
     
     output$fisher_breakdown_info <- renderText({
       text <- paste0("<h2>", i18n("INDIVIDUAL_BREAKDOWN_TITLE")," <small>", i18n("INDIVIDUAL_BREAKDOWN_SUBTITLE"),"</small></h2><hr>")
@@ -22,13 +17,12 @@ individual_breakdown_server <- function(id, pool) {
       observeEvent(input$fisher_chck,{if(isTRUE(input$fisher_chck))updateCheckboxInput(session,"nonfisher_chck",value = FALSE)})
       observeEvent(input$fisher_chck_edu,{if(isTRUE(input$fisher_chck_edu))updateCheckboxInput(session,"nonfisher_chck_edu",value = FALSE)})
       
-      
       cat_selected <- function(data, column_index = NULL){
         
         cate <- data[!is.na(data[,column_index]),]
         
         cate <- cate %>% count(cate[,column_index])
-        
+        cate <- cate[cate[,1]!='NULL',]
         names(cate) <- c(i18n("INDIVIDUAL_LABEL_NAME"), i18n("INDIVIDUAL_LABEL_COUNT"))
         
         return(cate)
@@ -40,7 +34,7 @@ individual_breakdown_server <- function(id, pool) {
           
           sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_FISHER"),input$filter_fisher_category,appConfig$country_profile$data$NAME)
         }else{
-          title <- sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"),"",appConfig$country_profile$data$NAME) 
+          title <- sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_GENDER"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"),"",appConfig$country_profile$data$NAME)
           
           title <- gsub("\\[|\\]", "", title)
           
@@ -55,7 +49,7 @@ individual_breakdown_server <- function(id, pool) {
           
           sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_FISHER"),input$filter_fisher_category,appConfig$country_profile$data$NAME)
         }else{
-          title <- sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"),"",appConfig$country_profile$data$NAME) 
+          title <- sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PYRAMID"),i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"),"",appConfig$country_profile$data$NAME)
           
           title <- gsub("\\[|\\]", "", title)
           
@@ -85,7 +79,7 @@ individual_breakdown_server <- function(id, pool) {
         
         if(category==i18n("INDIVIDUAL_BREAKDOWN_LABEL_FISHER")){
           
-          dat <- fisher_nonfisher_df %>% dplyr::filter(Category%in%input$filter_fisher_category)
+          dat <- filter_category(data = ind_overview,input = input$filter_fisher_category,column_indexes = c(6:9))
           gender_col <- cat_selected(dat,column_index = 2)
           
           #fisher breakdown by gender (pie chart)
@@ -147,7 +141,8 @@ individual_breakdown_server <- function(id, pool) {
         
         if(category==i18n("INDIVIDUAL_BREAKDOWN_LABEL_FISHER")){
           
-          fisher_df_edu <- fisher_nonfisher_df %>% dplyr::filter(Category%in%input$filter_fisher_category_edu)
+          #fisher_df_edu <- ind_overview %>% dplyr::filter(Category%in%input$filter_fisher_category_edu)
+          fisher_df_edu <- filter_category(data = ind_overview, input = input$filter_fisher_category_edu, column_indexes = c(6:9))
           edu_col <- cat_selected(fisher_df_edu,column_index = 4)
           
           
@@ -260,6 +255,6 @@ individual_breakdown_server <- function(id, pool) {
     
     
     
-  }) 
+  })
 }
 

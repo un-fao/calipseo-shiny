@@ -3,11 +3,6 @@ individual_breakdown_ui <- function(id){
   
   ns <- NS(id)
   
-  Owner <- as.character(i18n("INDIVIDUAL_LABEL_OWNER"))
-  Captain <- as.character(i18n("INDIVIDUAL_LABEL_CAPTAIN"))
-  `Holder of fishing Id` <- as.character(i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_ID"))
-  `Holder of fishing License` <- as.character(i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_LICENSE"))
-  
   
   tabItem(tabName = "individual_breakdown",
           fluidRow(
@@ -25,7 +20,7 @@ individual_breakdown_ui <- function(id){
                                                    span(checkboxInput(ns("fisher_chck"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_FISHER")),checkboxInput(ns("nonfisher_chck"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"))),
                                                    conditionalPanel(
                                                      condition = "input.fisher_chck == 1",ns = ns,
-                                                     selectizeInput(ns("filter_fisher_category"),label = i18n("SELECT_FISHER_CATEGORY"),choices = c(Owner,Captain,`Holder of fishing Id`,`Holder of fishing License`),multiple = FALSE, width = '40%')),
+                                                     selectizeInput(ns("filter_fisher_category"),label = i18n("SELECT_FISHER_CATEGORY"),choices = c(i18n("INDIVIDUAL_LIST_LABEL_OWNER"),i18n("INDIVIDUAL_LIST_LABEL_CAPTAIN"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_ID"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_LICENSE")),multiple = FALSE, width = '40%')),
                                                    box(width = 12, height = 480, title = uiOutput(ns('title_box_gender')), status = "primary", solidHeader= TRUE, plotlyOutput(ns("fisher_gender"))),
                                                    box(width = 12, height = 480, title = uiOutput(ns('title_box_pyramid')), status = "primary", solidHeader= TRUE,
                                                        plotlyOutput(ns("fisher_age_gender"))))),
@@ -34,7 +29,7 @@ individual_breakdown_ui <- function(id){
                                                    span(checkboxInput(ns("fisher_chck_edu"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_FISHER")),checkboxInput(ns("nonfisher_chck_edu"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"))),
                                                    conditionalPanel(
                                                      condition = "input.fisher_chck_edu == 1",ns = ns,
-                                                     selectizeInput(ns("filter_fisher_category_edu"),label = i18n("SELECT_FISHER_CATEGORY"),choices = c(Owner,Captain,`Holder of fishing Id`,`Holder of fishing License`),multiple = FALSE, width = '40%')),
+                                                     selectizeInput(ns("filter_fisher_category_edu"),label = i18n("SELECT_FISHER_CATEGORY"),choices = c(i18n("INDIVIDUAL_LIST_LABEL_OWNER"),i18n("INDIVIDUAL_LIST_LABEL_CAPTAIN"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_ID"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_LICENSE")),multiple = FALSE, width = '40%')),
                                                    fluidRow(box(width = 4, height = 480, title = sprintf(i18n("BREAKDOWN_INDIVIDUAL_TITLE_PIECHART_EDUCATION"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,plotlyOutput(ns("individual_edulevel"))),
                                                             box(width = 4, height = 480, title = sprintf(i18n("BREAKDOWN_MALE_TITLE_PIECHART_EDUCATION"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,plotlyOutput(ns("individual_edulevel_male"))),
                                                             box(width = 4, height = 480, title = sprintf(i18n("BREAKDOWN_FEMALE_TITLE_PIECHART_EDUCATION"), appConfig$country_profile$data$NAME), status = "primary", solidHeader= TRUE,plotlyOutput(ns("individual_edulevel_female"))))
