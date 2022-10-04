@@ -96,8 +96,7 @@
   "HISTORY_CATCHES_COLNAME_8" : "Fishing Method",
   "HISTORY_CATCHES_COLNAME_9" : "Species Description",
   "HISTORY_CATCHES_COLNAME_10" : "Quantity",
-  "HISTORY_CATCHES_COLNAME_11" : "Quantity Unit",
-  "HISTORY_CATCHES_COLNAME_12" : "Value",
+  "HISTORY_CATCHES_COLNAME_11" : "Value",
   "HISTORY_CATCHES_DATA_EXPORT_FILENAME" : "vessel_catch_history_%s",
   "HISTORY_CATCHES_PDF_TITLE" : "Vessel '%s' (%s) Catch history (as of %s)",
   

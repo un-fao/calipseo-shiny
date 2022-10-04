@@ -52,6 +52,7 @@ vessel_info_server <- function(id, pool) {
         if(i>2)vesselOwners[,i][vesselOwners[,i]== ""] <- "-"}
       
       vesselCatches <- accessVesselCatches(pool, vesselId)
+      vesselCatches<-vesselCatches[,-11]
       INFO("vessel-info server: Fetching vessel catches data with rows '%s'", nrow(vesselCatches))
       if(nrow(vesselCatches)>0){
         INFO("vessel-info server: Converting timedate to country's timezone and calculating days at sea")
@@ -69,7 +70,7 @@ vessel_info_server <- function(id, pool) {
         
         vesselCatches$year <- as.factor(format(vesselCatches$ret_datetime, "%Y"))
         vesselCatches <- vesselCatches[,c("year", "dep_datetime", "ret_datetime", "daysAtSea", "crew", "gr_f_area", "bch_name", 
-                                          "f_mthd", "species_desc", "quantity", "quantity_unit", "value")]
+                                          "f_mthd", "species_desc", "quantity", "value")]
         vesselCatches$gr_f_area <- as.factor(vesselCatches$gr_f_area)
         vesselCatches$bch_name <- as.factor(vesselCatches$bch_name)
         vesselCatches$f_mthd <- as.factor(vesselCatches$f_mthd)
@@ -89,7 +90,6 @@ vessel_info_server <- function(id, pool) {
           f_mthd = character(0),
           species_desc = character(0),
           quantity = character(0),
-          quantity_unit = character(0),
           value = character(0)
         )
         
@@ -430,7 +430,7 @@ vessel_info_server <- function(id, pool) {
         names(vesselCatches) <- c(i18n("HISTORY_CATCHES_COLNAME_1"),i18n("HISTORY_CATCHES_COLNAME_2"),i18n("HISTORY_CATCHES_COLNAME_3"),
                                   i18n("HISTORY_CATCHES_COLNAME_4"),i18n("HISTORY_CATCHES_COLNAME_5"),i18n("HISTORY_CATCHES_COLNAME_6"),
                                   i18n("HISTORY_CATCHES_COLNAME_7"),i18n("HISTORY_CATCHES_COLNAME_8"),i18n("HISTORY_CATCHES_COLNAME_9"),
-                                  i18n("HISTORY_CATCHES_COLNAME_10"),i18n("HISTORY_CATCHES_COLNAME_11"),i18n("HISTORY_CATCHES_COLNAME_12"))
+                                  sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_10"),PREF_UNIT_WEIGHT),sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_11"),PREF_CURRENCY))
         
         datatable(vesselCatches,
                   rownames = FALSE,

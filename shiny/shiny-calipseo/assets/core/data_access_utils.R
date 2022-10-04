@@ -54,6 +54,12 @@ accessCountryPrefUnitWeightFromDB <- function(con){
   return(country_param)
 } 
 
+#accessCountryPrefCurrencyFromDB
+accessCountryPrefCurrencyFromDB <- function(con){
+  country_param_sql <- readSQLScript("data/core/sql/country_pref_currency.sql")
+  country_param <- suppressWarnings(dbGetQuery(con, country_param_sql))
+  return(country_param)
+} 
 
 #accessIndividualDetailsFromDB
 accessIndividualDetailsFromDB <- function(con){
@@ -530,7 +536,10 @@ accessCountryPrefUnitWeight <- function(con){
   accessCountryPrefUnitWeightFromDB(con)
 }
 
-
+#accessCountryPrefCurrencyFromDB
+accessCountryPrefCurrency <- function(con){
+  accessCountryPrefCurrencyFromDB(con)
+}
 
 #accessIndividualDetailsFromDB
 accessIndividualDetails <- function(con){
