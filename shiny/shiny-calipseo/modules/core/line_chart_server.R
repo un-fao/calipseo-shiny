@@ -60,7 +60,7 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         max_nb<-length(unique(df[[colTarget]]))
         tagList(
           numericInput(ns("number"), rankLabel, value = if(max_nb<=5){max_nb}else{5}, min = 0, max = max_nb),
-          selectInput(ns("rank_method"),paste0(i18n("RANK_METHOD")," :"),choices=rank_method_choices)
+          selectInput(ns("rank_method"),i18n("RANK_METHOD"),choices=rank_method_choices)
         )
       }else{
         NULL

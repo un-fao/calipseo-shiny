@@ -44,12 +44,12 @@ logbooks_details_server <- function(id, pool){
   })
   
   output$plot_vessel <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel, x = ~ctrl$data_for_vessel[,1], y = ~ctrl$data_for_vessel[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=i18n("TABLE_COLNAME_QUANTITY")))
+    plot_ly(ctrl$data_for_vessel, x = ~ctrl$data_for_vessel[,1], y = ~ctrl$data_for_vessel[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT)))
   })
   
   output$data_vessel <- renderDataTable(
     ctrl$data_for_vessel,
-    colnames = c(i18n("TABLE_COLNAME_YEAR"),i18n("TABLE_COLNAME_QUANTITY")),
+    colnames = c(i18n("TABLE_COLNAME_YEAR"),sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT)),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -102,12 +102,12 @@ logbooks_details_server <- function(id, pool){
   
  
   output$plot_vessel_owner <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel_owner, x = ~ctrl$data_for_vessel_owner[,1], y = ~ctrl$data_for_vessel_owner[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=i18n("TABLE_COLNAME_QUANTITY")))
+    plot_ly(ctrl$data_for_vessel_owner, x = ~ctrl$data_for_vessel_owner[,1], y = ~ctrl$data_for_vessel_owner[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT)))
   })
   
   output$data_vessel_owner <- renderDataTable(
     ctrl$data_for_vessel_owner,
-    colnames = c(i18n("TABLE_COLNAME_YEAR"),i18n("TABLE_COLNAME_QUANTITY")),
+    colnames = c(i18n("TABLE_COLNAME_YEAR"),sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT)),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
@@ -301,7 +301,7 @@ logbooks_details_server <- function(id, pool){
       
      
     },
-    colnames = c(i18n("TABLE_COLNAME_NAME"),i18n("TABLE_COLNAME_QUANTITY")),
+    colnames = c(i18n("TABLE_COLNAME_NAME"),sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT)),
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,

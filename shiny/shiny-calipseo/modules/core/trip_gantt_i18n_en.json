@@ -32,10 +32,12 @@
   "LABEL_LANDING_SITE" : "Landing site",
   "LABEL_QUANTITY_CAUGHT" : "Quantity caught",
   "LABEL_QUANTITY_CAUGHT_SUBTITLE" : "tons",
-  "LABEL_CONTENT" : "Content",
+  "LABEL_CONTENT" : "Diversity",
   "LABEL_CONTENT_SUBTITLE" : "species",
   "LABEL_GLOBAL_CPUE" : "Global CPUE",
-  "LABEL_GLOBAL_CPUE_SUBTITLE" : "kg/day",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_KG" : "kg/day",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_LB" : "lb/day",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_OTHER" : "/day",
   "TITLE_TRIP_DETAILS_FOR_VESSEL" : "Trip detail for Vessel",
   
   /*Trip table*/

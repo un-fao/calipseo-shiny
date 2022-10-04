@@ -66,6 +66,8 @@ _Vessel details_
 
 **Core features**
 
+* [CALR-140](https://sdlc.review.fao.org/jira/browse/CALR-140) New strategy to catch and dissiminate weight unit preference use to store data 
+
 **Module features**
 
 * [CALR-120](https://sdlc.review.fao.org/jira/browse/CALR-120) New module for individuals QA

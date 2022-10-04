@@ -14,7 +14,7 @@
   
   
   /*Line chart keys on the SERVER*/
-  "RANK_LABEL" : "Display x most caught:",
+  "RANK_LABEL" : "Display x most caught :",
   "RANK_METHOD" : "Rank method :",
   "TOTAL_CATCH_OVER_THE_PERIOD" : "Total catch over the period",
   "CATCH_UNIT" : "tons",
@@ -33,7 +33,7 @@
   
   /*Plot and datatable/export labels*/
   "PLOT_XLAB" : "Time",
-  "PLOT_YLAB" : "Quantity (tons)",
+  "PLOT_YLAB" : "Quantity",
   "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
   "STATISTIC_TABLE_COLNAME_1" : "Year",
   "STATISTIC_TABLE_COLNAME_4" : "sum",

@@ -28,7 +28,7 @@
   
   /*Information boxes*/
   "INFOBOX_OVERVIEW_TOTAL_QUANTITY" : "Total quantity",
-  "TOTAL_QUANTITY_UNITS" : "tons",
+  "TOTAL_QUANTITY_UNITS_TONS" : "tons",
   "INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE" : "Logbook reporting percentage",
   "INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS" : "Total participating vessels",
   "GLOBAL_VESSEL_LABEL" : "Number of vessels",
@@ -49,5 +49,8 @@
   
   "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
   "STATISTIC_DATA_EXPORT_FILENAME" : "%s_%s_statistics",
-  "STATISTIC_PDF_TITLE" : "Statistics by %s - %s"
+  "STATISTIC_PDF_TITLE" : "Statistics by %s - %s",
+  
+  /*plots*/
+  "QUANTITY_PLOT_YLAB" : "Quantity"
 }

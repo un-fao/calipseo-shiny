@@ -109,7 +109,7 @@ logbooks_overview_server <- function(id, pool){
             box(
               title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
               width = 12,
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(infos$total_lastyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(ifelse(PREF_UNIT_WEIGHT=="Kilogram",infos$total_lastyear/1000,infos$total_lastyear),2), ifelse(PREF_UNIT_WEIGHT=="Kilogram",i18n("TOTAL_QUANTITY_UNITS_TONS"),tolower(PREF_UNIT_WEIGHT))), icon = icon("fish"), width = 6),
              #CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$ratio_reporting_lastyear, icon = icon("percent"), width = 6)
               CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$nb_active_vessel_lastyear, icon = icon("ship"), width = 6)
             )
@@ -119,7 +119,7 @@ logbooks_overview_server <- function(id, pool){
             box(
               title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
               width = 12,
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(infos$total_currentyear/1000,2), i18n("TOTAL_QUANTITY_UNITS")), icon = icon("fish"), width = 6),
+              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(ifelse(PREF_UNIT_WEIGHT=="Kilogram",infos$total_currentyear/1000,infos$total_currentyear),2), ifelse(PREF_UNIT_WEIGHT=="Kilogram",i18n("TOTAL_QUANTITY_UNITS_TONS"),tolower(PREF_UNIT_WEIGHT))), icon = icon("fish"), width = 6),
              #CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$ratio_reporting_currentyear, icon = icon("percent"), width = 6)
               CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$nb_active_vessel_currentyear, icon = icon("ship"), width = 6)
             )
@@ -190,7 +190,7 @@ logbooks_overview_server <- function(id, pool){
   line_chart_server("gq", label=i18n("GLOBAL_QUANTITY_LABEL"),
                     df=data_logbooks%>%
                       mutate(label="Total")
-                      , colDate = "date",colTarget="label",colValue="quantity", rank=FALSE,mode='plot+table')
+                      , colDate = "date",colTarget="label",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
   
   gv_data_formated<-reactiveVal(NULL)
   gv_data_ready<-reactiveVal(FALSE)
@@ -290,13 +290,13 @@ logbooks_overview_server <- function(id, pool){
              )
   })
   
-  line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
   line_chart_server("sp", label=i18n("SPECIES_LABEL"),df=data_logbooks%>%
-                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"),mode='plot+table')
-  line_chart_server("fg", label=i18n("FISHING_GEAR_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",colValue="quantity", rank=FALSE,mode='plot+table')
+                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"),mode='plot+table')
+  line_chart_server("fg", label=i18n("FISHING_GEAR_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
 
  })
   

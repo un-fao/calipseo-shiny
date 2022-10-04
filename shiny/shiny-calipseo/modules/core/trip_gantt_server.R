@@ -369,7 +369,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             fluidPage(
               fluidRow(
                 column(12,
-                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("TRIP_FROM"), "<span style='color:#0288D1;'><u>%s</u></span>",i18n("DATE_SEPARATOR_TO"),"<span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span>",i18n("DAYS"),")</p>"),format(as.Date(trip$date_from[1]),format = '%d-%m-%Y'),format(as.Date(trip$date_to[1]),format = '%d-%m-%Y'),as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days"))))
+                       HTML(sprintf(paste("<p style='font-size:16px;'>",i18n("TRIP_FROM"), "<span style='color:#0288D1;'><u>%s</u></span>",i18n("DATE_SEPARATOR_TO"),"<span style='color:#0288D1;'><u>%s</u></span> (<span style='color:#0288D1;'>%s</span>",i18n("DAYS"),")</p>"),format(as.Date(trip$date_from[1]),format = '%d-%m-%Y'),format(as.Date(trip$date_to[1]),format = '%d-%m-%Y'),round(as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),1)))
                 )),
               fluidRow(
                 column(6,
@@ -389,9 +389,12 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               ),
               uiOutput(ns('map')),
               fluidRow(
-                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/1000,2), i18n("LABEL_QUANTITY_CAUGHT_SUBTITLE")), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
+                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity),2), trip$quantity_unit[1]), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
                 valueBox(value=tags$p(i18n("LABEL_CONTENT"),style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),i18n("LABEL_CONTENT_SUBTITLE")), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
-                valueBox(value=tags$p(i18n("LABEL_GLOBAL_CPUE"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0), i18n("LABEL_GLOBAL_CPUE_SUBTITLE")), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
+                valueBox(value=tags$p(i18n("LABEL_GLOBAL_CPUE"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0),ifelse(trip$quantity_unit[1]=="pound",
+                                                                                                                                                                                                                    i18n("LABEL_GLOBAL_CPUE_SUBTITLE_LB"),
+                                                                                                                                                                                                                    ifelse(trip$quantity_unit[1]=="kilogram",
+                                                                                                                                                                                                                           i18n("LABEL_GLOBAL_CPUE_SUBTITLE_KG"),paste0(trip$quantity_unit[1],i18n("LABEL_GLOBAL_CPUE_SUBTITLE_OTHER"))))), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
               ),
               fluidRow(column(10, align="center",offset=1,DTOutput(ns("table"))%>%withSpinner(type = 4)))
             )

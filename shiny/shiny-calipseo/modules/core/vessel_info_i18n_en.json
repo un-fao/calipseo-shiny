@@ -132,6 +132,10 @@
   
   /*Warning message*/
     "WARNING_MESSAGE" : "Catches reported here are the results of a sample-based survey (Artisanal Fisheries), and do not reflect the total catches of the selected vessel",
+    
+  /*Catches plots*/
+  "SPECIES_YLAB" : "Quantity",
+  "SPECIES_GROUP_YLAB" : "Quantity",
   
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }

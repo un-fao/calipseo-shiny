@@ -69,6 +69,7 @@ print(appConfig$country_profile$data)
 #---------------------------------------------------------------------------------------
 COUNTRY_PARAMS <- accessCountryParam(pool)
 HAS_REGMANGT <- ifelse(COUNTRY_PARAMS[COUNTRY_PARAMS$CODE=='REGMANGT',]$BOOLEAN == 1, TRUE, FALSE)
+PREF_UNIT_WEIGHT<-accessCountryPrefUnitWeight(pool)[1,1]
 
 #local datasets
 #---------------------------------------------------------------------------------------
