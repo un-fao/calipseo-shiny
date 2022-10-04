@@ -805,14 +805,14 @@ vessel_info_server <- function(id, pool) {
                         mode = "plot+table", label = i18n("SPECIES_STATISTIC_LABEL"),
                         colDate = "date",colTarget="species_desc",
                         colValue="quantity",colText="text",
-                        ylab=sprintf('%s (%s)',i18n("SPECIES_YLAB"),PREF_UNIT_WEIGHT),
+                        ylab=sprintf('%s (%s)',i18n("SPECIES_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),
                         rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"))
       
       line_chart_server("catches_spgroups", 
                         SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
                         mode = "plot+table", label = i18n("SPECIES_GROUP_STATISTIC_LABEL"),
                         colDate = "date", colTarget="ISSCAAP_Group_En",
-                        ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT),
+                        ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),
                         colValue="quantity", rank=FALSE)
       
       

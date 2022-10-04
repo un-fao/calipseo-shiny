@@ -190,7 +190,7 @@ logbooks_overview_server <- function(id, pool){
   line_chart_server("gq", label=i18n("GLOBAL_QUANTITY_LABEL"),
                     df=data_logbooks%>%
                       mutate(label="Total")
-                      , colDate = "date",colTarget="label",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+                      , colDate = "date",colTarget="label",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
   
   gv_data_formated<-reactiveVal(NULL)
   gv_data_ready<-reactiveVal(FALSE)
@@ -290,13 +290,13 @@ logbooks_overview_server <- function(id, pool){
              )
   })
   
-  line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("vt", label=i18n("VESSEL_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="vesseltype",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("gt", label=i18n("GEAR_TYPE_LABEL"),df=data_logbooks, colDate = "date",colTarget="fishing_gear",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
   line_chart_server("sp", label=i18n("SPECIES_LABEL"),df=data_logbooks%>%
-                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"),mode='plot+table')
-  line_chart_server("fg", label=i18n("FISHING_GEAR_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
-  line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+                        mutate(text=sprintf("%s-<em>%s</em> (<b>%s</b>)",species_desc,species_sci,species_asfis)),colDate = "date",colTarget="species_desc",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity",colText="text", rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"),mode='plot+table')
+  line_chart_server("fg", label=i18n("FISHING_GEAR_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="ISSCAAP_Group_En",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("ls", label=i18n("LANDING_SITES_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="landing_site",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
+  line_chart_server("fz", label=i18n("FISHING_ZONE_LABEL"),df=data_logbooks%>%left_join(fish_group),colDate = "date", colTarget="fishing_zone",ylab=sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),colValue="quantity", rank=FALSE,mode='plot+table')
 
  })
   
