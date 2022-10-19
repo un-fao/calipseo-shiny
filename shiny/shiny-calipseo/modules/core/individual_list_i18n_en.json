@@ -4,6 +4,11 @@
   "INDIVIDUAL_LIST_SUBTITLE": "Access information on individuals",
   "INDIVIDUALS": "Individuals",
   
+  "INDIVIDUAL_LIST_LABEL_OWNER" : "Owner",
+  "INDIVIDUAL_LIST_LABEL_CAPTAIN" : "Captain",
+  "INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_ID" : "Holder of fishing Id",
+  "INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_LICENSE" : "Holder of fishing License",
+  
   
    /*Individual list table*/
   "INDIVIDUAL_LIST_TABLE_COLNAME_1": "Salutation",

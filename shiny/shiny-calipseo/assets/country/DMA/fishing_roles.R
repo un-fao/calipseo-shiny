@@ -1,47 +1,20 @@
-Category_fishery <- function(data, code = NULL, category_name) {
+filter_category <- function(data,input,column_indexes){
   
-  if(!is.null(code)){
-    if(code=='FIS'){
-      data[!is.na(data$FISHER_ID),1] <- category_name
-      data[!is.na(data$PERMIT_NUMBER),1] <- category_name}
-    data[data$FSH_CODE== code & !is.na(data$FSH_CODE),1] <- category_name
-    data <- data[data$Category==category_name & !is.na(data$Category),]
+  if(input==i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_ID")){ 
+    data <- data[data[column_indexes[1]]>0,]
+    
+  }else if(input==i18n("INDIVIDUAL_LABEL_OWNER")){
+    data <- data[data[column_indexes[2]]>0,]
+    
+  }else if(input==i18n("INDIVIDUAL_LABEL_CAPTAIN")){
+    data <- data[data[column_indexes[3]]>0,]
+    
   }else{
-    data <- data[!is.na(data$PERMIT_NUMBER),]
-    data[,1] <- category_name
-    data[data$Category==category_name,]
+    data <- data[data[column_indexes[4]]>0,]
+    
   }
   return(data)
 }
-
-
-fisher_nonfisher <- function(data){
-  
-  
-  fisher <- data[data$Category=='fisher',]
-  fisher$individualNumber <- as.factor(fisher$individualNumber)
-  fisher <- distinct(fisher, individualNumber, .keep_all = TRUE)
-  
-  non_fisher <- data[data$Category =='nonfisher',]
-  non_fisher$individualNumber <- as.factor(non_fisher$individualNumber)
-  non_fisher <- dplyr::filter(non_fisher,!individualNumber%in%fisher$individualNumber)
-  non_fisher <- distinct(non_fisher, individualNumber, .keep_all = TRUE)
-  
-  Owner <- Category_fishery(fisher, code = 'OWN', category_name = i18n("INDIVIDUAL_LABEL_OWNER"))
-  Captain <- Category_fishery(fisher, code = 'CAP', category_name = i18n("INDIVIDUAL_LABEL_CAPTAIN"))
-  Fisher_ID <- Category_fishery(fisher, code = 'FIS', category_name = i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_ID"))
-  Fisher_ID <- Fisher_ID[Fisher_ID$FSH_CODE!='CAP' & Fisher_ID$FSH_CODE!='OWN',]
-  Fisher_license <- Category_fishery(fisher, category_name = i18n("INDIVIDUAL_LABEL_HOLDER_FISHING_LICENSE"))
-  Fisher_license <- Fisher_license[Fisher_license$FSH_CODE!='CAP' & Fisher_license$FSH_CODE!='OWN' & Fisher_license$FSH_CODE!='FIS',]
-  Fisher_license <- Fisher_license[!is.na(Fisher_license$Category),]
-  
-  
-  data <- rbind(fisher,Owner,Captain,Fisher_ID,Fisher_license,non_fisher)
-  
-  return(data)
-  
-}
-
 
 
 pyramid_df <- function(data, subset = NULL){

@@ -8,10 +8,18 @@ individual_overview_server <- function(id, pool) {
     main_category <- function(data, column_index, column_name, gender_filter){
       
       data <- data[!is.na(data[,column_index]),]
-      data <- as.data.frame(table(data[,column_index]))
-      names(data) <-  c(paste(column_name),"Count")
-      data$Per <- round(prop.table(data[,2])*100,digits = 1)
+      if(nrow(data>0)){
+        
+        data <- as.data.frame(table(data[,column_index]))
+        names(data) <-  c(paste(column_name),"Count")
+        data$Per <- round(prop.table(data[,2])*100,digits = 1)
+      }else{
+        
+        data <- data.frame(Edulevel = i18n("INDIVIDUAL_OVERVIEW_LABEL_NODATA"), Count=0, Per = 0)
+      }
+      
       if(column_name!='Gender'){
+        
         dat <- data[order(data[, "Count"], decreasing = TRUE),c(1,3)]
         dat <- sprintf(paste(dat[,1],"(%s%s)"), dat[,2],"%")
         dat <- head(dat,1)
@@ -19,17 +27,26 @@ individual_overview_server <- function(id, pool) {
         
         data$Per <- sprintf('(%s%s)',data$Per,'%')
         dat <- data[order(data[, "Count"], decreasing = TRUE),c(1,3)]
-        dat <- dat[dat$Gender==gender_filter,]}
+        dat <- dat[dat$Gender==gender_filter,]
+        if(nrow(dat)>0){
+          dat
+        }else{
+          dat <- data.frame(Gender=gender_filter, Per = sprintf('(%s%s)',0,'%'))
+        }
+        
+      }
+      
       return(dat)
     }
     
-    fs_df <- fisher_nonfisher(ind_overview)
-    non_fisher <- fs_df[fs_df$Category =='nonfisher',]
-    fisher <- fs_df[fs_df$Category =='fisher',]
-    Owner <- fs_df[fs_df$Category ==i18n("INDIVIDUAL_OVERVIEW_LABEL_OWNER"),]
-    Captain <- fs_df[fs_df$Category ==i18n("INDIVIDUAL_OVERVIEW_LABEL_CAPTAIN"),]
-    Fisher_ID <- fs_df[fs_df$Category == i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHER_ID"),]
-    Fisher_license <- fs_df[fs_df$Category == i18n("INDIVIDUAL_OVERVIEW_LABEL_HOLDER_FISHING_LICENSE"),]
+    
+    non_fisher <- ind_overview[ind_overview$Category =='nonfisher',]
+    fisher <- ind_overview[ind_overview$Category =='fisher',]
+    Owner <- fisher[fisher$Owner>0,]
+    Captain <- fisher[fisher$Captain>0,]
+    Fisher_ID <- fisher[fisher$Fisher_Id>0,]
+    Fisher_license <- fisher[fisher$License>0,]
+    
     
     fisher_male <- fisher[fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"),]
     fisher_female <- fisher[fisher$Gender==i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"),]
@@ -62,6 +79,7 @@ individual_overview_server <- function(id, pool) {
     nonfisher_per_unspecified <- main_category(non_fisher,column_name = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"), column_index = 2, gender_filter = i18n("INDIVIDUAL_OVERVIEW_LABEL_UNSPECIFIED"))$Per
     
     
+    
     age_fisher <- Age_comp(fisher[,c('Gender','DOB')], Prep = TRUE)
     age_non_fisher <- Age_comp(non_fisher[,c('Gender','DOB')], Prep = TRUE)
     age_owner <- Age_comp(Owner[,c('Gender','DOB')], Prep = TRUE)
@@ -84,27 +102,27 @@ individual_overview_server <- function(id, pool) {
     
     
     
-    individual_profile <- function(dash_title = NULL,dash_icon = NULL, total_number = NULL, 
-                                   number_males = NULL, number_females = NULL, 
-                                   min_age = NULL, median_age = NULL, max_age = NULL, 
+    individual_profile <- function(dash_title = NULL,dash_icon = NULL, total_number = NULL,
+                                   number_males = NULL, number_females = NULL,
+                                   min_age = NULL, median_age = NULL, max_age = NULL,
                                    main_edu_level = NULL){
       
       div(class = 'col-md-6',
           box(width = 12,title = dash_title,
-              div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_TOTAL_NUMBER"), 
+              div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_TOTAL_NUMBER"),
                                                 value = total_number, icon = dash_icon,infobox_extra_style = 'min-height:55px',
                                                 infobox_icon_extra_style = 'height: 55px; line-height: 55px;',width = 12)),
-              div(class = 'row',div(class = 'col-md-6', 
-                                    CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_MALES"), 
+              div(class = 'row',div(class = 'col-md-6',
+                                    CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_MALES"),
                                                     value = number_males,icon = icon('mars'),content_margin_left = 0,
                                                     width = 12,style_title = 'text-align:center;',infobox_icon_extra_style = 'height: 55px; line-height: 55px;',
                                                     style_value = 'text-align:center;',infobox_extra_style = 'min-height:55px')),
-                  div(class = 'col-md-6', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_FEMALES"), 
+                  div(class = 'col-md-6', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_FEMALES"),
                                                           value = number_females, icon = icon('venus'),content_margin_left = 0,
                                                           width = 12,style_title = 'text-align:center;',infobox_icon_extra_style = 'height: 55px; line-height: 55px;',
                                                           style_value = 'text-align:center;',infobox_extra_style = 'min-height:55px'))),
-              div(class = 'row',div(class = 'col-md-4', 
-                                    CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MIN_AGE"), 
+              div(class = 'row',div(class = 'col-md-4',
+                                    CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MIN_AGE"),
                                                     value = min_age, Use_icon = FALSE,content_margin_left = 0,
                                                     width = 12,infobox_extra_style = 'min-height:55px',
                                                     style_title = "font-size:90%;text-align:center;",
@@ -114,12 +132,12 @@ individual_overview_server <- function(id, pool) {
                                                           width = 12,infobox_extra_style = 'min-height:55px',
                                                           style_title = "font-size:90%;text-align:center;",
                                                           style_value = "font-weight:700px;text-align:center")),
-                  div(class = 'col-md-4', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MAX_AGE"), 
+                  div(class = 'col-md-4', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MAX_AGE"),
                                                           value = max_age, Use_icon = FALSE,content_margin_left = 0,
                                                           width = 12,infobox_extra_style = 'min-height:55px',
                                                           style_title = "font-size:90%;text-align:center;",
                                                           style_value = "font-weight:700px;text-align:center"))),
-              div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MEAN_EDU_LEVEL"), 
+              div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MEAN_EDU_LEVEL"),
                                                 value = main_edu_level,icon = icon('user-graduate'),content_margin_left = 0,style_title = 'text-align:center;',
                                                 style_value = 'text-align:center;' ,infobox_extra_style = 'min-height:55px',
                                                 infobox_icon_extra_style = 'height: 55px; line-height: 55px;',width = 12))
@@ -147,7 +165,7 @@ individual_overview_server <- function(id, pool) {
     output$fisher_dash <- renderUI({
       
       individual_profile(dash_title = i18n("INDIVIDUAL_OVERVIEW_TITLE_FISHER"),dash_icon = icon('fish'), total_number = nrow(fisher),number_males = nrow(fisher_male),
-                         number_females = nrow(fisher_female), min_age = min(age_fisher$Age), median_age = median(age_fisher$Age), 
+                         number_females = nrow(fisher_female), min_age = min(age_fisher$Age), median_age = median(age_fisher$Age),
                          max_age = max(age_fisher$Age), main_edu_level = main_edu_fisher)#sprintf(paste(edu_fisher$Edulevel,"(%s%s)"), edu_fisher$Per,"%"))
       
     })
@@ -156,7 +174,7 @@ individual_overview_server <- function(id, pool) {
     output$nonfisher_dash <- renderUI({
       
       individual_profile(dash_title = i18n("INDIVIDUAL_OVERVIEW_TITLE_NONFISHER"),dash_icon = icon('user'), total_number = nrow(non_fisher),number_males = nrow(non_fisher_male),
-                         number_females = nrow(non_fisher_female), min_age = min(age_non_fisher$Age), median_age = median(age_non_fisher$Age), 
+                         number_females = nrow(non_fisher_female), min_age = min(age_non_fisher$Age), median_age = median(age_non_fisher$Age),
                          max_age = max(age_non_fisher$Age), main_edu_level = main_edu_non_fisher)#sprintf(paste(edu_non_fisher$Edulevel,"(%s%s)"), edu_non_fisher$Per,"%"))
       
     })
