@@ -6,7 +6,7 @@ fz.CODE as gr_f_area_id, fz.I18n_DEFAULT as fishing_zone,
 ls.CODE as arrivalport, ls.ID as bch_id, ls.I18n_DEFAULT as landing_site,
 g.CODE as f_mthd_id, g.I18n_DEFAULT as fishing_gear,
 sp.I18n_DEFAULT as species_desc, sp.SCIENTIFIC_NAME as species_sci, sp.ASFIS_CODE as species_asfis, 
-fas.QUANTITY as quantity, uom.I18n_DEFAULT as quantity_unit 
+fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as quantity, uom.I18n_DEFAULT as quantity_unit 
 FROM dt_fishing_activities as fa 
 LEFT JOIN dt_fishing_activities_gear as fag ON fa.ID = fag.DT_FISHING_ACTIVITY_ID 
 LEFT JOIN cl_ref_gears as g ON fag.CL_REF_GEAR_ID = g.ID 

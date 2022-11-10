@@ -6,9 +6,9 @@ year(fa.DATE_TO) as year,
 month(fa.DATE_TO) as period,
 'WCA' as geographic_identifier,
 sp.ASFIS_CODE as species,
-fas.QUANTITY as catch_retained,
+fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as catch_retained,
 fas.DISCARD_QUANTITY as catch_discarded,
-fas.QUANTITY as catch_nominal,
+fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as catch_nominal,
 uom.I18n_DEFAULT as catch_unit,
 v.CL_APP_VESSEL_STAT_TYPE_ID 
 FROM dt_fishing_activities as fa 
