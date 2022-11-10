@@ -1,7 +1,7 @@
 {
   "id": "shiny-calipseo",
-  "version": "1.2.0",
-  "date": "2022-11-03",
+  "version": "1.2.0.9001",
+  "date": "2022-11-10",
   "dependencies": [
     {"package": "htmltools", "version": "0.5.2", "repos": "https://cloud.r-project.org"},
     {"package": "shiny", "version": "1.7.1", "repos": "https://cloud.r-project.org"},
