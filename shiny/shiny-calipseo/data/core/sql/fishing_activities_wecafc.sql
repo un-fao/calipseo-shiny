@@ -1,10 +1,10 @@
 SELECT 
 cou.ISO_3_CODE as flagstate,
-t.year,t.period,t.geographical_identifier,t.species,t.catch_retained,t.catch_discarded,t.catch_nominal,t.catch_unit 
+t.year,t.period,t.geographic_identifier,t.species,t.catch_retained,t.catch_discarded,t.catch_nominal,t.catch_unit 
 FROM (SELECT 
 year(fa.DATE_TO) as year,
 month(fa.DATE_TO) as period,
-'WCA' as geographical_identifier,
+'WCA' as geographic_identifier,
 sp.ASFIS_CODE as species,
 fas.QUANTITY as catch_retained,
 fas.DISCARD_QUANTITY as catch_discarded,
