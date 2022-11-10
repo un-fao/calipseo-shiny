@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "logbooks",
+  "rank": 5,
+  "title": "Logbooks export",
+  "icon": "share"
+}
