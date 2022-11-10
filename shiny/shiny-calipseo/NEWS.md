@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.2.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.1.zip) - 2022-11-XX**
+# **shiny-calipseo [v1.2.0.9001](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.9001.zip) - 2022-11-11**
 
 **New features**
 
