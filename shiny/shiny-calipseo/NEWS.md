@@ -1,3 +1,20 @@
+# **shiny-calipseo [v1.2.9999](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.9999.zip) - 2022-11-XX**
+
+**New features**
+
+* [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142) New module for SUR - export to CWP RH / WECAFC-FIRMS RDB formats
+
+**Enhancements**
+
+* [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143) Improve units of measures handling / conversion
+* [CALR-144](https://sdlc.review.fao.org/jira/browse/CALR-144) Systematize use of CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT for target quantity field
+
+**New R dependencies**
+
+* lubridate --> [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142)
+* units --> [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143)
+* measurements --> [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143)
+
 # **shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-11-03**
 
 ## Corrections
