@@ -69,7 +69,8 @@ print(appConfig$country_profile$data)
 #---------------------------------------------------------------------------------------
 COUNTRY_PARAMS <- accessCountryParam(pool)
 HAS_REGMANGT <- ifelse(COUNTRY_PARAMS[COUNTRY_PARAMS$CODE=='REGMANGT',]$BOOLEAN == 1, TRUE, FALSE)
-PREF_UNIT_WEIGHT<-accessCountryPrefUnitWeight(pool)[1,1]
+PREF_UNIT_WEIGHT<-accessCountryPrefUnitWeight(pool)
+if(PREF_UNIT_WEIGHT$CODE=="lb") PREF_UNIT_WEIGHT$CODE <- "lbs" #patch to make sure unit conversion
 PREF_CURRENCY<-accessCountryPrefCurrency(pool)[1,1]
 
 #local datasets

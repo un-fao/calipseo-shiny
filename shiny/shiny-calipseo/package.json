@@ -22,6 +22,8 @@
     {"package": "readxl", "version": "1.4.0", "repos": "https://cloud.r-project.org"},
     {"package": "writexl", "version": "1.4.0", "repos": "https://cloud.r-project.org"},
     {"package": "openxlsx", "version": "4.2.5", "repos": "https://cloud.r-project.org"},
+    {"package": "units", "version": "0.8-0", "repos": "https://cloud.r-project.org"},
+    {"package": "measurements", "version": "1.4.0", "repos": "https://cloud.r-project.org"},
     {"package": "sf", "version": "1.0-7", "repos": "https://cloud.r-project.org"},
     {"package": "sp", "version": "1.4-6", "repos": "https://cloud.r-project.org"},
     {"package": "plyr", "version": "1.8.7", "repos": "https://cloud.r-project.org"},

@@ -14,6 +14,7 @@
 #' @param colText column name of variable use to marker label
 #' @param xlab character string to specify x label name
 #' @param ylab character string to specify y label name
+#' @param valueUnit value unit
 #' @param rank boolean argument, if TRUE slider include capacity to filter target value by rank level of value
 #' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
 #' @param rankLabel character string to specify rank label name
@@ -150,7 +151,6 @@ line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValu
         
         df<-df%>%
           mutate(date = as.character(format(as.Date(date),format = getDateFormat(input$granu))))%>%
-          #mutate(value=value/1000)%>%
           group_by(date,target,text,trip_id)%>%
           summarise(sum_by_trip = sum(value))%>%
           group_by(date,target,text)%>%

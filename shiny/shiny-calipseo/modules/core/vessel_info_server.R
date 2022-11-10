@@ -399,7 +399,7 @@ vessel_info_server <- function(id, pool) {
       INFO("vessel-info server: Rendering the vessel catches summary data to the table")
       output$vessel_catch_summary <- renderDataTable(server = FALSE,{
         names(vesselCatchSummary) <- c(i18n("SUMMARY_CATCHES_COLNAME_1"),i18n("SUMMARY_CATCHES_COLNAME_2"),
-                                       sprintf('%s (%s)',i18n("SUMMARY_CATCHES_COLNAME_3"),PREF_UNIT_WEIGHT))
+                                       sprintf('%s (%s)',i18n("SUMMARY_CATCHES_COLNAME_3"),PREF_UNIT_WEIGHT$CODE))
         datatable(vesselCatchSummary,
                   rownames = FALSE,
                   extensions = c("Buttons"),
@@ -430,7 +430,7 @@ vessel_info_server <- function(id, pool) {
         names(vesselCatches) <- c(i18n("HISTORY_CATCHES_COLNAME_1"),i18n("HISTORY_CATCHES_COLNAME_2"),i18n("HISTORY_CATCHES_COLNAME_3"),
                                   i18n("HISTORY_CATCHES_COLNAME_4"),i18n("HISTORY_CATCHES_COLNAME_5"),i18n("HISTORY_CATCHES_COLNAME_6"),
                                   i18n("HISTORY_CATCHES_COLNAME_7"),i18n("HISTORY_CATCHES_COLNAME_8"),i18n("HISTORY_CATCHES_COLNAME_9"),
-                                  sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_10"),PREF_UNIT_WEIGHT),sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_11"),PREF_CURRENCY))
+                                  sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_10"),PREF_UNIT_WEIGHT$CODE),sprintf('%s (%s)',i18n("HISTORY_CATCHES_COLNAME_11"),PREF_CURRENCY))
         
         datatable(vesselCatches,
                   rownames = FALSE,
@@ -805,14 +805,14 @@ vessel_info_server <- function(id, pool) {
                         mode = "plot+table", label = i18n("SPECIES_STATISTIC_LABEL"),
                         colDate = "date",colTarget="species_desc",
                         colValue="quantity",colText="text",
-                        ylab=sprintf('%s (%s)',i18n("SPECIES_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),
+                        ylab=sprintf('%s (%s)',i18n("SPECIES_YLAB"),PREF_UNIT_WEIGHT$CODE),valueUnit=tolower(PREF_UNIT_WEIGHT$CODE),
                         rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"))
       
       line_chart_server("catches_spgroups", 
                         SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
                         mode = "plot+table", label = i18n("SPECIES_GROUP_STATISTIC_LABEL"),
                         colDate = "date", colTarget="ISSCAAP_Group_En",
-                        ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT),valueUnit=tolower(PREF_UNIT_WEIGHT),
+                        ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT$CODE),valueUnit=tolower(PREF_UNIT_WEIGHT$CODE),
                         colValue="quantity", rank=FALSE)
       
       
