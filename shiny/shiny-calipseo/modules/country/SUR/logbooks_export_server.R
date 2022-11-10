@@ -66,9 +66,10 @@ logbooks_export_server <- function(id, pool) {
        content = function(file) {
          data<-accessLogBooksWecafc(pool,year=input$year)
          data<-data%>%
-           mutate(period=ifelse(input$aggregate=="month",sprintf('%02d',as.integer(period)),ifelse(as.integer(period)%in%c(1:3),"Q1",
-                                                                                                  ifelse(as.integer(period)%in%c(4:6),"Q2",
-                                                                                                         ifelse(as.integer(period)%in%c(7:9),"Q3","Q4")))))%>%
+          rowwise()%>%
+            mutate(period=ifelse(input$aggregate=="month",sprintf('%02d',as.integer(period)),ifelse(as.integer(period)%in%c(1:3),"Q1",
+                                                                                                   ifelse(as.integer(period)%in%c(4:6),"Q2",
+                                                                                                          ifelse(as.integer(period)%in%c(7:9),"Q3","Q4")))))%>%
            group_by(flagstate,year,period,geographical_identifier,species,catch_unit)%>%
            summarise(catch_retained=sum(ifelse(catch_unit=="Kilogram"&!is.null(catch_retained),catch_retained/1000,catch_retained),na.rm=T),
                      catch_discarded=sum(ifelse(catch_unit=="Kilogram"&!is.null(catch_discarded),catch_discarded/1000,catch_discarded),na.rm=T),
@@ -76,7 +77,7 @@ logbooks_export_server <- function(id, pool) {
            ungroup()%>%
            mutate(catch_unit=ifelse(catch_unit=="Kilogram","t",catch_unit))%>%
            select(flagstate,year,period,geographical_identifier,species,catch_retained,catch_discarded,catch_nominal,catch_unit)
-         print(data)
+         print(as.data.frame(data))
          write.csv(data, file,row.names = F)
        }
      )
