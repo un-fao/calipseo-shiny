@@ -6,7 +6,9 @@ computation_server <- function(id, pool) {
   ns <- session$ns
   print(names(session))
   
-  AVAILABLE_INDICATORS <- getLocalCountryDataset("statistical_indicators")
+  
+  AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
+  print(AVAILABLE_INDICATORS)
   
   output$computation_info <- renderText({
     text <- paste0("<h2>", i18n("COMPUTATION_TITLE")," <small>", i18n("COMPUTATION_SUBTITLE"),
@@ -37,20 +39,28 @@ computation_server <- function(id, pool) {
     filename = NULL,
     filepath = NULL
   )
+  
+  available_periods<-reactiveVal(NULL)
  
   #getComputationStatus
   getComputationStatus <- function(indicator){
     
     staging <- list.files(path = sprintf("./out/staging/%s", indicator$id), recursive = TRUE)
     released <- list.files(path = sprintf("./out/release/%s", indicator$id), recursive = TRUE)
+    print(staging)
+    print(released)
     values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
+    print(values)
     periods <- as.vector(sapply(values, function(x){ 
       x.splits <- unlist(strsplit(x,"_"))
       period <- x.splits[length(x.splits)]
       return(period)
     }))
 
+    print(periods)
+    
     df <- data.frame(
+      Id = character(0),
       Period = character(0),
       Status = character(0),
       File = character(0),
@@ -58,15 +68,14 @@ computation_server <- function(id, pool) {
       stringsAsFactors = FALSE
     )
     if(length(periods)>0){
-      status <- "staging"
-        
-      #sapply(years, function(x){
-      #  if(any(regexpr(x, released) > 0)){
-      #    return("release")
-      #  }else{
-      #    return("staging")
-      #  }
-      #})
+      status <- sapply(periods, function(x){
+       if(any(regexpr(x, released) > 0)){
+         return("release")
+       }else{
+         return("staging")
+       }
+      })
+      
       uuids <- NULL
       for(i in 1:length(periods)){
         one_uuid = uuid::UUIDgenerate() 
@@ -74,9 +83,10 @@ computation_server <- function(id, pool) {
       }
       #print(uuids)
       df <- tibble::tibble(
+        Id = indicator$id,
         Period = periods,
         Status = status,
-        File = sapply(1:length(periods), function(i){file.path("out", status[i], indicator$id, gsub("-", "/", periods[i]), paste0( values[i], ".csv"))}),
+        File = sapply(1:length(periods), function(i){file.path("out", status[i], indicator$id, paste0( values[i], ".csv"))}),
         Actions = paste0(
           shinyInput(downloadButtonCustom, length(periods), indexes = uuids, id = 'button_result_', ns = ns, 
                      title = i18n("DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
@@ -111,13 +121,15 @@ computation_server <- function(id, pool) {
               
               #TODO refactoring
               filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-              data <- as.data.frame(readr::read_csv(file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)))
+              filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+              print(filepath)
+              data <- as.data.frame(readr::read_csv(filepath))
               print(head(data))
               print(type)
               if(type == "report"){
                 generateReport(session, out$indicator,  df[i,"Year"], data, con)
               }else{
-                writexl::write_xlsx(data, con)
+                readr::write_csv(data, con)
               }
             }
           )
@@ -163,10 +175,8 @@ computation_server <- function(id, pool) {
     out$computation <- NULL
     cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), input$computation_indicator))
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), indicator$label, input$computation_year)
+    indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), indicator$label, paste0(input$computation_year,"-",paste0(c(input$computation_quarter,input$computation_month),collapse="")))
     
-    cat(sprintf(paste0(i18n("QUERY_DATA_YEAR_LABEL")," %s\n"), input$computation_year))
-    data_is_loaded <- TRUE
     progress$set(message = indicator_msg, detail = i18n("COMPUTATION_PROGRESS_SUB_LABEL"), value = 0)
     
     cat(sprintf(paste0(i18n("LOAD_R_COMPUTE_SCRIPT_LABEL"),"'%s'\n"), indicator$compute_with$script))
@@ -193,15 +203,15 @@ computation_server <- function(id, pool) {
         key <- parts[1]
         value <- parts[2]
         fun_arg_eval <- switch(key,
-          "data" = paste0(value, "(pool = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "process" = paste0("getProcessOutput(id = ", value,", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          "local" = getLocalCountryDataset(value)
+          "local" = getLocalCountryDataset(appConfig,value)
         )
         return(fun_arg_eval)
       }), collapse = ", ")
     ,")"))))
 
-    if(!is(indicator_out, "try-error")){
+    if(!is(indicator_output, "try-error")){
       cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
       
       #export to computation directory
@@ -212,10 +222,12 @@ computation_server <- function(id, pool) {
       out$year <- input$computation_year
       out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
       out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-      
-      out$filename <- paste0(indicator$id, "_", c(input$computation_year, out$quarter, out$month), ".csv")
+      print(input$computation_month)
+      out$filename <- paste0(indicator$id, "_", input$computation_year,"-", paste0(c(out$quarter, out$month), collapse=""), ".csv")
       out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
     
+      print(out$filepath)
+      
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
   
       readr::write_csv(indicator_output, out$filepath, )
@@ -235,7 +247,7 @@ computation_server <- function(id, pool) {
   
   #observe for computation / download
   observe({
-    
+    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
     #get indicator
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
     out$indicator <- indicator
@@ -296,13 +308,64 @@ computation_server <- function(id, pool) {
     
     #computation_by
     output$computation_by <- renderUI({
-      
-      #selectizeInput(
-      #ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
-      #choices = accessAvailableYears(pool), selected = NULL, 
-      #options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL"))),
-      
+      tagList(
+        uiOutput(ns("computation_year_wrapper")),
+        uiOutput(ns("computation_month_wrapper")),
+        uiOutput(ns("computation_quarter_wrapper"))
+      )
     })
+      
+    observeEvent(input$computation_indicator,{
+      req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+      print(input$computation_indicator)
+      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+      available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
+      available_periods_key <- available_periods_parts[1]
+      available_periods_value <- available_periods_parts[2]
+      available_periods <- available_periods(eval(parse(text=paste0(available_periods_value, "(con = pool)"))))
+      print(available_periods())
+    })
+    
+      output$computation_year_wrapper <- renderUI({
+        req(!is.null(available_periods()))
+        choices=unique(available_periods()$year)
+        print(choices)
+        selectizeInput(
+          ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
+          choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
+          options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
+      })
+      
+      observeEvent(input$computation_year,{
+        req(!is.null(input$computation_year))
+        
+        output$computation_month_wrapper <- renderUI({
+          if("month"%in%indicator$compute_by$period){
+            choices=unique(subset(available_periods(),year==input$computation_year)$month)
+            print(choices)
+            selectizeInput(
+              ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
+              choices = choices[order(choices)], selected = NULL, 
+              options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
+            )
+          }else{
+            NULL
+          }
+        })
+        
+        output$computation_quarter_wrapper <- renderUI({
+          if("quarter"%in%indicator$compute_by$period){
+            choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
+          selectizeInput(
+            ns("computation_quarter"), label = i18n("COMPUTATION_QUARTER_LABEL"), 
+            choices = choices[order(choices)], selected = NULL, 
+            options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"))
+          )
+          }else{
+            NULL
+          }
+        })
+      })
     
     #releaseInfoShortcut (if indicator yet released)
     output$releaseInfoShortcut <- renderUI({

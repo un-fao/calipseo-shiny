@@ -13,7 +13,7 @@ computation_ui <- function(id){
       box(width = 6,
           selectizeInput(
             ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
-            choices = sapply(getLocalCountryDataset("statistical_indicators"), function(x){x$label}), selected = NULL,
+            choices = sapply(getLocalCountryDataset(appConfig,"statistical_indicators.json"), function(x){x$label}), selected = NULL,
             options = list(
               placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
               render = I('{

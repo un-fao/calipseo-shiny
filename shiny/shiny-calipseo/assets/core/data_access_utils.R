@@ -872,7 +872,7 @@ loadLocalCountryDatasets <- function(config){
 }
 
 #getLocalCountryDataset
-getLocalCountryDataset <- function(filename){
+getLocalCountryDataset <- function(config,filename){
   #get(name, envir = CALIPSEO_SHINY_ENV)
   country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
   filename <- file.path(country_dir, filename)
