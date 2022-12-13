@@ -23,10 +23,7 @@ computation_ui <- function(id){
               }')
             )
           ),
-          selectizeInput(
-            ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
-            choices = accessAvailableYears(pool), selected = NULL, 
-            options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL"))),
+          uiOutput(ns("computation_by")),
           actionButton(ns("computeButton"), label = i18n("COMPUTATION_ACTIONBUTTON_LABEL"), class = "btn-primary"),
           uiOutput(ns("releaseInfoShortcut"))
       ),

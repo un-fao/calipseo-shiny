@@ -1,0 +1,18 @@
+[
+  {
+    "id": "artfish_estimates",
+    "label": "Artfish estimates",
+    "compute_by": {
+      "period": "month",
+      "available_periods": "data:accessSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/artfish_method.R",
+      "fun" : "artfish_estimates",
+      "fun_args": {
+        "data_effort": "data:accessEffortData",
+        "data_landing": "data:accessLandingData"
+      }
+    }
+  }
+]

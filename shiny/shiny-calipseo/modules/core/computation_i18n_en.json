@@ -6,7 +6,6 @@
   /*computation*/
   "COMPUTATION_IN_PROGRESS" : "Computing...",
   "COMPUTATION_SECTION_TITLE" : "This section allows you to download computation results and reports",
-  "NOTIFICATION_DATALOAD_FOR_COMPUTATION" : "All data assets are loaded and ready for computation",
   "LOAD_R_COMPUTE_SCRIPT_LABEL" : "Load R 'compute' script",
   "LOADING_R_COMPUTE_SCRIPT_PROGRESS_LABEL" : "Prepare R script...",
   "EXECUTE_INDICATOR_LABEL" : "Execute indicator",

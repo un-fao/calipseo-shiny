@@ -518,6 +518,13 @@ accessSurveyDateAndStratumFromDB <- function(con){
   return(out)
 }
 
+#accessSurveyPeriodsFromDB
+accessSurveyPeriodsFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/survey_periods.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out)
+}
+
 #accessEffortDataFromDB
 accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/effort_data.sql")
@@ -809,6 +816,11 @@ accessSurveyDateAndStratum <- function(con){
   accessSurveyDateAndStratumFromDB(con)
 }
 
+#accessSurveyPeriods
+accessSurveyPeriods <- function(con){
+  accessSurveyPeriodsFromDB(con)
+}
+
 #accessEffortData
 accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
@@ -835,6 +847,7 @@ loadCountryProfile <- function(appConfig, con){
 #-----------------------------------------------------------------------------------------------------
 
 #loadLocalDataset
+#@deprecated
 loadLocalDataset <- function(filename){
   filesplits <- unlist(strsplit(filename, "/"))
   objectname <- unlist(strsplit(filesplits[length(filesplits)], "\\."))[1]
@@ -846,6 +859,7 @@ loadLocalDataset <- function(filename){
 }
 
 #loadLocalCountryDatasets
+#@deprecated
 loadLocalCountryDatasets <- function(config){
   country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
   if(dir.exists(country_dir)){
@@ -858,11 +872,19 @@ loadLocalCountryDatasets <- function(config){
 }
 
 #getLocalCountryDataset
-getLocalCountryDataset <- function(name){
-  get(name, envir = CALIPSEO_SHINY_ENV)
+getLocalCountryDataset <- function(filename){
+  #get(name, envir = CALIPSEO_SHINY_ENV)
+  country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
+  filename <- file.path(country_dir, filename)
+  data <- switch(mime::guess_type(filename),
+   "application/json" = jsonlite::read_json(filename),
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
+  )
+  return(data)
 }
 
 #getLocalCountryDatasets
+#@deprecated
 getLocalCountryDatasets <- function(config){
   out <- list()
   country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
@@ -889,4 +911,14 @@ loadRemoteReferenceDataset <- function(objectname,filename){
 #getRemoteReferenceDataset
 getRemoteReferenceDataset <- function(name){
   get(name, envir = CALIPSEO_SHINY_ENV)
+}
+
+#getProcessOutput
+getProcessOutput <- function(id, year, quarter = NULL, month = NULL){
+  filename <- file.path("out/release", id, year)
+  if(!is.null(quarter)) filename <- file.path(filename, paste0("Q",quarter))
+  if(!is.null(month)) filename <- file.path(filename, paste0("M",month))
+  filename <- file.path(filename, paste0(id, paste0(year, "-",paste0(c(quarter,month),collapse="")), ".csv"))
+  out <- readr::read_csv(filename)
+  return(out)
 }
