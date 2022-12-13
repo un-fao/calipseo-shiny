@@ -30,7 +30,8 @@ computation_server <- function(id, pool) {
     computation = NULL,
     computing = FALSE,
     summary = data.frame(
-      Year = character(0),
+      Id = character(0),
+      Period = character(0),
       Status = character(0),
       File = character(0),
       Actions = character(0),
@@ -128,7 +129,7 @@ computation_server <- function(id, pool) {
               print(head(data))
               print(type)
               if(type == "report"){
-                generateReport(session, out$indicator,  df[i,"Year"], data, con)
+                generateReport(session, out$indicator,  df[i,"Period"], data, con)
               }else{
                 readr::write_csv(data, con)
               }
@@ -152,7 +153,7 @@ computation_server <- function(id, pool) {
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
-    colnames = c(i18n("COMPUTATION_STATUS_TABLE_COLNAME_1"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_2"),
+    colnames = c("Id", i18n("COMPUTATION_STATUS_TABLE_COLNAME_1"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_2"),
                  i18n("COMPUTATION_STATUS_TABLE_COLNAME_3"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_4")),
     options = list(
       paging = FALSE,
