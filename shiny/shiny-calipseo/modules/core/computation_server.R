@@ -37,7 +37,8 @@ computation_server <- function(id, pool) {
       stringsAsFactors = FALSE
     ),
     filename = NULL,
-    filepath = NULL
+    filepath = NULL,
+    filepath_release = NULL
   )
   
   available_periods<-reactiveVal(NULL)
@@ -222,11 +223,9 @@ computation_server <- function(id, pool) {
       out$year <- input$computation_year
       out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
       out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-      print(input$computation_month)
       out$filename <- paste0(indicator$id, "_", input$computation_year,"-", paste0(c(out$quarter, out$month), collapse=""), ".csv")
       out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
-    
-      print(out$filepath)
+      out$filepath_release <- gsub("staging", "release", out$filepath)
       
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
   
@@ -251,10 +250,15 @@ computation_server <- function(id, pool) {
     #get indicator
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
     out$indicator <- indicator
-    out$year <- input$computation_year
-    out$filename <- paste0(indicator$value, "_", input$computation_year, ".xlsx")
     out$computation <- NULL
     out$summary <- getComputationStatus(indicator)
+    
+    out$year <- input$computation_year
+    out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
+    out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
+    out$filename <- paste0(indicator$id, "_", input$computation_year,"-", paste0(c(out$quarter, out$month), collapse=""), ".csv")
+    out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
+    out$filepath_release <- gsub("staging", "release", out$filepath)
     
     #DOWNLOAD CONTROLLERS
     #-------------------------------------------------------------------------------------------
@@ -278,11 +282,12 @@ computation_server <- function(id, pool) {
       },
       content = function(con){
         disable("downloadRawData")
-        write_xlsx(out$computation, con)
+        readr::write_csv(out$computation, con)
         enable("downloadRawData")
       }
     )
     #downloadReportInStaging
+    #TODO eblondel
     output$downloadReportInStaging <- downloadHandler(
       filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_STAGING.xlsx")  },
       content = function(con){
@@ -292,6 +297,7 @@ computation_server <- function(id, pool) {
       }
     )
     #downloadReportInRelease
+    #TODO eblondel
     output$downloadReportInRelease <- downloadHandler(
       filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_RELEASE.xlsx")  },
       content = function(con){
@@ -369,10 +375,9 @@ computation_server <- function(id, pool) {
     
     #releaseInfoShortcut (if indicator yet released)
     output$releaseInfoShortcut <- renderUI({
-      filename <- paste0(out$indicator$value, "_", out$year, ".xlsx")
-      if(!dir.exists("out/release")) dir.create("out/release", recursive = TRUE)
-      if (file.exists(file.path("out/release", filename))){
-        cat(sprintf(paste0(i18n("FILE_LABEL")," %s ", i18n("RELEASE_SHORTCUT_BUTTON_LABEL"),"\n"), file.path("out/release", filename)))
+      if(!dir.exists(dirname(out$filepath_release))) dir.create(dirname(out$filepath_release), recursive = TRUE)
+      if (file.exists(out$filepath_release)){
+        cat(sprintf(paste0(i18n("FILE_LABEL")," %s ", i18n("RELEASE_SHORTCUT_BUTTON_LABEL"),"\n"), out$filepath_release))
         tags$div(
           tags$div(
             class = "row",
@@ -380,7 +385,7 @@ computation_server <- function(id, pool) {
               downloadButtonCustom(
                 session$ns("downloadReportShortcut"),
                 i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
-                icon = icon("file-excel"),
+                icon = icon("file-csv"),
                 class = "btn-lg btn-light"
               )
             }else{tags$div()}
@@ -400,7 +405,7 @@ computation_server <- function(id, pool) {
         if(nrow(out$summary)>0){
           tags$div(
             id = "computation-results",
-            h3(tags$b(out$indicator$label), " - ", tags$small(out$year)), hr(),
+            h3(tags$b(out$indicator$label), " - ", tags$small(out$year, " - ", paste(c(out$quarter,out$year), collapse=""))), hr(),
             p(em(paste0(i18n("COMPUTATION_RESULTS_WITH_LABEL")," ", nrow(out$computation)," ",i18n("RECORDS_STORED_IN_STAGING_LABEL")))),
             tags$div(class = "col-md-6",
                      h4(
@@ -413,7 +418,7 @@ computation_server <- function(id, pool) {
                      downloadButtonCustom(
                        session$ns("downloadRawData"),
                        i18n("COMPUTATION_DOWNLOAD_RESULT_LABEL"),
-                       icon = icon("file-excel"),
+                       icon = icon("file-csv"),
                        class = "btn-lg btn-light"
                      ),
                      if(!is.null(out$indicator$report_with)) {
@@ -470,7 +475,7 @@ computation_server <- function(id, pool) {
   
   # Show modal when button is clicked.
   observeEvent(input$showReleaseModal, {
-    alreadyReleased <- file.exists(file.path("out/release", out$filename))
+    alreadyReleased <- file.exists(out$filepath_release)
     showModal(releaseModal(session, warning = alreadyReleased))
   })
   
@@ -479,11 +484,11 @@ computation_server <- function(id, pool) {
   # message.
   observeEvent(input$releaseButton, {
     file.copy(
-      from = file.path("out/staging", out$filename),
-      to = file.path("out/release", out$filename),
+      from = out$filepath,
+      to = out$filepath_release,
       overwrite = TRUE
     )
-    if(file.exists(file.path("out/release", out$filename))){
+    if(file.exists(out$filepath_release)){
       released_vals$filename <- out$filename
       out$summary <- getComputationStatus(out$indicator)
       removeModal()
@@ -495,7 +500,7 @@ computation_server <- function(id, pool) {
   # Display information about released file
   observe({
     output$releaseInfo <- renderUI({
-      if (is.null(released_vals$filename) & !file.exists(file.path("out/release", out$filename))){
+      if (is.null(released_vals$filename) & !file.exists(out$filepath_release)){
         tags$div(tags$b(i18n("RELEASE_NO_DATA_LABEL")), style="margin-left:5px;padding:12px;")
       }else{
         tags$div(
@@ -512,7 +517,7 @@ computation_server <- function(id, pool) {
           ),br(),
           tags$div(
             class = "row", style = "padding-left: 15px",
-            p(tags$b(paste0(i18n("LAST_RELEASE_LABEL"),":")), tags$span(file.info(file.path("out/release", out$filename))$mtime))
+            p(tags$b(paste0(i18n("LAST_RELEASE_LABEL"),":")), tags$span(file.info(out$filepath_release)$mtime))
           )
         )
       }
