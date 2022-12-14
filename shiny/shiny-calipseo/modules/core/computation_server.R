@@ -236,12 +236,17 @@ computation_server <- function(id, pool) {
       paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]
         parts <- unlist(strsplit(fun_arg_value, ":"))
-        key <- parts[1]
-        value <- parts[2]
+        key <- ""
+        value <- ""
+        if(length(parts)==2){
+          key <- parts[1]
+          value <- parts[2]
+        }
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "process" = paste0("getProcessOutput(id = ", value,", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          "local" = getLocalCountryDataset(appConfig,value)
+          "local" = getLocalCountryDataset(appConfig,value),
+          fun_arg_value
         )
         return(fun_arg_eval)
       }), collapse = ", ")
@@ -272,7 +277,7 @@ computation_server <- function(id, pool) {
       
     }else{
       cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$id))
-      progress$set(message = errMsg, detail = i18n("ERROR_DURING_COMPUTATION"), value = 100)
+      progress$set(message = i18n("ERROR_DURING_COMPUTATION"), value = 100)
       out$computing <- FALSE
     }
 

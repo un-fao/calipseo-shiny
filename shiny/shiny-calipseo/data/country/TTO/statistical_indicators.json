@@ -25,5 +25,34 @@
         "firstActiveCol": "D"
       }
     }
+  },
+  {
+    "id": "artisanal_fisheries_landings1_trawlers_species",
+    "label": "1st raised landings - trawlers - by species",
+    "compute_by":{
+      "period": "year",
+      "available_periods": "data:accessAvailableYears"
+    },
+    "compute_with" : {
+      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings_trawlers.R",
+      "fun" : "compute_1st_raised_trawl_landings",
+      "fun_args": {
+        "raw_data" : "data:accessLandingForms",
+        "raised_1" : "local:raised_1.xlsx",
+        "by" : "\"species\""
+      }
+    },
+    "report_with": {
+      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings_trawlers_report.R",
+      "fun": "report_1st_raised_trawl_landings",
+      "fun_args": {
+        "landings": "data",
+        "by": "\"species\""
+      },
+      "export_options" : {
+        "firstActiveRow": 5,
+        "firstActiveCol": "C"
+      }
+    }
   }
 ]
