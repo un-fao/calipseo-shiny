@@ -33,6 +33,9 @@
 #----------------------------------------------------------------------------------------------
 compute_2nd_raised_landings_FAO <- function(landings_2, ref_species){
   
+  landings_2 <- as.data.frame(landings_2)
+  ref_species <- as.data.frame(ref_species)
+  
   data <- landings_2[landings_2$descriptor == "LAN" & !is.null(landings_2$species_id),]
   data <- merge(
     data,

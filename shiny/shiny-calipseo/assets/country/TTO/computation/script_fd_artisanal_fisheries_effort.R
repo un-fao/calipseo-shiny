@@ -40,6 +40,9 @@ round2 <- function(x, n=0) {scale<-10^n; trunc(x*scale+sign(x)*0.5)/scale}
 #----------------------------------------------------------------------------------------------
 compute_1st_raised_effort <- function(raw_data, raised_1){
 
+  raw_data <- as.data.frame(raw_data)
+  raised_1 <- as.data.frame(raised_1)
+  
 	#convert these date/time from character to datetime objects (POSIXct)
 	#This assumes that date/time are stored and read in UTC
 	raw_data$dep_datetime <- as.POSIXct(raw_data$dep_datetime); attr(raw_data$dep_datetime,"tzone") <- appConfig$country_profile$timezone

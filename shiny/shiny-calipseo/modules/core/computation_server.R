@@ -4,11 +4,8 @@ computation_server <- function(id, pool) {
  moduleServer(id, function(input, output, session){  
   
   ns <- session$ns
-  print(names(session))
-  
   
   AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
-  print(AVAILABLE_INDICATORS)
   
   output$computation_info <- renderText({
     text <- paste0("<h2>", i18n("COMPUTATION_TITLE")," <small>", i18n("COMPUTATION_SUBTITLE"),
@@ -56,8 +53,6 @@ computation_server <- function(id, pool) {
       period <- x.splits[length(x.splits)]
       return(period)
     }))
-
-    print(periods)
     
     df <- data.frame(
       Id = character(0),
@@ -82,7 +77,6 @@ computation_server <- function(id, pool) {
         one_uuid = uuid::UUIDgenerate() 
         uuids <- c(uuids, one_uuid)
       }
-      #print(uuids)
       df <- do.call("rbind", lapply(1:length(periods), function(i){
         filepath <- file.path("out", status[i], indicator$id, paste0( values[i], ".csv"))
         tibble::tibble(
@@ -244,7 +238,7 @@ computation_server <- function(id, pool) {
         }
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          "process" = paste0("getProcessOutput(id = ", value,", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          "process" = paste0("getProcessOutput(id = \"", value,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "local" = getLocalCountryDataset(appConfig,value),
           fun_arg_value
         )
@@ -329,20 +323,20 @@ computation_server <- function(id, pool) {
       
     observeEvent(input$computation_indicator,{
       req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-      print(input$computation_indicator)
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
       out$results <- getComputationResults(indicator)
       available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
       available_periods_key <- available_periods_parts[1]
       available_periods_value <- available_periods_parts[2]
-      available_periods <- available_periods(eval(parse(text=paste0(available_periods_value, "(con = pool)"))))
-      print(available_periods())
+      available_periods(switch(available_periods_key,
+        "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
+        "process" = eval(parse(text=paste0("getReleasePeriods(id = \"",available_periods_value,"\")")))
+      ))
     })
     
     output$computation_year_wrapper <- renderUI({
       req(!is.null(available_periods()))
       choices=unique(available_periods()$year)
-      print(choices)
       selectizeInput(
         ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
         choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
@@ -355,7 +349,6 @@ computation_server <- function(id, pool) {
       output$computation_month_wrapper <- renderUI({
         if("month"%in%indicator$compute_by$period){
           choices=unique(subset(available_periods(),year==input$computation_year)$month)
-          print(choices)
           selectizeInput(
             ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
             choices = choices[order(choices)], selected = NULL, 

@@ -930,7 +930,38 @@ getProcessOutput <- function(id, year, quarter = NULL, month = NULL){
   filename <- file.path("out/release", id, year)
   if(!is.null(quarter)) filename <- file.path(filename, paste0("Q",quarter))
   if(!is.null(month)) filename <- file.path(filename, paste0("M",month))
-  filename <- file.path(filename, paste0(id, paste0(year, "-",paste0(c(quarter,month),collapse="")), ".csv"))
+  filename <- file.path(filename, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
   out <- readr::read_csv(filename)
   return(out)
 }
+
+#getReleasePeriods
+getReleasePeriods <- function(id){
+  years <- as.list(list.files(sprintf("out/release/%s",id)))
+  out <- data.frame(
+    year = integer(0),
+    quarter = integer(0),
+    month = integer(0)
+  )
+  if(length(years)>0){
+    out <- do.call("rbind", lapply(years, function(year){
+      res <- list.files(sprintf("out/release/%s/%s",id, year))
+      out_periods <- data.frame(year = year)
+      by_year <- any(sapply(res, endsWith, ".csv"))
+      if(!by_year){
+        by_quarter = any(sapply(res, startsWith, "Q"))
+        by_month = any(sapply(res, startsWith, "M"))
+        if(by_quarter){
+          out_periods <- data.frame(year = rep(year, length(res)), quarter = res)
+        }
+        if(by_month){
+          out_periods <- data.frame(year = rep(year, length(res)), month = res)
+        }
+      }
+      return(out_periods)
+    }))  
+  }
+  return(out)
+}
+
+

@@ -38,6 +38,9 @@
 #----------------------------------------------------------------------------------------------
 compute_1st_raised_trawl_landings <- function(raw_data, raised_1, by = "species"){
 
+  raw_data <- as.data.frame(raw_data)
+  raised_1 <- as.data.frame(raised_1)
+  
 	if(!(by %in% c("species","species_group"))){
 		stop("'by' parameter should be either 'species' or 'species_group'")
 	}

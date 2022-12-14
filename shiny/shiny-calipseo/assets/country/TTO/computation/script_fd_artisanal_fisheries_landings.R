@@ -37,6 +37,9 @@
 #----------------------------------------------------------------------------------------------
 compute_1st_raised_landings <- function(raw_data, raised_1){
 
+  raw_data <- as.data.frame(raw_data)
+  raised_1 <- as.data.frame(raised_1)
+  
 	#raise data
 	raw_data_01 <- raise_raw_data(raw_data, raised_1)
 

@@ -36,6 +36,13 @@
 #----------------------------------------------------------------------------------------------
 compute_2nd_raised_landings_by_SPECIES <- function(raw_data, landings_1, raised_1, raised_2, zones, species_groups){
 
+  raw_data <- as.data.frame(raw_data)
+  landings_1 <- as.data.frame(landings_1)
+  raised_1 <- as.data.frame(raised_1)
+  raised_2 <- as.data.frame(raised_2)
+  zones <- as.data.frame(zones)
+  species_groups <- as.data.frame(species_groups)
+  
 	#TRIP NUMBERS
 	#-----------------------------------------------
 	#For TRIP numbers, this is not a simple addition
@@ -54,12 +61,12 @@ compute_2nd_raised_landings_by_SPECIES <- function(raw_data, landings_1, raised_
 		all.x = TRUE,
 		all.y = FALSE
 	)
-	raw_data_01_zones[is.na(raw_data_01_zones $zone), "zone"] <- -99
+	raw_data_01_zones[is.na(raw_data_01_zones$zone), "zone"] <- -99
 	raw_data_01_raised_2 <- merge(
 		x = raw_data_01_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)
@@ -168,7 +175,7 @@ compute_2nd_raised_landings_by_SPECIES <- function(raw_data, landings_1, raised_
 		x = df_with_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)
@@ -427,6 +434,13 @@ compute_2nd_raised_landings_by_SPECIES <- function(raw_data, landings_1, raised_
 #----------------------------------------------------------------------------------------------
 compute_2nd_raised_landings_by_FAOGROUP <- function(raw_data, landings_1, raised_1, raised_2, zones, species_groups){
 
+  raw_data <- as.data.frame(raw_data)
+  landings_1 <- as.data.frame(landings_1)
+  raised_1 <- as.data.frame(raised_1)
+  raised_2 <- as.data.frame(raised_2)
+  zones <- as.data.frame(zones)
+  species_groups <- as.data.frame(species_groups)
+  
 	#TRIP NUMBERS
 	#-----------------------------------------------
 	#For TRIP numbers, this is not a simple addition
@@ -450,7 +464,7 @@ compute_2nd_raised_landings_by_FAOGROUP <- function(raw_data, landings_1, raised
 		x = raw_data_01_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)
@@ -559,7 +573,7 @@ compute_2nd_raised_landings_by_FAOGROUP <- function(raw_data, landings_1, raised
 		x = df_with_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)
@@ -789,6 +803,13 @@ compute_2nd_raised_landings_by_FAOGROUP <- function(raw_data, landings_1, raised
 #----------------------------------------------------------------------------------------------
 compute_2nd_raised_landings_by_ICCATGROUP <- function(raw_data, landings_1, raised_1, raised_2, zones, species_groups){
 
+  raw_data <- as.data.frame(raw_data)
+  landings_1 <- as.data.frame(landings_1)
+  raised_1 <- as.data.frame(raised_1)
+  raised_2 <- as.data.frame(raised_2)
+  zones <- as.data.frame(zones)
+  species_groups <- as.data.frame(species_groups)
+  
 	#TRIP NUMBERS
 	#-----------------------------------------------
 	#For TRIP numbers, this is not a simple addition
@@ -812,7 +833,7 @@ compute_2nd_raised_landings_by_ICCATGROUP <- function(raw_data, landings_1, rais
 		x = raw_data_01_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)
@@ -898,7 +919,7 @@ compute_2nd_raised_landings_by_ICCATGROUP <- function(raw_data, landings_1, rais
 		x = df_with_zones,
 		y = raised_2,
 		by.x = c("zone","month"),
-		by.y = c("zone#","month"),
+		by.y = c("zone","month"),
 		all.x = TRUE,
 		all.y = FALSE
 	)

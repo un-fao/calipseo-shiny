@@ -40,6 +40,9 @@ round2 <- function(x, n=0) {scale<-10^n; trunc(x*scale+sign(x)*0.5)/scale}
 #----------------------------------------------------------------------------------------------
 compute_1st_raised_trawl_effort <- function(raw_data, raised_1){
 
+  raw_data <- as.data.frame(raw_data)
+  raised_1 <- as.data.frame(raised_1)
+  
 	#filter on TRAWLING
 	raw_data <- raw_data[raw_data$f_mthd == "TRAWLING",]
 
