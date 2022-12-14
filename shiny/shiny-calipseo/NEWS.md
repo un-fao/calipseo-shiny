@@ -1,8 +1,13 @@
-# **shiny-calipseo [v1.2.0.9002] - 2022-11-17 - IN DEV**
+# **shiny-calipseo [v1.3] - 2022-12-14 - IN DEV**
+
+**Enhancements**
+
+* [CALR-146](https://sdlc.review.fao.org/jira/browse/CALR-146) Make the computation module generic (initially done for TTO)
 
 **Miscs**
 
 * [CALR-145](https://sdlc.review.fao.org/jira/browse/CALR-145) Introduce dotenv package for easier switch between local instance configs
+
 
 # **shiny-calipseo [v1.2.0.9001](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.9001.zip) - 2022-11-11**
 
