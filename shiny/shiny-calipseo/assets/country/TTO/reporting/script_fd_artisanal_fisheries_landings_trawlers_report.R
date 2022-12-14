@@ -11,7 +11,7 @@
 # 2018-12-20	eblondel    Creation.
 # 2019-02-13	eblondel	generic report writer
 # 2019-02-14	eblondel	subtotals / totals aggregations moved to computation script
-#
+# 2022-12-14  eblondel  coerce to data.frame to adapt to core shiny-calipseo computation model
 
 #environment
 #--------------------
@@ -35,6 +35,7 @@
 #@returns a list of data.frame object ready for writing to Excel files
 report_1st_raised_trawl_landings <- function(landings, by = "species"){
 
+  landings <- as.data.frame(landings)
 
 	#replace NA by NA strings
 	landings[is.na(landings$month),]$month <- "NA"

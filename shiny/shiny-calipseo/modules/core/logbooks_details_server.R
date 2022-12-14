@@ -21,7 +21,7 @@ logbooks_details_server <- function(id, pool){
   observeEvent(input$logbooks_vessel,{
     
     if(input$logbooks_vessel != ""){
-      years <- accessAvailableYears(pool)
+      years <- accessAvailableYears(pool)$year
       data_for_vessel <- do.call("rbind", lapply(years, function(year){
         df <- accessLogBooks(pool, year = year, vesselId = input$logbooks_vessel)
         if(nrow(df)==0) df <- NULL
@@ -78,7 +78,7 @@ logbooks_details_server <- function(id, pool){
   
   observeEvent(input$logbooks_vessel_owner,{
     if(input$logbooks_vessel_owner != ""){
-      years <- accessAvailableYears(pool)
+      years <- accessAvailableYears(pool)$year
       data_for_vessel_owner <- do.call("rbind", lapply(years, function(year){
         df <- accessLogBooks(pool, year = year, entityOwner = input$logbooks_vessel_owner)
         if(nrow(df)==0) df <- NULL

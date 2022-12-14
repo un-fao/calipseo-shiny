@@ -1,1 +1,1 @@
-select distinct year(DATE_TO) as YEAR from dt_fishing_trip;
+select distinct year(DATE_TO) as year from dt_fishing_trip;

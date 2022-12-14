@@ -12,7 +12,7 @@
 # 2018-12-04	eblondel	Consolidation based on 2012/2013 datasets
 # 2018-12-12	eblondel	Wrap logics into functions
 # 2019-02-13	eblondel	generic report writer + handle multiple aggregations
-#
+# 2022-12-14  eblondel  coerce to data.frame to adapt to core shiny-calipseo computation model
 
 #environment
 #--------------------
@@ -35,6 +35,8 @@ require(openxlsx) #required for report fine-tuning
 #@returns a list of data.frame object ready for writing to Excel files
 report_1st_raised_trawl_effort <- function(effort){
 
+  effort <- as.data.frame(effort)
+  
 	#replace NA by NA strings
 	effort[is.na(effort$vesstype),]$vesstype <- "NA"
 	effort[is.na(effort$gr_f_area_id),]$gr_f_area_id <- 9999

@@ -1,13 +1,17 @@
 [
   {
-    "value": "artisanal_fisheries_landings1",
+    "id": "artisanal_fisheries_landings1",
     "label": "1st raised landings",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "data:accessAvailableYears"
+    },
     "compute_with": {
       "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings.R",
       "fun" : "compute_1st_raised_landings",
       "fun_args": {
-        "raw_data" : "raw_data",
-        "raised_1" : "raised_1"
+        "raw_data" : "data:accessLandingForms",
+        "raised_1" : "local:raised_1.xlsx"
       }
     },
     "report_with" : {
@@ -19,195 +23,6 @@
       "export_options" : {
         "firstActiveRow": 5,
         "firstActiveCol": "D"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings1_trawlers_species",
-    "label": "1st raised landings - trawlers - by species",
-    "compute_with" : {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings_trawlers.R",
-      "fun" : "compute_1st_raised_trawl_landings",
-      "fun_args": {
-        "raw_data" : "raw_data",
-        "raised_1" : "raised_1",
-        "by" : "\"species\""
-      }
-    },
-    "report_with": {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings_trawlers_report.R",
-      "fun": "report_1st_raised_trawl_landings",
-      "fun_args": {
-        "landings": "data",
-        "by": "\"species\""
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings1_trawlers_species_group",
-    "label": "1st raised landings - trawlers - by species group",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings_trawlers.R",
-      "fun" : "compute_1st_raised_trawl_landings",
-      "fun_args": {
-        "raw_data" : "raw_data",
-        "raised_1" : "raised_1",
-        "by" : "\"species_group\""
-      }
-    },
-    "report_with": {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings_trawlers_report.R",
-      "fun": "report_1st_raised_trawl_landings",
-      "fun_args": {
-        "landings": "data",
-        "by": "\"species\""
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings2_by_SPECIES",
-    "label": "2nd raised landings - by SPECIES",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings2.R",
-      "fun" : "compute_2nd_raised_landings_by_SPECIES",
-      "fun_args": {
-        "raw_data" : "raw_data",
-		"landings_1" : "landings_1",
-        "raised_1" : "raised_1",
-		"raised_2" : "raised_2",
-		"zones" : "zones",
-		"species_groups": "species_groups"
-      }
-    },
-    "report_with" : {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings2_report.R",
-      "fun": "report_2nd_raised_landings_by_SPECIES",
-      "fun_args": {
-        "landings_2" : "data"
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings2_by_FAOGROUP",
-    "label": "2nd raised landings - by FAOGROUP",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings2.R",
-      "fun" : "compute_2nd_raised_landings_by_FAOGROUP",
-      "fun_args": {
-        "raw_data" : "raw_data",
-		"landings_1" : "landings_1",
-        "raised_1" : "raised_1",
-		"raised_2" : "raised_2",
-		"zones" : "zones",
-		"species_groups": "species_groups"
-      }
-    },
-    "report_with" : {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings2_report.R",
-      "fun": "report_2nd_raised_landings_by_FAOGROUP",
-      "fun_args": {
-        "landings_2" : "data"
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings2_by_ICCATGROUP",
-    "label": "2nd raised landings - by ICCATGROUP",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings2.R",
-      "fun" : "compute_2nd_raised_landings_by_ICCATGROUP",
-      "fun_args": {
-        "raw_data" : "raw_data",
-		"landings_1" : "landings_1",
-        "raised_1" : "raised_1",
-		"raised_2" : "raised_2",
-		"zones" : "zones",
-		"species_groups": "species_groups"
-      }
-    },
-    "report_with" : {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_landings2_report.R",
-      "fun": "report_2nd_raised_landings_by_ICCATGROUP",
-      "fun_args": {
-        "landings_2" : "data"
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_effort1",
-    "label": "1st raised effort",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_effort.R",
-      "fun" : "compute_1st_raised_effort",
-      "fun_args": {
-        "raw_data" : "raw_data",
-        "raised_1" : "raised_1"
-      }
-    },
-    "report_with" : {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_effort_report.R",
-      "fun": "report_1st_raised_effort",
-      "fun_args": {
-        "effort" : "data"
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_effort1_trawlers",
-    "label": "1st raised effort - trawlers",
-    "compute_with" : {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_effort_trawlers.R",
-      "fun" : "compute_1st_raised_trawl_effort",
-      "fun_args": {
-        "raw_data" : "raw_data",
-        "raised_1" : "raised_1"
-      }
-    },
-    "report_with": {
-      "script": "assets/country/TTO/reporting/script_fd_artisanal_fisheries_effort_trawlers_report.R",
-      "fun": "report_1st_raised_trawl_effort",
-      "fun_args": {
-        "effort": "data"
-      },
-      "export_options" : {
-        "firstActiveRow": 5,
-        "firstActiveCol": "C"
-      }
-    }
-  },
-  {
-    "value": "artisanal_fisheries_landings2_FAO",
-    "label": "2nd raised landings - for FAO reporting",
-    "compute_with": {
-      "script": "assets/country/TTO/computation/script_fd_artisanal_fisheries_landings2_FAO.R",
-      "fun" : "compute_2nd_raised_landings_FAO",
-      "fun_args": {
-		    "landings_2" : "landings_2",
-        "ref_species" : "ref_species"
       }
     }
   }

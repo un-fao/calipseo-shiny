@@ -12,7 +12,7 @@ landings1_maps_ui <- function(id){
       ),
       box(width = 6,
           selectizeInput(ns("year_map_total"), label = i18n("LANDINGS1_MAP_YEAR_LABEL"), 
-                         choice = accessAvailableYears(pool), selected = NULL, 
+                         choice = accessAvailableYears(pool)$year, selected = NULL, 
                          options = list(
                            placeholder = i18n("LANDINGS1_MAP_YEAR_PLACEHOLDER_LABEL"),
                            onInitialize = I('function() { this.setValue(""); }')

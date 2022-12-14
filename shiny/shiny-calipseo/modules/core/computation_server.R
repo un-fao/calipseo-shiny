@@ -29,11 +29,12 @@ computation_server <- function(id, pool) {
     month = NULL,
     computation = NULL,
     computing = FALSE,
-    summary = data.frame(
+    results = data.frame(
       Id = character(0),
       Period = character(0),
-      Status = character(0),
       File = character(0),
+      Status = character(0),
+      Date = character(0),
       Actions = character(0),
       stringsAsFactors = FALSE
     ),
@@ -44,15 +45,12 @@ computation_server <- function(id, pool) {
   
   available_periods<-reactiveVal(NULL)
  
-  #getComputationStatus
-  getComputationStatus <- function(indicator){
+  #getComputationResults
+  getComputationResults <- function(indicator){
     
     staging <- list.files(path = sprintf("./out/staging/%s", indicator$id), recursive = TRUE)
     released <- list.files(path = sprintf("./out/release/%s", indicator$id), recursive = TRUE)
-    print(staging)
-    print(released)
     values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
-    print(values)
     periods <- as.vector(sapply(values, function(x){ 
       x.splits <- unlist(strsplit(x,"_"))
       period <- x.splits[length(x.splits)]
@@ -64,8 +62,9 @@ computation_server <- function(id, pool) {
     df <- data.frame(
       Id = character(0),
       Period = character(0),
-      Status = character(0),
       File = character(0),
+      Status = character(0),
+      Date = character(0),
       Actions = character(0),
       stringsAsFactors = FALSE
     )
@@ -84,24 +83,39 @@ computation_server <- function(id, pool) {
         uuids <- c(uuids, one_uuid)
       }
       #print(uuids)
-      df <- tibble::tibble(
-        Id = indicator$id,
-        Period = periods,
-        Status = status,
-        File = sapply(1:length(periods), function(i){file.path("out", status[i], indicator$id, paste0( values[i], ".csv"))}),
-        Actions = paste0(
-          shinyInput(downloadButtonCustom, length(periods), indexes = uuids, id = 'button_result_', ns = ns, 
-                     title = i18n("DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
-                     onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
-          if(!is.null(indicator$report_with)){
-            shinyInput(downloadButtonCustom, length(periods), indexes = uuids, id = 'button_report_', ns = ns, 
-                     title = i18n("DOWNLOAD_REPORT_TITLE"), label = "", icon = icon("file-contract"),
-                     onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button")))
-          }else{
-            ""
-          }
+      df <- do.call("rbind", lapply(1:length(periods), function(i){
+        filepath <- file.path("out", status[i], indicator$id, paste0( values[i], ".csv"))
+        tibble::tibble(
+          Id = indicator$id,
+          Period = periods[i],
+          File = filepath,
+          Status = status[i],
+          Date = file.info(filepath)$mtime,
+          Actions = as(
+            tagList(
+              #download result button
+              downloadButtonCustom(
+                  ns(paste0("button_download_result_", uuids[i])), 
+                  title = i18n("BUTTON_DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
+                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
+              ), 
+              #download report button
+              if(!is.null(indicator$report_with)){
+                downloadButtonCustom(
+                  ns(paste0("button_download_report_", uuids[i])), 
+                  title = i18n("BUTTON_DOWNLOAD_REPORT_TITLE"), label = "", icon = icon("file-contract"),
+                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
+                )
+              }else{
+                ""
+              },
+              #release button
+              actionButton(inputId = ns(paste0('button_release_', uuids[i])), class="btn btn-info", style = "margin-right: 2px;",
+                           title = i18n("BUTTON_RELEASE_TITLE"), label = "", icon = icon("upload"))
+            )
+          ,"character")
         )
-      )
+      }))
       
       #function to manage button server outputs
       manageButtonServerOutputs <- function(prefix, type){
@@ -111,50 +125,69 @@ computation_server <- function(id, pool) {
         lapply(button_outs, function(name) {
           output[[name]] <<- NULL
         })
-        #add new downloadHandler (for each button)
         lapply(1:nrow(df), function(i){
           idx = uuids[i]
-          button_output <- paste0(prefix,idx)
-          output[[button_output]] <<- downloadHandler(
-            filename = function() {
-              paste0(type, "_", out$indicator$id, "_", df[i,"Period"],"_", toupper(df[i,"Status"]), ifelse(type=="report",".xlsx", ".csv"))
-            },
-            content = function(con) {
-              
-              #TODO refactoring
-              filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-              filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
-              print(filepath)
-              data <- as.data.frame(readr::read_csv(filepath))
-              print(head(data))
-              print(type)
-              if(type == "report"){
-                generateReport(session, out$indicator,  df[i,"Period"], data, con)
-              }else{
+          button_id <- paste0(prefix,idx)
+          switch(type,
+           #download result handler
+           "result" = {
+            output[[button_id]] <<- downloadHandler(
+              filename = function() {
+                paste0(type, "_", out$indicator$id, "_", df[i,"Period"],"_", toupper(df[i,"Status"]), ".csv")
+              },
+              content = function(con) {
+                filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
+                filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+                data <- as.data.frame(readr::read_csv(filepath))
                 readr::write_csv(data, con)
               }
-            }
+            )
+           },
+           #download report handler
+           "report" = {
+             output[[button_id]] <<- downloadHandler(
+               filename = function() {
+                 paste0(type, "_", out$indicator$id, "_", df[i,"Period"],"_", toupper(df[i,"Status"]), ".xlsx")
+               },
+               content = function(con) {
+                 filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
+                 filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+                 data <- as.data.frame(readr::read_csv(filepath))
+                 generateReport(session, out$indicator,  df[i,"Period"], data, con)
+               }
+             )
+           },
+           #release handler
+           "release" = {
+             observeEvent(input[[button_id]],{
+               filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
+               filepath_staging <- file.path("out", "staging", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+               filepath <- file.path("out", "release", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+               torelease(filepath_staging)
+               alreadyReleased <- file.exists(filepath)
+               showModal(releaseModal(session, warning = alreadyReleased))
+             })
+           }
           )
         })
       }
       
-      manageButtonServerOutputs("button_result_", "result")
-      manageButtonServerOutputs("button_report_", "report")
-      
-     
-      
+      manageButtonServerOutputs("button_download_result_", "result")
+      manageButtonServerOutputs("button_download_report_", "report")
+      manageButtonServerOutputs("button_release_", "release")
+
     }
     return(df)
   }
   
-  #computation status
-  output$computation_summary <- renderDataTable(
-    out$summary,
+  #computation results
+  output$computation_results <- renderDataTable(
+    out$results,
     server = FALSE,
     escape = FALSE,
     rownames = FALSE,
-    colnames = c("Id", i18n("COMPUTATION_STATUS_TABLE_COLNAME_1"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_2"),
-                 i18n("COMPUTATION_STATUS_TABLE_COLNAME_3"),i18n("COMPUTATION_STATUS_TABLE_COLNAME_4")),
+    colnames = c("Id", i18n("COMPUTATION_RESULTS_TABLE_COLNAME_PERIOD"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_FILE"),
+                 i18n("COMPUTATION_RESULTS_TABLE_COLNAME_STATUS"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_DATE"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS")),
     options = list(
       paging = FALSE,
       searching = FALSE,
@@ -177,12 +210,13 @@ computation_server <- function(id, pool) {
     out$computation <- NULL
     cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), input$computation_indicator))
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), indicator$label, paste0(input$computation_year,"-",paste0(c(input$computation_quarter,input$computation_month),collapse="")))
+    indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), 
+                             indicator$label, paste0(input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""},paste0(c(input$computation_quarter,input$computation_month),collapse="")))
     
     progress$set(message = indicator_msg, detail = i18n("COMPUTATION_PROGRESS_SUB_LABEL"), value = 0)
     
     cat(sprintf(paste0(i18n("LOAD_R_COMPUTE_SCRIPT_LABEL"),"'%s'\n"), indicator$compute_with$script))
-    progress$set(message = indicator_msg, detail = i18n("LOADING_R_COMPUTE_SCRIPT_PROGRESS_LABEL"), value = 20)
+    progress$set(message = indicator_msg, detail = i18n("LOAD_R_COMPUTE_SCRIPT_PROGRESS_LABEL"), value = 20)
     source(indicator$compute_with$script) #TODO to check if still needed
     
     #possible inputs
@@ -224,21 +258,22 @@ computation_server <- function(id, pool) {
       out$year <- input$computation_year
       out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
       out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-      out$filename <- paste0(indicator$id, "_", input$computation_year,"-", paste0(c(out$quarter, out$month), collapse=""), ".csv")
+      out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
       out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
       out$filepath_release <- gsub("staging", "release", out$filepath)
       
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
-  
+      if(!dir.exists(dirname(out$filepath_release))) dir.create(dirname(out$filepath_release), recursive = TRUE)
+      
       readr::write_csv(indicator_output, out$filepath, )
       
       progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
-      out$summary <- getComputationStatus(indicator)
-      print(out$summary)
+      out$results <- getComputationResults(indicator)
       
     }else{
       cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$id))
       progress$set(message = errMsg, detail = i18n("ERROR_DURING_COMPUTATION"), value = 100)
+      out$computing <- FALSE
     }
 
     enable("computeButton")
@@ -252,12 +287,12 @@ computation_server <- function(id, pool) {
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
     out$indicator <- indicator
     out$computation <- NULL
-    out$summary <- getComputationStatus(indicator)
+    out$results <- getComputationResults(indicator)
     
     out$year <- input$computation_year
     out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
     out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-    out$filename <- paste0(indicator$id, "_", input$computation_year,"-", paste0(c(out$quarter, out$month), collapse=""), ".csv")
+    out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
     out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
     out$filepath_release <- gsub("staging", "release", out$filepath)
     
@@ -272,41 +307,6 @@ computation_server <- function(id, pool) {
         data <- as.data.frame(readxl::read_excel(file.path("out/release", filename)))
         generateReport(session, out$indicator,  out$year, data, con)
         enable("downloadReportShortcut")
-      }
-    )
-    
-    #downloadRawData
-    output$downloadRawData <- downloadHandler(
-      filename = function(){
-        cat(paste0(i18n("FILENAME_LABEL"),":"),out$filename)
-        out$filename 
-      },
-      content = function(con){
-        disable("downloadRawData")
-        readr::write_csv(out$computation, con)
-        enable("downloadRawData")
-      }
-    )
-    #downloadReportInStaging
-    #TODO eblondel
-    output$downloadReportInStaging <- downloadHandler(
-      filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_STAGING.xlsx")  },
-      content = function(con){
-        disable("downloadReportInStaging")
-        generateReport(session, out$indicator, out$year, out$computation, con)
-        enable("downloadReportInStaging")
-      }
-    )
-    #downloadReportInRelease
-    #TODO eblondel
-    output$downloadReportInRelease <- downloadHandler(
-      filename = function(){ paste0(unlist(strsplit(out$filename, "\\."))[1], "_report_RELEASE.xlsx")  },
-      content = function(con){
-        disable("downloadReportInRelease")
-        filename <- paste0(out$indicator$value, "_", out$year, ".xlsx")
-        data <- as.data.frame(readxl::read_excel(file.path("out/release", filename)))
-        generateReport(session, out$indicator, out$year, data, con)
-        enable("downloadReportInRelease")
       }
     )
     
@@ -326,6 +326,7 @@ computation_server <- function(id, pool) {
       req(!is.null(input$computation_indicator)&input$computation_indicator!="")
       print(input$computation_indicator)
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+      out$results <- getComputationResults(indicator)
       available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
       available_periods_key <- available_periods_parts[1]
       available_periods_value <- available_periods_parts[2]
@@ -333,131 +334,52 @@ computation_server <- function(id, pool) {
       print(available_periods())
     })
     
-      output$computation_year_wrapper <- renderUI({
-        req(!is.null(available_periods()))
-        choices=unique(available_periods()$year)
-        print(choices)
-        selectizeInput(
-          ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
-          choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
-          options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
-      })
-      
-      observeEvent(input$computation_year,{
-        req(!is.null(input$computation_year))
-        
-        output$computation_month_wrapper <- renderUI({
-          if("month"%in%indicator$compute_by$period){
-            choices=unique(subset(available_periods(),year==input$computation_year)$month)
-            print(choices)
-            selectizeInput(
-              ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
-              choices = choices[order(choices)], selected = NULL, 
-              options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
-            )
-          }else{
-            NULL
-          }
-        })
-        
-        output$computation_quarter_wrapper <- renderUI({
-          if("quarter"%in%indicator$compute_by$period){
-            choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
-          selectizeInput(
-            ns("computation_quarter"), label = i18n("COMPUTATION_QUARTER_LABEL"), 
-            choices = choices[order(choices)], selected = NULL, 
-            options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"))
-          )
-          }else{
-            NULL
-          }
-        })
-      })
-    
-    #releaseInfoShortcut (if indicator yet released)
-    output$releaseInfoShortcut <- renderUI({
-      if(!dir.exists(dirname(out$filepath_release))) dir.create(dirname(out$filepath_release), recursive = TRUE)
-      if (file.exists(out$filepath_release)){
-        cat(sprintf(paste0(i18n("FILE_LABEL")," %s ", i18n("RELEASE_SHORTCUT_BUTTON_LABEL"),"\n"), out$filepath_release))
-        tags$div(
-          tags$div(
-            class = "row",
-            if(!is.null(out$indicator$report_with)) {
-              downloadButtonCustom(
-                session$ns("downloadReportShortcut"),
-                i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
-                icon = icon("file-csv"),
-                class = "btn-lg btn-light"
-              )
-            }else{tags$div()}
-          )
-        )
-      }
+    output$computation_year_wrapper <- renderUI({
+      req(!is.null(available_periods()))
+      choices=unique(available_periods()$year)
+      print(choices)
+      selectizeInput(
+        ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
+        choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
+        options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
     })
-    
-    #computation results
-    output$results <- renderUI({
-      if(out$computing){
-        tags$div(
-          id = "computation-results",
-          tags$span(tags$b(i18n("COMPUTATION_IN_PROGRESS")))
-        )
-      }else{
-        if(nrow(out$summary)>0){
-          tags$div(
-            id = "computation-results",
-            h3(tags$b(out$indicator$label), " - ", tags$small(out$year, " - ", paste(c(out$quarter,out$year), collapse=""))), hr(),
-            p(em(paste0(i18n("COMPUTATION_RESULTS_WITH_LABEL")," ", nrow(out$computation)," ",i18n("RECORDS_STORED_IN_STAGING_LABEL")))),
-            tags$div(class = "col-md-6",
-                     h4(
-                       tags$b(i18n("DRAFT_LABEL")), " ", 
-                       tags$span(
-                         class = "glyphicon glyphicon-info-sign tooltip-info", 
-                         title = i18n("COMPUTATION_SECTION_TITLE")
-                       )
-                     ), hr(),
-                     downloadButtonCustom(
-                       session$ns("downloadRawData"),
-                       i18n("COMPUTATION_DOWNLOAD_RESULT_LABEL"),
-                       icon = icon("file-csv"),
-                       class = "btn-lg btn-light"
-                     ),
-                     if(!is.null(out$indicator$report_with)) {
-                       downloadButtonCustom(
-                         session$ns("downloadReportInStaging"),
-                         i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
-                         icon = icon("file-excel"),
-                         class = "btn-lg btn-light"
-                       )
-                     }else{ tags$div() }
-            ),
-            tags$div(class = "col-md-6",
-                     h4(
-                       tags$b(i18n("RELEASE_LABEL"))," ",
-                       tags$span(
-                         class = "glyphicon glyphicon-info-sign tooltip-info", 
-                         title = i18n("RELEASE_COMPUTATION_MESSAGE")
-                       )
-                     ), hr(),
-                     actionButton(session$ns("showReleaseModal"), i18n("CREATE_RELEASE_LABEL"), class = "btn-primary"),
-                     uiOutput(session$ns("releaseInfo"))
-            )
+      
+    observeEvent(input$computation_year,{
+      req(!is.null(input$computation_year))
+      
+      output$computation_month_wrapper <- renderUI({
+        if("month"%in%indicator$compute_by$period){
+          choices=unique(subset(available_periods(),year==input$computation_year)$month)
+          print(choices)
+          selectizeInput(
+            ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
+            choices = choices[order(choices)], selected = NULL, 
+            options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
           )
         }else{
-          tags$div(
-            id = "computation-results",
-            tags$span(em(i18n("NO_COMPUTATION_RUN_LABEL")))
-          )
+          NULL
         }
-      }
+      })
+      
+      output$computation_quarter_wrapper <- renderUI({
+        if("quarter"%in%indicator$compute_by$period){
+          choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
+        selectizeInput(
+          ns("computation_quarter"), label = i18n("COMPUTATION_QUARTER_LABEL"), 
+          choices = choices[order(choices)], selected = NULL, 
+          options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"))
+        )
+        }else{
+          NULL
+        }
+      })
     })
-    
   })
-  
+    
   #-------------------
   #RELEASE MANAGEMENT
   #-------------------
-  released_vals <- reactiveValues(filename = NULL)
+  torelease <- reactiveVal(NULL)
   
   #releaseModal
   releaseModal <- function(session, warning = FALSE) {
@@ -468,61 +390,30 @@ computation_server <- function(id, pool) {
         div(tags$b(i18n("CONFIRMATION_TO_CREATE_RELEASE")))
       },
       footer = tagList(
-        modalButton(i18n("TO_CANCEL_RELEASE_LABEL")),
-        actionButton(session$ns("releaseButton"), i18n("TO_CREATE_RELEASE_LABEL"))
+        actionButton(session$ns("cancelRelease"),i18n("TO_CANCEL_RELEASE_LABEL")),
+        actionButton(session$ns("goRelease"), i18n("TO_CREATE_RELEASE_LABEL"))
       )
     )
   }
   
-  # Show modal when button is clicked.
-  observeEvent(input$showReleaseModal, {
-    alreadyReleased <- file.exists(out$filepath_release)
-    showModal(releaseModal(session, warning = alreadyReleased))
-  })
-  
   # When OK button is pressed, attempt to load the data set. If successful,
   # remove the modal. If not show another modal, but this time with a failure
   # message.
-  observeEvent(input$releaseButton, {
+  observeEvent(input$goRelease, {
     file.copy(
-      from = out$filepath,
-      to = out$filepath_release,
+      from = torelease(),
+      to = gsub("staging", "release", torelease()),
       overwrite = TRUE
     )
-    if(file.exists(out$filepath_release)){
-      released_vals$filename <- out$filename
-      out$summary <- getComputationStatus(out$indicator)
+    if(file.exists(gsub("staging", "release", torelease()))){
+      torelease(NULL)
+      out$results <- getComputationResults(out$indicator)
       removeModal()
     }
   })
-  
-  #UI RENDERERS
-  #----------------
-  # Display information about released file
-  observe({
-    output$releaseInfo <- renderUI({
-      if (is.null(released_vals$filename) & !file.exists(out$filepath_release)){
-        tags$div(tags$b(i18n("RELEASE_NO_DATA_LABEL")), style="margin-left:5px;padding:12px;")
-      }else{
-        tags$div(
-          tags$div(
-            class = "row",
-            if(!is.null(out$indicator$report_with)) {
-              downloadButtonCustom(
-                session$ns("downloadReportInRelease"),
-                i18n("GENERATE_DOWNLOAD_REPORT_LABEL"),
-                icon = icon("file-excel"),
-                class = "btn-lg btn-light"
-              )
-            }else{ tags$div()}
-          ),br(),
-          tags$div(
-            class = "row", style = "padding-left: 15px",
-            p(tags$b(paste0(i18n("LAST_RELEASE_LABEL"),":")), tags$span(file.info(out$filepath_release)$mtime))
-          )
-        )
-      }
-    })
+  observeEvent(input$cancelRelease,{
+    torelease(NULL)
+    removeModal()
   })
   
  })

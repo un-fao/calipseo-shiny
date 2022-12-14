@@ -17,7 +17,7 @@ home_server <- function(id, pool){
     infos$count_vessels_captains <- countVesselCaptains(pool)
     infos$count_fishing_trips <- countFishingTrips(pool)
     infos$landing_sites <- nrow(accessLandingSites(pool))
-    infos$years <- length(accessAvailableYears(pool))
+    infos$years <- nrow(accessAvailableYears(pool))
     #infos$indicators <- length(accessAvailableIndicators())
   })
   

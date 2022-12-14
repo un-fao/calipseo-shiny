@@ -6,7 +6,7 @@ logbooks_export_server <- function(id, pool) {
     ns <- session$ns
     
     output$year_wrapper<-renderUI({
-      years<-accessAvailableYears(pool)
+      years<-accessAvailableYears(pool)$year
       selectizeInput(ns("year"),
                      label="Year",
                      multiple = F,

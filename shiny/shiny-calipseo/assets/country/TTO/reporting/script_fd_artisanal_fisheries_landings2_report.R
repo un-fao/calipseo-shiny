@@ -9,7 +9,7 @@
 # Date			 Author			 Comment
 # ------------- --------------- -----------------------
 # 2019-02-26	eblondel    Creation.
-#
+# 2022-12-14  eblondel  coerce to data.frame to adapt to core shiny-calipseo computation model
 
 #environment
 #--------------------
@@ -30,6 +30,8 @@ options(stringsAsFactors = FALSE)
 #@returns a data.frame object ready for writing to Excel files
 report_2nd_raised_landings_by_SPECIES <- function(landings_2){
 
+  landings_2 <- as.data.frame(landings_2)
+  
 	year <- unique(landings_2$year)[1]
 
 	report <- landings_2[is.na(landings_2$group_id_iccat) & is.na(landings_2$group_id_fao),]
@@ -138,6 +140,8 @@ report_2nd_raised_landings_by_SPECIES <- function(landings_2){
 #@returns a data.frame object ready for writing to Excel files
 report_2nd_raised_landings_by_FAOGROUP <- function(landings_2){
 
+  landings_2 <- as.data.frame(landings_2)
+  
 	year <- unique(landings_2$year)[1]
 
 	report <- landings_2[is.na(landings_2$group_id_subt) & is.na(landings_2$group_id_iccat),]
@@ -246,6 +250,8 @@ report_2nd_raised_landings_by_FAOGROUP <- function(landings_2){
 #@returns a data.frame object ready for writing to Excel files
 report_2nd_raised_landings_by_ICCATGROUP <- function(landings_2){
 
+  landings_2 <- as.data.frame(landings_2)
+  
 	year <- unique(landings_2$year)[1]
 
 	report <- landings_2[is.na(landings_2$group_id_subt) & is.na(landings_2$group_id_fao),]

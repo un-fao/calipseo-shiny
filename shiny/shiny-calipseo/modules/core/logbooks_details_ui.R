@@ -78,7 +78,7 @@ logbooks_details_ui <- function(id){
                      div(
                        class = "col-md-6",
                        selectizeInput(ns("logbooks_year"), label = i18n("TABPANEL_BY_LANDING_SITE_SELECT_LABEL"), 
-                                      choice = accessAvailableYears(pool), selected = NULL, 
+                                      choice = accessAvailableYears(pool)$year, selected = NULL, 
                                       options = list(
                                         placeholder = i18n("TABPANEL_BY_LANDING_SITE_SELECT_PLACEHOLDER_LABEL"),
                                         onInitialize = I('function() { this.setValue(""); }')

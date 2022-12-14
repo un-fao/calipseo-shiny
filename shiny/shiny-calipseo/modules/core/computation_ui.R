@@ -10,7 +10,7 @@ computation_ui <- function(id){
         width = 6, style = "margin:12px;",
         htmlOutput(ns("computation_info"))
       ),
-      box(width = 6,
+      box(width = 6, title = i18n("COMPUTATION_RUN_LABEL"),
           selectizeInput(
             ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
             choices = sapply(getLocalCountryDataset(appConfig,"statistical_indicators.json"), function(x){x$label}), selected = NULL,
@@ -24,16 +24,11 @@ computation_ui <- function(id){
             )
           ),
           uiOutput(ns("computation_by")),
-          actionButton(ns("computeButton"), label = i18n("COMPUTATION_ACTIONBUTTON_LABEL"), class = "btn-primary"),
-          uiOutput(ns("releaseInfoShortcut"))
+          actionButton(ns("computeButton"), label = i18n("COMPUTATION_ACTIONBUTTON_LABEL"), class = "btn-primary")
       ),
-      box(width = 6,
-          p(tags$b(i18n("COMPUTATION_STATUS_LABEL"))), hr(),
-          DT::dataTableOutput(ns("computation_summary"))   
-      )
     ),
     fluidRow(
-      box(width = 12, uiOutput(ns("results")))
+      box(width = 12, title = i18n("COMPUTATION_RESULTS_LABEL"), DT::dataTableOutput(ns("computation_results")) )
     )
   )
 }
