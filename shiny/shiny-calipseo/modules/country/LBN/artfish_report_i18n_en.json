@@ -4,9 +4,15 @@
   
   "ARTFISH_SUBTITLE" : "Details on estimations and statistical diagnostics",
   
+  "SELECT_INPUT_TITLE_YEAR" : "Year",
+  
   "SELECT_INPUT_TITLE_MONTH" : "Month",
   
+  "SELECT_INPUT_PLACEHOLDER_YEAR" : "select a year",
+
   "SELECT_INPUT_PLACEHOLDER_MONTH" : "select a month",
+  
+  "SELECT_INPUT_PLACEHOLDER_FISHING_UNIT" : "select a fishing unit",
   
   "SELECT_INPUT_TITLE_FISHING_UNIT" : "Fishing unit",
   

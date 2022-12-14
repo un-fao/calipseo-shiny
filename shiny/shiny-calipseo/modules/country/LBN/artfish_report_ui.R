@@ -1,9 +1,9 @@
-#artfish_ui
-artfish_ui <- function(id){
+#artfish_report_ui
+artfish_report_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "artfish",
+  tabItem(tabName = "artfish_report",
           fluidRow(
             div(
               width = 12, style = "margin:12px;",
@@ -14,8 +14,9 @@ artfish_ui <- function(id){
           ),
           fluidRow(
             column(4,
-              uiOutput(ns("period_selector")),
-              uiOutput(ns("stratum_selector")),
+              uiOutput(ns("year_selector")),
+              uiOutput(ns("month_selector")),
+              uiOutput(ns("fishing_unit_selector")),
               uiOutput(ns("button"))
             ),
             column(6,

@@ -1,53 +1,96 @@
-#artfish_server
-artfish_server <- function(id, pool){
+#artfish_report_server
+artfish_report_server <- function(id, pool){
 
  moduleServer(id, function(input, output, session){   
   
   ns<-session$ns
+  estimates<-reactiveVal(NULL)
   
-  survey<-accessSurveyDateAndStratum(pool)
+  fishing_units<-accessFishingUnits(pool)
   
   ref_species<-accessRefSpecies(pool)
   ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
   ref_species<-subset(ref_species,select=c(ID,Species))
   
-  output$period_selector<-renderUI({
+  output$year_selector<-renderUI({
     
-    dates<-unique(survey$date)
-    dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
+    #dates<-unique(survey$date)
+    #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
     #TODO to check what happens with 2014 reports
     
-    selectizeInput(ns("period"),paste0(i18n("SELECT_INPUT_TITLE_MONTH")," :"),choices=dates,multiple = F,selected=NULL,
+    choices <- list.files("out/release/artfish_estimates",full.names = F)
+    
+    print(choices)
+    
+    selectizeInput(ns("year"),paste0(i18n("SELECT_INPUT_TITLE_YEAR")," :"),choices=choices[order(as.numeric(choices))],multiple = F,selected=NULL,
                    options = list(
-                     placeholder = i18n("SELECT_INPUT_PLACEHOLDER_MONTH"),
+                     placeholder = i18n("SELECT_INPUT_PLACEHOLDER_YEAR"),
                      onInitialize = I('function() { this.setValue(""); }')
                      )
                    )
   })
   
-  observeEvent(input$period,{
+  observeEvent(input$year,{
+  req(!is.null(input$year)&input$year!="")
     
-    output$stratum_selector<-renderUI({
-      if(!is.null(input$period))if(input$period!=""){
-      stratum<-subset(survey,date==input$period)
-      selectizeInput(ns("stratum"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=setNames(stratum$strat_id,stratum$strat_name),multiple = F)
-      }
-    })
+  output$month_selector<-renderUI({
+    
+    choices <- list.files(sprintf("out/release/artfish_estimates/%s",input$year),full.names = F)
+    choices <- as.numeric(gsub("M","",choices))
+    
+    selectizeInput(ns("month"),paste0(i18n("SELECT_INPUT_TITLE_MONTH")," :"),choices=choices[order(choices)],multiple = F,selected=NULL,
+                   options = list(
+                     placeholder = i18n("SELECT_INPUT_PLACEHOLDER_MONTH"),
+                     onInitialize = I('function() { this.setValue(""); }')
+                   )
+    )
+  })
+  })
+  
+  observeEvent(c(input$year,input$month),{
+    req(!is.null(input$year)&input$year!="")
+    req(!is.null(input$month)&input$month!="")
+    
+    
+    data<-list.files(sprintf("out/release/artfish_estimates/%s/M%s",input$year,input$month),full.names = T)
+    data<-readr::read_csv(data)
+    estimates<-estimates(data)
+    
+    print(head(data))
+    
+    fishing_units_selection<-subset(fishing_units,code%in%unique(data$EST_BGC))
+    
+    choices<-setNames(fishing_units_selection$code,fishing_units_selection$label)
+    
+     output$fishing_unit_selector<-renderUI({
+       selectizeInput(ns("fishing_unit"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=choices,multiple = F,selected=NULL,
+                      options = list(
+                        placeholder = i18n("SELECT_INPUT_PLACEHOLDER_FISHING_UNIT"),
+                        onInitialize = I('function() { this.setValue(""); }')
+                      )
+       )
+     })
+    
+  })
+  
+  observeEvent(input$fishing_unit,{
+    req(!is.null(input$fishing_unit)&input$fishing_unit!="")
+    subdata<-estimates()
+    subdata<-subset(subdata,EST_BGC==input$fishing_unit)
+    estimates<-estimates(subdata)
     
     output$button<-renderUI({
-      if(!is.null(input$period))if(input$period!=""){
         actionButton(ns("btn"),i18n("ACTION_BUTTON_TITLE_SUBMIT"))
-      }
     })
   })
   
   observeEvent(input$btn,{
     
-    data_effort<-accessEffortData(pool,year=as.integer(unlist(strsplit(input$period,"-"))[1]),month=as.integer(unlist(strsplit(input$period,"-"))[2]),fishing_unit=input$stratum)
+    # data_effort<-accessEffortData(pool,year=as.integer(unlist(strsplit(input$period,"-"))[1]),month=as.integer(unlist(strsplit(input$period,"-"))[2]),fishing_unit=input$stratum)
+    # data_landing<-accessLandingData(pool,year=as.integer(unlist(strsplit(input$period,"-"))[1]),month=as.integer(unlist(strsplit(input$period,"-"))[2]),fishing_unit=input$stratum)
+    # estimate<-artfish_estimates(data_effort=data_effort,data_landing=data_landing)
     
-    data_landing<-accessLandingData(pool,year=as.integer(unlist(strsplit(input$period,"-"))[1]),month=as.integer(unlist(strsplit(input$period,"-"))[2]),fishing_unit=input$stratum)
-    
-    estimate<-artfish_estimates(data_effort=data_effort,data_landing=data_landing)
+    estimate<-estimates()
     
     headerCallback <- c(
       "function(thead, data, start, end, display){",
