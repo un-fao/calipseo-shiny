@@ -545,6 +545,13 @@ accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NU
   return(fa)
 }
 
+#accessFishingUnitsFromDB
+accessFishingUnitsFromDB <- function(con){
+  fa_sql <- readSQLScript("data/core/sql/fishing_units.sql")
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 #GENERIC DATA ACCESSORS (considering this needs to be replaced later by API calls)
@@ -829,6 +836,11 @@ accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 #accessLandingData
 accessLandingData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessLandingDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessFishingUnits
+accessFishingUnits<- function(con){
+  accessFishingUnitsFromDB(con)
 }
 
 #Country profile
