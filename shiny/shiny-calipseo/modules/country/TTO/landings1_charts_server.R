@@ -27,11 +27,9 @@ landings1_charts_server <- function(id, pool){
   )
   
   observeEvent(input$bch_name,{
-    releases <- list.files("out/release", pattern ="artisanal_fisheries_landings1_\\d",full.names = T)
-    print("Releases")
-    print(releases)
+    releases <- list.files("out/release/artisanal_fisheries_landings1", full.names = T, recursive = TRUE)
     if(length(releases)>0){
-      ts <- as.data.frame(do.call("rbind", lapply(releases, readxl::read_excel)))
+      ts <- as.data.frame(do.call("rbind", lapply(releases, readr::read_csv)))
       ts <- ts[order(ts$bch_name),]
       tsr$data <- ts
     }

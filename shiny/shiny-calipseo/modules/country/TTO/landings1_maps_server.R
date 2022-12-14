@@ -56,11 +56,11 @@ landings1_maps_server <- function(id, pool){
   )
   
   observeEvent(input$year_map_total,{
-    targetRelease <- file.path("out/release", sprintf("artisanal_fisheries_landings1_%s.xlsx", input$year_map_total))
+    targetRelease <- file.path(sprintf("out/release/artisanal_fisheries_landings1/%s", input$year_map_total), sprintf("artisanal_fisheries_landings1_%s.csv", input$year_map_total))
     hasRelease <- file.exists(targetRelease)
     tsdata <- NULL
     if(hasRelease){
-      tsdata <- readxl::read_excel(targetRelease)
+      tsdata <- readr::read_csv(targetRelease)
       tsdata <- tsdata[order(tsdata$bch_name),]
     }
     tsr$data <- tsdata
