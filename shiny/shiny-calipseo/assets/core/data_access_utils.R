@@ -528,8 +528,24 @@ accessSurveyPeriodsFromDB <- function(con){
 #accessEffortDataFromDB
 accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/effort_data.sql")
-  if(!is.null(month)&!is.null(year)&!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s AND s.CL_FISH_FISHING_UNIT_ID = %s",year,month,fishing_unit ))
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessEffortDataByFleetSegmentFromDB
+accessEffortDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/effort_by_fleet_segment_data.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
@@ -538,8 +554,24 @@ accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NUL
 #accessLandingDataFromDB
 accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/landing_data.sql")
-  if(!is.null(month)&!is.null(year)&!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s AND l.fishing_unit = %s",year,month,fishing_unit ))
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND l.fishing_unit = %s",fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessLandingDataByFleetSegmentFromDB
+accessLandingDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/landing_by_fleet_segment_data.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND l.fishing_unit = %s",fishing_unit ))
   }
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
@@ -833,9 +865,19 @@ accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
+#accessEffortDataByFleetSegment
+accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessEffortDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
 #accessLandingData
 accessLandingData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessLandingDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessLandingData
+accessLandingDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessLandingDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
 #accessFishingUnits

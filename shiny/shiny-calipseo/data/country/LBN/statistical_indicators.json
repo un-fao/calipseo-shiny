@@ -14,5 +14,21 @@
         "data_landing": "data:accessLandingData"
       }
     }
+  },
+    {
+    "id": "artfish_estimates_by_fleet_segment",
+    "label": "Artfish estimates by fleet segment",
+    "compute_by": {
+      "period": "month",
+      "available_periods": "data:accessSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/artfish_method.R",
+      "fun" : "artfish_estimates_by_fleet_segment",
+      "fun_args": {
+        "data_effort": "data:accessEffortDataByFleetSegment",
+        "data_landing": "data:accessLandingDataByFleetSegment"
+      }
+    }
   }
 ]
