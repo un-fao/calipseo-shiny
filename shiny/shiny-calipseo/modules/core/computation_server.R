@@ -308,69 +308,69 @@ computation_server <- function(id, pool) {
         enable("downloadReportShortcut")
       }
     )
-    
-    #UI RENDERERS
-    #-----------------------------------------------------------------------------------------------------
-    
-    #computation_by
-    output$computation_by <- renderUI({
-      tagList(
-        uiOutput(ns("computation_year_wrapper")),
-        uiOutput(ns("computation_month_wrapper")),
-        uiOutput(ns("computation_quarter_wrapper"))
-      )
+  })
+  
+  #UI RENDERERS
+  #-----------------------------------------------------------------------------------------------------
+  
+  #computation_by
+  output$computation_by <- renderUI({
+    tagList(
+      uiOutput(ns("computation_year_wrapper")),
+      uiOutput(ns("computation_month_wrapper")),
+      uiOutput(ns("computation_quarter_wrapper"))
+    )
+  })
+  
+  observeEvent(input$computation_indicator,{
+    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+    out$results <- getComputationResults(indicator)
+    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
+    available_periods_key <- available_periods_parts[1]
+    available_periods_value <- available_periods_parts[2]
+    available_periods(switch(available_periods_key,
+                             "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
+                             "process" = eval(parse(text=paste0("getReleasePeriods(id = \"",available_periods_value,"\")")))
+    ))
+  })
+  
+  output$computation_year_wrapper <- renderUI({
+    req(!is.null(available_periods()))
+    choices=unique(available_periods()$year)
+    selectizeInput(
+      ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
+      choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
+      options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
+  })
+  
+  observeEvent(input$computation_year,{
+    req(!is.null(input$computation_year))
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+    output$computation_month_wrapper <- renderUI({
+      if("month"%in%indicator$compute_by$period){
+        choices=unique(subset(available_periods(),year==input$computation_year)$month)
+        selectizeInput(
+          ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
+          choices = choices[order(choices)], selected = NULL, 
+          options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
+        )
+      }else{
+        NULL
+      }
     })
-      
-    observeEvent(input$computation_indicator,{
-      req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-      out$results <- getComputationResults(indicator)
-      available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
-      available_periods_key <- available_periods_parts[1]
-      available_periods_value <- available_periods_parts[2]
-      available_periods(switch(available_periods_key,
-        "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
-        "process" = eval(parse(text=paste0("getReleasePeriods(id = \"",available_periods_value,"\")")))
-      ))
-    })
     
-    output$computation_year_wrapper <- renderUI({
-      req(!is.null(available_periods()))
-      choices=unique(available_periods()$year)
-      selectizeInput(
-        ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
-        choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
-        options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
-    })
-      
-    observeEvent(input$computation_year,{
-      req(!is.null(input$computation_year))
-      
-      output$computation_month_wrapper <- renderUI({
-        if("month"%in%indicator$compute_by$period){
-          choices=unique(subset(available_periods(),year==input$computation_year)$month)
-          selectizeInput(
-            ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
-            choices = choices[order(choices)], selected = NULL, 
-            options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
-          )
-        }else{
-          NULL
-        }
-      })
-      
-      output$computation_quarter_wrapper <- renderUI({
-        if("quarter"%in%indicator$compute_by$period){
-          choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
+    output$computation_quarter_wrapper <- renderUI({
+      if("quarter"%in%indicator$compute_by$period){
+        choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
         selectizeInput(
           ns("computation_quarter"), label = i18n("COMPUTATION_QUARTER_LABEL"), 
           choices = choices[order(choices)], selected = NULL, 
           options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"))
         )
-        }else{
-          NULL
-        }
-      })
+      }else{
+        NULL
+      }
     })
   })
     
