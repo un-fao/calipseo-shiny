@@ -8,6 +8,7 @@
 **New features**
 
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
+* [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
 
 **Miscs**
 
