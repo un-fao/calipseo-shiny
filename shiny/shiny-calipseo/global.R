@@ -8,7 +8,7 @@ options(
 
 #environment
 #--------------------------------------------------------------------------------------
-dotenv::load_dot_env(file = ".REnviron")
+try(dotenv::load_dot_env(file = ".REnviron"), silent = TRUE)
 
 #packages
 #---------------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ config_file <- "/etc/shiny-server/config.yml"
 #If you are an R developer, you need to create a .REnviron file (no file extension) in /shiny-calipseo dir
 #The file should include the local path for your shiny config file in that way:
 #CALIPSEO_SHINY_CONFIG=<your config path>
+
 local_config_file <- Sys.getenv("CALIPSEO_SHINY_CONFIG")
 if(nzchar(local_config_file)) config_file <- local_config_file
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
@@ -36,7 +37,7 @@ default_store_dir <- "/srv/shiny-server/shiny-calipseo-store"
 #shiny-storage in dev (assume Windows OS for now)
 if(Sys.info()[["sysname"]] == "Windows") default_store_dir <- "out"
 if(is.null(appConfig$store)) appConfig$store <- default_store_dir
-if(!dir.exists(appConfig$store)) dir.create(appConfig$store)
+if(!dir.exists(appConfig$store) && Sys.info()[["sysname"]] != "Windows") dir.create(appConfig$store)
 
 #DB connections
 #---------------------------------------------------------------------------------------
