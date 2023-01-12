@@ -45,8 +45,8 @@ computation_server <- function(id, pool) {
   #getComputationResults
   getComputationResults <- function(indicator){
     
-    staging <- list.files(path = sprintf("./%s/staging/%s", appConfig$store, indicator$id), recursive = TRUE)
-    released <- list.files(path = sprintf("./%s/release/%s", appConfig$store, indicator$id), recursive = TRUE)
+    staging <- list.files(path = sprintf("%s/staging/%s", appConfig$store, indicator$id), recursive = TRUE)
+    released <- list.files(path = sprintf("%s/release/%s", appConfig$store, indicator$id), recursive = TRUE)
     values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
     periods <- as.vector(sapply(values, function(x){ 
       x.splits <- unlist(strsplit(x,"_"))
