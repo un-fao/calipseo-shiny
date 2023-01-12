@@ -45,8 +45,8 @@ computation_server <- function(id, pool) {
   #getComputationResults
   getComputationResults <- function(indicator){
     
-    staging <- list.files(path = sprintf("./out/staging/%s", indicator$id), recursive = TRUE)
-    released <- list.files(path = sprintf("./out/release/%s", indicator$id), recursive = TRUE)
+    staging <- list.files(path = sprintf("./%s/staging/%s", appConfig$store, indicator$id), recursive = TRUE)
+    released <- list.files(path = sprintf("./%s/release/%s", appConfig$store, indicator$id), recursive = TRUE)
     values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
     periods <- as.vector(sapply(values, function(x){ 
       x.splits <- unlist(strsplit(x,"_"))
@@ -78,7 +78,7 @@ computation_server <- function(id, pool) {
         uuids <- c(uuids, one_uuid)
       }
       df <- do.call("rbind", lapply(1:length(periods), function(i){
-        filepath <- file.path("out", status[i], indicator$id, paste0( values[i], ".csv"))
+        filepath <- file.path(appConfig$store, status[i], indicator$id, paste0( values[i], ".csv"))
         tibble::tibble(
           Id = indicator$id,
           Period = periods[i],
@@ -131,7 +131,7 @@ computation_server <- function(id, pool) {
               },
               content = function(con) {
                 filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+                filepath<-file.path(appConfig$store, df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
                 data <- as.data.frame(readr::read_csv(filepath))
                 readr::write_csv(data, con)
               }
@@ -145,7 +145,7 @@ computation_server <- function(id, pool) {
                },
                content = function(con) {
                  filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                 filepath<-file.path("out", df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+                 filepath<-file.path(appConfig$store, df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
                  data <- as.data.frame(readr::read_csv(filepath))
                  generateReport(session, out$indicator,  df[i,"Period"], data, con)
                }
@@ -155,8 +155,8 @@ computation_server <- function(id, pool) {
            "release" = {
              observeEvent(input[[button_id]],{
                filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-               filepath_staging <- file.path("out", "staging", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
-               filepath <- file.path("out", "release", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+               filepath_staging <- file.path(appConfig$store, "staging", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
+               filepath <- file.path(appConfig$store, "release", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
                torelease(filepath_staging)
                alreadyReleased <- file.exists(filepath)
                showModal(releaseModal(session, warning = alreadyReleased))
@@ -238,7 +238,7 @@ computation_server <- function(id, pool) {
         }
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          "process" = paste0("getProcessOutput(id = \"", value,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          "process" = paste0("getProcessOutput(config = \"", appConfig$store, "\", id = \"", value,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "local" = getLocalCountryDataset(appConfig,value),
           fun_arg_value
         )
@@ -258,7 +258,7 @@ computation_server <- function(id, pool) {
       out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
       out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
       out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
-      out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
+      out$filepath <- file.path(appConfig$store, "staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
       out$filepath_release <- gsub("staging", "release", out$filepath)
       
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
@@ -292,7 +292,7 @@ computation_server <- function(id, pool) {
     out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
     out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
     out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
-    out$filepath <- file.path("out/staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
+    out$filepath <- file.path(appConfig$store, "staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
     out$filepath_release <- gsub("staging", "release", out$filepath)
     
     #DOWNLOAD CONTROLLERS
@@ -303,7 +303,7 @@ computation_server <- function(id, pool) {
       content = function(con){
         disable("downloadReportShortcut")
         filename <- paste0(out$indicator$value, "_", out$year, ".xlsx")
-        data <- as.data.frame(readxl::read_excel(file.path("out/release", filename)))
+        data <- as.data.frame(readxl::read_excel(file.path(appConfig$store, "release", filename)))
         generateReport(session, out$indicator,  out$year, data, con)
         enable("downloadReportShortcut")
       }
@@ -331,7 +331,7 @@ computation_server <- function(id, pool) {
     available_periods_value <- available_periods_parts[2]
     available_periods(switch(available_periods_key,
                              "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
-                             "process" = eval(parse(text=paste0("getReleasePeriods(id = \"",available_periods_value,"\")")))
+                             "process" = eval(parse(text=paste0("getReleasePeriods(config = \"", appConfig$store,"\" id = \"",available_periods_value,"\")")))
     ))
   })
   

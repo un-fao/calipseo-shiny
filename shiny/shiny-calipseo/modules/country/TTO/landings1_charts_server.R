@@ -27,7 +27,7 @@ landings1_charts_server <- function(id, pool){
   )
   
   observeEvent(input$bch_name,{
-    releases <- list.files("out/release/artisanal_fisheries_landings1", full.names = T, recursive = TRUE)
+    releases <- list.files(file.path(appConfig$store, "release/artisanal_fisheries_landings1"), full.names = T, recursive = TRUE)
     if(length(releases)>0){
       ts <- as.data.frame(do.call("rbind", lapply(releases, readr::read_csv)))
       ts <- ts[order(ts$bch_name),]

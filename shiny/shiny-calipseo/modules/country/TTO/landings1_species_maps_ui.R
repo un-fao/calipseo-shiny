@@ -12,7 +12,7 @@ landings1_species_maps_ui <- function(id){
       ),
       box(width = 6,
           selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
-                         choice = getReleasePeriods(id = "artisanal_fisheries_landings1")$year, selected = NULL, 
+                         choice = getReleasePeriods(config = appConfig$store, id = "artisanal_fisheries_landings1")$year, selected = NULL, 
                          options = list(
                            placeholder = i18n("LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL"),
                            onInitialize = I('function() { this.setValue(""); }')

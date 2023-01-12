@@ -968,8 +968,8 @@ getRemoteReferenceDataset <- function(name){
 }
 
 #getProcessOutput
-getProcessOutput <- function(id, year, quarter = NULL, month = NULL){
-  filename <- file.path("out/release", id, year)
+getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL){
+  filename <- file.path(config$store, "release", id, year)
   if(!is.null(quarter)) filename <- file.path(filename, paste0("Q",quarter))
   if(!is.null(month)) filename <- file.path(filename, paste0("M",month))
   filename <- file.path(filename, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
@@ -978,8 +978,8 @@ getProcessOutput <- function(id, year, quarter = NULL, month = NULL){
 }
 
 #getReleasePeriods
-getReleasePeriods <- function(id){
-  years <- as.list(list.files(sprintf("out/release/%s",id)))
+getReleasePeriods <- function(config, id){
+  years <- as.list(list.files(sprintf("%s/release/%s",config$store, id)))
   out <- data.frame(
     year = integer(0),
     quarter = integer(0),
@@ -987,7 +987,7 @@ getReleasePeriods <- function(id){
   )
   if(length(years)>0){
     out <- do.call("rbind", lapply(years, function(year){
-      res <- list.files(sprintf("out/release/%s/%s",id, year))
+      res <- list.files(sprintf("%s/release/%s/%s", config$store, id, year))
       out_periods <- data.frame(year = year)
       by_year <- any(sapply(res, endsWith, ".csv"))
       if(!by_year){

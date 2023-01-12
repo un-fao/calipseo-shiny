@@ -31,6 +31,12 @@ appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
 
+#shiny-storage check
+default_store_dir <- "/srv/shiny-server/shiny-calipseo-store"
+#shiny-storage in dev (assume Windows OS for now)
+if(Sys.info()[["sysname"]] == "Windows") default_store_dir <- "out"
+if(is.null(appConfig$store)) appConfig$store
+if(!dir.exists(appConfig$store)) dir.create(appConfig$store)
 
 #DB connections
 #---------------------------------------------------------------------------------------
