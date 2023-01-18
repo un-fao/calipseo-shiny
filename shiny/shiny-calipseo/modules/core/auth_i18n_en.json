@@ -1,0 +1,7 @@
+{
+  "AUTH_TITLE": "Please log in with your Calipseo account",
+  "AUTH_LOGIN_TITLE": "Log in",
+  "AUTH_LOGIN_ERROR": "Invalid username or password!",
+  "AUTH_USERNAME": "User Name",
+  "AUTH_PASSWORD": "Password"
+}

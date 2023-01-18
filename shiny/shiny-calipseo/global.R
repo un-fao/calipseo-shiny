@@ -59,6 +59,7 @@ CALIPSEO_SHINY_ENV <- new.env()
 #---------------------------------------------------------------------------------------
 #core R script utils
 source("assets/core/utils.R")
+source("assets/core/auth_utils.R")
 source("assets/core/module_utils.R")
 source("assets/core/data_access_utils.R")
 source("assets/core/ui_utils.R")
