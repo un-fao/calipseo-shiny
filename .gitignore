@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .REnviron
+shiny/deploy
 shiny/shiny-calipseo.zip
 shiny/shiny-calipseo/out/
 shinyconfigs/shiny_config.txt
