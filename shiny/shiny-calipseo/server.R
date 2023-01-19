@@ -63,8 +63,8 @@ server <- function(input, output, session) {
     #anonymous usage
     observe({
       INFO("Set-up geoflow-shiny in anonymous mode")
-      shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
-      shinyjs::show(selector = "header")
+      #shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
+      #shinyjs::show(selector = "header")
       loadModuleServers(appConfig, pool)
     })
   }

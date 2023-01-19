@@ -17,7 +17,7 @@ ui <- shiny::tagList(
       )
     ),
     dashboardSidebar(
-      collapsed = TRUE,
+      collapsed = FALSE,
       sidebarMenuFromModules(appConfig)
       #withSpinner(uiOutput("side_ui"))
     ),
