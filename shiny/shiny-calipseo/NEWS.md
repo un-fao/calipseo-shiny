@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3] - 2023-01-18 - IN DEV**
+# **shiny-calipseo [v1.2.9999] - 2023-01-19 - IN DEV**
 
 **Enhancements**
 
@@ -9,7 +9,7 @@
 
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
 * [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
-* [CALR-64](https://sdlc.review.fao.org/jira/browse/CALR-64) Support Shiny app auth login UI based on Calipseo jwt-auth API
+
 
 **Miscs**
 

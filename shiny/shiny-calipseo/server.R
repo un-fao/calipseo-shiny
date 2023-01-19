@@ -9,7 +9,9 @@ server <- function(input, output, session) {
   #page management
   session$userData$page <- reactiveVal(NULL)
   
-
+  loadedSideUI <- reactiveVal(FALSE)
+  loadedMainUI <- reactiveVal(FALSE)
+  
   if(appConfig$auth){
     #auth mode    
     auth_info <- reactiveVal(NULL)
@@ -59,38 +61,49 @@ server <- function(input, output, session) {
     }
   }else{
     #anonymous usage
-    INFO("Set-up geoflow-shiny in anonymous mode")
-    shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
-    shinyjs::show(selector = "header")
-    loadModuleServers(appConfig, pool)
+    observe({
+      INFO("Set-up geoflow-shiny in anonymous mode")
+      shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
+      shinyjs::show(selector = "header")
+      loadModuleServers(appConfig, pool)
+    })
   }
   
   #side UI
-  output$side_ui <- renderUI({
-    if(appConfig$auth){
-      if(appConfig$auth_ui){
-        req(credentials()$user_auth)
-        sidebarMenuFromModules(appConfig)
-      }else{
-        sidebarMenuFromModules(appConfig)
-      }
-    }else{
-      sidebarMenuFromModules(appConfig)
-    }
-  })
+  #output$side_ui <- renderUI({
+  #  print(loadedSideUI())
+  #  if(!loadedSideUI()){
+  #    loadedSideUI(TRUE)
+  #    if(appConfig$auth){
+  #      if(appConfig$auth_ui){
+  #        req(credentials()$user_auth)
+  #        sidebarMenuFromModules(appConfig)
+  #      }else{
+  #        sidebarMenuFromModules(appConfig)
+  #      }
+  #    }else{
+  #      sidebarMenuFromModules(appConfig)
+  #    }
+  #  }
+    
+  #})
   #main UI
-  output$main_ui <- renderUI({
-    if(appConfig$auth){
-      if(appConfig$auth_ui){
-        req(credentials()$user_auth)
-        loadModuleUIs(appConfig)
-      }else{
-        loadModuleUIs(appConfig)
-      }
-    }else{
-      loadModuleUIs(appConfig)
-    }
-  })
+  #output$main_ui <- renderUI({
+  #  print(loadedMainUI())
+  #  if(!loadedMainUI()){
+  #    loadedMainUI(TRUE)
+  #    if(appConfig$auth){
+  #      if(appConfig$auth_ui){
+  #        req(credentials()$user_auth)
+  #        loadModuleUIs(appConfig)
+  #      }else{
+  #        loadModuleUIs(appConfig)
+  #      }
+  #    }else{
+  #      loadModuleUIs(appConfig)
+  #    }
+  #  }
+  #})
   
   observe({
     currentPage <- NA
@@ -113,23 +126,10 @@ server <- function(input, output, session) {
   
   observe({
     #Update PageUrl
-    if(!is.null(input$`calipseo-tabs`)) {
+    if(!is.null(input$`calipseo-tabs`)) if(input$`calipseo-tabs` != "home") {
       PageUrl <- gsub('_', '-', input$`calipseo-tabs`)
       session$userData$page(PageUrl)
       updatePageUrl(PageUrl, session)
-    }
-  })
-  
-  observe({
-    if(appConfig$auth){
-      if(appConfig$auth_ui){
-        req(credentials()$user_auth)
-        isolate({updateTabItems(session, "calipseo-tabs", "home")})
-      }else{
-        isolate({updateTabItems(session, "calipseo-tabs", "home")})
-      }
-    }else{
-      isolate({updateTabItems(session, "calipseo-tabs", "home")})
     }
   })
   

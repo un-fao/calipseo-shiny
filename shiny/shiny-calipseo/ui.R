@@ -18,7 +18,8 @@ ui <- shiny::tagList(
     ),
     dashboardSidebar(
       collapsed = TRUE,
-      withSpinner(uiOutput("side_ui"))
+      sidebarMenuFromModules(appConfig)
+      #withSpinner(uiOutput("side_ui"))
     ),
     dashboardBody(
       tags$head(
@@ -34,7 +35,8 @@ ui <- shiny::tagList(
           HTML(appConfig$auth_footer)
         )
       ),
-      withSpinner(uiOutput("main_ui")),
+      loadModuleUIs(appConfig),
+      #withSpinner(uiOutput("main_ui")),
       useShinyjs()
     )
   ),
