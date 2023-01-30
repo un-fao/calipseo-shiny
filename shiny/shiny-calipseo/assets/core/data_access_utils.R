@@ -979,30 +979,45 @@ getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL){
 
 #getReleasePeriods
 getReleasePeriods <- function(config, id){
-  years <- as.list(list.files(sprintf("%s/release/%s",config$store, id)))
+  
   out <- data.frame(
     year = integer(0),
     quarter = integer(0),
-    month = integer(0)
+    month = integer(0),
+    file = integer(0)
   )
-  if(length(years)>0){
-    out <- do.call("rbind", lapply(years, function(year){
-      res <- list.files(sprintf("%s/release/%s/%s", config$store, id, year))
-      out_periods <- data.frame(year = year)
-      by_year <- any(sapply(res, endsWith, ".csv"))
-      if(!by_year){
-        by_quarter = any(sapply(res, startsWith, "Q"))
-        by_month = any(sapply(res, startsWith, "M"))
-        if(by_quarter){
-          out_periods <- data.frame(year = rep(year, length(res)), quarter = res)
-        }
-        if(by_month){
-          out_periods <- data.frame(year = rep(year, length(res)), month = res)
-        }
+  
+  target_folder<-sprintf("%s/release/%s",config$store, id)
+  
+  full_path<-list.files(target_folder,recursive = T,full.names = T)
+  files<-list.files(target_folder,recursive = T,full.names = F)
+  
+  if(length(files)>0){
+    x<-strsplit(files,"/")
+    years<-unlist(lapply(x, function(l) l[[1]]))
+    
+    by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
+    
+    if(by_year){
+      out <- data.frame(year = years,file=complete_path)
+    }else{
+      
+      month_quarter<-unlist(lapply(x, function(l) l[[2]]))
+      
+      by_quarter = any(sapply(month_quarter, startsWith, "Q"))
+      by_month = any(sapply(month_quarter, startsWith, "M"))
+      
+      if(by_quarter){
+        out <- data.frame(year = years, quarter = month_quarter, file=full_path)
       }
-      return(out_periods)
-    }))  
+      if(by_month){
+        out <- data.frame(year = years, month = month_quarter, file=full_path)
+      }
+      
+    }
   }
+  
+
   return(out)
 }
 

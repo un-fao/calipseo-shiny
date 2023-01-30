@@ -18,7 +18,7 @@ artfish_report_server <- function(id, pool){
     #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
     #TODO to check what happens with 2014 reports
     
-    choices <- list.files(file.path(appConfig$store, "release/artfish_estimates"),full.names = F)
+    choices <- unique(getReleasePeriods(config=appConfig, "artfish_estimates")$year)
     
     print(choices)
     
@@ -35,7 +35,8 @@ artfish_report_server <- function(id, pool){
     
   output$month_selector<-renderUI({
     
-    choices <- list.files(sprintf("%s/release/artfish_estimates/%s", appConfig$store, input$year),full.names = F)
+    choices <- getReleasePeriods(config=appConfig, "artfish_estimates")
+    choices <- unique(subset(choices,year==input$year)$month)
     choices <- as.numeric(gsub("M","",choices))
     
     selectizeInput(ns("month"),paste0(i18n("SELECT_INPUT_TITLE_MONTH")," :"),choices=choices[order(choices)],multiple = F,selected=NULL,
@@ -51,8 +52,8 @@ artfish_report_server <- function(id, pool){
     req(!is.null(input$year)&input$year!="")
     req(!is.null(input$month)&input$month!="")
     
-    
-    data<-list.files(sprintf("%s/release/artfish_estimates/%s/M%s",appConfig$store,input$year,input$month),full.names = T)
+    data<-getReleasePeriods(config=appConfig, "artfish_estimates")
+    data<-subset(data,year==input$year&month==paste0("M",input$month))$file
     data<-readr::read_csv(data)
     estimates<-estimates(data)
     
