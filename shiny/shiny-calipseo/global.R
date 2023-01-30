@@ -29,6 +29,8 @@ local_config_file <- Sys.getenv("CALIPSEO_SHINY_CONFIG")
 if(nzchar(local_config_file)) config_file <- local_config_file
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 
+if(is.null(appConfig$auth)) appConfig$auth <- FALSE
+
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
 
