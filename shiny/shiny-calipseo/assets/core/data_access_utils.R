@@ -1005,7 +1005,7 @@ getStatPeriods <- function(config, id,release=T){
     by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
     
     if(by_year){
-      out <- data.frame(year = years,file=complete_path)
+      out <- data.frame(year = years,file=full_path)
     }else{
       
       month_quarter<-unlist(lapply(x, function(l) l[[2]]))
