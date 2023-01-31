@@ -12,13 +12,22 @@ artfish_report_server <- function(id, pool){
   ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
   ref_species<-subset(ref_species,select=c(ID,Species))
   
+  output$mode_selector<-renderUI({
+    
+    selectizeInput(ns("mode"),paste0(i18n("SELECT_INPUT_TITLE_MODE")," :"),choices=c("release"=T,"staging"=F),multiple = F,selected="release")
+  
+  })
+  
+  observeEvent(c(input$mode,session$userData$computation_new()),{
+    req(!is.null(input$mode)&input$mode!="")
+  
   output$year_selector<-renderUI({
     
     #dates<-unique(survey$date)
     #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
     #TODO to check what happens with 2014 reports
     
-    choices <- unique(getReleasePeriods(config=appConfig, "artfish_estimates")$year)
+    choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",release = input$mode)$year)
     
     print(choices)
     
@@ -29,13 +38,14 @@ artfish_report_server <- function(id, pool){
                      )
                    )
   })
+  })
   
   observeEvent(input$year,{
   req(!is.null(input$year)&input$year!="")
     
   output$month_selector<-renderUI({
     
-    choices <- getReleasePeriods(config=appConfig, "artfish_estimates")
+    choices <- getStatPeriods(config=appConfig, "artfish_estimates",release = input$mode)
     choices <- unique(subset(choices,year==input$year)$month)
     choices <- as.numeric(gsub("M","",choices))
     
@@ -52,7 +62,7 @@ artfish_report_server <- function(id, pool){
     req(!is.null(input$year)&input$year!="")
     req(!is.null(input$month)&input$month!="")
     
-    data<-getReleasePeriods(config=appConfig, "artfish_estimates")
+    data<-getStatPeriods(config=appConfig, "artfish_estimates",release = input$mode)
     data<-subset(data,year==input$year&month==paste0("M",input$month))$file
     data<-readr::read_csv(data)
     estimates<-estimates(data)

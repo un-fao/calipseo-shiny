@@ -977,8 +977,14 @@ getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL){
   return(out)
 }
 
-#getReleasePeriods
-getReleasePeriods <- function(config, id){
+#getStatPeriods
+getStatPeriods <- function(config, id,release=T){
+  
+  if(release){
+    target<-"release"
+  }else{
+    target<-"staging"
+  }
   
   out <- data.frame(
     year = integer(0),
@@ -987,7 +993,7 @@ getReleasePeriods <- function(config, id){
     file = integer(0)
   )
   
-  target_folder<-sprintf("%s/release/%s",config$store, id)
+  target_folder<-sprintf("%s/%s/%s",config$store,target, id)
   
   full_path<-list.files(target_folder,recursive = T,full.names = T)
   files<-list.files(target_folder,recursive = T,full.names = F)

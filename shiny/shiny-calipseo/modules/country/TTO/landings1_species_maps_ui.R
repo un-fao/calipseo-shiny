@@ -11,12 +11,7 @@ landings1_species_maps_ui <- function(id){
         htmlOutput(ns("landings1_species_maps_info"))
       ),
       box(width = 6,
-          selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
-                         choice = getReleasePeriods(config = appConfig$store, id = "artisanal_fisheries_landings1")$year, selected = NULL, 
-                         options = list(
-                           placeholder = i18n("LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL"),
-                           onInitialize = I('function() { this.setValue(""); }')
-                         ))
+        uiOutput(ns("year_map_species_selector"))
       )
     ),
     fluidRow(

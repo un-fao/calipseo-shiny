@@ -14,6 +14,7 @@ artfish_report_ui <- function(id){
           ),
           fluidRow(
             column(4,
+              uiOutput(ns("mode_selector")),
               uiOutput(ns("year_selector")),
               uiOutput(ns("month_selector")),
               uiOutput(ns("fishing_unit_selector")),
