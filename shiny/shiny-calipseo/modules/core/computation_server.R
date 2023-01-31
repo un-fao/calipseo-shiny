@@ -272,6 +272,7 @@ computation_server <- function(id, pool) {
       readr::write_csv(indicator_output, out$filepath, )
       
       progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
+      session$userData$computation_new(Sys.time())
       out$results <- getComputationResults(indicator)
       
     }else{
