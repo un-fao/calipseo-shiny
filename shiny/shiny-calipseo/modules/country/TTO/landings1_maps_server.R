@@ -3,6 +3,8 @@ landings1_maps_server <- function(id, pool){
   
  moduleServer(id, function(input, output, session){  
    
+   ns<-session$ns
+   
   output$year_map_total_selector<-renderUI({
     
     choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
