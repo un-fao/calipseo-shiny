@@ -2,6 +2,18 @@
 landings1_maps_server <- function(id, pool){
   
  moduleServer(id, function(input, output, session){  
+   
+  output$year_map_total_selector<-renderUI({
+    
+    choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
+    
+     selectizeInput(ns("year_map_total"), label = i18n("LANDINGS1_MAP_YEAR_LABEL"), 
+                    choice = choices[order(as.numeric(choices))], selected = NULL, 
+                    options = list(
+                      placeholder = i18n("LANDINGS1_MAP_YEAR_PLACEHOLDER_LABEL"),
+                      onInitialize = I('function() { this.setValue(""); }')
+                    ))
+  })
   
   output$landings1_maps_info <- renderText({
     text <- paste0("<h2>", i18n("LANDINGS1_MAPS_TITLE")," <small>", i18n("LANDINGS1_MAPS_SUBTITLE"),
