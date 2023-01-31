@@ -21,23 +21,23 @@ artfish_report_server <- function(id, pool){
   observeEvent(c(input$mode,session$userData$computation_new()),{
     req(!is.null(input$mode)&input$mode!="")
   
-  output$year_selector<-renderUI({
-    
-    #dates<-unique(survey$date)
-    #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
-    #TODO to check what happens with 2014 reports
-    
-    choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",release = input$mode)$year)
-    
-    print(choices)
-    
-    selectizeInput(ns("year"),paste0(i18n("SELECT_INPUT_TITLE_YEAR")," :"),choices=choices[order(as.numeric(choices))],multiple = F,selected=NULL,
-                   options = list(
-                     placeholder = i18n("SELECT_INPUT_PLACEHOLDER_YEAR"),
-                     onInitialize = I('function() { this.setValue(""); }')
+    output$year_selector<-renderUI({
+      
+      #dates<-unique(survey$date)
+      #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
+      #TODO to check what happens with 2014 reports
+      
+      choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",release = input$mode)$year)
+      
+      print(choices)
+      
+      selectizeInput(ns("year"),paste0(i18n("SELECT_INPUT_TITLE_YEAR")," :"),choices=choices[order(as.numeric(choices))],multiple = F,selected=NULL,
+                     options = list(
+                       placeholder = i18n("SELECT_INPUT_PLACEHOLDER_YEAR"),
+                       onInitialize = I('function() { this.setValue(""); }')
+                       )
                      )
-                   )
-  })
+    })
   })
   
   observeEvent(input$year,{
