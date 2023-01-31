@@ -82,6 +82,7 @@ computation_server <- function(id, pool) {
       df <- do.call("rbind", lapply(1:length(periods), function(i){
         filepath <- file.path(appConfig$store, status[i], indicator$id, paste0( values[i], ".csv"))
         tibble::tibble(
+          uuid = uuids[i],
           Id = indicator$id,
           Period = periods[i],
           File = filepath,
@@ -112,6 +113,7 @@ computation_server <- function(id, pool) {
           ,"character")
         )
       }))
+      df <- df[order(df$Period),]
       
       #function to manage button server outputs
       manageButtonServerOutputs <- function(prefix, type){
@@ -122,7 +124,7 @@ computation_server <- function(id, pool) {
           output[[name]] <<- NULL
         })
         lapply(1:nrow(df), function(i){
-          idx = uuids[i]
+          idx = df[i,"uuid"]
           button_id <- paste0(prefix,idx)
           switch(type,
            #download result handler
@@ -185,6 +187,7 @@ computation_server <- function(id, pool) {
     colnames = c("Id", i18n("COMPUTATION_RESULTS_TABLE_COLNAME_PERIOD"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_FILE"),
                  i18n("COMPUTATION_RESULTS_TABLE_COLNAME_STATUS"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_DATE"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS")),
     options = list(
+      columnDefs = list(list(visible=FALSE, targets=0)),
       paging = FALSE,
       searching = FALSE,
       preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
