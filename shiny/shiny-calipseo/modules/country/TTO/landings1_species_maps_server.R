@@ -6,7 +6,7 @@ landings1_species_maps_server <- function(id, pool){
    ns<-session$ns
    
    output$year_map_species_selector<-renderUI({
-     choices<-unique(getStatPeriods(config = appConfig$store, id = "artisanal_fisheries_landings1")$year)
+     choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
      selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
                     choice = choices[order(as.numeric(choices))], selected = NULL, 
                     options = list(
