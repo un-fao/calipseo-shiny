@@ -3,6 +3,8 @@ computation_server <- function(id, pool) {
 
  moduleServer(id, function(input, output, session){  
   
+  session$userData$computation_new <- reactiveVal(NULL)
+   
   ns <- session$ns
   
   AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
@@ -403,6 +405,8 @@ computation_server <- function(id, pool) {
       to = gsub("staging", "release", torelease()),
       overwrite = TRUE
     )
+    file.remove(torelease())
+    session$userData$computation_new(Sys.time())
     if(file.exists(gsub("staging", "release", torelease()))){
       torelease(NULL)
       out$results <- getComputationResults(out$indicator)
