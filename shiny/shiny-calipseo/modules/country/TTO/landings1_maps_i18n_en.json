@@ -5,6 +5,7 @@
   
   /*maps landing site selector*/
   "LANDINGS1_MAP_YEAR_LABEL" : "Year",
+  "LANDINGS1_MAP_MODE_LABEL" : "Data status",
   "LANDINGS1_MAP_YEAR_PLACEHOLDER_LABEL" : "Select a year",
   "LANDINGS1_MAP_LANDING_SITE_LABEL" : "Landing site",
   "LANDINGS1_MAP_VALUE_LABEL" : "Value"

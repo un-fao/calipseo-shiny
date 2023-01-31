@@ -11,7 +11,12 @@ landings1_maps_ui <- function(id){
         htmlOutput(ns("landings1_maps_info"))
       ),
       box(width = 6,
-        uiOutput(ns("year_map_total_selector"))
+          div(class = "col-md-6",
+              uiOutput(ns("mode_selector"))
+          ),
+          div(class = "col-md-6",
+              uiOutput(ns("year_map_total_selector"))
+          )
       )
     ),
     fluidRow(

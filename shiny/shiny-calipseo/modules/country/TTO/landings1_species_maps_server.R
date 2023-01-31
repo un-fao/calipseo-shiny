@@ -5,14 +5,24 @@ landings1_species_maps_server <- function(id, pool){
    
    ns<-session$ns
    
-   output$year_map_species_selector<-renderUI({
-     choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
-     selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
-                    choice = choices[order(as.numeric(choices))], selected = NULL, 
-                    options = list(
-                      placeholder = i18n("LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL"),
-                      onInitialize = I('function() { this.setValue(""); }')
-                    ))
+   output$mode_selector<-renderUI({
+     
+     selectizeInput(ns("mode"),paste0(i18n("LANDINGS1_SPECIES_MAPS_MODE_LABEL")," :"),choices=c("release"=T,"staging"=F),multiple = F,selected="release")
+     
+   })
+   
+   observeEvent(c(input$mode,session$userData$computation_new()),{
+     req(!is.null(input$mode)&input$mode!="")
+   
+     output$year_map_species_selector<-renderUI({
+       choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
+       selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
+                      choice = choices[order(as.numeric(choices))], selected = NULL, 
+                      options = list(
+                        placeholder = i18n("LANDINGS1_SPECIES_MAPS_YEAR_PLACEHOLDER_LABEL"),
+                        onInitialize = I('function() { this.setValue(""); }')
+                      ))
+     })
    })
   
   output$landings1_species_maps_info <- renderText({
