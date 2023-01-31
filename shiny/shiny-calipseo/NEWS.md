@@ -4,6 +4,8 @@
 
 * [CALR-146](https://sdlc.review.fao.org/jira/browse/CALR-146) Make the computation module generic (initially done for TTO)
 * [CALR-147](https://sdlc.review.fao.org/jira/browse/CALR-147) Use computation module (statistics storage) for Artfish module
+* [CALR-152](https://sdlc.review.fao.org/jira/browse/CALR-152) Computation module needs to trigger changes for dependent modules
+* [CALR-153](https://sdlc.review.fao.org/jira/browse/CALR-153) Computation module - refactor periods handling (to check actual file existance)
 
 **New features**
 
