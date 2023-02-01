@@ -184,9 +184,16 @@ logbooks_overview_server <- function(id, pool){
 
   data_logbooks <- accessLogBooksMultiyear(pool)  
   
-  fish_group<-getRemoteReferenceDataset("asfis_enrished")
-  fish_group<-subset(fish_group,select=c('3A_Code','ISSCAAP_Group_En'))
-  names(fish_group)<-c('species_asfis','ISSCAAP_Group_En')
+  cl_asfis_species<-getRemoteReferenceDataset("cl_asfis_species")
+  cl_asfis_species<-subset(cl_asfis_species,select=c('code','isscaap_group_code'))
+  names(cl_asfis_species)<-c('species_asfis','isscaap_group_code')
+  
+  cl_isscaap_group<-getRemoteReferenceDataset("cl_isscaap_group")
+  cl_isscaap_group<-subset(cl_isscaap_group,select=c('code','name_en'))
+  names(cl_isscaap_group)<-c('isscaap_group_code','ISSCAAP_Group_En')
+  
+  fish_group<-merge(cl_asfis_species,cl_isscaap_group)
+  fish_group<-subset(fish_group,select=-c(isscaap_group_code))
   
   line_chart_server("gq", label=i18n("GLOBAL_QUANTITY_LABEL"),
                     df=data_logbooks%>%

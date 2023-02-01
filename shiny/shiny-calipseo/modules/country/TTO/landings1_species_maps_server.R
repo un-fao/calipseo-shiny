@@ -7,7 +7,7 @@ landings1_species_maps_server <- function(id, pool){
    
    output$mode_selector<-renderUI({
      
-     selectizeInput(ns("mode"),paste0(i18n("LANDINGS1_SPECIES_MAPS_MODE_LABEL")," :"),choices=c("release"=T,"staging"=F),multiple = F,selected="release")
+     selectizeInput(ns("mode"),paste0(i18n("LANDINGS1_SPECIES_MAPS_MODE_LABEL")," :"),choices=c("release","staging"),multiple = F,selected="release")
      
    })
    
@@ -15,7 +15,7 @@ landings1_species_maps_server <- function(id, pool){
      req(!is.null(input$mode)&input$mode!="")
    
      output$year_map_species_selector<-renderUI({
-       choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1")$year)
+       choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1",mode=input$mode)$year)
        selectizeInput(ns("year_map_species"), label = i18n("LANDINGS1_SPECIES_MAPS_YEAR_LABEL"), 
                       choice = choices[order(as.numeric(choices))], selected = NULL, 
                       options = list(
@@ -126,13 +126,13 @@ landings1_species_maps_server <- function(id, pool){
   )
   
   observeEvent(input$year_map_species,{
-    targetRelease <- file.path(sprintf("%s/release/artisanal_fisheries_landings1/%s", appConfig$store, input$year_map_species), sprintf("artisanal_fisheries_landings1_%s.csv", input$year_map_species))
-    hasRelease <- file.exists(targetRelease)
-    tsdata <- NULL
-    if(hasRelease){
-      tsdata <- readr::read_csv(targetRelease)
-      tsdata <- tsdata[order(tsdata$bch_name),]
-    }
+    req(!is.null(input$mode)&input$mode!="")
+    req(!is.null(input$year_map_species)&input$year_map_species!="")
+    
+    target<-getStatPeriods(config=appConfig, "artisanal_fisheries_landings1",mode = input$mode)
+    target<-subset(target,year==input$year_map_species)$file
+    tsdata<-readr::read_csv(target)
+    tsdata <- tsdata[order(tsdata$bch_name),]
     tsr$data <- tsdata
   })
   

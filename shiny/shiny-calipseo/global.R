@@ -92,7 +92,8 @@ loadLocalCountryDatasets(appConfig)
 
 #remote datasets
 #---------------------------------------------------------------------------------------
-loadRemoteReferenceDataset("asfis_enrished","https://raw.githubusercontent.com/openfigis/RefData/gh-pages/species/CL_FI_SPECIES_GROUPS.csv")
+loadRemoteReferenceDataset("cl_asfis_species","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cl_asfis_species.csv")
+loadRemoteReferenceDataset("cl_isscaap_group","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cl_isscaap_group.csv")
 
 #language/i18n
 #---------------------------------------------------------------------------------------
