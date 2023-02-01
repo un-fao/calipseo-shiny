@@ -1,7 +1,9 @@
-# **shiny-calipseo [v1.2.9999] - 2023-01-19 - IN DEV**
+# **shiny-calipseo [v1.3.0] - 2023-02-01**
 
 **Enhancements**
 
+* [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143) Improve units of measures handling / conversion
+* [CALR-144](https://sdlc.review.fao.org/jira/browse/CALR-144) Systematize use of CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT for target quantity field
 * [CALR-146](https://sdlc.review.fao.org/jira/browse/CALR-146) Make the computation module generic (initially done for TTO)
 * [CALR-147](https://sdlc.review.fao.org/jira/browse/CALR-147) Use computation module (statistics storage) for Artfish module
 * [CALR-152](https://sdlc.review.fao.org/jira/browse/CALR-152) Computation module needs to trigger changes for dependent modules
@@ -10,6 +12,7 @@
 
 **New features**
 
+* [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142) New module for SUR - export to CWP RH / WECAFC-FIRMS RDB formats
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
 * [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
 * [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
@@ -18,22 +21,12 @@
 
 * [CALR-145](https://sdlc.review.fao.org/jira/browse/CALR-145) Introduce dotenv package for easier switch between local instance configs
 
-# **shiny-calipseo [v1.2.0.9001](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.9001.zip) - 2022-11-11**
-
-**New features**
-
-* [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142) New module for SUR - export to CWP RH / WECAFC-FIRMS RDB formats
-
-**Enhancements**
-
-* [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143) Improve units of measures handling / conversion
-* [CALR-144](https://sdlc.review.fao.org/jira/browse/CALR-144) Systematize use of CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT for target quantity field
-
 **New R dependencies**
 
 * lubridate --> [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142)
 * units --> [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143)
 * measurements --> [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143)
+
 
 # **shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-11-03**
 
