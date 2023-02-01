@@ -6,12 +6,13 @@
 * [CALR-147](https://sdlc.review.fao.org/jira/browse/CALR-147) Use computation module (statistics storage) for Artfish module
 * [CALR-152](https://sdlc.review.fao.org/jira/browse/CALR-152) Computation module needs to trigger changes for dependent modules
 * [CALR-153](https://sdlc.review.fao.org/jira/browse/CALR-153) Computation module - refactor periods handling (to check actual file existance)
+* [CALR-155](https://sdlc.review.fao.org/jira/browse/CALR-155) Use ASFIS species / species groups from fdiwg repository instead of RefData
 
 **New features**
 
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
 * [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
-
+* [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
 
 **Miscs**
 
