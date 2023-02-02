@@ -42,8 +42,8 @@ vessel_list_server <- function(id, pool) {
     names(df)[names(df)=="REG PORT LANDING SITE"] <- "REG_PORT"
     names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
     
-    INFO("vessel-list server: Joining vessle list data and license permits data")
-    
+    INFO("vessel-list server: Joining vessel list data and license permits data")
+    df$Details<- ""
     df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                 "HOME_PORT","REG_PORT","Details")]
     
@@ -59,12 +59,15 @@ vessel_list_server <- function(id, pool) {
       INFO("vessel-list server: Computing valid and expired license permits")
       ls_permits <- LicenseValidity(ls_permits)
       
+      #reordering
       valid_dates <- ls_permits[ls_permits['Validity']=='valid',]
-      invalid_dates <- ls_permits[ls_permits['REGISTRATION_NUMBER'] != valid_dates$REGISTRATION_NUMBER,]
-      ls_permits <- rbind(valid_dates,invalid_dates)
+      if(nrow(valid_dates)){
+        invalid_dates <- ls_permits[ls_permits['REGISTRATION_NUMBER'] != valid_dates$REGISTRATION_NUMBER,]
+        ls_permits <- rbind(valid_dates,invalid_dates)
+      }
       ls_permits <- rbind(ls_permits,not_complete_ls_permits)
       
-      INFO("vessel-list server: Joining vessles with license permits and those without license permits")
+      INFO("vessel-list server: Joining vessels with license permits and those without license permits")
       df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
       df <- dplyr::distinct(df,REGISTRATION_NUMBER,.keep_all = TRUE)
       df$Validity[is.na(df$Validity)] <- 'missing license'
