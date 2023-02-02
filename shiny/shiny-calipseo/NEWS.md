@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.0] - 2023-02-01**
+# **shiny-calipseo [v1.3.0] - 2023-02-02**
 
 **Enhancements**
 
