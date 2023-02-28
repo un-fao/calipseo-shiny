@@ -969,11 +969,12 @@ getRemoteReferenceDataset <- function(name){
 
 #getProcessOutput
 getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL){
-  filename <- file.path(config$store, "release", id, year)
-  if(!is.null(quarter)) filename <- file.path(filename, paste0("Q",quarter))
-  if(!is.null(month)) filename <- file.path(filename, paste0("M",month))
-  filename <- file.path(filename, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
-  out <- readr::read_csv(filename)
+  filepath <- file.path(config$store, "release", id, year)
+  if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
+  if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
+  #filepath <- file.path(filepath, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
+  files <- list.files(filename,recursive = T,full.names = F, pattern = ".csv")
+  out <- do.call("rbind", lapply(files, readr::read_csv))
   return(out)
 }
 
