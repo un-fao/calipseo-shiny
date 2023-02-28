@@ -968,8 +968,8 @@ getRemoteReferenceDataset <- function(name){
 }
 
 #getProcessOutput
-getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL){
-  filepath <- file.path(config$store, "release", id, year)
+getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL, mode = "release"){
+  filepath <- file.path(config$store, mode, id, year)
   if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
   if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
   #filepath <- file.path(filepath, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))

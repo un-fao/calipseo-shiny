@@ -243,6 +243,7 @@ computation_server <- function(id, pool) {
         }
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          #TODO add mode (release/staging) to getProcessOutput
           "process" = paste0("getProcessOutput(config = \"", appConfig$store, "\", id = \"", value,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "local" = getLocalCountryDataset(appConfig,value),
           fun_arg_value
@@ -378,6 +379,11 @@ computation_server <- function(id, pool) {
         NULL
       }
     })
+    
+    #TODO additional renderUI/dropdownlist (mode staging/release) conditioned by the indicator definition 
+    #(to display if input is the result of another indicator)
+    
+    
   })
     
   #-------------------
