@@ -244,7 +244,7 @@ computation_server <- function(id, pool) {
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           #TODO add mode (release/staging) to getProcessOutput
-          "process" = paste0("getProcessOutput(config = \"", appConfig$store, "\", id = \"", value,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          "process" = paste0("getProcessOutput(config = appConfig, id = \"", value,"\", ","mode = \"",input$computation_mode,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "local" = getLocalCountryDataset(appConfig,value),
           fun_arg_value
         )
@@ -296,9 +296,9 @@ computation_server <- function(id, pool) {
     out$results <- getComputationResults(indicator)
     
     out$year <- input$computation_year
-    out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
-    out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-    out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
+    out$quarter <- if("quarter"%in%indicator$compute_by$period &!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
+    out$month <- if("month"%in%indicator$compute_by$period &!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
+    out$filename <- paste0(indicator$id, "_", input$computation_year,if(("quarter"%in%indicator$compute_by$period &!is.null(input$computation_quarter))|("month"%in%indicator$compute_by$period &!is.null(input$computation_month))){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
     out$filepath <- file.path(appConfig$store, "staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
     out$filepath_release <- gsub("staging", "release", out$filepath)
     
@@ -323,32 +323,55 @@ computation_server <- function(id, pool) {
   #computation_by
   output$computation_by <- renderUI({
     tagList(
+      uiOutput(ns("computation_mode_wrapper")),
       uiOutput(ns("computation_year_wrapper")),
       uiOutput(ns("computation_month_wrapper")),
       uiOutput(ns("computation_quarter_wrapper"))
     )
   })
   
-  observeEvent(input$computation_indicator,{
+  observeEvent(c(input$computation_indicator,input$computation_mode),{
     req(!is.null(input$computation_indicator)&input$computation_indicator!="")
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
     out$results <- getComputationResults(indicator)
     available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
     available_periods_key <- available_periods_parts[1]
+    if(available_periods_key=="process"){
+      req(!is.null(input$computation_mode)&input$computation_mode!="")
+    }
     available_periods_value <- available_periods_parts[2]
     available_periods(switch(available_periods_key,
                              "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
-                             "process" = eval(parse(text=paste0("getReleasePeriods(config = \"", appConfig$store,"\" id = \"",available_periods_value,"\")")))
+                             "process" = eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",available_periods_value,"\",mode = \"",input$computation_mode,"\")")))
     ))
+    
   })
   
+  observeEvent(input$computation_indicator,{
+    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
+    available_periods_key <- available_periods_parts[1]
+    output$computation_mode_wrapper <- renderUI({
+      if(available_periods_key=="process"){
+        choices=c("release","staging")
+        selectizeInput(
+          ns("computation_mode"), label = i18n("COMPUTATION_MODE_LABEL"), 
+          choices = choices, selected = "release"
+        )
+      }else{
+        NULL
+      }
+    })
+  })
+    
   output$computation_year_wrapper <- renderUI({
     req(!is.null(available_periods()))
-    choices=unique(available_periods()$year)
+
     selectizeInput(
       ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
       choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
-      options = list(placeholder = i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")))
+      options = list(placeholder = if(length(choices)>0){i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")}else{i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY")}))
   })
   
   observeEvent(input$computation_year,{

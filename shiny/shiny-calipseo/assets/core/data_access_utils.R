@@ -103,7 +103,7 @@ accessIndividualQaDOBFromDB <- function(con){
 
 
 #accessRefSpeciesFromDB
-accessRefSpeciesFromDB <- function(con){
+accessRefSpeciesFromDB <- function(con,year=NULL){
   ref_species_sql <- readSQLScript("data/core/sql/ref_species.sql", language = appConfig$language)
   ref_species <- suppressWarnings(dbGetQuery(con, ref_species_sql))
   return(ref_species)
@@ -637,7 +637,7 @@ accessIndividualQaDOB <- function(con){
 
 
 #accessRefSpecies
-accessRefSpecies <- function(con){
+accessRefSpecies <- function(con,year=NULL){
   accessRefSpeciesFromDB(con)
 }
 
@@ -973,7 +973,8 @@ getProcessOutput <- function(config, id, year, quarter = NULL, month = NULL, mod
   if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
   if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
   #filepath <- file.path(filepath, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
-  files <- list.files(filename,recursive = T,full.names = F, pattern = ".csv")
+  files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
+  print(files)
   out <- do.call("rbind", lapply(files, readr::read_csv))
   return(out)
 }
