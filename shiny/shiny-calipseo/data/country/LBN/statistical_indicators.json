@@ -30,5 +30,36 @@
         "data_landing": "data:accessLandingDataByFleetSegment"
       }
     }
+  },
+   {
+    "id": "gfcm_task_II_1",
+    "label": "GFCM - Task II.1 reporting",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "process:artfish_estimates_by_fleet_segment"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/compute_gfcm_task_II_1.R",
+      "fun" : "compute_gfcm_task_II_1",
+      "fun_args": {
+		    "data" : "process:artfish_estimates_by_fleet_segment"
+      }
+    }
+  },
+     {
+    "id": "gfcm_task_II_2",
+    "label": "GFCM - Task II.2 reporting",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "process:artfish_estimates_by_fleet_segment"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/compute_gfcm_task_II_2.R",
+      "fun" : "compute_gfcm_task_II_2",
+      "fun_args": {
+        "ref_species" : "data:accessRefSpecies",
+		    "data" : "process:artfish_estimates_by_fleet_segment"
+      }
+    }
   }
 ]
