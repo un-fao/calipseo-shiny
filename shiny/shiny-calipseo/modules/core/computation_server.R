@@ -244,7 +244,7 @@ computation_server <- function(id, pool) {
         fun_arg_eval <- switch(key,
           "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           #TODO add mode (release/staging) to getProcessOutput
-          "process" = paste0("getProcessOutput(config = appConfig, id = \"", value,"\", ","mode = \"",input$computation_mode,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+          "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","mode = \"",input$computation_mode,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
           "local" = getLocalCountryDataset(appConfig,value),
           fun_arg_value
         )
@@ -367,7 +367,7 @@ computation_server <- function(id, pool) {
     
   output$computation_year_wrapper <- renderUI({
     req(!is.null(available_periods()))
-
+    choices=unique(available_periods()$year)
     selectizeInput(
       ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
       choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
