@@ -1,6 +1,8 @@
 # **shiny-calipseo [v1.3.0] - 2023-02-02**
 
-**Enhancements**
+## Improvements
+
+**Core enhancements**
 
 * [CALR-143](https://sdlc.review.fao.org/jira/browse/CALR-143) Improve units of measures handling / conversion
 * [CALR-144](https://sdlc.review.fao.org/jira/browse/CALR-144) Systematize use of CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT for target quantity field
@@ -10,12 +12,25 @@
 * [CALR-153](https://sdlc.review.fao.org/jira/browse/CALR-153) Computation module - refactor periods handling (to check actual file existance)
 * [CALR-155](https://sdlc.review.fao.org/jira/browse/CALR-155) Use ASFIS species / species groups from fdiwg repository instead of RefData
 
-**New features**
+**Module enhancements**
+
+_Computation_
+
+* [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Add support for mode (release/staging) selection for inter-dependent indicators
+
+## New features
+
+**Core features**
+
+* [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
+* [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
+
+**Module features**
 
 * [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142) New module for SUR - export to CWP RH / WECAFC-FIRMS RDB formats
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
-* [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
-* [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
+* [CALR-158](https://sdlc.review.fao.org/jira/browse/CALR-158) LBN - Add statistical indicator to compute GFCM Task II.1
+* [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
 
 **Miscs**
 
