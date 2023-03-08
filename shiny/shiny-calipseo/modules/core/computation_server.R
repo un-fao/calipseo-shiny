@@ -219,9 +219,6 @@ computation_server <- function(id, pool) {
     source(indicator$compute_with$script) #TODO to check if still needed
     
     #possible inputs
-    #input$computation_year
-    #input$computation_quarter
-    #input$computation_month
     indicator_args <- switch(indicator$compute_by$period,
       "year" = c("year"),
       "quarter" = c("year","quarter"),
@@ -325,6 +322,7 @@ computation_server <- function(id, pool) {
     tagList(
       uiOutput(ns("computation_mode_wrapper")),
       uiOutput(ns("computation_year_wrapper")),
+      uiOutput(ns("dependsMessage")),
       uiOutput(ns("computation_month_wrapper")),
       uiOutput(ns("computation_quarter_wrapper"))
     )
@@ -359,6 +357,37 @@ computation_server <- function(id, pool) {
           ns("computation_mode"), label = i18n("COMPUTATION_MODE_LABEL"), 
           choices = choices, selected = "release"
         )
+      }else{
+        NULL
+      }
+    })
+  })
+  
+  observeEvent(input$computation_year,{
+    req(!is.null(input$computation_year))
+    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
+    available_periods_key <- available_periods_parts[1]
+    output$dependsMessage<-renderUI({
+      if(available_periods_key=="process"&nrow(subset(available_periods(),year==input$computation_year))>0){
+        period_computed=subset(available_periods(),year==input$computation_year)
+        nb_computed<-nrow(period_computed)
+        if(any("month" %in% names(period_computed))){
+          if(nb_computed==12){
+            tags$span(shiny::icon(c('check-circle')), "All months are available for this indicator", style="color:green;")
+          }else{
+            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available for this indicator",nb_computed,ifelse(nb_computed>1, "months are","month is")), style="color:orange;")
+          }
+        }else if(any("quarter" %in% names(period_computed))){
+          if(nb_computed==4){
+            tags$span(shiny::icon(c('check-circle')), "All months are available for this indicator", style="color:green;")
+          }else{
+            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available for this indicator",nb_computed,ifelse(nb_computed>1, "quarters are","quarter is")), style="color:orange;")
+          }
+        }else{
+          NULL
+        }
       }else{
         NULL
       }
