@@ -43,6 +43,11 @@ computation_server <- function(id, pool) {
   )
   
   available_periods<-reactiveVal(NULL)
+  selected_indicator<-reactiveValues(
+    indicator = NULL,
+    period_key = NULL,
+    period_value = NULL
+  )
  
   #getComputationResults
   getComputationResults <- function(indicator){
@@ -188,7 +193,8 @@ computation_server <- function(id, pool) {
                  i18n("COMPUTATION_RESULTS_TABLE_COLNAME_STATUS"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_DATE"),i18n("COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS")),
     options = list(
       columnDefs = list(list(visible=FALSE, targets=0)),
-      paging = FALSE,
+      paging = TRUE,
+      pageLength=12,
       searching = FALSE,
       preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
       drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } '),
@@ -196,10 +202,67 @@ computation_server <- function(id, pool) {
     )
   )
   
-  #observe on 'compute' button
-  observeEvent(input$computeButton,{
+  computeIndicator<-function(out,session,computation_indicator,computation_target,computation_year,computation_quarter=NULL,computation_month=NULL,compute_dependent_indicators=FALSE){
     
-    disable("computeButton")
+    if(compute_dependent_indicators){
+      
+      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
+      indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
+        fun_arg_value <- indicator$compute_with$fun_args[[x]]
+        parts <- unlist(strsplit(fun_arg_value, ":"))
+        key <- ""
+        value <- ""
+        if(length(parts)==2){
+          key <- parts[1]
+          value <- parts[2]
+        }
+        if(key=="process")return(value)}))
+      
+      for(indicator in indicators){
+        process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
+        
+        release_periods <- getStatPeriods(config = appConfig, id = indicator, target = "release")
+        #release_periods df(year, month)
+        year_already_computed <- release_periods[release_periods$year == computation_year, ]
+
+        if(nrow(year_already_computed)>0){
+          periods_already_computed <- year_already_computed[,process_def$compute_by$period]
+          periods_to_compute <- switch(process_def$compute_by$period,
+                                       "month" = setdiff(paste0("M",rep(1:12)), periods_already_computed),
+                                       "quarter" = setdiff(paste0("Q",rep(1:4)), periods_already_computed)
+          )
+        }else{
+          periods_to_compute <- switch(process_def$compute_by$period,
+                                       "month" = paste0("M",rep(1:12)),
+                                       "quarter" = paste0("Q",rep(1:4))
+          )
+        }
+        
+        print("THIS IS THE TEST-START")
+        print(periods_to_compute)
+        print("THIS IS THE TEST-END")
+        
+
+          
+          if(length(periods_to_compute)>0){
+          
+          for(period in periods_to_compute){
+            computeIndicator(
+              out = out,
+              session = session,
+              computation_indicator = indicator,
+              computation_target = computation_target,
+              computation_year = computation_year,
+              computation_quarter = if(process_def$compute_by$period == "quarter") period else NULL ,
+              computation_month = if(process_def$compute_by$period == "month") period else NULL,
+              compute_dependent_indicators = TRUE
+            )
+          }
+          }
+        
+      }
+      
+    }
     
     progress <- shiny::Progress$new(session, min = 0, max = 100)
     on.exit(progress$close())
@@ -207,10 +270,10 @@ computation_server <- function(id, pool) {
     out$computing <- TRUE
     raw_output <- NULL
     out$computation <- NULL
-    cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), input$computation_indicator))
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+    cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), computation_indicator))
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
     indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), 
-                             indicator$label, paste0(input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""},paste0(c(input$computation_quarter,input$computation_month),collapse="")))
+                             indicator$label, paste0(computation_year,if(!is.null(computation_quarter)|!is.null(computation_month)){"-"}else{""},paste0(c(computation_quarter,computation_month),collapse="")))
     
     progress$set(message = indicator_msg, detail = i18n("COMPUTATION_PROGRESS_SUB_LABEL"), value = 0)
     
@@ -220,35 +283,35 @@ computation_server <- function(id, pool) {
     
     #possible inputs
     indicator_args <- switch(indicator$compute_by$period,
-      "year" = c("year"),
-      "quarter" = c("year","quarter"),
-      "month" = c("year", "month")
+                             "year" = c("year"),
+                             "quarter" = c("year","quarter"),
+                             "month" = c("year", "month")
     )
     
     #compute indicator evaluating fun
     cat(sprintf(paste0(i18n("EXECUTE_INDICATOR_LABEL"),"'%s'\n"), indicator$value))
     progress$set(message = indicator_msg, detail = i18n("EXECUTE_R_SCRIPT_LABEL"), value = 40)
     indicator_output <- try(eval(parse(text = paste0(indicator$compute_with$fun, "(",
-      paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
-        fun_arg_value <- indicator$compute_with$fun_args[[x]]
-        parts <- unlist(strsplit(fun_arg_value, ":"))
-        key <- ""
-        value <- ""
-        if(length(parts)==2){
-          key <- parts[1]
-          value <- parts[2]
-        }
-        fun_arg_eval <- switch(key,
-          "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          #TODO add mode (release/staging) to getProcessOutput
-          "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","mode = \"",input$computation_mode,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-          "local" = getLocalCountryDataset(appConfig,value),
-          fun_arg_value
-        )
-        return(fun_arg_eval)
-      }), collapse = ", ")
-    ,")"))))
-
+                                                     paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
+                                                       fun_arg_value <- indicator$compute_with$fun_args[[x]]
+                                                       parts <- unlist(strsplit(fun_arg_value, ":"))
+                                                       key <- ""
+                                                       value <- ""
+                                                       if(length(parts)==2){
+                                                         key <- parts[1]
+                                                         value <- parts[2]
+                                                       }
+                                                       fun_arg_eval <- switch(key,
+                                                                              "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+                                                                              #TODO add mode (release/staging) to getProcessOutput
+                                                                              "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","target = \"",computation_target,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
+                                                                              "local" = getLocalCountryDataset(appConfig,value),
+                                                                              fun_arg_value
+                                                       )
+                                                       return(fun_arg_eval)
+                                                     }), collapse = ", ")
+                                                     ,")"))))
+    
     if(!is(indicator_output, "try-error")){
       cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
       
@@ -257,11 +320,14 @@ computation_server <- function(id, pool) {
       out$computation <- indicator_output
       out$computing <- FALSE
       out$indicator <- indicator
-      out$year <- input$computation_year
-      out$quarter <- if(!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
-      out$month <- if(!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-      out$filename <- paste0(indicator$id, "_", input$computation_year,if(!is.null(input$computation_quarter)|!is.null(input$computation_month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
-      out$filepath <- file.path(appConfig$store, "staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
+      out$year <- computation_year
+      out$quarter <- NULL
+      out$quarter <- if("quarter"%in%indicator$compute_by$period)if(!is.null(computation_quarter))if(!computation_quarter!="")if(startsWith(computation_quarter,"Q")){computation_quarter}else{paste0("Q",computation_quarter)}
+      out$month <- NULL
+      out$month <- if("month"%in%indicator$compute_by$period)if(!is.null(computation_month))if(computation_month!="")if(startsWith(computation_month,"M")){computation_month}else{paste0("M",computation_month)}
+      
+      out$filename <- paste0(indicator$id, "_", computation_year,if(!is.null(out$quarter)|!is.null(out$month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
+      out$filepath <- file.path(appConfig$store, "staging", indicator$id, computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
       out$filepath_release <- gsub("staging", "release", out$filepath)
       
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
@@ -278,26 +344,18 @@ computation_server <- function(id, pool) {
       progress$set(message = i18n("ERROR_DURING_COMPUTATION"), value = 100)
       out$computing <- FALSE
     }
-
-    enable("computeButton")
     
-  })
+    return(out)
+  }
   
-  #observe for computation / download
-  observe({
-    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-    #get indicator
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    out$indicator <- indicator
-    out$computation <- NULL
-    out$results <- getComputationResults(indicator)
+  #observe on 'compute' button
+  observeEvent(input$computeButton,{
     
-    out$year <- input$computation_year
-    out$quarter <- if("quarter"%in%indicator$compute_by$period &!is.null(input$computation_quarter)) paste0("Q",input$computation_quarter) else NULL
-    out$month <- if("month"%in%indicator$compute_by$period &!is.null(input$computation_month)) paste0("M",input$computation_month) else NULL
-    out$filename <- paste0(indicator$id, "_", input$computation_year,if(("quarter"%in%indicator$compute_by$period &!is.null(input$computation_quarter))|("month"%in%indicator$compute_by$period &!is.null(input$computation_month))){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
-    out$filepath <- file.path(appConfig$store, "staging", indicator$id, input$computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
-    out$filepath_release <- gsub("staging", "release", out$filepath)
+    disable("computeButton")
+    
+      out<-computeIndicator(out=out,session=session,computation_indicator=input$computation_indicator,computation_target=input$computation_target,computation_year=input$computation_year,computation_quarter=input$computation_quarter,computation_month=input$computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
+      
+    enable("computeButton")
     
     #DOWNLOAD CONTROLLERS
     #-------------------------------------------------------------------------------------------
@@ -320,42 +378,78 @@ computation_server <- function(id, pool) {
   #computation_by
   output$computation_by <- renderUI({
     tagList(
-      uiOutput(ns("computation_mode_wrapper")),
+      uiOutput(ns("computation_indicator_wrapper")),
+      uiOutput(ns("computation_target_wrapper")),
       uiOutput(ns("computation_year_wrapper")),
-      uiOutput(ns("dependsMessage")),
       uiOutput(ns("computation_month_wrapper")),
-      uiOutput(ns("computation_quarter_wrapper"))
+      uiOutput(ns("computation_quarter_wrapper")),
+      uiOutput(ns("computeButton_wrapper"))
     )
   })
   
-  observeEvent(c(input$computation_indicator,input$computation_mode),{
+  #UI OF INDICATORS LIST SELECTION
+  output$computation_indicator_wrapper<-renderUI({
+    req(AVAILABLE_INDICATORS)
+  selectizeInput(
+    ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
+    choices = setNames(sapply(AVAILABLE_INDICATORS, function(x){x$id}),sapply(AVAILABLE_INDICATORS, function(x){x$label})), selected = NULL,
+    options = list(
+      placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
+      onInitialize = I('function() { this.setValue(""); }'),
+       render = I('{
+                 option: function(item, escape) {
+                 return "<div><strong>" + escape(item.label) + "</strong>"
+                 }
+               }')
+    )
+  )
+  })
+  
+  observeEvent(input$computation_indicator,{
     req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    out$results <- getComputationResults(indicator)
-    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
-    available_periods_key <- available_periods_parts[1]
-    if(available_periods_key=="process"){
-      req(!is.null(input$computation_mode)&input$computation_mode!="")
+    
+    available_periods(NULL)
+    selected_indicator$indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
+    available_periods_parts <- unlist(strsplit(selected_indicator$indicator$compute_by$available_periods[1], ":"))
+    selected_indicator$period_key <- available_periods_parts[1]
+    selected_indicator$period_value <- available_periods_parts[2]
+    
+    out$results <- getComputationResults(selected_indicator$indicator)
+    out$computation <- NULL
+    
+    if(selected_indicator$period_key=="data"){
+      available_periods(eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)"))))
+      
+    }else{
+      req(!is.null(input$computation_target)&input$computation_target!="")
+      available_periods(eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")"))))
     }
-    available_periods_value <- available_periods_parts[2]
-    available_periods(switch(available_periods_key,
-                             "data" = eval(parse(text=paste0(available_periods_value, "(con = pool)"))),
-                             "process" = eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",available_periods_value,"\",mode = \"",input$computation_mode,"\")")))
-    ))
+
+  })
+  
+  observeEvent(c(input$computation_target),{
+    req(!is.null(input$computation_target)&input$computation_target!="")
+    req(selected_indicator$period_key=="process")
+    available_periods(eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")"))))
     
   })
   
   observeEvent(input$computation_indicator,{
     req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
-    available_periods_key <- available_periods_parts[1]
-    output$computation_mode_wrapper <- renderUI({
-      if(available_periods_key=="process"){
-        choices=c("release","staging")
+    req(!is.null(selected_indicator$period_key))
+    output$computation_target_wrapper <- renderUI({
+      
+      if(selected_indicator$period_key=="process"){
+        choices=c(setNames(c("release","release+staging"),c(i18n("COMPUTATION_TARGET_RELEASE_ITEM"),i18n("COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM"))))
+        fluidRow(
+          column(6,
         selectizeInput(
-          ns("computation_mode"), label = i18n("COMPUTATION_MODE_LABEL"), 
-          choices = choices, selected = "release"
+          ns("computation_target"), label = i18n("COMPUTATION_TARGET_LABEL"), 
+          choices = choices, selected = "release+staging"
+        )),
+        column(6,
+          uiOutput(ns("info_target_message"))
+        )
         )
       }else{
         NULL
@@ -363,27 +457,36 @@ computation_server <- function(id, pool) {
     })
   })
   
-  observeEvent(input$computation_year,{
-    req(!is.null(input$computation_year))
-    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
-    available_periods_parts <- unlist(strsplit(indicator$compute_by$available_periods[1], ":"))
-    available_periods_key <- available_periods_parts[1]
-    output$dependsMessage<-renderUI({
-      if(available_periods_key=="process"&nrow(subset(available_periods(),year==input$computation_year))>0){
+  observeEvent(input$computation_target,{
+    req(!is.null(input$computation_target))
+    output$info_target_message<-renderUI({
+      tags$span(shiny::icon(c('circle-info')),ifelse(input$computation_target=="release","Only already released indicators will be use in the computation","The missing dependent indicators will be automatically computed"), style="color:blue")
+    })
+  })
+  
+  observeEvent(available_periods(),{
+    req(!is.null(input$computation_year)&input$computation_year!="")
+    req(!is.null(selected_indicator$indicator))
+
+    output$computed_indicators_message<-renderUI({
+      if(selected_indicator$period_key=="process"&nrow(subset(available_periods(),year==input$computation_year))>0){
         period_computed=subset(available_periods(),year==input$computation_year)
         nb_computed<-nrow(period_computed)
         if(any("month" %in% names(period_computed))){
           if(nb_computed==12){
-            tags$span(shiny::icon(c('check-circle')), "All months are available for this indicator", style="color:green;")
+            tags$span(shiny::icon(c('check-circle')), sprintf("All months are available in %s for this indicator",input$computation_year), style="color:green;")
           }else{
-            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available for this indicator",nb_computed,ifelse(nb_computed>1, "months are","month is")), style="color:orange;")
+            tagList(
+            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available in %s for this indicator",nb_computed,ifelse(nb_computed>1, "months are","month is"),input$computation_year), style="color:orange;")
+            )
           }
         }else if(any("quarter" %in% names(period_computed))){
           if(nb_computed==4){
-            tags$span(shiny::icon(c('check-circle')), "All months are available for this indicator", style="color:green;")
+            tags$span(shiny::icon(c('check-circle')), sprintf("All months are available in %s for this indicator",input$computation_year), style="color:green;")
           }else{
-            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available for this indicator",nb_computed,ifelse(nb_computed>1, "quarters are","quarter is")), style="color:orange;")
+            tagList(
+            tags$span(shiny::icon(c('triangle-exclamation')), sprintf("Only %s %s available in %s for this indicator",nb_computed,ifelse(nb_computed>1, "quarters are","quarter is"),input$computation_year), style="color:orange;")
+            )
           }
         }else{
           NULL
@@ -394,39 +497,66 @@ computation_server <- function(id, pool) {
     })
   })
     
+  observeEvent(available_periods(),{
   output$computation_year_wrapper <- renderUI({
     req(!is.null(available_periods()))
     choices=unique(available_periods()$year)
+    if(!is.null(input$computation_target)){
+      fluidRow(
+        column(6,
+               selectizeInput(
+                 ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
+                 choices = choices[order(choices,decreasing = T)] , selected = NULL, 
+                 options = list(placeholder = if(length(choices)>0){i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")}else{i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY")},
+                                onInitialize = I('function() { this.setValue(""); }')))),
+        column(6,
+               uiOutput(ns("computed_indicators_message"))
+        )
+      )
+      }else{
     selectizeInput(
       ns("computation_year"), label = i18n("COMPUTATION_YEAR_LABEL"), 
-      choices = choices[order(choices)] , selected = if(!is.null(input$computation_year)){input$computation_year}else{max(choices)}, 
-      options = list(placeholder = if(length(choices)>0){i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")}else{i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY")}))
+      choices = choices[order(choices,decreasing = T)] , selected = NULL, 
+      options = list(placeholder = if(length(choices)>0){i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL")}else{i18n("COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY")},
+                     onInitialize = I('function() { this.setValue(""); }')))
+      }
+  })
   })
   
-  observeEvent(input$computation_year,{
-    req(!is.null(input$computation_year))
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$label == input$computation_indicator})][[1]]
+  observeEvent(c(input$computation_indicator,input$computation_year),{
+    #req(!is.null(input$computation_year)&input$computation_year!="")
     output$computation_month_wrapper <- renderUI({
-      if("month"%in%indicator$compute_by$period){
+      if("month"%in%selected_indicator$indicator$compute_by$period){
+        if(!is.null(input$computation_year))if(input$computation_year!=""){
+        
         choices=unique(subset(available_periods(),year==input$computation_year)$month)
         selectizeInput(
           ns("computation_month"), label = i18n("COMPUTATION_MONTH_LABEL"), 
           choices = choices[order(choices)], selected = NULL, 
-          options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"))
+          options = list(placeholder = i18n("COMPUTATION_MONTH_PLACEHOLDER_LABEL"),
+                         onInitialize = I('function() { this.setValue(""); }'))
         )
+        }else{
+          NULL
+        }
       }else{
         NULL
       }
     })
     
     output$computation_quarter_wrapper <- renderUI({
-      if("quarter"%in%indicator$compute_by$period){
+      if("quarter"%in%selected_indicator$indicator$compute_by$period){
+        if(!is.null(input$computation_year))if(input$computation_year!=""){
         choices=unique(subset(available_periods(),year==input$computation_year)$quarter)
         selectizeInput(
           ns("computation_quarter"), label = i18n("COMPUTATION_QUARTER_LABEL"), 
           choices = choices[order(choices)], selected = NULL, 
-          options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"))
+          options = list(placeholder = i18n("COMPUTATION_QUARTER_PLACEHOLDER_LABEL"),
+                         onInitialize = I('function() { this.setValue(""); }'))
         )
+      }else{
+        NULL
+      }
       }else{
         NULL
       }
@@ -437,6 +567,19 @@ computation_server <- function(id, pool) {
     
     
   })
+  
+  output$computeButton_wrapper<-renderUI({
+    req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+    req(!is.null(input$computation_year)&input$computation_year!="")
+    if("quarter"%in%selected_indicator$indicator$compute_by$period){
+    req(!is.null(input$computation_quarter)&input$computation_quarter!="")
+    }
+    if("month"%in%selected_indicator$indicator$compute_by$period){
+      req(!is.null(input$computation_month)&input$computation_month!="")
+    }
+    actionButton(ns("computeButton"), label = i18n("COMPUTATION_ACTIONBUTTON_LABEL"), class = "btn-primary")
+  })
+  
     
   #-------------------
   #RELEASE MANAGEMENT

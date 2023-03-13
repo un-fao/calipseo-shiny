@@ -968,19 +968,27 @@ getRemoteReferenceDataset <- function(name){
 }
 
 #getProcessOutput
-getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, mode = "release"){
-  filepath <- file.path(config$store, mode, id, year)
-  if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
-  if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
-  #filepath <- file.path(filepath, paste0(id, "_", paste0(year, if(!is.null(quarter)|!is.null(month)){"-"}else{""},paste0(c(quarter,month),collapse="")), ".csv"))
-  files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
-  print(files)
-  out <- do.call("rbind", lapply(files, readr::read_csv))
+getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, target = "release"){
+  if(target == "release+staging"){
+    out <- rbind(
+      getProcessOutputs(config, id, year, quarter, month, target = "release"),
+      getProcessOutputs(config, id, year, quarter, month, target = "staging")
+    )
+  }else{
+    filepath <- file.path(config$store, target, id, year)
+    if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
+    if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
+    files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
+    print(files)
+    out <- do.call("rbind", lapply(files, readr::read_csv))
+  }
+  
   return(out)
+  
 }
 
 #getStatPeriods
-getStatPeriods <- function(config, id,mode="release"){
+getStatPeriods <- function(config, id,target = "release"){
   
   out <- data.frame(
     year = integer(0),
@@ -989,37 +997,44 @@ getStatPeriods <- function(config, id,mode="release"){
     file = integer(0)
   )
   
-  target_folder<-sprintf("%s/%s/%s",config$store,mode, id)
-  
-  full_path<-list.files(target_folder,recursive = T,full.names = T)
-  files<-list.files(target_folder,recursive = T,full.names = F)
-  
-  if(length(files)>0){
-    x<-strsplit(files,"/")
-    years<-unlist(lapply(x, function(l) l[[1]]))
+  if(target == "release+staging"){
+    out <- rbind(
+      getStatPeriods(config, id, target = "release"),
+      getStatPeriods(config, id, target = "staging")
+    )
+  }else{
     
-    by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
+    target_folder<-sprintf("%s/%s/%s",config$store,target, id)
     
-    if(by_year){
-      out <- data.frame(year = years,file=full_path)
-    }else{
+    full_path<-list.files(target_folder,recursive = T,full.names = T)
+    files<-list.files(target_folder,recursive = T,full.names = F)
+    
+    if(length(files)>0){
+      x<-strsplit(files,"/")
+      years<-unlist(lapply(x, function(l) l[[1]]))
       
-      month_quarter<-unlist(lapply(x, function(l) l[[2]]))
+      by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
       
-      by_quarter = any(sapply(month_quarter, startsWith, "Q"))
-      by_month = any(sapply(month_quarter, startsWith, "M"))
-      
-      if(by_quarter){
-        out <- data.frame(year = years, quarter = month_quarter, file=full_path)
+      if(by_year){
+        out <- data.frame(year = years,file=full_path)
+      }else{
+        
+        month_quarter<-unlist(lapply(x, function(l) l[[2]]))
+        
+        by_quarter = any(sapply(month_quarter, startsWith, "Q"))
+        by_month = any(sapply(month_quarter, startsWith, "M"))
+        
+        if(by_quarter){
+          out <- data.frame(year = years, quarter = month_quarter, file=full_path)
+        }
+        if(by_month){
+          out <- data.frame(year = years, month = month_quarter, file=full_path)
+        }
+        
       }
-      if(by_month){
-        out <- data.frame(year = years, month = month_quarter, file=full_path)
-      }
-      
     }
   }
   
-
   return(out)
 }
 
