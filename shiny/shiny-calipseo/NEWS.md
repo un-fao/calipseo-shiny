@@ -17,6 +17,7 @@
 _Computation_
 
 * [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Add support for mode (release/staging) selection for inter-dependent indicators
+* [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Add message to inform if all downstream indicatore are computed
 
 ## New features
 
@@ -24,6 +25,7 @@ _Computation_
 
 * [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
 * [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
+* [CALR-157](https://sdlc.review.fao.org/jira/browse/CALR-157) Computation module -  add support for triggering upstream indicators in cascade 
 
 **Module features**
 
