@@ -163,10 +163,11 @@ computation_server <- function(id, pool) {
            #release handler
            "release" = {
              observeEvent(input[[button_id]],{
-               filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
+               filename <- paste0(df[i,"Id"], "_", df[i,"Period"], ".csv")
                filepath_staging <- file.path(appConfig$store, "staging", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
                filepath <- file.path(appConfig$store, "release", df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
                torelease(filepath_staging)
+               print(filepath_staging)
                alreadyReleased <- file.exists(filepath)
                showModal(releaseModal(session, warning = alreadyReleased))
              })
@@ -416,6 +417,7 @@ computation_server <- function(id, pool) {
     
     out$results <- getComputationResults(selected_indicator$indicator)
     out$computation <- NULL
+    out$indicator <- selected_indicator$indicator
     
     if(selected_indicator$period_key=="data"){
       available_periods(eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)"))))
@@ -592,7 +594,11 @@ computation_server <- function(id, pool) {
       if (warning){
         div(tags$b(i18n("DATASET_RELEASED_LABEL"), style = "color: orange; font-weight:bold;"))
       }else{ 
-        div(tags$b(i18n("CONFIRMATION_TO_CREATE_RELEASE")))
+        tagList(
+        div(tags$b(i18n("CONFIRMATION_TO_CREATE_RELEASE"))),
+        checkboxInput(ns("releaseDependent"), label=i18n("RELEASE_DEPENDENT_LABEL"), value = FALSE, width = NULL)
+        )
+        
       },
       footer = tagList(
         actionButton(session$ns("cancelRelease"),i18n("TO_CANCEL_RELEASE_LABEL")),
@@ -601,22 +607,73 @@ computation_server <- function(id, pool) {
     )
   }
   
+  
+  releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
+    
+    if(release_dependent_indicators){
+      decode_target<-unlist(strsplit(target ,"/staging/"))[2]
+      decode_target<-unlist(strsplit(decode_target,"/"))
+      computation_indicator<-decode_target[1]
+      computation_year<-decode_target[2]
+      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
+      indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
+        fun_arg_value <- indicator$compute_with$fun_args[[x]]
+        parts <- unlist(strsplit(fun_arg_value, ":"))
+        key <- ""
+        value <- ""
+        if(length(parts)==2){
+          key <- parts[1]
+          value <- parts[2]
+        }
+        if(key=="process")return(value)}))
+      
+      for(indicator in indicators){
+        process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
+        
+        staging_indicators <- getStatPeriods(config = appConfig, id = indicator, target = "staging")
+        #r
+        indicators_to_release <- staging_indicators[staging_indicators$year == computation_year, ]$file
+        
+        if(length(indicators_to_release)>0){
+          
+          for(dependent_target in indicators_to_release){
+            releaseIndicator(
+              out = out,
+              session = session,
+              target = dependent_target,
+              release_dependent_indicators = TRUE
+            )
+          }
+        }
+        
+      }
+      
+    }
+    
+    file.copy(
+      from = target,
+      to = gsub("staging", "release", target),
+      overwrite = TRUE
+    )
+    file.remove(target)
+    
+    session$userData$computation_new(Sys.time())
+    if(file.exists(gsub("staging", "release", target))){
+      target<-NULL
+      out$results <- getComputationResults(out$indicator)
+    }
+    torelease(target)
+    
+    return(out)
+    
+  }
+  
   # When OK button is pressed, attempt to load the data set. If successful,
   # remove the modal. If not show another modal, but this time with a failure
   # message.
   observeEvent(input$goRelease, {
-    file.copy(
-      from = torelease(),
-      to = gsub("staging", "release", torelease()),
-      overwrite = TRUE
-    )
-    file.remove(torelease())
-    session$userData$computation_new(Sys.time())
-    if(file.exists(gsub("staging", "release", torelease()))){
-      torelease(NULL)
-      out$results <- getComputationResults(out$indicator)
-      removeModal()
-    }
+    out<-releaseIndicator(out=out,session=session,target=torelease(),release_dependent_indicators=input$releaseDependent)
+    removeModal()
   })
   observeEvent(input$cancelRelease,{
     torelease(NULL)

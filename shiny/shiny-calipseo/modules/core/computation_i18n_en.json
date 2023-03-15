@@ -42,6 +42,7 @@
   /*release information*/
   "CREATE_RELEASE_LABEL" : "Create a release",
   "RELEASE_NO_DATA_LABEL" : "No data released yet!",
+  "RELEASE_DEPENDENT_LABEL" : "Release also dependent indicators",
   "LAST_RELEASE_LABEL" : "Last release",
   "GENERATE_DOWNLOAD_REPORT_LABEL" : "Generate & download report",
   "DATASET_RELEASED_LABEL" : "Dataset already released. Click OK to overwrite release, or cancel.",
