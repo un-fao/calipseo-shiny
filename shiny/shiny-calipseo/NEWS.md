@@ -1,6 +1,27 @@
-# **shiny-calipseo [v1.3.0] - 2023-02-02**
+# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-03-16**
 
-## Improvements
+# Enhancements
+
+**Core enhancements**
+
+* [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Computation module - Add support for mode (release/staging) selection for inter-dependent indicators
+* [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Computation module - Add message to inform if all upstream indicators are going to be computed (case of inter-dependent indicators)
+
+# New features
+
+**Core new features**
+
+* [CALR-157](https://sdlc.review.fao.org/jira/browse/CALR-157) Computation module -  add support for triggering upstream indicators in cascade 
+* [CALR-161](https://sdlc.review.fao.org/jira/browse/CALR-161) Computation module -  add capability to release staging indicators in cascade if a toplevel indicator is released
+
+**Module new features**
+
+* [CALR-158](https://sdlc.review.fao.org/jira/browse/CALR-158) LBN - Add statistical indicator to compute GFCM Task II.1
+* [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
+
+# **shiny-calipseo [v1.3.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.3.0.zip) - 2022-02-02**
+
+## Enhancements
 
 **Core enhancements**
 
@@ -9,15 +30,8 @@
 * [CALR-146](https://sdlc.review.fao.org/jira/browse/CALR-146) Make the computation module generic (initially done for TTO)
 * [CALR-147](https://sdlc.review.fao.org/jira/browse/CALR-147) Use computation module (statistics storage) for Artfish module
 * [CALR-152](https://sdlc.review.fao.org/jira/browse/CALR-152) Computation module needs to trigger changes for dependent modules
-* [CALR-153](https://sdlc.review.fao.org/jira/browse/CALR-153) Computation module - refactor periods handling (to check actual file existance)
+* [CALR-153](https://sdlc.review.fao.org/jira/browse/CALR-153) Computation module - refactor periods handling (to check actual file existence)
 * [CALR-155](https://sdlc.review.fao.org/jira/browse/CALR-155) Use ASFIS species / species groups from fdiwg repository instead of RefData
-
-**Module enhancements**
-
-_Computation_
-
-* [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Add support for mode (release/staging) selection for inter-dependent indicators
-* [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Add message to inform if all downstream indicatore are computed
 
 ## New features
 
@@ -25,15 +39,11 @@ _Computation_
 
 * [CALR-150](https://sdlc.review.fao.org/jira/browse/CALR-150) Computation module - enable external store for storing computation results
 * [CALR-154](https://sdlc.review.fao.org/jira/browse/CALR-154) Computation module - need to be permissive for visualizing statistics (staging/release)
-* [CALR-157](https://sdlc.review.fao.org/jira/browse/CALR-157) Computation module -  add support for triggering upstream indicators in cascade 
-* [CALR-161](https://sdlc.review.fao.org/jira/browse/CALR-161) Computation module -  add capability to release staging indicators in cascade if a toplevel indicator is released
 
 **Module features**
 
 * [CALR-142](https://sdlc.review.fao.org/jira/browse/CALR-142) New module for SUR - export to CWP RH / WECAFC-FIRMS RDB formats
 * [CALR-148](https://sdlc.review.fao.org/jira/browse/CALR-148) LBN - Add statistical indicator to compute Artfish estimates by fleet segment
-* [CALR-158](https://sdlc.review.fao.org/jira/browse/CALR-158) LBN - Add statistical indicator to compute GFCM Task II.1
-* [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
 
 **Miscs**
 
