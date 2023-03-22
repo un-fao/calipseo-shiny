@@ -92,8 +92,8 @@ loadLocalCountryDatasets(appConfig)
 
 #remote datasets
 #---------------------------------------------------------------------------------------
-loadRemoteReferenceDataset("cl_asfis_species","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cl_asfis_species.csv")
-loadRemoteReferenceDataset("cl_isscaap_group","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cl_isscaap_group.csv")
+loadRemoteReferenceDataset("cl_asfis_species","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cwp/cl_asfis_species.csv")
+loadRemoteReferenceDataset("cl_isscaap_group","https://raw.githubusercontent.com/fdiwg/fdi-codelists/main/global/cwp/cl_isscaap_group.csv")
 
 #language/i18n
 #---------------------------------------------------------------------------------------
