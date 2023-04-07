@@ -1,13 +1,20 @@
-# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-03-16**
+# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-07**
 
-# Enhancements
+## Corrections
+
+**Core corrections**
+
+* [CALR-162](https://sdlc.review.fao.org/jira/browse/CALR-162) Computation module - Error with handling local datasets
+* [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to computeIndicator
+
+## Enhancements
 
 **Core enhancements**
 
 * [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Computation module - Add support for mode (release/staging) selection for inter-dependent indicators
 * [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Computation module - Add message to inform if all upstream indicators are going to be computed (case of inter-dependent indicators)
 
-# New features
+## New features
 
 **Core new features**
 
