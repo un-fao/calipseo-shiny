@@ -42,7 +42,8 @@
       "script": "assets/country/LBN/compute_gfcm_task_II_1.R",
       "fun" : "compute_gfcm_task_II_1",
       "fun_args": {
-		    "data" : "process:artfish_estimates_by_fleet_segment"
+		    "data" : "process:artfish_estimates_by_fleet_segment",
+		    "socio" : "local:socio_2018.xlsx"
       }
     }
   },

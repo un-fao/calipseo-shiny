@@ -229,13 +229,13 @@ computation_server <- function(id, pool) {
         if(nrow(year_already_computed)>0){
           periods_already_computed <- year_already_computed[,process_def$compute_by$period]
           periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = setdiff(paste0("M",rep(1:12)), periods_already_computed),
-                                       "quarter" = setdiff(paste0("Q",rep(1:4)), periods_already_computed)
+                                       "month" = setdiff(rep(1:12), periods_already_computed),
+                                       "quarter" = setdiff(rep(1:4), periods_already_computed)
           )
         }else{
           periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = paste0("M",rep(1:12)),
-                                       "quarter" = paste0("Q",rep(1:4))
+                                       "month" = rep(1:12),
+                                       "quarter" = rep(1:4)
           )
         }
         
@@ -292,26 +292,30 @@ computation_server <- function(id, pool) {
     #compute indicator evaluating fun
     cat(sprintf(paste0(i18n("EXECUTE_INDICATOR_LABEL"),"'%s'\n"), indicator$value))
     progress$set(message = indicator_msg, detail = i18n("EXECUTE_R_SCRIPT_LABEL"), value = 40)
-    indicator_output <- try(eval(parse(text = paste0(indicator$compute_with$fun, "(",
-                                                     paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
-                                                       fun_arg_value <- indicator$compute_with$fun_args[[x]]
-                                                       parts <- unlist(strsplit(fun_arg_value, ":"))
-                                                       key <- ""
-                                                       value <- ""
-                                                       if(length(parts)==2){
-                                                         key <- parts[1]
-                                                         value <- parts[2]
-                                                       }
-                                                       fun_arg_eval <- switch(key,
-                                                                              "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-                                                                              #TODO add mode (release/staging) to getProcessOutput
-                                                                              "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","target = \"",computation_target,"\", ", paste0(indicator_args, sprintf(" = input$computation_%s", indicator_args), collapse = ", "),")"),
-                                                                              "local" = getLocalCountryDataset(appConfig,value),
-                                                                              fun_arg_value
-                                                       )
-                                                       return(fun_arg_eval)
-                                                     }), collapse = ", ")
-                                                     ,")"))))
+    
+    indicator_script_command<-paste0(indicator$compute_with$fun, "(",
+                                     paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
+                                       fun_arg_value <- indicator$compute_with$fun_args[[x]]
+                                       parts <- unlist(strsplit(fun_arg_value, ":"))
+                                       key <- ""
+                                       value <- ""
+                                       if(length(parts)==2){
+                                         key <- parts[1]
+                                         value <- parts[2]
+                                       }
+                                       fun_arg_eval <- switch(key,
+                                                              "data" = paste0(value, "(con = pool, ",paste0(indicator_args, sprintf(" = computation_%s", indicator_args), collapse = ", "),")"),
+                                                              #TODO add mode (release/staging) to getProcessOutput
+                                                              "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","target = \"",computation_target,"\", ", paste0(indicator_args, sprintf(" = computation_%s", indicator_args), collapse = ", "),")"),
+                                                              "local" = paste0("getLocalCountryDataset(appConfig, \"",value,"\")"),
+                                                              fun_arg_value
+                                       )
+                                       return(fun_arg_eval)
+                                     }), collapse = ", ")
+                                     ,")")
+    print(indicator_script_command)
+    
+    indicator_output <- try(eval(parse(text = indicator_script_command)))
     
     if(!is(indicator_output, "try-error")){
       cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
@@ -323,9 +327,9 @@ computation_server <- function(id, pool) {
       out$indicator <- indicator
       out$year <- computation_year
       out$quarter <- NULL
-      out$quarter <- if("quarter"%in%indicator$compute_by$period)if(!is.null(computation_quarter))if(!computation_quarter!="")if(startsWith(computation_quarter,"Q")){computation_quarter}else{paste0("Q",computation_quarter)}
+      out$quarter <- if("quarter"%in%indicator$compute_by$period)if(!is.null(computation_quarter))if(!computation_quarter!="")if(startsWith(as.character(computation_quarter),"Q")){computation_quarter}else{paste0("Q",computation_quarter)}
       out$month <- NULL
-      out$month <- if("month"%in%indicator$compute_by$period)if(!is.null(computation_month))if(computation_month!="")if(startsWith(computation_month,"M")){computation_month}else{paste0("M",computation_month)}
+      out$month <- if("month"%in%indicator$compute_by$period)if(!is.null(computation_month))if(computation_month!="")if(startsWith(as.character(computation_month),"M")){computation_month}else{paste0("M",computation_month)}
       
       out$filename <- paste0(indicator$id, "_", computation_year,if(!is.null(out$quarter)|!is.null(out$month)){"-"}else{""}, paste0(c(out$quarter, out$month), collapse=""), ".csv")
       out$filepath <- file.path(appConfig$store, "staging", indicator$id, computation_year, paste0(c(out$quarter, out$month), collapse=""), out$filename)
