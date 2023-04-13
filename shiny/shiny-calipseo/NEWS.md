@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-07**
+# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-13**
 
 ## Corrections
 
@@ -13,6 +13,8 @@
 
 * [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Computation module - Add support for mode (release/staging) selection for inter-dependent indicators
 * [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Computation module - Add message to inform if all upstream indicators are going to be computed (case of inter-dependent indicators)
+* [CALR-164](https://sdlc.review.fao.org/jira/browse/CALR-164) Make individual modules generic
+
 
 ## New features
 
@@ -20,6 +22,7 @@
 
 * [CALR-157](https://sdlc.review.fao.org/jira/browse/CALR-157) Computation module -  add support for triggering upstream indicators in cascade 
 * [CALR-161](https://sdlc.review.fao.org/jira/browse/CALR-161) Computation module -  add capability to release staging indicators in cascade if a toplevel indicator is released
+* [CALR-165](https://sdlc.review.fao.org/jira/browse/CALR-165) Create config file for LCA
 
 **Module new features**
 
