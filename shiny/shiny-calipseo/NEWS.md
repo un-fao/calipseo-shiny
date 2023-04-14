@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-13**
+# **shiny-calipseo [v1.3.20230414] ONGOING DEVELOPMENT - 2022-04-14**
 
 ## Corrections
 
@@ -6,6 +6,7 @@
 
 * [CALR-162](https://sdlc.review.fao.org/jira/browse/CALR-162) Computation module - Error with handling local datasets
 * [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to computeIndicator
+* [CALR-166](https://sdlc.review.fao.org/jira/browse/CALR-166) Individuals overview/breakdown - Add controls for age pyramid display in case of no data for non-fishers
 
 ## Enhancements
 
