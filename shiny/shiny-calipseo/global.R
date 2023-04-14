@@ -60,13 +60,8 @@ CALIPSEO_SHINY_ENV <- new.env()
 #utilities
 #---------------------------------------------------------------------------------------
 #core R script utils
-source("assets/core/utils.R")
-source("assets/core/auth_utils.R")
-source("assets/core/module_utils.R")
-source("assets/core/data_access_utils.R")
-source("assets/core/ui_utils.R")
-source("assets/core/js_utils.R")
-source("assets/core/vessel_utils.R")
+core_assets <- list.files("assets/core", pattern = ".R", full.names = T)
+for(core_asset in core_assets) source(core_asset)
 
 #country R script utils
 country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 
