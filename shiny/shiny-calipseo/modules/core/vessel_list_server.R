@@ -43,7 +43,6 @@ vessel_list_server <- function(id, pool) {
     names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
     
     INFO("vessel-list server: Joining vessel list data and license permits data")
-    df$Details<- ""
     df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                 "HOME_PORT","REG_PORT","Details")]
     
