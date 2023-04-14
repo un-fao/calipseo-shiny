@@ -3,6 +3,8 @@ individual_breakdown_server <- function(id, pool) {
   
   moduleServer(id, function(input, output, session) {
     
+    ns <- session$ns
+    
     ind_overview <- accessIndividualOverview(pool)
     non_fisher <- ind_overview[ind_overview$Category =='nonfisher',]
     
@@ -93,7 +95,10 @@ individual_breakdown_server <- function(id, pool) {
           })
           
           
-          output$fisher_age_gender <- renderPlotly({plot_df(dat, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))})
+          output$fisher_age_gender <- renderPlotly({plot_pyramid_data(dat, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))})
+          output$fisher_age_gender_wrapper <- renderUI({
+            plotlyOutput(ns("fisher_age_gender"))
+          })
           
           
         }else{
@@ -110,8 +115,14 @@ individual_breakdown_server <- function(id, pool) {
             
           })
           
-          output$fisher_age_gender <- renderPlotly({plot_df(non_fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))})
-          
+          output$fisher_age_gender <- renderPlotly({plot_pyramid_data(non_fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))})
+          output$fisher_age_gender_wrapper <- renderUI({
+            if(nrow(non_fisher)>0){
+              plotlyOutput(ns("fisher_age_gender"))
+            }else{
+              tags$div(i18n("INDIVIDUAL_BREAKDOWN_LABEL_NODATA"))
+            }
+          })
         }
         
         

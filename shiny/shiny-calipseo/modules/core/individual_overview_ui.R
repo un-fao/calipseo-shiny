@@ -13,7 +13,7 @@ individual_overview_ui <- function(id){
           div(class = 'row',div(class = 'col-md-6',box(width = 12,title = i18n("INDIVIDUAL_OVERVIEW_TITLE_FISHER"),
                                                        plotlyOutput(ns("fisher_age_gender")))),
               div(class = 'col-md-6',box(width = 12,title =i18n("INDIVIDUAL_OVERVIEW_TITLE_NONFISHER"),
-                                         plotlyOutput(ns("non_fisher_age_gender")))))
+                                         uiOutput(ns("non_fisher_age_gender_wrapper")))))
           
   )
   
