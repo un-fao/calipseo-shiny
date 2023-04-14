@@ -23,7 +23,7 @@ individual_breakdown_ui <- function(id){
                                                      selectizeInput(ns("filter_fisher_category"),label = i18n("SELECT_FISHER_CATEGORY"),choices = c(i18n("INDIVIDUAL_LIST_LABEL_OWNER"),i18n("INDIVIDUAL_LIST_LABEL_CAPTAIN"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_ID"),i18n("INDIVIDUAL_LIST_LABEL_HOLDER_FISHING_LICENSE")),multiple = FALSE, width = '40%')),
                                                    box(width = 12, height = 480, title = uiOutput(ns('title_box_gender')), status = "primary", solidHeader= TRUE, plotlyOutput(ns("fisher_gender"))),
                                                    box(width = 12, height = 480, title = uiOutput(ns('title_box_pyramid')), status = "primary", solidHeader= TRUE,
-                                                       plotlyOutput(ns("fisher_age_gender"))))),
+                                                       uiOutput(ns("fisher_age_gender_wrapper"))))),
                 shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_INDIVIDUAL_BREAKDOWN_EDUCATION"),box_height='70px',
                                                div(h4(i18n("INDIVIDUAL_BREAKDOWN_TITLE_EDUCATION")),
                                                    span(checkboxInput(ns("fisher_chck_edu"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_FISHER")),checkboxInput(ns("nonfisher_chck_edu"), label = i18n("INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER"))),

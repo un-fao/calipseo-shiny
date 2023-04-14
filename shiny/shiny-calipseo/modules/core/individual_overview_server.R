@@ -213,11 +213,17 @@ individual_overview_server <- function(id, pool) {
     
     
     
-    output$fisher_age_gender <- renderPlotly({plot_df(fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))})
+    output$fisher_age_gender <- renderPlotly({plot_pyramid_data(fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))})
     
-    output$non_fisher_age_gender <- renderPlotly({plot_df(non_fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))})
+    output$non_fisher_age_gender <- renderPlotly({(plot_pyramid_data(non_fisher, fill = i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL")))})
     
-    
+    output$non_fisher_age_gender_wrapper <- renderUI({
+      if(nrow(non_fisher)>0){
+        plotlyOutput(ns("non_fisher_age_gender"))
+      }else{
+        tags$div(i18n("INDIVIDUAL_OVERVIEW_LABEL_NODATA"))
+      }
+    })
     
   }
   

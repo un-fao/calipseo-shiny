@@ -17,7 +17,7 @@ filter_category <- function(data,input,column_indexes){
 }
 
 
-pyramid_df <- function(data, subset = NULL){
+prepare_pyramid_data <- function(data, subset = NULL){
   
   data <- data[,-2]
   
@@ -39,12 +39,12 @@ pyramid_df <- function(data, subset = NULL){
 
 
 
-plot_df <- function(category, fill){
+plot_pyramid_data <- function(category, fill){
   
   age <- Age_comp(category[,c('Gender','DOB', 'Edulevel')], Prep = TRUE)
   
-  Male <- pyramid_df(age, subset = i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"))
-  Female <- pyramid_df(age, subset = i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"))
+  Male <- prepare_pyramid_data(age, subset = i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"))
+  Female <- prepare_pyramid_data(age, subset = i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"))
   
   pyramid_df <- rbind(Female,Male)
   

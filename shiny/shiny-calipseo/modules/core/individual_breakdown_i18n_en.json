@@ -20,6 +20,7 @@
   
   "INDIVIDUAL_BREAKDOWN_TITLE_FISHER" : "Fisher",
   "INDIVIDUAL_BREAKDOWN_TITLE_NONFISHER" : "Non Fisher",
+  "INDIVIDUAL_BREAKDOWN_LABEL_NODATA" : "No data",
   
   /*individual_breakdown labels*/ 
   "INDIVIDUAL_TYPE" :"Type of Individual",
