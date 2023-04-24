@@ -78,5 +78,20 @@
 		    "data" : "process:artfish_estimates_by_fleet_segment"
       }
     }
+  },
+   {
+    "id": "fao",
+    "label": "FAO reporting",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "process:artfish_estimates"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/compute_fao.R",
+      "fun" : "compute_fao",
+      "fun_args": {
+		    "data" : "process:artfish_estimates"
+      }
+    }
   }
 ]
