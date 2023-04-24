@@ -80,6 +80,22 @@
     }
   },
    {
+    "id": "gfcm_task_III",
+    "label": "GFCM - Task III reporting",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "data:accessSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/compute_gfcm_task_III.R",
+      "fun" : "compute_gfcm_task_III",
+      "fun_args": {
+		    "data" : "data:accessTripDetailByFleetSegment",
+		    "vulnerable_sp" : "local:vulnerable_species_list.xlsx" 
+      }
+    }
+  },
+   {
     "id": "fao",
     "label": "FAO reporting",
     "compute_by": {
