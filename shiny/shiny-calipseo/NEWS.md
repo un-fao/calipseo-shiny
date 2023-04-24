@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.20230420] ONGOING DEVELOPMENT - 2022-04-20**
+# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-24**
 
 ## Corrections
 
@@ -6,7 +6,6 @@
 
 * [CALR-162](https://sdlc.review.fao.org/jira/browse/CALR-162) Computation module - Error with handling local datasets
 * [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to computeIndicator
-* [CALR-166](https://sdlc.review.fao.org/jira/browse/CALR-166) Individuals overview/breakdown - Add controls for age pyramid display in case of no data for non-fishers
 
 ## Enhancements
 
@@ -15,7 +14,7 @@
 * [CALR-156](https://sdlc.review.fao.org/jira/browse/CALR-156) Computation module - Add support for mode (release/staging) selection for inter-dependent indicators
 * [CALR-160](https://sdlc.review.fao.org/jira/browse/CALR-160) Computation module - Add message to inform if all upstream indicators are going to be computed (case of inter-dependent indicators)
 * [CALR-164](https://sdlc.review.fao.org/jira/browse/CALR-164) Make individual modules generic
-
+* [CALR-170](https://sdlc.review.fao.org/jira/browse/CALR-170) LBN - adjust digit number of statistical indicators
 
 ## New features
 
@@ -29,6 +28,9 @@
 
 * [CALR-158](https://sdlc.review.fao.org/jira/browse/CALR-158) LBN - Add statistical indicator to compute GFCM Task II.1
 * [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
+* [CALR-167](https://sdlc.review.fao.org/jira/browse/CALR-167) LBN - Add statistical indicator to compute GFCM Task I
+* [CALR-168](https://sdlc.review.fao.org/jira/browse/CALR-168) LBN - Add statistical indicator to compute FAO report
+* [CALR-169](https://sdlc.review.fao.org/jira/browse/CALR-169) LBN - Add statistical indicator to compute GFCM Task III
 
 # **shiny-calipseo [v1.3.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.3.0.zip) - 2022-02-02**
 
