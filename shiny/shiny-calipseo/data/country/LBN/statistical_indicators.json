@@ -32,6 +32,22 @@
     }
   },
    {
+    "id": "gfcm_task_I",
+    "label": "GFCM - Task I reporting",
+    "compute_by": {
+      "period": "year",
+      "available_periods": "process:artfish_estimates"
+    },
+    "compute_with": {
+      "script": "assets/country/LBN/compute_gfcm_task_I.R",
+      "fun" : "compute_gfcm_task_I",
+      "fun_args": {
+		    "data" : "process:artfish_estimates",
+		    "socio" : "local:socio_2018.xlsx"
+      }
+    }
+  },
+   {
     "id": "gfcm_task_II_1",
     "label": "GFCM - Task II.1 reporting",
     "compute_by": {
