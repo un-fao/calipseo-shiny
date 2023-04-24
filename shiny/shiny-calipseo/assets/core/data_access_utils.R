@@ -584,6 +584,17 @@ accessFishingUnitsFromDB <- function(con){
   return(fa)
 }
 
+#accessTripDetailByFleetSegmentFromDB
+accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
+  fa_sql <- readSQLScript("data/core/sql/species_trip_detail_by_fleet_segment.sql")
+  if(!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE year(ft.DATE_TO) = %s",year))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
 #GENERIC DATA ACCESSORS (considering this needs to be replaced later by API calls)
@@ -866,7 +877,7 @@ accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 }
 
 #accessEffortDataByFleetSegment
-accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL){
   accessEffortDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
@@ -883,6 +894,11 @@ accessLandingDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_uni
 #accessFishingUnits
 accessFishingUnits<- function(con){
   accessFishingUnitsFromDB(con)
+}
+
+#accessTripDetailByFleetSegment
+accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){
+  accessTripDetailByFleetSegmentFromDB(con,year=year,month=month)
 }
 
 #Country profile
