@@ -3,9 +3,9 @@ compute_gfcm_task_II_2<-function(ref_species,data){
   
   data<-data%>%
     group_by(EST_YEAR,EST_FS,EST_SPC)%>%
-    summarise(TOTAL_LANDING= sum(EST_LND_CATCH,na.rm=T)/1000,
+    summarise(TOTAL_LANDING= round(sum(EST_LND_CATCH,na.rm=T)/1000,0),
               TOTAL_DISCARDS = 0,
-              TOTAL_CATCH = sum(EST_LND_CATCH,na.rm=T)/1000
+              TOTAL_CATCH = round(sum(EST_LND_CATCH,na.rm=T)/1000,0)
               )%>%
     ungroup()%>%
     mutate(COMMENT="",
