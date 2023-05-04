@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.9999] ONGOING DEVELOPMENT - 2022-04-24**
+# **shiny-calipseo [v1.3.20230425] ONGOING DEVELOPMENT - 2022-04-25**
 
 ## Corrections
 
@@ -26,11 +26,11 @@
 
 **Module new features**
 
+* [CALR-167](https://sdlc.review.fao.org/jira/browse/CALR-167) LBN - Add statistical indicator to compute GFCM Task I
 * [CALR-158](https://sdlc.review.fao.org/jira/browse/CALR-158) LBN - Add statistical indicator to compute GFCM Task II.1
 * [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
-* [CALR-167](https://sdlc.review.fao.org/jira/browse/CALR-167) LBN - Add statistical indicator to compute GFCM Task I
-* [CALR-168](https://sdlc.review.fao.org/jira/browse/CALR-168) LBN - Add statistical indicator to compute FAO report
 * [CALR-169](https://sdlc.review.fao.org/jira/browse/CALR-169) LBN - Add statistical indicator to compute GFCM Task III
+* [CALR-168](https://sdlc.review.fao.org/jira/browse/CALR-168) LBN - Add statistical indicator to compute FAO report
 
 # **shiny-calipseo [v1.3.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.3.0.zip) - 2022-02-02**
 
