@@ -68,6 +68,13 @@ accessIndividualDetailsFromDB <- function(con){
   return(individual_details)
 } 
 
+#accessIndividualInfoFromDB
+accessIndividualInfoFromDB <- function(con){
+  individual_info_sql <- readSQLScript("data/core/sql/individual_info.sql")
+  individual_info <- suppressWarnings(dbGetQuery(con, individual_info_sql))
+  return(individual_info)
+} 
+
 
 #accessVesselQaNamesFromDB
 accessVesselQaNamesFromDB <- function(con){
@@ -620,6 +627,11 @@ accessCountryPrefCurrency <- function(con){
 #accessIndividualDetailsFromDB
 accessIndividualDetails <- function(con){
   accessIndividualDetailsFromDB(con)
+}
+
+#accessIndividualInfoFromDB
+accessIndividualInfo <- function(con){
+  accessIndividualInfoFromDB(con)
 }
 
 

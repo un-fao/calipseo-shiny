@@ -39,6 +39,7 @@
     {"package": "plotly", "version": "4.10.0", "repos": "https://cloud.r-project.org"},
     {"package": "leaflet", "version": "2.1.1", "repos": "https://cloud.r-project.org"},
     {"package": "leaflet.minicharts", "version": "0.6.2", "repos": "https://cloud.r-project.org"},
-    {"package": "lubridate", "version": "1.8.0", "repos": "https://cloud.r-project.org"}
+    {"package": "lubridate", "version": "1.8.0", "repos": "https://cloud.r-project.org"},
+    {"package": "sortable", "version": "0.5.0", "repos": "https://cloud.r-project.org"}
   ]
 }
