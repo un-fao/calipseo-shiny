@@ -1,0 +1,17 @@
+{
+    
+  /*Pretty table keys on the SERVER*/
+  "BUCKET_HEADER" : "Drag the items in choosen bucket to display desired statistics",
+  "AVAILABLE_VARIABLES" : "Unselected variables",
+  "ROW_VARIABLES" : "Group by",
+  "COL_VARIABLES" : "Explode view",
+  
+  
+  /*Plot and datatable/export labels*/
+  "TOTAL_LABEL" : "Grand Total",
+  "EMPTY_TABLE_MESSAGE" :"(Please select variables to display statistic table)",
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "statistics_table",
+  "STATISTIC_PDF_TITLE" : "Statistics table"
+   
+}
