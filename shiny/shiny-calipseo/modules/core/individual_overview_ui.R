@@ -5,15 +5,13 @@ individual_overview_ui <- function(id){
   
   tabItem(tabName = "individual_overview",
           div(class = 'row',style = "margin:12px;",htmlOutput(ns("individual_overview_info"))),
-          div(uiOutput(ns('descrip_title')),br(),
-              uiOutput(ns('fisher_dash')),
-              uiOutput(ns('nonfisher_dash'))),
-          div(class = 'row',box(width = 12,title = i18n("INDIVIDUAL_OVERVIEW_TITLE_INDIVIDUAL_DETAIL"), 
-                                withSpinner(DT::dataTableOutput(ns("category_fishery_dt"))))),br(),
-          div(class = 'row',div(class = 'col-md-6',box(width = 12,title = i18n("INDIVIDUAL_OVERVIEW_TITLE_FISHER"),
-                                                       plotlyOutput(ns("fisher_age_gender")))),
-              div(class = 'col-md-6',box(width = 12,title =i18n("INDIVIDUAL_OVERVIEW_TITLE_NONFISHER"),
-                                         uiOutput(ns("non_fisher_age_gender_wrapper")))))
+          div(class = 'row',
+              div(class = 'col-md-6',sunburst_chart_ui(ns("sb"),title=i18n("INDIVIDUAL_OVERVIEW_SUNBURST_BOX_LABEL"),sliderWidth =25)),
+              div(class = 'col-md-6',pyramid_chart_ui(ns("py"),title=i18n("INDIVIDUAL_OVERVIEW_PYRAMID_BOX_LABEL"),sliderWidth =25))
+          ),
+          div(class = 'row',
+              div(class = 'col-md-12',pretty_table_ui(ns("pt"),title=i18n("INDIVIDUAL_OVERVIEW_TABLE_BOX_LABEL"),sliderWidth =25,sliderOpen=T))
+          )
           
   )
   
