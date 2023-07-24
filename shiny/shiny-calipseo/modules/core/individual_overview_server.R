@@ -5,61 +5,39 @@ individual_overview_server <- function(id, pool) {
     
     ns <- session$ns
     
-    ind_info <- accessIndividualInfo(pool)
-
-    # individual_profile <- function(dash_title = NULL,dash_icon = NULL, total_number = NULL,
-    #                                number_males = NULL, number_females = NULL,
-    #                                min_age = NULL, median_age = NULL, max_age = NULL,
-    #                                main_edu_level = NULL){
-    #   
-    #   div(class = 'col-md-6',
-    #       box(width = 12,title = dash_title,
-    #           div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_TOTAL_NUMBER"),
-    #                                             value = total_number, icon = dash_icon,infobox_extra_style = 'min-height:55px',
-    #                                             infobox_icon_extra_style = 'height: 55px; line-height: 55px;',width = 12)),
-    #           div(class = 'row',div(class = 'col-md-6',
-    #                                 CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_MALES"),
-    #                                                 value = number_males,icon = icon('mars'),content_margin_left = 0,
-    #                                                 width = 12,style_title = 'text-align:center;',infobox_icon_extra_style = 'height: 55px; line-height: 55px;',
-    #                                                 style_value = 'text-align:center;',infobox_extra_style = 'min-height:55px')),
-    #               div(class = 'col-md-6', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_NUMBER_OF_FEMALES"),
-    #                                                       value = number_females, icon = icon('venus'),content_margin_left = 0,
-    #                                                       width = 12,style_title = 'text-align:center;',infobox_icon_extra_style = 'height: 55px; line-height: 55px;',
-    #                                                       style_value = 'text-align:center;',infobox_extra_style = 'min-height:55px'))),
-    #           div(class = 'row',div(class = 'col-md-4',
-    #                                 CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MIN_AGE"),
-    #                                                 value = min_age, Use_icon = FALSE,content_margin_left = 0,
-    #                                                 width = 12,infobox_extra_style = 'min-height:55px',
-    #                                                 style_title = "font-size:90%;text-align:center;",
-    #                                                 style_value = "font-weight:700px;text-align:center")),
-    #               div(class = 'col-md-4', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MEDIAN_AGE"),
-    #                                                       value = median_age,  Use_icon = FALSE,content_margin_left = 0,
-    #                                                       width = 12,infobox_extra_style = 'min-height:55px',
-    #                                                       style_title = "font-size:90%;text-align:center;",
-    #                                                       style_value = "font-weight:700px;text-align:center")),
-    #               div(class = 'col-md-4', CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MAX_AGE"),
-    #                                                       value = max_age, Use_icon = FALSE,content_margin_left = 0,
-    #                                                       width = 12,infobox_extra_style = 'min-height:55px',
-    #                                                       style_title = "font-size:90%;text-align:center;",
-    #                                                       style_value = "font-weight:700px;text-align:center"))),
-    #           div(class = 'row',CalipseoInfoBox(title = i18n("INFOBOX_TITLE_INDIVIDUAL_OVERVIEW_MEAN_EDU_LEVEL"),
-    #                                             value = main_edu_level,icon = icon('user-graduate'),content_margin_left = 0,style_title = 'text-align:center;',
-    #                                             style_value = 'text-align:center;' ,infobox_extra_style = 'min-height:55px',
-    #                                             infobox_icon_extra_style = 'height: 55px; line-height: 55px;',width = 12))
-    #           
-    #       ))
-    #   
-    #   
-    # }
-    # 
-    # 
-    # 
-     output$individual_overview_info <- renderText({
-       paste0("<h2>", i18n("INDIVIDUAL_OVERVIEW_TITLE")," <small>", i18n("INDIVIDUAL_OVERVIEW_SUBTITLE"))
-       
-     })
-
+    output$individual_overview_info <- renderText({
+      paste0("<h2>", i18n("INDIVIDUAL_OVERVIEW_TITLE")," <small>", i18n("INDIVIDUAL_OVERVIEW_SUBTITLE"))
+      
+    })
     
+    ind_info <- accessIndividualInfo(pool)
+    
+    total_nb<-length(unique(ind_info$ID))
+    non_fisher_nb<-0
+    fisher_nb<-total_nb
+    fisher_active_nb<-fisher_nb
+    license_nb<-nrow(unique(subset(ind_info,!is.na(License),select=c(ID,License))))
+    license_active_nb<-nrow(unique(subset(ind_info,!is.na(License),select=c(ID,License))))
+    
+    
+    output$indicators<-renderUI({
+                div(
+                  column(12,
+                         infoBox(i18n("INFOBOX_TITLE_TOTAL"),total_nb , icon = icon("user"), fill = TRUE,color="blue",width = 6),
+                         infoBox(i18n("INFOBOX_TITLE_NON_FISHER"),non_fisher_nb, icon = icon("user"), fill = TRUE,color="yellow",width = 6)
+                         
+                  ),
+                  column(12,
+                         infoBox(i18n("INFOBOX_TITLE_FISHER"), fisher_nb, icon = icon("fish"), fill = TRUE,color="aqua",width = 6),
+                         infoBox(i18n("INFOBOX_TITLE_FISHER_ACTIVE"),fisher_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
+                         
+                  ),
+                  column(12,
+                         infoBox(i18n("INFOBOX_TITLE_LICENSE"),license_nb, icon = icon("id-card"), fill = TRUE,color="purple",width = 6),
+                         infoBox(i18n("INFOBOX_TITLE_LICENSE_ACTIVE"),license_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
+                  )
+                )
+    })
     
     colVariables<-c()
     if(!all(is.na(ind_info$Edulevel))){
