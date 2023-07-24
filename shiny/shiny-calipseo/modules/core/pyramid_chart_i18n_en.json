@@ -1,0 +1,28 @@
+{ 
+  /*Pyramid chart keys on the SERVER*/
+  "MODE_SELECTOR_LABEL" : "Mode :",
+  "PYRAMID_CHOICE" : "Pyramid chart",
+  "STACKED_CHOICE" : "Stacked bar chart",
+  "PERCENT_CHOICE" : "Percentage bar chart",
+  "AGE_SELECTOR_LABEL" : "Age range :",
+  "STEP_SELECTOR_LABEL" : "Group age by :",
+  "FILL_SELECTOR_LABEL" : "Fill by",
+  "FILTER_SELECTOR_LABEL" : "Filter '%s' items :",
+  "FILTER_NO_VALUE" : "No item selected",
+  "PYRAMID_X_LABEL" :"Number",
+  "PYRAMID_Y_LABEL" :"Age",
+  "STACKED_X_LABEL" :"Age",
+  "STACKED_Y_LABEL" :"Number",
+  "PERCENT_X_LABEL" :"Age",
+  "PERCENT_Y_LABEL" :"Percentage",
+  
+  /*Plot and datatable/export labels*/
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "age_repartition_table",
+  "STATISTIC_PDF_TITLE" : "age_repartition_table",
+  
+  /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistics",
+  "TABPANEL_PLOT" : "Plot"
+   
+}
