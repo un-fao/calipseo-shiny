@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.20230425] ONGOING DEVELOPMENT - 2022-04-25**
+# **shiny-calipseo [v1.3.20230802] ONGOING DEVELOPMENT - 2023-08-02**
 
 ## Corrections
 
@@ -6,6 +6,7 @@
 
 * [CALR-162](https://sdlc.review.fao.org/jira/browse/CALR-162) Computation module - Error with handling local datasets
 * [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to computeIndicator
+* [CALR-175](https://sdlc.review.fao.org/jira/browse/CALR-175) js_select2_filter_provider.js fails when some item is null
 
 ## Enhancements
 

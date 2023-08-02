@@ -19,7 +19,7 @@ function(){
       if(i === 0){
         data = data.map(function(item){
           var it = item;
-          if(item.startsWith('<')) it = $(it).text().trim();
+          if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
           return(it);
         })
         .each(function(d, j){
@@ -28,7 +28,7 @@ function(){
       }else{
         data = data.map(function(item){
           var it = item;
-          if(item.startsWith('<')) it = $(it).text().trim();
+          if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
           return(it);
         })
         .unique().sort()
