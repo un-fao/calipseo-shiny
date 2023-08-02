@@ -17,6 +17,13 @@
 * [CALR-164](https://sdlc.review.fao.org/jira/browse/CALR-164) Make individual modules generic
 * [CALR-170](https://sdlc.review.fao.org/jira/browse/CALR-170) LBN - adjust digit number of statistical indicators
 
+**Module enhancements**
+
+_Individuals_
+
+* [CALR-174](https://sdlc.review.fao.org/jira/browse/CALR-174) Individual Overview - Restructurate visual and content to make the module more generic
+
+
 ## New features
 
 **Core new features**
@@ -24,6 +31,9 @@
 * [CALR-157](https://sdlc.review.fao.org/jira/browse/CALR-157) Computation module -  add support for triggering upstream indicators in cascade 
 * [CALR-161](https://sdlc.review.fao.org/jira/browse/CALR-161) Computation module -  add capability to release staging indicators in cascade if a toplevel indicator is released
 * [CALR-165](https://sdlc.review.fao.org/jira/browse/CALR-165) Create config file for LCA
+* [CALR-171](https://sdlc.review.fao.org/jira/browse/CALR-171) Create generic widget module for sunburst chart
+* [CALR-172](https://sdlc.review.fao.org/jira/browse/CALR-172) Create generic widget module for pyramid chart
+* [CALR-173](https://sdlc.review.fao.org/jira/browse/CALR-173) Create generic widget module to display table with wide view
 
 **Module new features**
 
