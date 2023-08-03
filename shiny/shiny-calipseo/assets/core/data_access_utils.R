@@ -75,6 +75,13 @@ accessIndividualInfoFromDB <- function(con){
   return(individual_info)
 } 
 
+#accessIndividualIsFisherFromDB
+accessIndividualIsFisherFromDB <- function(con){
+  individual_isfisher_sql <- readSQLScript("data/core/sql/individual_isfisher.sql")
+  individual_isfisher <- suppressWarnings(dbGetQuery(con, individual_isfisher_sql))
+  return(individual_isfisher)
+} 
+
 
 #accessVesselQaNamesFromDB
 accessVesselQaNamesFromDB <- function(con){
@@ -155,6 +162,13 @@ accessVesselsFromDB <- function(con){
   vessels_sql <- readSQLScript("data/core/sql/vessels.sql", language = appConfig$language)
   vessels <- suppressWarnings(dbGetQuery(con, vessels_sql))
   return(vessels)
+}
+
+#accessVesselInfoFromDB
+accessVesselInfoFromDB <- function(con){
+  vessel_info_sql <- readSQLScript("data/core/sql/vessel_info.sql", language = appConfig$language)
+  vessel_info <- suppressWarnings(dbGetQuery(con, vessel_info_sql))
+  return(vessel_info)
 }
 
 #accessVesselsCountFromDB
@@ -634,6 +648,11 @@ accessIndividualInfo <- function(con){
   accessIndividualInfoFromDB(con)
 }
 
+#accessIndividualIsFisherFromDB
+accessIndividualIsFisher <- function(con){
+  accessIndividualIsFisherFromDB(con)
+}
+
 
 #accessVesselQaNamesFromDB
 accessVesselQaNames <- function(con){
@@ -687,6 +706,11 @@ accessLandingSiteNames <- function(con){
 #accessVessels
 accessVessels <- function(con){
   accessVesselsFromDB(con)
+}
+
+#accessVesselInfo
+accessVesselInfo <- function(con){
+  accessVesselInfoFromDB(con)
 }
 
 #accessVesselsCount

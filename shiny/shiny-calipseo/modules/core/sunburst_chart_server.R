@@ -23,12 +23,12 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
         orientation = "horizontal",
         add_rank_list(
           text = i18n("AVAILABLE_VARIABLES"),
-          labels = NULL,
+          labels = if(length(colVariables>3)){colVariables[4:length(colVariables)]}else{NULL},
           input_id = ns("available_variable")
         ),
         add_rank_list(
           text = i18n("SELECTED_VARIABLES"),
-          labels = colVariables,
+          labels = colVariables[1:3],
           input_id = ns("selected_variable")
         )
       )
@@ -104,7 +104,7 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
       
       if(isTRUE(data_ready())){
         
-        p<-data_formated()%>%plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = 5,hoverinfo="label+value+percent parent+percent root")
+        p<-data_formated()%>%plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = length(colVariables),hoverinfo="label+value+percent parent+percent root")
         
         
       }
