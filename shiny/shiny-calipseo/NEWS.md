@@ -22,7 +22,11 @@
 _Individuals_
 
 * [CALR-174](https://sdlc.review.fao.org/jira/browse/CALR-174) Individual Overview - Restructurate visual and content to make the module more generic
+* [CALR-176](https://sdlc.review.fao.org/jira/browse/CALR-176) Implement IS_FISHER and IS_FISHER ACTIVE query and apply them in individuals_overview
 
+_Vessels_
+
+* [CALR-177](https://sdlc.review.fao.org/jira/browse/CALR-177) Refactor vessel breakdown to vessel overview
 
 ## New features
 
