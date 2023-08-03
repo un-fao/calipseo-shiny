@@ -1,0 +1,37 @@
+{ 
+  /*Main title and subtitle*/
+  "VESSEL_OVERVIEW_TITLE" : "Overview of vessels",
+  "VESSEL_OVERVIEW_SUBTITLE" : "Visualize the overview of vessels",
+  
+  "OVERVIEW_VESSEL_TITLE_PIECHART" : "Breakdown of vessels in %s per vessel type",
+  "OVERVIEW_VESSEL_TITLE_MAP" : "Map",
+  "OVERVIEW_VESSEL_TITLE_DATA" : "Data",
+  /*Homeport*/
+  "OVERVIEW_VESSEL_TITLE_HOMEPORT" : "Breakdown of vessels in %s per home port",
+  "OVERVIEW_VESSEL_HOMEPORT_TABLE_COLNAME_1" : "VESSEL TYPE",
+  "OVERVIEW_VESSEL_HOMEPORT_TABLE_COLNAME_2" : "COUNT",
+  "OVERVIEW_VESSEL_HOMEPORT_MAP_LABEL_HOMEPORT" : "Home port",
+  "OVERVIEW_VESSEL_HOMEPORT_MAP_LABEL_NUMBER_OF_VESSELS" : "Number of vessels",
+  "OVERVIEW_VESSEL_HOMEPORT_DATA_EXPORT_FILENAME" : "Vessel Type Data Breakdown in",
+  "OVERVIEW_VESSEL_HOMEPORT_PDF_TITLE" : "Vessel Type Data Breakdown in",
+  /*Vesseltype Homeport*/
+  "OVERVIEW_VESSEL_TITLE_VESSELTYPE_HOMEPORT" : "Breakdown of vessel type in %s per home port",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_1" : "HOME PORT",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_2" : "COUNT",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_DATA_EXPORT_FILENAME" : "Vessel LandingSite Data Breakdown in",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_PDF_TITLE" : "Vessel LandingSite Data Breakdown in",
+  /*Datatable*/
+  "OVERVIEW_VESSEL_TITLE_TABLE" : "Data on Breakdown of vessels in %s per vessel type",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  
+  /*LandingSite data breakdown*/
+  
+  "OVERVIEW_VESSELTYPE_TITLE_LANDINGSITE" : "Breakdown of vessel type in %s per Landing sites",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_1" : "LANDING SITE/HOME PORT",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_2" : "VESSELTYPE",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_3" : "COUNT",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME" : "Home port/LandingSite Vessel Data Breakdown in",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_PDF_TITLE" : "Home port/LandingSite Vessel Data Breakdown in",
+  "OVERVIEW_VESSEL_SUNBURST_BOX_LABEL" : "Vessel Profil",
+  "OVERVIEW_VESSEL_TABLE_BOX_LABEL" : "Statistics Table"
+}
