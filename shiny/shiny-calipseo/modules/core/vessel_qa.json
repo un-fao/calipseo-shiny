@@ -3,5 +3,5 @@
   "parent": "vessels",
   "rank": 3,
   "title": "Vessels quality assessment",
-  "icon": "table"
+  "icon": "triangle-exclamation"
 }
