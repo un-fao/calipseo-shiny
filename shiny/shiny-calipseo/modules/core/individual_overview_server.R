@@ -11,6 +11,7 @@ individual_overview_server <- function(id, pool) {
     })
     
     ind_info <- accessIndividualInfo(pool)
+    ind_info <- ind_info[!names(ind_info)%in%c("First_name","Middle_name","Suffix_name","Salutations","FisherID")]
     
     country_params<-accessCountryParam(pool)
     
@@ -122,8 +123,9 @@ individual_overview_server <- function(id, pool) {
     
       print(head(pyramid_data))
     print(unique(pyramid_data$Role))
-
-     pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=c("Gender"="Gender"),colVariables=colVariables[colVariables!="Gender"],mode="plot+table")
+      
+    py_colVariables<-setNames(names(colVariables),colVariables)
+     pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=c("Gender"="Gender"),colVariables=py_colVariables[py_colVariables!="Gender"],mode="plot+table")
      
      sunburst_data<-ind_info%>%
        select(-DOB,-Regdate)%>%

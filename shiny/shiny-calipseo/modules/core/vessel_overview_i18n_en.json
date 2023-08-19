@@ -33,5 +33,6 @@
   "OVERVIEW_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME" : "Home port/LandingSite Vessel Data Breakdown in",
   "OVERVIEW_VESSELTYPE_LANDINGSITE_PDF_TITLE" : "Home port/LandingSite Vessel Data Breakdown in",
   "OVERVIEW_VESSEL_SUNBURST_BOX_LABEL" : "Vessel Profil",
-  "OVERVIEW_VESSEL_TABLE_BOX_LABEL" : "Statistics Table"
+  "OVERVIEW_VESSEL_TABLE_BOX_LABEL" : "Statistics Table",
+  "OVERVIEW_VESSEL_PYRAMID_BOX_LABEL" : "Fleet Age Repartition"
 }

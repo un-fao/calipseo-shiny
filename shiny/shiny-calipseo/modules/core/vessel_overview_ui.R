@@ -11,6 +11,7 @@ vessel_overview_ui <- function(id){
             )
           ),
           div(class = 'row',
+              div(class = 'col-md-6',pyramid_chart_ui(ns("py"),title=i18n("OVERVIEW_VESSEL_PYRAMID_BOX_LABEL"),sliderWidth =25)),
               div(class = 'col-md-6',sunburst_chart_ui(ns("sb"),title=i18n("OVERVIEW_VESSEL_SUNBURST_BOX_LABEL"),sliderWidth =25)),
           ),
           div(class = 'row',

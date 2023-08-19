@@ -1,9 +1,14 @@
 SELECT * FROM (SELECT 
 ind.REG_ENTITY_ID as ID, 
+ind.FIRST_NAME as First_name,
+ind.MIDDLE_NAME as Middle_name, 
+ind.SUFFIX_NAME as Suffix_name, 
+salu.I18n_DEFAULT AS Salutations, 
 gend.I18n_DEFAULT AS Gender, 
 ind.DATE_OF_BIRTH AS DOB, 
 edulevel.I18n_DEFAULT as Eduction, 
 role.I18n_DEFAULT as Role, 
+ind.FISHER_ID as FisherID, 
 ind.FISHER_ID_REGISTRATION_DATE as Regdate, 
 wt.I18n_DEFAULT as Worktime, 
 lt.I18n_DEFAULT as License, 
@@ -13,6 +18,7 @@ FROM reg_entity_individuals AS ind
   LEFT JOIN reg_entity_individual_education AS edu ON ind.REG_ENTITY_ID = edu.ID 
   LEFT JOIN cl_app_education_levels AS edulevel ON edu.CL_APP_EDUCATION_LEVEL_ID = edulevel.ID  
   LEFT JOIN cl_app_genders AS gend ON ind.CL_APP_GENDER_ID = gend.ID 
+  LEFT JOIN cl_app_salutations AS salu ON ind.CL_APP_SALUTATION_ID = salu.ID 
   LEFT JOIN reg_entity_individual_role_fishery AS r ON ind.REG_ENTITY_ID = r.REG_ENTITY_ID 
   LEFT JOIN cl_fish_role_in_fishery AS role ON r.CL_FISH_ROLE_IN_FISHERY_ID = role.ID 
   LEFT JOIN cl_fish_fisher_activity_type AS wt ON ind.CL_FISH_FISHER_ACTIVITY_TYPE_ID = wt.ID 
