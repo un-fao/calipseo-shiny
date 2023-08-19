@@ -3,7 +3,7 @@ vessel_overview_server <- function(id, pool) {
   
  moduleServer(id, function(input, output, session) {  
   
-  output$vessel_OVERVIEW_info <- renderText({
+  output$vessel_overview_info <- renderText({
     text <- paste0("<h2>", i18n("VESSEL_OVERVIEW_TITLE")," <small>", i18n("VESSEL_OVERVIEW_SUBTITLE"),"</small></h2><hr>")
     text
   })
@@ -13,14 +13,13 @@ vessel_overview_server <- function(id, pool) {
   country_params<-accessCountryParam(pool)
   
   is_vessel_active_query<-subset(country_params,CODE=="ISVESSELACTIVE")$TEXT
-  
-  if(length(is_vessel_active_query)>0){
-    is_vessel_active_table<-suppressWarnings(dbGetQuery(pool, is_vessel_active_query))
-    names(is_vessel_active_table)<-c("ID","Active")
-    is_vessel_active_table$Active[is_vessel_active_table$Active==0]<-"Vessel Non Active"
-    is_vessel_active_table$Active[is_vessel_active_table$Active==1]<-"Vessel Active"
-    ind_info<-merge(ind_info,is_vessel_active_table)
-  }else{
+   if(length(is_vessel_active_query)>0){
+     is_vessel_active_table<-suppressWarnings(dbGetQuery(pool, is_vessel_active_query))
+     names(is_vessel_active_table)<-c("ID","Active")
+     is_vessel_active_table$Active[is_vessel_active_table$Active==0]<-"Vessel Non Active"
+     is_vessel_active_table$Active[is_vessel_active_table$Active==1]<-"Vessel Active"
+     vessel_info<-merge(vessel_info,is_vessel_active_table)
+   }else{
     vessel_info$Active<-NA
   }
   
@@ -31,19 +30,24 @@ vessel_overview_server <- function(id, pool) {
     vessel_info$Active[is.na(vessel_info$Active)] <- "Unknown"
   }
   
+  if(!all(is.na(vessel_info$OPERATIONAL_STATUS))){
+    colVariables<-c(colVariables,c("OPERATIONAL_STATUS"="Operational Status"))
+    vessel_info$OPERATIONAL_STATUS[is.na(vessel_info$OPERATIONAL_STATUS)] <- "Unknown"
+  }
+  
   if(!all(is.na(vessel_info$VESSEL_TYPE))){
-    colVariables<-c(colVariables,c("VESSEL_TYPE"="Vessel type"))
+    colVariables<-c(colVariables,c("VESSEL_TYPE"="Vessel Type"))
     vessel_info$VESSEL_TYPE[is.na(vessel_info$VESSEL_TYPE)] <- "Unknown"
   }
   
-  if(!all(is.na(vessel_info$VESSEL_HOME_PORT))){
-    colVariables<-c(colVariables,c("HOME_PORT"="Home Port"))
-    vessel_info$HOME_PORT[is.na(vessel_info$HOME_PORT)] <- "Unknown"
+  if(!all(is.na(vessel_info$VESSEL_HOME_PORT_LANDING_SITE))){
+    colVariables<-c(colVariables,c("HOME_PORT_LANDING_SITE"="Home Port"))
+    vessel_info$HOME_PORT_LANDING_SITE[is.na(vessel_info$HOME_PORT)] <- "Unknown"
   }
   
-  if(!all(is.na(vessel_info$VESSEL_REG_PORT))){
-    colVariables<-c(colVariables,c("REG_PORT"="Registration Port"))
-    vessel_info$REG_PORT[is.na(vessel_info$REG_PORT)] <- "Unknown"
+  if(!all(is.na(vessel_info$VESSEL_REG_PORT_LANDING_SITE))){
+    colVariables<-c(colVariables,c("REG_PORT_LANDING_SITE"="Registration Port"))
+    vessel_info$REG_PORT_LANDING_SITE[is.na(vessel_info$REG_PORT_LANDING_SITE)] <- "Unknown"
   }
   
   if(!all(is.na(vessel_info$MANUFACTURER))){
@@ -72,6 +76,27 @@ vessel_overview_server <- function(id, pool) {
     ungroup()%>%
     distinct()%>%
     mutate(value=1)
+  
+  pyramid_data<-vessel_info%>%
+    filter(OPERATIONAL_STATUS_CODE%in%c(1,2))%>%
+    filter(!is.na(REGISTRATION_DATE))%>%
+    mutate(Age=round(time_length(interval(REGISTRATION_DATE,Sys.Date()),"years"),0))%>%
+    select(-REGISTRATION_DATE,-OPERATIONAL_STATUS_CODE)%>%
+    arrange(REGISTRATION_NUMBER,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
+    group_by(REGISTRATION_NUMBER) %>%
+    mutate(MANUFACTURE=paste0(unique(MANUFACTURER),collapse = "+"),
+           ENGINE_TYPE=paste0(unique(ENGINE_TYPE),collapse = "+"),
+           ENERGY_TYPE=paste0(unique(ENERGY_TYPE),collapse = "+"))%>%
+    ungroup()%>%
+    distinct()%>%
+    filter(Age>0)
+  
+  print("COLVARIABLES")
+  print(colVariables)
+  print("COLNAMES")
+  print(names(pyramid_data))
+  
+  pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=NULL,colVariables=setNames(names(colVariables),colVariables),mode="plot+table")
   
   sunburst_chart_server("sb", df=sunburst_data,colVariables=colVariables,colValue="value",mode="plot+table")
   

@@ -39,8 +39,13 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
     
     
     output$mode_selector<-renderUI({
-      selectInput(ns("mode"), i18n("MODE_SELECTOR_LABEL"), choices=setNames(c("pyramid","stacked_bar","percent_bar"),c(i18n("PYRAMID_CHOICE"),i18n("STACKED_CHOICE"),i18n("PERCENT_CHOICE"))),
-                  selected="pyramid", multiple=F)
+      if(!is.null(colGender)){
+        choices<-setNames(c("pyramid","stacked_bar","percent_bar"),c(i18n("PYRAMID_CHOICE"),i18n("STACKED_CHOICE"),i18n("PERCENT_CHOICE")))
+      }else{
+        choices<-setNames(c("stacked_bar","percent_bar"),c(i18n("STACKED_CHOICE"),i18n("PERCENT_CHOICE")))
+      }
+      
+      selectInput(ns("mode"), i18n("MODE_SELECTOR_LABEL"), choices=choices,selected=choices[1], multiple=F)
     })
     
     output$age_slider<-renderUI({
