@@ -309,6 +309,15 @@ accessVesselsCountByLandingSiteFromDB <- function(con){
   return(sites)
 }
 
+#accessVesselsLandingSiteFromDB
+accessVesselsLandingSiteFromDB <- function(con){
+  vesselsites_sql <- readSQLScript("data/core/sql/vessels_landing_sites_list.sql",
+                                         language = appConfig$language)
+  sites <- suppressWarnings(dbGetQuery(con,  vesselsites_sql))
+  return(sites)
+}
+
+
 #vesselsLandingsitesVesselTypesCountFromDB
 vesselsLandingSitesVesselTypesCountFromDB <- function(con){
   vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_ landing_sites_vessel_types_count.sql",
@@ -605,6 +614,20 @@ accessFishingUnitsFromDB <- function(con){
   return(fa)
 }
 
+#accessFishingDaysPerMonthFromDB
+accessFishingDaysPerMonthFromDB <- function(con){
+  fa_sql <- readSQLScript("data/core/sql/dt_fishing_days_per_month.sql")
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessEffortSurveyFromDB
+accessEffortSurveyFromDB <- function(con){
+  fa_sql <- readSQLScript("data/core/sql/dt_effort_survey.sql")
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 #accessTripDetailByFleetSegmentFromDB
 accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQLScript("data/core/sql/species_trip_detail_by_fleet_segment.sql")
@@ -785,6 +808,11 @@ accessVesselsCountByLandingSite <- function(con){
   accessVesselsCountByLandingSiteFromDB(con)
 }
 
+#accessVesselsLandingSite
+accessVesselsLandingSite <- function(con){
+  accessVesselsLandingSiteFromDB(con)
+}
+
 
 #vesselsLandingsitesvesseltypesCount
 vesselsLandingSitesVesselTypesCount <- function(con){
@@ -935,6 +963,16 @@ accessFishingUnits<- function(con){
 #accessTripDetailByFleetSegment
 accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){
   accessTripDetailByFleetSegmentFromDB(con,year=year,month=month)
+}
+
+#accessFishingDaysPerMonth
+accessFishingDaysPerMonth <- function(con){
+  accessFishingDaysPerMonthFromDB(con)
+}
+
+#accessEffortSurvey
+accessEffortSurvey <- function(con){
+  accessEffortSurveyFromDB(con)
 }
 
 #Country profile
