@@ -27,6 +27,7 @@ _Individuals_
 _Vessels_
 
 * [CALR-177](https://sdlc.review.fao.org/jira/browse/CALR-177) Refactor vessel breakdown to vessel overview
+* [CALR-180](https://sdlc.review.fao.org/jira/browse/CALR-180) Enable Stats breakdowns even with no map is available
 
 ## New features
 
