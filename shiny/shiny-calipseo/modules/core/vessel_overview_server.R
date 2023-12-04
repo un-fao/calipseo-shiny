@@ -118,8 +118,7 @@ vessel_overview_server <- function(id, pool) {
   pretty_table_server("pt", df=sunburst_data,colVariables=colVariables,colValue="value")
   
   output$map_vessels <- renderLeaflet({
-    
-    sites_vessels <- accessVesselsCountByLandingSite(pool)
+    sites_vessels <- accessVesselsCountByLandingSite(pool, sf = TRUE)
     leaflet() %>%
       addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
       addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
@@ -132,8 +131,7 @@ vessel_overview_server <- function(id, pool) {
   
   
   
-  df_vessel_landingsite_data <- as.data.frame(accessVesselsCountByLandingSite(pool))[,-3] 
-  
+  df_vessel_landingsite_data <- as.data.frame(accessVesselsCountByLandingSite(pool, sf = FALSE))[,-c(2,3)]
   names(df_vessel_landingsite_data) <- c(i18n("OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_1"),
                                          i18n("OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_2"))
   
