@@ -3,8 +3,8 @@
   /*Pretty table keys on the SERVER*/
   "BUCKET_HEADER" : "Drag the items in choosen bucket to display desired statistics",
   "AVAILABLE_VARIABLES" : "Unselected variables",
-  "ROW_VARIABLES" : "Group by",
-  "COL_VARIABLES" : "Explode view",
+  "ROW_VARIABLES" : "Display as rows",
+  "COL_VARIABLES" : "Display as columns",
   
   
   /*Plot and datatable/export labels*/
