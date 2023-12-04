@@ -1,11 +1,11 @@
-# **shiny-calipseo [v1.3.20230819] ONGOING DEVELOPMENT - 2023-08-19**
+# **shiny-calipseo [v1.3.20231205] ONGOING DEVELOPMENT - 2023-12-05**
 
 ## Corrections
 
 **Core corrections**
 
 * [CALR-162](https://sdlc.review.fao.org/jira/browse/CALR-162) Computation module - Error with handling local datasets
-* [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to computeIndicator
+* [CALR-163](https://sdlc.review.fao.org/jira/browse/CALR-163) Computation module - Error with passing temporal args to `computeIndicator`
 * [CALR-175](https://sdlc.review.fao.org/jira/browse/CALR-175) js_select2_filter_provider.js fails when some item is null
 
 ## Enhancements
@@ -21,12 +21,13 @@
 
 _Individuals_
 
-* [CALR-174](https://sdlc.review.fao.org/jira/browse/CALR-174) Individual Overview - Restructurate visual and content to make the module more generic
+* [CALR-174](https://sdlc.review.fao.org/jira/browse/CALR-174) Individual Overview - Restructure visual and content to make the module more generic
 * [CALR-176](https://sdlc.review.fao.org/jira/browse/CALR-176) Implement IS_FISHER and IS_FISHER ACTIVE query and apply them in individuals_overview
 
 _Vessels_
 
 * [CALR-177](https://sdlc.review.fao.org/jira/browse/CALR-177) Refactor vessel breakdown to vessel overview
+* [CALR-180](https://sdlc.review.fao.org/jira/browse/CALR-180) Enable Stats breakdowns even with no map is available
 
 ## New features
 
