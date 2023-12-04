@@ -21,7 +21,22 @@ vessel_overview_server <- function(id, pool) {
      vessel_info<-merge(vessel_info,is_vessel_active_table)
    }else{
     vessel_info$Active<-NA
-  }
+   }
+  
+  total_nb<-length(unique(vessel_info$ID))
+
+  fisher_active_nb<-length(unique(subset(vessel_info,Active=="Vessel Active")$ID))
+  
+  
+  output$indicators<-renderUI({
+    div(
+      column(12,
+             infoBox(i18n("INFOBOX_TITLE_VESSEL_TOTAL"),total_nb , icon = icon("ship"), fill = TRUE,color="blue",width = 6),
+             infoBox(i18n("INFOBOX_TITLE_VESSEL_ACTIVE"),fisher_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
+             
+      )
+    )
+  })
   
   colVariables<-c()
   
