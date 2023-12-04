@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": "compute_active_fisher",
+    "label": "Active Fisher",
+    "compute_by": {
+      "period": "month",
+      "available_periods": "data:accessSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/country/LCA/compute_active_fisher.R",
+      "fun" : "compute_active_fisher",
+      "fun_args": {
+        "data": "data:accessActiveFishers"
+      }
+    }
+  }
+]

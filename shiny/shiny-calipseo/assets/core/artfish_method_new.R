@@ -13,7 +13,7 @@ switch(survey_type,
        "2"={"LBN case"},
        "3"={},
        "4"={},
-       "5"={})
+       "5"={"LCA case"})
 
 if(survey_type==5){
   
@@ -27,8 +27,8 @@ if(survey_type==5){
   vessels_list<-merge(vessels_list,is_vessel_active_table)
   
   vessels_list<-vessels_list%>%
-    group_by(LANDING_SITE_ID)%>%
     filter(Active==1)%>%
+    group_by(LANDING_SITE_ID)%>%
     summarise(NB_ACT_BOAT=length(unique(ID)))%>%
     ungroup()
     
