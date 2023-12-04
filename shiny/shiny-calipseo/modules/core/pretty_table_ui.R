@@ -30,7 +30,7 @@ pretty_table_ui <- function(id,title,sliderWidth = 25,backgroundColor="#333a40",
     shinydashboardPlus::box(
       title=title,
       width = 12,
-      style= "min-height:400px",
+      style= "min-height:600px",
       sidebar = shinydashboardPlus::boxSidebar(
         id=ns("box"),
         width = sliderWidth,
