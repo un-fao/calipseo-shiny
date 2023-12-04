@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.20230819] ONGOING DEVELOPMENT - 2023-08-19**
+# **shiny-calipseo [v1.3.20231205] ONGOING DEVELOPMENT - 2023-12-05**
 
 ## Corrections
 
