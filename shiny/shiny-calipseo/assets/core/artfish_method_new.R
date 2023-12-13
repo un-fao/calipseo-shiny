@@ -1,14 +1,14 @@
 artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landing=NULL){
 
-#retrieve countries_param
-country_params<-accessCountryParam(con)
+  #Access to countries_param
+  country_params<-accessCountryParam(con)
 
-#Check type of survey 
-survey_type<-subset(country_params,CODE=="EFFSURVTYPE")$CL_CODE_ID
+  #Check type of survey 
+  survey_type<-subset(country_params,CODE=="EFFSURVTYPE")$CL_CODE_ID
 
-switch(survey_type,
-       "1"={},
-       "2"={
+  switch(survey_type,
+    "1"={},
+    "2"={
          
          
          if(is.null(data_effort))data_effort=accessEffortData(con,year,month)
@@ -125,16 +125,15 @@ switch(survey_type,
          return(estimate)
          
        },
-       "3"={},
-       "4"={},
-       "5"={
-         
+    "3"={},
+    "4"={},
+    "5"={
+      
   if(is.null(data_landing))data_landing=accessLandingData(con,year,month)
   
   vessels_list <- accessVesselsLandingSite(con)
   
   is_vessel_active_query<-subset(country_params,CODE=="ISVESSELACTIVE")$TEXT
-  
   is_vessel_active_query<-gsub("NOW()",sprintf("'%s-12-31'",year),is_vessel_active_query,fixed=T)
   is_vessel_active_table<-suppressWarnings(dbGetQuery(con, is_vessel_active_query))
   names(is_vessel_active_table)<-c("ID","Active")
@@ -283,7 +282,7 @@ switch(survey_type,
    #                  mutate(DATE_FROM=as.Date(gsub("'","",DATE_FROM))),by=c("DT_FISHING_TRIP_ID"="ID"))%>%
    #   rowwise()%>%
    #   summarise(
-   #          id=CL_FISH_FISHING_UNIT_ID,
+   #          id=DT_FISHING_TRIP_ID,
    #          year=year(DATE_FROM),
    #          month=month(DATE_FROM),
    #          days=day(DATE_FROM),
@@ -363,12 +362,9 @@ switch(survey_type,
                   EST_LND_CATCH=EST_EFF_EFFORT*EST_LND_CPUE,
                   EST_LND_VALUE=EST_LND_CATCH*EST_LND_PRICE,
                   EST_LND_AVW=EST_LND_CATCH/EST_LND_NOFISH)%>%
-    select(-ratio,-EST_LND_CPUE_G)
+    select(-ratio)
   
-  print("ESTIMATE")
-  print(estimate)
-  
-  #print(estimate)
+
   
   return(estimate)
   
