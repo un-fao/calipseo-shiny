@@ -558,6 +558,13 @@ accessSurveyPeriodsFromDB <- function(con){
   return(out)
 }
 
+#accessEffortSurveyPeriodsFromDB
+accessEffortSurveyPeriodsFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/effort_survey_periods.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out)
+}
+
 #accessEffortDataFromDB
 accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/effort_data.sql")
@@ -938,6 +945,11 @@ accessSurveyPeriods <- function(con){
   accessSurveyPeriodsFromDB(con)
 }
 
+#accessEffortSurveyPeriods
+accessEffortSurveyPeriods <- function(con){
+  accessEffortSurveyPeriodsFromDB(con)
+}
+
 #accessEffortData
 accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
@@ -1128,31 +1140,7 @@ getStatPeriods <- function(config, id,target = "release"){
     }
   }
   
-  #accessActiveFishers
-  accessActiveFishers <- function(con,year = NULL,month=NULL){
-    
-    ind_info <- accessIndividualInfo(con)
-    ind_info <- ind_info[!names(ind_info)%in%c("First_name","Middle_name","Suffix_name","Salutations","FisherID")]
-    
-    country_params<-accessCountryParam(con)
-    
-    is_fisher_active_query<-subset(country_params,CODE=="ISFISHERACTIVE")$TEXT
-    
-    is_fisher_active_query<-gsub("NOW()",sprintf("'%s-%s-01'",year,ifelse(is.null(month),"01",month)))
-    
-    if(length(is_fisher_active_query)>0){
-      is_fisher_active_table<-suppressWarnings(dbGetQuery(pool, is_fisher_active_query))
-      names(is_fisher_active_table)<-c("ID","Active")
-      is_fisher_active_table$Active[is_fisher_active_table$Active==0]<-"Fisher Non Active"
-      is_fisher_active_table$Active[is_fisher_active_table$Active==1]<-"Fisher Active"
-      is_fisher_active_table$Active[is.na(is_fisher_active_table$Active)]<-"Non Fisher"
-      ind_info<-merge(ind_info,is_fisher_active_table)
-    }else{
-      ind_info$Active<-NA
-    }
-    
-    ind_info<-subset(ind_info,Active=="Fisher Active")
-  }
+
   
   return(out)
 }
