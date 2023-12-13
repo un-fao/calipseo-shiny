@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.3.20231205] ONGOING DEVELOPMENT - 2023-12-05**
+# **shiny-calipseo [v1.4.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.4.0.zip) - 2023-12-05**
 
 ## Corrections
 
@@ -47,6 +47,10 @@ _Vessels_
 * [CALR-159](https://sdlc.review.fao.org/jira/browse/CALR-159) LBN - Add statistical indicator to compute GFCM Task II.2
 * [CALR-169](https://sdlc.review.fao.org/jira/browse/CALR-169) LBN - Add statistical indicator to compute GFCM Task III
 * [CALR-168](https://sdlc.review.fao.org/jira/browse/CALR-168) LBN - Add statistical indicator to compute FAO report
+
+**New R dependencies**
+
+* `sortable` --> [CALR-171](https://sdlc.review.fao.org/jira/browse/CALR-171)
 
 # **shiny-calipseo [v1.3.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.3.0.zip) - 2022-02-02**
 
