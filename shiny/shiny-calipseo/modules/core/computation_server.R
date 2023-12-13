@@ -294,6 +294,9 @@ computation_server <- function(id, pool) {
     progress$set(message = indicator_msg, detail = i18n("EXECUTE_R_SCRIPT_LABEL"), value = 40)
     
     indicator_script_command<-paste0(indicator$compute_with$fun, "(",
+                                     paste0("con = pool, ",paste0(indicator_args, sprintf(" = computation_%s", indicator_args), collapse = ", "),
+                                            if(length(indicator$compute_with$fun_args)>0)","),
+                                     if(length(indicator$compute_with$fun_args)>0){
                                      paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
                                        fun_arg_value <- indicator$compute_with$fun_args[[x]]
                                        parts <- unlist(strsplit(fun_arg_value, ":"))
@@ -311,7 +314,7 @@ computation_server <- function(id, pool) {
                                                               fun_arg_value
                                        )
                                        return(fun_arg_eval)
-                                     }), collapse = ", ")
+                                     }), collapse = ", ")}
                                      ,")")
     print(indicator_script_command)
     

@@ -4,14 +4,25 @@
     "label": "Active Fisher",
     "compute_by": {
       "period": "month",
-      "available_periods": "data:accessSurveyPeriods"
+      "available_periods": "data:accessEffortSurveyPeriods"
     },
     "compute_with": {
       "script": "assets/country/LCA/compute_active_fisher.R",
       "fun" : "compute_active_fisher",
-      "fun_args": {
-        "data": "data:accessActiveFishers"
-      }
+      "fun_args": {}
+    }
+  },
+    {
+    "id": "artfish_estimates",
+    "label": "Artfish estimates",
+    "compute_by": {
+      "period": "month",
+      "available_periods": "data:accessEffortSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/core/artfish_method_new.R",
+      "fun" : "artfish_estimates",
+      "fun_args": {}
     }
   }
 ]
