@@ -13,6 +13,19 @@
     }
   },
     {
+    "id": "compute_active_vessel",
+    "label": "Active Vessel",
+    "compute_by": {
+      "period": "month",
+      "available_periods": "data:accessEffortSurveyPeriods"
+    },
+    "compute_with": {
+      "script": "assets/country/LCA/compute_active_vessel.R",
+      "fun" : "compute_active_vessel",
+      "fun_args": {}
+    }
+  },
+    {
     "id": "artfish_estimates",
     "label": "Artfish estimates",
     "compute_by": {
