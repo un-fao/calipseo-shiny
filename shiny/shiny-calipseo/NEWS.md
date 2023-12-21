@@ -13,6 +13,7 @@
 
 **Module enhancements**
 * [CALR-184](https://sdlc.review.fao.org/jira/browse/CALR-184) Vessel overview, update table categories
+* [CALR-185](https://sdlc.review.fao.org/jira/browse/CALR-185) add capability to filter variable categories for table module
 
 ## New features
 

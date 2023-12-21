@@ -101,6 +101,10 @@ pretty_table_server <- function(id, df,colVariables=list(),colValue="value") {
                         across(where(is.numeric), ~sum(.))))
         }
         
+        new_df<-new_df%>%
+          mutate(across(where(~is.character(.)),~as.factor(.)))%>%
+          ungroup()
+        
         data_for_table<-data_for_table(new_df)
         
         print(new_df)
