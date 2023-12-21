@@ -55,12 +55,12 @@ vessel_overview_server <- function(id, pool) {
     vessel_info$VESSEL_TYPE[is.na(vessel_info$VESSEL_TYPE)] <- "Unknown"
   }
   
-  if(!all(is.na(vessel_info$VESSEL_HOME_PORT_LANDING_SITE))){
+  if(!all(is.na(vessel_info$HOME_PORT_LANDING_SITE))){
     colVariables<-c(colVariables,c("HOME_PORT_LANDING_SITE"="Home Port"))
     vessel_info$HOME_PORT_LANDING_SITE[is.na(vessel_info$HOME_PORT)] <- "Unknown"
   }
   
-  if(!all(is.na(vessel_info$VESSEL_REG_PORT_LANDING_SITE))){
+  if(!all(is.na(vessel_info$REG_PORT_LANDING_SITE))){
     colVariables<-c(colVariables,c("REG_PORT_LANDING_SITE"="Registration Port"))
     vessel_info$REG_PORT_LANDING_SITE[is.na(vessel_info$REG_PORT_LANDING_SITE)] <- "Unknown"
   }

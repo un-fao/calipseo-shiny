@@ -12,6 +12,7 @@
 * [CALR-181](https://sdlc.review.fao.org/jira/browse/CALR-181) Make computation module more flexible
 
 **Module enhancements**
+* [CALR-184](https://sdlc.review.fao.org/jira/browse/CALR-184) Vessel overview, update table categories
 
 ## New features
 
