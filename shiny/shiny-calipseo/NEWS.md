@@ -1,3 +1,26 @@
+# **shiny-calipseo [v1.5.0](Ongoing) - 2023-12-0521**
+
+## Corrections
+
+**Core corrections**
+
+## Enhancements
+
+**Core enhancements**
+
+* [CALR-178](https://sdlc.review.fao.org/jira/browse/CALR-178) Make artfish method compatible for multiple sampling strategy
+* [CALR-181](https://sdlc.review.fao.org/jira/browse/CALR-181) Make computation module more flexible
+
+**Module enhancements**
+
+## New features
+
+**Core new features**
+**Stat new features**
+_Saint Lucia statistical indicators_
+* [CALR-182](https://sdlc.review.fao.org/jira/browse/CALR-182) LCA- add statistical indicator for count number of active fisher by category
+* [CALR-183](https://sdlc.review.fao.org/jira/browse/CALR-183) LCA-add statistical indicator to count active vessel
+
 # **shiny-calipseo [v1.4.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.4.0.zip) - 2023-12-05**
 
 ## Corrections
