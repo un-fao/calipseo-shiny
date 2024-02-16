@@ -1,0 +1,16 @@
+Package,.
+htmltools,GPL (>= 2)
+shiny,GPL-3 | file LICENSE
+shinydashboard,GPL (>= 2) | file LICENSE
+shinydashboardPlus,GPL (>= 2) | file LICENSE
+shinyWidgets,GPL-3
+shinyFiles,GPL (>= 2)
+mime,GPL
+units,GPL-2
+measurements,GPL-3
+sf,GPL-2 | MIT + file LICENSE
+sp,GPL (>= 2)
+DT,GPL-3 | file LICENSE
+leaflet,GPL-3
+leaflet.minicharts,GPL (>= 2) | file LICENSE
+lubridate,GPL (>= 2)
