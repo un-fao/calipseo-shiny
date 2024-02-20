@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.5.0](Ongoing) - 2023-12-05-21**
+# **shiny-calipseo [v1.5.0](Ongoing) - 2025-02-20**
 
 ## Corrections
 
@@ -10,6 +10,8 @@
 
 * [#178](https://github.com/un-fao/calipseo-shiny/issues/178) Make artfish method compatible for multiple sampling strategy
 * [#181](https://github.com/un-fao/calipseo-shiny/issues/181) Make computation module more flexible
+* [#186](https://github.com/un-fao/calipseo-shiny/issues/186) Make the shiny app rely on external calipseo-data
+* [#187](https://github.com/un-fao/calipseo-shiny/issues/187) Move statistical indicators defs to calipseo-data repository
 
 **Module enhancements**
 
