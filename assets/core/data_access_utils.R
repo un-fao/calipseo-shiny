@@ -1046,7 +1046,7 @@ getLocalCountryDataset <- function(config,filename){
 #@deprecated
 getLocalCountryDatasets <- function(config){
   out <- list()
-  country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
+  country_dir <- sprintf("../calipseo-data/country/%s", config$country_profile$iso3)
   if(dir.exists(country_dir)){
     files <- list.files(path = country_dir, full.names = TRUE)
     out <- lapply(files, function(file){
