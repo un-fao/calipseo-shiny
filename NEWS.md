@@ -4,6 +4,8 @@
 
 **Core corrections**
 
+* [#188](https://github.com/un-fao/calipseo-shiny/issues/188) Counting of landing sites too restrictive on geographic coordinates availability
+
 ## Enhancements
 
 **Core enhancements**

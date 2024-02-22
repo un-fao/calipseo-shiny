@@ -142,11 +142,14 @@ accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
 }
 
 #accessLandingSitesFromDB
-accessLandingSitesFromDB <- function(con){
+accessLandingSitesFromDB <- function(con, sf = TRUE){
   landingsites_sql <- readSQLScript("data/core/sql/landing_sites.sql",
                                     language = appConfig$language)
   landingsites <- suppressWarnings(dbGetQuery(con, landingsites_sql))
-  landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  if(sf){
+    landingsites <- landingsites[!is.na(landingsites$LONGITUDE) & !is.na(landingsites$LATITUDE),]
+    landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  }
   return(landingsites)
 }  
 
@@ -727,8 +730,8 @@ accessSpeciesCatchesYear <- function(con, registrationNumber) {
 }
 
 #accessLandingSites
-accessLandingSites <- function(con){
-  accessLandingSitesFromDB(con)
+accessLandingSites <- function(con, sf = TRUE){
+  accessLandingSitesFromDB(con, sf = sf)
 }
 
 #accessLandingSiteNames
