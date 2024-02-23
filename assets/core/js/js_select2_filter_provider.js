@@ -13,7 +13,7 @@ function(){
           var vals = $('option:selected', this).map(function(index,element){
             return $.fn.dataTable.util.escapeRegex($(element).val());
           }).toArray().join('|');
-          column.search(vals.length > 0 ? '('+vals+')' : '', true, false).draw();
+          column.search(vals.length > 0 ? '('+vals+')' : '', true, false, false).draw();
         });
       var data = column.data();
       if(i === 0){

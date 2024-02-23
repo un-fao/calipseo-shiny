@@ -55,24 +55,23 @@ individual_list_server <- function(id, pool) {
               
       ind_info<-ind_info[names(ind_info)!="ID"]
       
-      for(i in 1:length(names(ind_info))){
-        names(ind_info)[i] <- i18n(sprintf("INDIVIDUAL_LIST_TABLE_COLNAME_%s",toupper(names(ind_info)[i])))
-      }
-     
-      
       js <- js_select2_filter_provider(ns("individual_list"))
      
       ind_info$Status<-ifelse(ind_info$Status=="Active",paste0(icon("anchor-circle-check",style = 'color:green'),span(" Active",style='color:green;')),
                               ifelse(ind_info$Status=="Inactive",paste0(icon("anchor-circle-exclamation",style = 'color:orange'),span(" Inactive",style='color:orange;')),
-                                     ""))
+                                     paste0(icon("ban",style = 'color:gray'),span(" Not concerned",style='color:gray;'))))
+      
       ind_info$Gender<-ifelse(ind_info$Gender=="Male",paste0(icon("mars"),span(" Male")),
                               ifelse(ind_info$Gender=="Female",paste0(icon("venus"),span(" Female")),
                                      ind$Gender))
-
+      
+      for(i in 1:length(names(ind_info))){
+        names(ind_info)[i] <- i18n(sprintf("INDIVIDUAL_LIST_TABLE_COLNAME_%s",toupper(names(ind_info)[i])))
+      }
       
      
      print("START TEST PRINT")
-     print(ind_info)
+     print(head(ind_info))
      print("END TEST PRINT")
 
 
