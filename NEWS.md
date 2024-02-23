@@ -5,6 +5,7 @@
 **Core corrections**
 
 * [#188](https://github.com/un-fao/calipseo-shiny/issues/188) Counting of landing sites too restrictive on geographic coordinates availability
+* [#189](https://github.com/un-fao/calipseo-shiny/issues/189) Bad filering inside tables of vessel and individual list modules
 
 ## Enhancements
 
