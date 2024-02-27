@@ -13,6 +13,21 @@ vessel_list_server <- function(id, pool) {
     outp <- accessVessels(pool)
     INFO("vessel-list server: Fetching vessel list data with rows '%s'", nrow(outp))
     
+    #add status
+    country_params<-accessCountryParam(pool)
+    
+    is_vessel_active_query<-subset(country_params,CODE=="ISVESSELACTIVE")$TEXT
+    if(length(is_vessel_active_query)>0){
+      is_vessel_active_table<-suppressWarnings(dbGetQuery(pool, is_vessel_active_query))
+      names(is_vessel_active_table)<-c("ID","Status")
+      is_vessel_active_table$Status[is_vessel_active_table$Status==0]<-"inactive"
+      is_vessel_active_table$Status[is_vessel_active_table$Status==1]<-"active"
+      outp<-merge(outp,is_vessel_active_table)
+      outp$ID = NULL
+    }else{
+      outp$Status<-NA
+    }
+    
     ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
     INFO("vessel-list server: Fetching license permits data with rows '%s'", nrow(ls_permits))
     
@@ -43,7 +58,7 @@ vessel_list_server <- function(id, pool) {
     names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
     
     INFO("vessel-list server: Joining vessel list data and license permits data")
-    df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+    df <- df[,c("REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                 "HOME_PORT","REG_PORT","Details")]
     
     
@@ -73,7 +88,7 @@ vessel_list_server <- function(id, pool) {
       df$HOME_PORT[is.na(df$HOME_PORT)] <- 'unknown'
       df$REG_PORT[is.na(df$REG_PORT)] <- 'unknown'
       
-      df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+      df <- df[,c("REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                   "HOME_PORT","REG_PORT","Validity","Details")]
       
       INFO("vessel-list server: Applying font colour and icon to the desired columns")
@@ -92,19 +107,23 @@ vessel_list_server <- function(id, pool) {
       
       df$Validity <- paste(span("No License",style='color:darkred;font-weight:bold;'))
       
-      df <- df[,c("REGISTRATION_NUMBER","NAME","VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+      df <- df[,c("REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                   "HOME_PORT","REG_PORT","Validity","Details")]
     }
     
+    df$Status<-ifelse(df$Status=="active",paste0(icon("anchor-circle-check",style = 'color:green'),span(paste0(" ",i18n("VESSEL_LIST_VESSEL_STATUS_ACTIVE")),style='color:green;')),
+                              ifelse(df$Status=="inactive",paste0(icon("anchor-circle-exclamation",style = 'color:orange'),span(paste0(" ", i18n("VESSEL_LIST_VESSEL_STATUS_INACTIVE")),style='color:orange;')),
+                                     paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("VESSEL_LIST_VESSEL_STATUS_UNDEFINED")),style='color:gray;'))))
+    
     #factorize types for access to codelists
-    df[,1:8] <- lapply(df[,1:8],as.factor)
+    df[,1:9] <- lapply(df[,1:9],as.factor)
     
     INFO("vessel-list server: Applying the I18n_terms to the vessel list columns")
-    names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_1"),i18n("VESSEL_LIST_TABLE_COLNAME_2"),
-                   i18n("VESSEL_LIST_TABLE_COLNAME_3"),i18n("VESSEL_LIST_TABLE_COLNAME_4"),
-                   i18n("VESSEL_LIST_TABLE_COLNAME_5"),i18n("VESSEL_LIST_TABLE_COLNAME_6"),
-                   i18n("VESSEL_LIST_TABLE_COLNAME_7"),i18n("VESSEL_LIST_TABLE_COLNAME_8"),
-                   i18n("VESSEL_LIST_TABLE_COLNAME_9"))
+    names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_REGNUMBER"),i18n("VESSEL_LIST_TABLE_COLNAME_NAME"),
+                   i18n("VESSEL_LIST_TABLE_COLNAME_VESSELSTATUS"),i18n("VESSEL_LIST_TABLE_COLNAME_VESSELTYPE"),i18n("VESSEL_LIST_TABLE_COLNAME_OPSTATUS"),
+                   i18n("VESSEL_LIST_TABLE_COLNAME_VESSELSTATTYPE"),i18n("VESSEL_LIST_TABLE_COLNAME_HOMEPORT"),
+                   i18n("VESSEL_LIST_TABLE_COLNAME_REGPORT"),i18n("VESSEL_LIST_TABLE_COLNAME_LICENSESTATUS"),
+                   i18n("VESSEL_LIST_TABLE_COLNAME_DETAILS"))
     
     
     INFO("vessel-list server: Rendering the vessel list data to the table")

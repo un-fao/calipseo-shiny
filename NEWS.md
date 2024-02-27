@@ -27,10 +27,11 @@ _Individuals list_
 
 _Vessels list_
 
-* [#184](https://github.com/un-fao/calipseo-shiny/issues/184) Vessel overview, update table categories
+* [#194](https://github.com/un-fao/calipseo-shiny/issues/194) Vessel list - Support vessel status (active/inactive)
 
 _Vessels overview_
 
+* [#184](https://github.com/un-fao/calipseo-shiny/issues/184) Vessel overview, update table categories
 * [#193](https://github.com/un-fao/calipseo-shiny/issues/193) Full i18n implementation for vessels overview
 
 ## New features
