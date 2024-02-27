@@ -42,7 +42,7 @@ individual_list_server <- function(id, pool) {
        is_fisher_active_table$Status[is.na(is_fisher_active_table$Status)]<-""
        ind_info<-merge(ind_info,is_fisher_active_table)
      }else{
-       ind_info$active<-NA
+       ind_info$Status<-NA
      }
      
      ind_info<-unique(subset(ind_info,select=c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,Gender,Site,ID)))
