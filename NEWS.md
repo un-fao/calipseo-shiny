@@ -23,6 +23,7 @@
 _Individuals list_
 
 * [#191](https://github.com/un-fao/calipseo-shiny/issues/191) Full i18n implementation for individuals list
+* [#192](https://github.com/un-fao/calipseo-shiny/issues/192) Full i18n implementation for individuals overview
 
 _Vessels list_
 
