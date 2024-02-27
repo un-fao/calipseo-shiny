@@ -25,6 +25,7 @@
 ## New features
 
 **Core new features**
+
 **Stat new features**
 _Saint Lucia statistical indicators_
 * [#182](https://github.com/un-fao/calipseo-shiny/issues/182) LCA- add statistical indicator for count number of active fisher by category
