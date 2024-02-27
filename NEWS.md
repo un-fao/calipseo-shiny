@@ -16,20 +16,28 @@
 * [#181](https://github.com/un-fao/calipseo-shiny/issues/181) Make computation module more flexible
 * [#186](https://github.com/un-fao/calipseo-shiny/issues/186) Make the shiny app rely on external calipseo-data
 * [#187](https://github.com/un-fao/calipseo-shiny/issues/187) Move statistical indicators defs to calipseo-data repository
+* [#185](https://github.com/un-fao/calipseo-shiny/issues/185) add capability to filter variable categories for table module
 
 **Module enhancements**
 
+_Individuals list_
+
+* [#191](https://github.com/un-fao/calipseo-shiny/issues/191) Full i18n implementation for individuals list
+
+_Vessels list_
+
 * [#184](https://github.com/un-fao/calipseo-shiny/issues/184) Vessel overview, update table categories
-* [#185](https://github.com/un-fao/calipseo-shiny/issues/185) add capability to filter variable categories for table module
 
 ## New features
 
 **Core new features**
 
 **Stat new features**
-_Saint Lucia statistical indicators_
-* [#182](https://github.com/un-fao/calipseo-shiny/issues/182) LCA- add statistical indicator for count number of active fisher by category
-* [#183](https://github.com/un-fao/calipseo-shiny/issues/183) LCA-add statistical indicator to count active vessel
+
+_Saint Lucia (LCA)_
+
+* [#182](https://github.com/un-fao/calipseo-shiny/issues/182) LCA - add statistical indicator for count number of active fisher by category
+* [#183](https://github.com/un-fao/calipseo-shiny/issues/183) LCA - add statistical indicator to count active vessel
 
 # **shiny-calipseo [v1.4.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.4.0.zip) - 2023-12-05**
 

@@ -18,7 +18,7 @@ individual_list_server <- function(id, pool) {
     
     
      ind_info <- accessIndividualInfo(pool)
-     ind_info <- ind_info[names(ind_info)%in%c("ID","Salutations","First_name","Middle_name","Suffix_name","Last_name","Gender","FisherID","Site")]
+     ind_info <- ind_info[names(ind_info)%in%c("ID","Salutations","First_name","Middle_name","Suffix_name","Last_name","GenderCode", "Gender","FisherID","Site")]
      
      country_params<-accessCountryParam(pool)
      
@@ -26,8 +26,8 @@ individual_list_server <- function(id, pool) {
      if(length(is_fisher_query)>0){
        is_fisher_table<-suppressWarnings(dbGetQuery(pool, is_fisher_query))
        names(is_fisher_table)<-c("ID","Type")
-       is_fisher_table$Type[is_fisher_table$Type==0]<-"Non Fisher"
-       is_fisher_table$Type[is_fisher_table$Type==1]<-"Fisher"
+       is_fisher_table$Type[is_fisher_table$Type==0]<- i18n("INDIVIDUAL_LIST_TABLE_COLNAME_TYPE_NONFISHER")
+       is_fisher_table$Type[is_fisher_table$Type==1]<- i18n("INDIVIDUAL_LIST_TABLE_COLNAME_TYPE_FISHER")
        ind_info<-merge(ind_info,is_fisher_table)
      }else{
        ind_info$Type<-NA
@@ -37,12 +37,12 @@ individual_list_server <- function(id, pool) {
      if(length(is_fisher_active_query)>0){
        is_fisher_active_table<-suppressWarnings(dbGetQuery(pool, is_fisher_active_query))
        names(is_fisher_active_table)<-c("ID","Status")
-       is_fisher_active_table$Status[is_fisher_active_table$Status==0]<-"Inactive"
-       is_fisher_active_table$Status[is_fisher_active_table$Status==1]<-"Active"
+       is_fisher_active_table$Status[is_fisher_active_table$Status==0]<-"inactive"
+       is_fisher_active_table$Status[is_fisher_active_table$Status==1]<-"active"
        is_fisher_active_table$Status[is.na(is_fisher_active_table$Status)]<-""
        ind_info<-merge(ind_info,is_fisher_active_table)
      }else{
-       ind_info$Active<-NA
+       ind_info$active<-NA
      }
      
      ind_info<-unique(subset(ind_info,select=c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,Gender,Site,ID)))
@@ -57,24 +57,21 @@ individual_list_server <- function(id, pool) {
       
       js <- js_select2_filter_provider(ns("individual_list"))
      
-      ind_info$Status<-ifelse(ind_info$Status=="Active",paste0(icon("anchor-circle-check",style = 'color:green'),span(" Active",style='color:green;')),
-                              ifelse(ind_info$Status=="Inactive",paste0(icon("anchor-circle-exclamation",style = 'color:orange'),span(" Inactive",style='color:orange;')),
-                                     paste0(icon("ban",style = 'color:gray'),span(" Not concerned",style='color:gray;'))))
+      ind_info$Status<-ifelse(ind_info$Status=="active",paste0(icon("anchor-circle-check",style = 'color:green'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_ACTIVE")),style='color:green;')),
+                              ifelse(ind_info$Status=="inactive",paste0(icon("anchor-circle-exclamation",style = 'color:orange'),span(paste0(" ", i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_INACTIVE")),style='color:orange;')),
+                                     paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_NOTCONCERNED")),style='color:gray;'))))
       
-      ind_info$Gender<-ifelse(ind_info$Gender=="Male",paste0(icon("mars"),span(" Male")),
-                              ifelse(ind_info$Gender=="Female",paste0(icon("venus"),span(" Female")),
-                                     ind$Gender))
-      
+      ind_info$Gender<-sapply(1:nrow(ind_info), function(i){
+        if(is.null(ind_info[i,]$GenderCode)) return(paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_GENDER_UNDEFINED")),style='color:gray;')))
+        switch(ind_info[i,]$GenderCode,
+          "MALE" = paste0(icon("mars"),span(paste0(" ",ind_info[i,]$Gender))),
+          "FEMALE",paste0(icon("venus"),span(paste0(" ",ind_info[i,]$Gender)))
+        )
+      })
+      ind_info$GenderCode = NULL
       for(i in 1:length(names(ind_info))){
         names(ind_info)[i] <- i18n(sprintf("INDIVIDUAL_LIST_TABLE_COLNAME_%s",toupper(names(ind_info)[i])))
       }
-      
-     
-     print("START TEST PRINT")
-     print(head(ind_info))
-     print("END TEST PRINT")
-
-
 
     INFO("individual-list server: Fetching individual list data with rows '%s'", nrow(ind_info))
 
