@@ -29,6 +29,10 @@ _Vessels list_
 
 * [#184](https://github.com/un-fao/calipseo-shiny/issues/184) Vessel overview, update table categories
 
+_Vessels overview_
+
+* [#193](https://github.com/un-fao/calipseo-shiny/issues/193) Full i18n implementation for vessels overview
+
 ## New features
 
 **Core new features**

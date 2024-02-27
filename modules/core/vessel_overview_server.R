@@ -15,17 +15,17 @@ vessel_overview_server <- function(id, pool) {
   is_vessel_active_query<-subset(country_params,CODE=="ISVESSELACTIVE")$TEXT
    if(length(is_vessel_active_query)>0){
      is_vessel_active_table<-suppressWarnings(dbGetQuery(pool, is_vessel_active_query))
-     names(is_vessel_active_table)<-c("ID","Active")
-     is_vessel_active_table$Active[is_vessel_active_table$Active==0]<-"Vessel Non Active"
-     is_vessel_active_table$Active[is_vessel_active_table$Active==1]<-"Vessel Active"
+     names(is_vessel_active_table)<-c("ID","Status")
+     is_vessel_active_table$Status[is_vessel_active_table$Status==0]<-i18n("VESSEL_STATUS_INACTIVE")
+     is_vessel_active_table$Status[is_vessel_active_table$Status==1]<-i18n("VESSEL_STATUS_ACTIVE")
      vessel_info<-merge(vessel_info,is_vessel_active_table)
-   }else{
-    vessel_info$Active<-NA
-   }
+  }else{
+    vessel_info$Status<-NA
+  }
   
   total_nb<-length(unique(vessel_info$ID))
 
-  fisher_active_nb<-length(unique(subset(vessel_info,Active=="Vessel Active")$ID))
+  fisher_active_nb<-length(unique(subset(vessel_info,Status=="Vessel Active")$ID))
   
   
   output$indicators<-renderUI({
@@ -40,44 +40,44 @@ vessel_overview_server <- function(id, pool) {
   
   colVariables<-c()
   
-  if(!all(is.na(vessel_info$Active))){
-    colVariables<-c(colVariables,c("Active"="Active"))
-    vessel_info$Active[is.na(vessel_info$Active)] <- "Unknown"
+  if(!all(is.na(vessel_info$Status))){
+    colVariables<-c(colVariables,c("Status"=i18n("VESSEL_PROPERTY_STATUS")))
+    vessel_info$Status[is.na(vessel_info$Status)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$OPERATIONAL_STATUS))){
-    colVariables<-c(colVariables,c("OPERATIONAL_STATUS"="Operational Status"))
-    vessel_info$OPERATIONAL_STATUS[is.na(vessel_info$OPERATIONAL_STATUS)] <- "Unknown"
+    colVariables<-c(colVariables,c("OPERATIONAL_STATUS"=i18n("VESSEL_PROPERTY_OPERATIONAL_STATUS")))
+    vessel_info$OPERATIONAL_STATUS[is.na(vessel_info$OPERATIONAL_STATUS)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$VESSEL_TYPE))){
-    colVariables<-c(colVariables,c("VESSEL_TYPE"="Vessel Type"))
-    vessel_info$VESSEL_TYPE[is.na(vessel_info$VESSEL_TYPE)] <- "Unknown"
+    colVariables<-c(colVariables,c("VESSEL_TYPE"=i18n("VESSEL_PROPERTY_VESSELTYPE")))
+    vessel_info$VESSEL_TYPE[is.na(vessel_info$VESSEL_TYPE)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$HOME_PORT_LANDING_SITE))){
-    colVariables<-c(colVariables,c("HOME_PORT_LANDING_SITE"="Home Port"))
-    vessel_info$HOME_PORT_LANDING_SITE[is.na(vessel_info$HOME_PORT)] <- "Unknown"
+    colVariables<-c(colVariables,c("HOME_PORT_LANDING_SITE"=i18n("VESSEL_PROPERTY_HOMEPORT")))
+    vessel_info$HOME_PORT_LANDING_SITE[is.na(vessel_info$HOME_PORT)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$REG_PORT_LANDING_SITE))){
-    colVariables<-c(colVariables,c("REG_PORT_LANDING_SITE"="Registration Port"))
-    vessel_info$REG_PORT_LANDING_SITE[is.na(vessel_info$REG_PORT_LANDING_SITE)] <- "Unknown"
+    colVariables<-c(colVariables,c("REG_PORT_LANDING_SITE"=i18n("VESSEL_PROPERTY_REGPORT")))
+    vessel_info$REG_PORT_LANDING_SITE[is.na(vessel_info$REG_PORT_LANDING_SITE)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$MANUFACTURER))){
-    colVariables<-c(colVariables,c("MANUFACTURER"="Manufacturer"))
-    vessel_info$MANUFACTURER[is.na(vessel_info$MANUFACTURER)] <- "Unknown"
+    colVariables<-c(colVariables,c("MANUFACTURER"=i18n("VESSEL_PROPERTY_MANUFACTURER")))
+    vessel_info$MANUFACTURER[is.na(vessel_info$MANUFACTURER)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$ENGINE_TYPE))){
-    colVariables<-c(colVariables,c("ENGINE_TYPE"="Engine Type"))
-    vessel_info$ENGINE_TYPE[is.na(vessel_info$ENGINE_TYPE)] <- "Unknown"
+    colVariables<-c(colVariables,c("ENGINE_TYPE"=i18n("VESSEL_PROPERTY_ENGINETYPE")))
+    vessel_info$ENGINE_TYPE[is.na(vessel_info$ENGINE_TYPE)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   if(!all(is.na(vessel_info$ENERGY_TYPE))){
-    colVariables<-c(colVariables,c("ENERGY_TYPE"="Energy type"))
-    vessel_info$ENERGY_TYPE[is.na(vessel_info$ENERGY_TYPE)] <- "Unknown"
+    colVariables<-c(colVariables,c("ENERGY_TYPE"=i18n("VESSEL_PROPERTY_ENERGYTYPE")))
+    vessel_info$ENERGY_TYPE[is.na(vessel_info$ENERGY_TYPE)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
   print(head(vessel_info))
