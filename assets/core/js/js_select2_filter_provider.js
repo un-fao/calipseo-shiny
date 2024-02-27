@@ -16,26 +16,15 @@ function(){
           column.search(vals.length > 0 ? '('+vals+')' : '', true, false, false).draw();
         });
       var data = column.data();
-      if(i === 0){
-        data = data.map(function(item){
-          var it = item;
-          if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
-          return(it);
-        })
-        .each(function(d, j){
-          select.append('<option value="'+d+'">'+d+'</option>');
-        });
-      }else{
-        data = data.map(function(item){
-          var it = item;
-          if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
-          return(it);
-        })
-        .unique().sort()
-        .each(function(d, j){
-          select.append('<option value="'+d+'">'+d+'</option>');
-        });
-      }
+      data = data.map(function(item){
+        var it = item;
+        if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
+        return(it);
+      })
+      .unique().sort()
+      .each(function(d, j){
+        select.append('<option value="'+d+'">'+d+'</option>');
+      });
       select.select2({width: '100%%', closeOnSelect: false});
     }else{
       $(tds[i]).empty();
