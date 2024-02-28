@@ -46,7 +46,6 @@ individual_list_server <- function(id, pool) {
      }
      
      ind_info<-unique(subset(ind_info,select=c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,GenderCode,Gender,Site,ID)))
-     ind_info<-ind_info[!sapply(ind_info, function(x) all(x == ""|is.na(x)))]
      
      # ind_info$Details <- sapply(ind_info$ID, function(x){
      #  ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
