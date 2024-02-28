@@ -4,6 +4,7 @@
 
 **Core corrections**
 
+* [#166](https://github.com/un-fao/calipseo-shiny/issues/166) Individuals - Add controls for age pyramid on non fishers for no data
 * [#188](https://github.com/un-fao/calipseo-shiny/issues/188) Counting of landing sites too restrictive on geographic coordinates availability
 * [#189](https://github.com/un-fao/calipseo-shiny/issues/189) Bad filering inside tables of vessel and individual list modules
 * [#190](https://github.com/un-fao/calipseo-shiny/issues/190) Select2 js filter not sorting first column
