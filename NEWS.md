@@ -1,4 +1,4 @@
-# **shiny-calipseo [v1.5.0](Ongoing) - 2024-02-20**
+# **shiny-calipseo [v1.5.0](Ongoing) - 2024-02-29**
 
 ## Corrections
 
@@ -50,7 +50,7 @@ _Saint Lucia (LCA)_
 * [#182](https://github.com/un-fao/calipseo-shiny/issues/182) LCA - add statistical indicator for count number of active fisher by category
 * [#183](https://github.com/un-fao/calipseo-shiny/issues/183) LCA - add statistical indicator to count active vessel
 
-# **shiny-calipseo [v1.4.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.4.0.zip) - 2023-12-05**
+# **shiny-calipseo [v1.4.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.4.0) - 2023-12-05**
 
 ## Corrections
 
@@ -105,7 +105,7 @@ _Vessels_
 
 * `sortable` --> [#171](https://github.com/un-fao/calipseo-shiny/issues/171)
 
-# **shiny-calipseo [v1.3.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.3.0.zip) - 2022-02-02**
+# **shiny-calipseo [v1.3.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.3.0) - 2022-02-02**
 
 ## Enhancements
 
@@ -142,7 +142,7 @@ _Vessels_
 * measurements --> [#143](https://github.com/un-fao/calipseo-shiny/issues/143)
 
 
-# **shiny-calipseo [v1.2.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.2.0.zip) - 2022-11-03**
+# **shiny-calipseo [v1.2.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.2.0) - 2022-11-03**
 
 ## Corrections
 
@@ -222,7 +222,7 @@ _Vessel details_
 * [#125](https://github.com/un-fao/calipseo-shiny/issues/125) New module for individuals details
 * [#132](https://github.com/un-fao/calipseo-shiny/issues/132) New module for individuals overview
 
-# **shiny-calipseo [v1.1.3](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.3.zip) - 2022-07-13**
+# **shiny-calipseo [v1.1.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.1.3) - 2022-07-13**
 
 ## Corrections
 
@@ -233,7 +233,7 @@ _Artfish method (summary by fishing units)_
 * [#117](https://github.com/un-fao/calipseo-shiny/issues/117) bugs in calculation break the "By fishing unit' module  
 
 
-# **shiny-calipseo [v1.1.2](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.2.zip) - 2022-06-24**
+# **shiny-calipseo [v1.1.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.1.2) - 2022-06-24**
 
 ## Corrections
 
@@ -243,7 +243,7 @@ _Logbook validation (Suriname)_
 
 * [#110](https://github.com/un-fao/calipseo-shiny/issues/110) Logbooks validation / SQL - add inclusion of fishery products - **Fix regression with SQL**
 
-# **shiny-calipseo [v1.1.1](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.1.zip) - 2022-06-22**
+# **shiny-calipseo [v1.1.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.1.1) - 2022-06-22**
 
 ## Enhancements
 
@@ -271,7 +271,7 @@ _Logbook details_
 * [#113](https://github.com/un-fao/calipseo-shiny/issues/113) Logbooks - details - download buttons do not work in "By landing site" tab tables
 
 
-# **shiny-calipseo [v1.1.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.1.0.zip) - 2022-05-12**
+# **shiny-calipseo [v1.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.1.0) - 2022-05-12**
 
 ## New features
 
@@ -317,7 +317,7 @@ _Vessels - details (info)_
 
 * [#106](https://github.com/un-fao/calipseo-shiny/issues/106) Fix logbook SQL generation function for Suriname logbook data
 
-# **shiny-calipseo  [v1.0.0](https://bitbucket.org/cioapps/fao-calipseo-stats/get/v1.0.0.zip) - 2022-04-22**
+# **shiny-calipseo  [v1.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.0.0) - 2022-04-22**
 
 ## New features
 
