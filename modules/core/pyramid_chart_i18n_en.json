@@ -23,6 +23,8 @@
   
   /*tabpanels*/
   "TABPANEL_STATISTIC" : "Statistics",
-  "TABPANEL_PLOT" : "Plot"
+  "TABPANEL_PLOT" : "Plot",
+  
+  "MESSAGE_NO_DATA" : "(no data available)"
    
 }

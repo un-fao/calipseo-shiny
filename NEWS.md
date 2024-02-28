@@ -34,6 +34,10 @@ _Vessels overview_
 * [#184](https://github.com/un-fao/calipseo-shiny/issues/184) Vessel overview, update table categories
 * [#193](https://github.com/un-fao/calipseo-shiny/issues/193) Full i18n implementation for vessels overview
 
+_pyramid chart_
+
+* [#197](https://github.com/un-fao/calipseo-shiny/issues/197) Manage case when no datafor pyramid chart
+
 ## New features
 
 **Core new features**

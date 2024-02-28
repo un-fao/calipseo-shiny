@@ -23,6 +23,7 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
     data_ready<-reactiveVal(FALSE)
     col_av_filter<-reactiveVal(NULL)
     col_av_fill<-reactiveVal(NULL)
+    no_age_data<-reactiveVal(FALSE)
     
     observeEvent(input$mode,{
       if(input$mode=="pyramid"){
@@ -38,7 +39,14 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
            rename(setNames(colAge,"age"))
     
     
+  observe({
+    if(length(unique(df$age))<2)no_data<-no_age_data(TRUE)  
+    })
+    
     output$mode_selector<-renderUI({
+      if(no_age_data()){
+        NULL
+      }else{
       if(!is.null(colGender)){
         choices<-setNames(c("pyramid","stacked_bar","percent_bar"),c(i18n("PYRAMID_CHOICE"),i18n("STACKED_CHOICE"),i18n("PERCENT_CHOICE")))
       }else{
@@ -46,31 +54,46 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
       }
       
       selectInput(ns("mode"), i18n("MODE_SELECTOR_LABEL"), choices=choices,selected=choices[1], multiple=F)
+      }
     })
     
     output$age_slider<-renderUI({
+      if(no_age_data()){
+        NULL
+      }else{
       sliderInput(ns("age_range"), i18n("AGE_SELECTOR_LABEL"),
                   min = min(df$age), max = max(df$age),
                   value = c(min(df$age),max(df$age)), step = 1
       )
+      }
     })
     
     output$step_selector<-renderUI({
+      if(no_age_data()){
+        NULL
+      }else{
       numericInput(ns("step"), i18n("STEP_SELECTOR_LABEL"), 1, min = 1, max = 100)
+      }
     })
     
     
     output$fill_selector<-renderUI({
+      if(no_age_data()){
+        NULL
+      }else{
       choices=col_av_fill()
       print(input$filter_col)
       print(sub)
       print(choices)
       selectInput(ns("fill_col"), i18n("FILL_SELECTOR_LABEL"), choices=choices, multiple=F)
+      }
     })
     
     observeEvent(input$fill_col,{
     output$filter_selector<-renderUI({
-
+      if(no_age_data()){
+        NULL
+      }else{
       lapply(col_av_filter()[col_av_filter()!=input$fill_col], function(i) {
         col<-col_av_filter()[is.element(col_av_filter(),i)]
         values<-unique(df[[col]])
@@ -85,11 +108,13 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
           multiple=T
         )
       })
-      
+      }
     })
     })
     
      data_formating<-eventReactive(c(input$age_range,input$step,input$fill_col,input$mode,lapply(col_av_filter(), function(i) {input[[paste0("filter_", i)]]})),{
+       req(!no_age_data())
+       
        new_df<-subset(df,age>=input$age_range[1]&age<=input$age_range[2])
        
        var_list<-sapply(setNames(unname(col_av_filter()),unname(col_av_filter())), function(i) {input[[paste0("filter_", i)]]})
@@ -161,6 +186,9 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
     
     #observeEvent(c(input$stat,input$granu,input$number),{
     output$plot<-renderPlotly({
+      if(no_age_data()){
+        NULL
+      }else{
        data_formating()
        
        if(isTRUE(data_ready())){
@@ -204,12 +232,33 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
              )
          }
           
-        }
+       }
+      }
     })
     #  })
     
+    
+    output$plot_no_data<-renderUI({
+      if(no_age_data()){
+        HTML(i18n("MESSAGE_NO_DATA"))
+      }else{
+        NULL
+      }
+    })
+    
+    output$table_no_data<-renderUI({
+      if(no_age_data()){
+        HTML(i18n("MESSAGE_NO_DATA"))
+      }else{
+        NULL
+      }
+    })
+    
     output$table<-DT::renderDT(server = FALSE, {
       
+      if(no_age_data()){
+        NULL
+      }else{
       data_formating()
       
       if(isTRUE(data_ready())){
@@ -239,28 +288,30 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
           )
         )
       }
-      
+      }
     })
+    
+    
     
     output$result<-renderUI({
       switch(mode,
              'plot+table'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)}),
+                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)})
                )
              },
              'table+plot'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)}),
+                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)})
                )
              },
              'plot'={
-               plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+               if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)}
              },
              'table'={
-               DTOutput(ns("table"))%>%withSpinner(type = 4)
+               if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)}
              }
       )
     })
