@@ -70,6 +70,7 @@ _Individuals_
 
 * [#174](https://github.com/un-fao/calipseo-shiny/issues/174) Individual Overview - Restructure visual and content to make the module more generic
 * [#176](https://github.com/un-fao/calipseo-shiny/issues/176) Implement IS_FISHER and IS_FISHER ACTIVE query and apply them in individuals_overview
+* [#179](https://github.com/un-fao/calipseo-shiny/issues/179) Refactor Individuals list based on vessels list
 
 _Vessels_
 
