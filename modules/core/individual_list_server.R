@@ -45,7 +45,7 @@ individual_list_server <- function(id, pool) {
        ind_info$Status<-NA
      }
      
-     ind_info<-unique(subset(ind_info,select=c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,Gender,Site,ID)))
+     ind_info<-unique(subset(ind_info,select=c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,GenderCode,Gender,Site,ID)))
      ind_info<-ind_info[!sapply(ind_info, function(x) all(x == ""|is.na(x)))]
      
      # ind_info$Details <- sapply(ind_info$ID, function(x){
@@ -65,7 +65,7 @@ individual_list_server <- function(id, pool) {
         if(is.null(ind_info[i,]$GenderCode)) return(paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_GENDER_UNDEFINED")),style='color:gray;')))
         switch(ind_info[i,]$GenderCode,
           "MALE" = paste0(icon("mars"),span(paste0(" ",ind_info[i,]$Gender))),
-          "FEMALE",paste0(icon("venus"),span(paste0(" ",ind_info[i,]$Gender)))
+          "FEMALE" = paste0(icon("venus"),span(paste0(" ",ind_info[i,]$Gender)))
         )
       })
       ind_info$GenderCode = NULL
