@@ -16,7 +16,7 @@ landings1_maps_server <- function(id, pool){
    
       output$year_map_total_selector<-renderUI({
         
-        choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1",mode=input$mode)$year)
+        choices<-unique(getStatPeriods(config = appConfig, id = "artisanal_fisheries_landings1",target=input$mode)$year)
         
          selectizeInput(ns("year_map_total"), label = i18n("LANDINGS1_MAP_YEAR_LABEL"), 
                         choice = choices[order(as.numeric(choices))], selected = NULL, 
@@ -84,7 +84,7 @@ landings1_maps_server <- function(id, pool){
     req(!is.null(input$mode)&input$mode!="")
     req(!is.null(input$year_map_total)&input$year_map_total!="")
     
-    target<-getStatPeriods(config=appConfig, "artisanal_fisheries_landings1",mode = input$mode)
+    target<-getStatPeriods(config=appConfig, "artisanal_fisheries_landings1",target = input$mode)
     target<-subset(target,year==input$year_map_total)$file
     tsdata<-readr::read_csv(target)
     tsdata <- tsdata[order(tsdata$bch_name),]
