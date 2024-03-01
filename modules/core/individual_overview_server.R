@@ -110,7 +110,7 @@ individual_overview_server <- function(id, pool) {
       pyramid_data<-ind_info%>%
         filter(!is.na(DOB))%>%
          mutate(Age=round(time_length(interval(DOB,Sys.Date()),"years"),0))%>%
-         select(-DOB,-Regdate)%>%
+         select(-DOB,-Regdate,-GenderCode)%>%
         arrange(ID,License,Role,Site)%>%
         group_by(ID) %>%
         mutate(License=paste0(unique(License),collapse = "+"),
@@ -122,12 +122,16 @@ individual_overview_server <- function(id, pool) {
     
       print(head(pyramid_data))
     print(unique(pyramid_data$Role))
-      
+    
+    print("PIPO")
+    print(unique(pyramid_data$Gender))
+    
     py_colVariables<-setNames(names(colVariables),colVariables)
-     pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=c("Gender"=i18n("INDIVIDUAL_PROPERTY_GENDER")),colVariables=py_colVariables[py_colVariables!=i18n("INDIVIDUAL_PROPERTY_GENDER")],mode="plot+table")
+    print(py_colVariables)
+     pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=c("Gender"="Gender"),colVariables=py_colVariables[py_colVariables!="Gender"],mode="plot+table")
      
      sunburst_data<-ind_info%>%
-       select(-DOB,-Regdate)%>%
+       select(-DOB,-Regdate,-GenderCode)%>%
        arrange(ID,License,Role,Site)%>%
        group_by(ID) %>%
        mutate(License=paste0(unique(License),collapse = "+"),
