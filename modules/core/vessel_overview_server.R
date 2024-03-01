@@ -9,6 +9,7 @@ vessel_overview_server <- function(id, pool) {
   })
   
   vessel_info <- accessVesselInfo(pool)
+  INFO("vessel-overview server: Fetching vessel info list '%s'", nrow(vessel_info))
   
   country_params<-accessCountryParam(pool)
   
@@ -25,14 +26,14 @@ vessel_overview_server <- function(id, pool) {
   
   total_nb<-length(unique(vessel_info$ID))
 
-  fisher_active_nb<-length(unique(subset(vessel_info,Status=="Vessel Active")$ID))
+  vessel_active_nb<-length(unique(subset(vessel_info,Status==i18n("VESSEL_STATUS_ACTIVE"))$ID))
   
   
   output$indicators<-renderUI({
     div(
       column(12,
              infoBox(i18n("INFOBOX_TITLE_VESSEL_TOTAL"),total_nb , icon = icon("ship"), fill = TRUE,color="blue",width = 6),
-             infoBox(i18n("INFOBOX_TITLE_VESSEL_ACTIVE"),fisher_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
+             infoBox(i18n("INFOBOX_TITLE_VESSEL_ACTIVE"),vessel_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
              
       )
     )
@@ -80,12 +81,10 @@ vessel_overview_server <- function(id, pool) {
     vessel_info$ENERGY_TYPE[is.na(vessel_info$ENERGY_TYPE)] <- i18n("VESSEL_UNKNOWN_VALUE")
   }
   
-  print(head(vessel_info))
-  
   sunburst_data<-vessel_info%>%
-    arrange(REGISTRATION_NUMBER,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
-    group_by(REGISTRATION_NUMBER) %>%
-    mutate(MANUFACTURE=paste0(unique(MANUFACTURER),collapse = "+"),
+    arrange(ID,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
+    group_by(ID) %>%
+    mutate(MANUFACTURER=paste0(unique(MANUFACTURER),collapse = "+"),
            ENGINE_TYPE=paste0(unique(ENGINE_TYPE),collapse = "+"),
            ENERGY_TYPE=paste0(unique(ENERGY_TYPE),collapse = "+"))%>%
     ungroup()%>%
@@ -97,9 +96,9 @@ vessel_overview_server <- function(id, pool) {
     filter(!is.na(REGISTRATION_DATE))%>%
     mutate(Age=round(time_length(interval(REGISTRATION_DATE,Sys.Date()),"years"),0))%>%
     select(-REGISTRATION_DATE,-OPERATIONAL_STATUS_CODE)%>%
-    arrange(REGISTRATION_NUMBER,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
-    group_by(REGISTRATION_NUMBER) %>%
-    mutate(MANUFACTURE=paste0(unique(MANUFACTURER),collapse = "+"),
+    arrange(ID,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
+    group_by(ID) %>%
+    mutate(MANUFACTURER=paste0(unique(MANUFACTURER),collapse = "+"),
            ENGINE_TYPE=paste0(unique(ENGINE_TYPE),collapse = "+"),
            ENERGY_TYPE=paste0(unique(ENERGY_TYPE),collapse = "+"))%>%
     ungroup()%>%
