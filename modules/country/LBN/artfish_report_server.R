@@ -27,7 +27,7 @@ artfish_report_server <- function(id, pool){
       #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
       #TODO to check what happens with 2014 reports
       
-      choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",mode = input$mode)$year)
+      choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",target = input$mode)$year)
       
       print(choices)
       
@@ -45,7 +45,7 @@ artfish_report_server <- function(id, pool){
     
   output$month_selector<-renderUI({
     
-    choices <- getStatPeriods(config=appConfig, "artfish_estimates",mode = input$mode)
+    choices <- getStatPeriods(config=appConfig, "artfish_estimates",target = input$mode)
     choices <- unique(subset(choices,year==input$year)$month)
     choices <- as.numeric(gsub("M","",choices))
     
@@ -62,7 +62,7 @@ artfish_report_server <- function(id, pool){
     req(!is.null(input$year)&input$year!="")
     req(!is.null(input$month)&input$month!="")
     
-    data<-getStatPeriods(config=appConfig, "artfish_estimates",mode = input$mode)
+    data<-getStatPeriods(config=appConfig, "artfish_estimates",target = input$mode)
     data<-subset(data,year==input$year&month==paste0("M",input$month))$file
     data<-readr::read_csv(data)
     estimates<-estimates(data)

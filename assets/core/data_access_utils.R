@@ -959,7 +959,7 @@ accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 }
 
 #accessEffortDataByFleetSegment
-accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL){
+accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit = NULL){
   accessEffortDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
