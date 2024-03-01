@@ -1,4 +1,4 @@
-# **calipseo-shiny [v1.5.0]([Ongoing](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.0)) - 2024-03-01**
+# **calipseo-shiny [v1.5.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.0) - 2024-03-01**
 
 ## Corrections
 
