@@ -23,45 +23,43 @@ vessel_list_server <- function(id, pool) {
       is_vessel_active_table$Status[is_vessel_active_table$Status==0]<-"inactive"
       is_vessel_active_table$Status[is_vessel_active_table$Status==1]<-"active"
       outp<-merge(outp,is_vessel_active_table)
-      outp$ID = NULL
     }else{
       outp$Status<-NA
     }
+    INFO("vessel-list server: Fetching vessel list data after enriching with ISVESSELACTIVE '%s'", nrow(outp))
     
     ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
     INFO("vessel-list server: Fetching license permits data with rows '%s'", nrow(ls_permits))
     
     
     #TODO add buttons
+    #!!!! problematic when no registration number/ empty registration number
     outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
       outhtml <- sprintf("<a href=\"./?page=vessel-info&registrationNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
       return(outhtml)
     })
     
-    
-    not_complete_ls_permits <- ls_permits[is.na(ls_permits$PERMIT_NUMBER),]
-    INFO("vessel-list server: Vessels with no permit numbers '%s'", nrow(not_complete_ls_permits))
-    
-    not_complete_ls_permits$Validity <- 'missing license'
-    
-    ls_permits <- ls_permits[!is.na(ls_permits$PERMIT_NUMBER),]
-    
-    
-    df <- reactiveValues(data = outp)
-    
-    df <- df$data[,-which(endsWith(colnames(df$data), "_CODE"))]
-    names(df) <- gsub("_", " ", names(df))
+    df = NULL
+    outp <- outp[,-which(endsWith(colnames(outp), "_CODE"))]
+    names(outp) <- gsub("_", " ", names(outp))
     INFO("vessel-list server: Renaming vessel list data columns")
-    names(df)[names(df)=="REGISTRATION NUMBER"] <- "REGISTRATION_NUMBER"
-    names(df)[names(df)=="HOME PORT LANDING SITE"] <- "HOME_PORT"
-    names(df)[names(df)=="REG PORT LANDING SITE"] <- "REG_PORT"
-    names(df)[names(df)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
+    names(outp)[names(outp)=="REGISTRATION NUMBER"] <- "REGISTRATION_NUMBER"
+    names(outp)[names(outp)=="HOME PORT LANDING SITE"] <- "HOME_PORT"
+    names(outp)[names(outp)=="REG PORT LANDING SITE"] <- "REG_PORT"
+    names(outp)[names(outp)=="VESSEL OPERATIONAL STATUS"] <- "OP_STATUS"
     
     INFO("vessel-list server: Joining vessel list data and license permits data")
-    df <- df[,c("REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
+    outp <- outp[,c("ID", "REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",
                 "HOME_PORT","REG_PORT","Details")]
     
+    #vessels with no licenses
+    not_complete_ls_permits <- ls_permits[is.na(ls_permits$PERMIT_NUMBER),]
+    not_complete_ls_permits$Validity <- 'missing license'
+    INFO("vessel-list server: Vessels with no permit numbers '%s'", nrow(not_complete_ls_permits))
     
+    #process vessels with license
+    ls_permits <- ls_permits[!is.na(ls_permits$PERMIT_NUMBER),]
+
     if(nrow(ls_permits)>0){
       
       js <- js_select2_filter_provider(ns("vessel_list"))
@@ -72,18 +70,16 @@ vessel_list_server <- function(id, pool) {
       
       INFO("vessel-list server: Computing valid and expired license permits")
       ls_permits <- LicenseValidity(ls_permits)
+      INFO("vessel-list server: Vessels with permit numbers after computing valid/expired license permits '%s'", nrow(ls_permits))
       
-      #reordering
-      valid_dates <- ls_permits[ls_permits['Validity']=='valid',]
-      if(nrow(valid_dates)){
-        invalid_dates <- ls_permits[ls_permits['REGISTRATION_NUMBER'] != valid_dates$REGISTRATION_NUMBER,]
-        ls_permits <- rbind(valid_dates,invalid_dates)
-      }
+      #merge vessels with license + no license
       ls_permits <- rbind(ls_permits,not_complete_ls_permits)
+      INFO("vessel-list server: all vessels before display '%s'", nrow(ls_permits))
+      ls_permits$REGISTRATION_NUMBER = NULL
       
       INFO("vessel-list server: Joining vessels with license permits and those without license permits")
-      df <- left_join(df,ls_permits,by="REGISTRATION_NUMBER")
-      df <- dplyr::distinct(df,REGISTRATION_NUMBER,.keep_all = TRUE)
+      df <- left_join(outp,ls_permits,by="ID")
+      df <- dplyr::distinct(df,ID,.keep_all = TRUE)
       df$Validity[is.na(df$Validity)] <- 'missing license'
       df$HOME_PORT[is.na(df$HOME_PORT)] <- 'unknown'
       df$REG_PORT[is.na(df$REG_PORT)] <- 'unknown'
@@ -104,7 +100,7 @@ vessel_list_server <- function(id, pool) {
       df$Validity[tolower(df$Validity)=="missing license"] <- paste(gicon("remove",style = 'color:red;'),span("Missing license",style='color:red;'))
       
     }else{
-      
+      df = outp
       df$Validity <- paste(span("No License",style='color:darkred;font-weight:bold;'))
       
       df <- df[,c("REGISTRATION_NUMBER","NAME","Status", "VESSEL TYPE","OP_STATUS","VESSEL STAT TYPE",

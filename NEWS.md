@@ -9,6 +9,7 @@
 * [#189](https://github.com/un-fao/calipseo-shiny/issues/189) Bad filering inside tables of vessel and individual list modules
 * [#190](https://github.com/un-fao/calipseo-shiny/issues/190) Select2 js filter not sorting first column
 * [#198](https://github.com/un-fao/calipseo-shiny/issues/198) Regression in getStatPeriod argument name
+* [#199](https://github.com/un-fao/calipseo-shiny/issues/199) Discrepancy between home vessel counting and vessel listing
 
 ## Enhancements
 
