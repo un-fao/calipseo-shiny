@@ -105,14 +105,16 @@ individual_overview_server <- function(id, pool) {
    }
     
 
+      readr::write_csv(ind_info, "ind_info.csv")
      
       pyramid_data<-ind_info%>%
         filter(!is.na(DOB))%>%
          mutate(Age=round(time_length(interval(DOB,Sys.Date()),"years"),0))%>%
          select(-DOB,-Regdate)%>%
-        arrange(ID,Role,Site)%>%
+        arrange(ID,License,Role,Site)%>%
         group_by(ID) %>%
-        mutate(Role=paste0(unique(Role),collapse = "+"),
+        mutate(License=paste0(unique(License),collapse = "+"),
+               Role=paste0(unique(Role),collapse = "+"),
                Site=paste0(unique(Site),collapse = "+"))%>%
         ungroup()%>%
         distinct()%>%
@@ -126,9 +128,10 @@ individual_overview_server <- function(id, pool) {
      
      sunburst_data<-ind_info%>%
        select(-DOB,-Regdate)%>%
-       arrange(ID,Role,Site)%>%
+       arrange(ID,License,Role,Site)%>%
        group_by(ID) %>%
-       mutate(Role=paste0(unique(Role),collapse = "+"),
+       mutate(License=paste0(unique(License),collapse = "+"),
+              Role=paste0(unique(Role),collapse = "+"),
               Site=paste0(unique(Site),collapse = "+"))%>%
        ungroup()%>%
        distinct()%>%
