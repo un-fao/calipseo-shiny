@@ -91,13 +91,13 @@ vessel_list_server <- function(id, pool) {
       df$HOME_PORT <- as.character(df$HOME_PORT)
       df$REG_PORT <- as.character(df$REG_PORT)
       df$OP_STATUS <- as.character(df$OP_STATUS)
-      df$NAME[tolower(df$NAME)=="name to be completed"] <- paste(gicon("alert", style='color:darkorange;'),span("NAME TO BE COMPLETED",style='color:darkorange;'))
-      df$HOME_PORT[tolower(df$HOME_PORT)=="unknown"] <- paste(gicon("alert", style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
-      df$REG_PORT[tolower(df$REG_PORT)=="unknown"] <- paste(gicon("alert", style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
-      df$OP_STATUS[tolower(df$OP_STATUS)=="unknown"] <- paste(gicon("alert",style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
-      df$Validity[tolower(df$Validity)=="valid"] <- paste(gicon("ok",style = 'color:green;'),span("Valid",style='color:green;'))
-      df$Validity[tolower(df$Validity)=="expired"] <- paste(gicon("remove",style = 'color:red;'),span("Expired",style='color:red;'))
-      df$Validity[tolower(df$Validity)=="missing license"] <- paste(gicon("remove",style = 'color:red;'),span("Missing license",style='color:red;'))
+      df$NAME[tolower(df$NAME)=="name to be completed"] <- paste(icon("alert", style='color:darkorange;'),span("NAME TO BE COMPLETED",style='color:darkorange;'))
+      df$HOME_PORT[tolower(df$HOME_PORT)=="unknown"] <- paste(icon("alert", style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
+      df$REG_PORT[tolower(df$REG_PORT)=="unknown"] <- paste(icon("alert", style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
+      df$OP_STATUS[tolower(df$OP_STATUS)=="unknown"] <- paste(icon("alert",style = 'color:darkorange;'),span("Unknown",style='color:darkorange;'))
+      df$Validity[tolower(df$Validity)=="valid"] <- paste(icon("ok",style = 'color:green;'),span("Valid",style='color:green;'))
+      df$Validity[tolower(df$Validity)=="expired"] <- paste(icon("remove",style = 'color:red;'),span("Expired",style='color:red;'))
+      df$Validity[tolower(df$Validity)=="missing license"] <- paste(icon("remove",style = 'color:red;'),span("Missing license",style='color:red;'))
       
     }else{
       df = outp
@@ -112,7 +112,8 @@ vessel_list_server <- function(id, pool) {
                                      paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("VESSEL_LIST_VESSEL_STATUS_UNDEFINED")),style='color:gray;'))))
     
     #factorize types for access to codelists
-    df[,1:9] <- lapply(df[,1:9],as.factor)
+    max_factor_index = 9
+    df[,1:max_factor_index] <- lapply(df[,1:max_factor_index],as.factor)
     
     INFO("vessel-list server: Applying the I18n_terms to the vessel list columns")
     names(df) <- c(i18n("VESSEL_LIST_TABLE_COLNAME_REGNUMBER"),i18n("VESSEL_LIST_TABLE_COLNAME_NAME"),
@@ -143,7 +144,7 @@ vessel_list_server <- function(id, pool) {
           list(extend = "pdf", title = i18n("VESSEL_LIST_TITLE"), header = TRUE, orientation = "landscape")
         ),
         columnDefs = list(
-          list(targets=8,searchable = FALSE, sortable = FALSE)
+          list(targets=max_factor_index,searchable = FALSE, sortable = FALSE)
         ),
         exportOptions = list(
           modifiers = list(page = "all", selected = TRUE)
