@@ -103,9 +103,6 @@ individual_overview_server <- function(id, pool) {
       colVariables<-c(colVariables,c("Site"=i18n("INDIVIDUAL_PROPERTY_SITE")))
       ind_info$Site[is.na(ind_info$Site)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
    }
-    
-
-      readr::write_csv(ind_info, "ind_info.csv")
      
       pyramid_data<-ind_info%>%
         filter(!is.na(DOB))%>%
@@ -119,12 +116,6 @@ individual_overview_server <- function(id, pool) {
         ungroup()%>%
         distinct()%>%
          filter(Age>0)
-    
-      print(head(pyramid_data))
-    print(unique(pyramid_data$Role))
-    
-    print("PIPO")
-    print(unique(pyramid_data$Gender))
     
     py_colVariables<-setNames(names(colVariables),colVariables)
     print(py_colVariables)
