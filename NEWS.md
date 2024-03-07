@@ -1,3 +1,12 @@
+
+# **calipseo-shiny [v1.5.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.1) - 2024-03-07**
+
+## Corrections
+
+**Core corrections**
+
+* [#201](https://github.com/un-fao/calipseo-shiny/issues/201) JS select2 provider fails when column handle single values
+
 # **calipseo-shiny [v1.5.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.0) - 2024-03-04**
 
 ## Corrections

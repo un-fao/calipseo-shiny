@@ -18,7 +18,10 @@ function(){
       var data = column.data();
       data = data.map(function(item){
         var it = item;
-        if(item != null) if(item.startsWith('<')) it = $(it).text().trim();
+        if(item != null){
+         if(item instanceof Array) item = item[0];
+         if(item.startsWith('<')) it = $(item).text().trim(); 
+        } 
         return(it);
       })
       .unique().sort()
