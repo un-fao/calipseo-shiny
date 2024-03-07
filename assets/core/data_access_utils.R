@@ -318,11 +318,16 @@ accessVesselsLandingSiteFromDB <- function(con){
 
 
 #vesselsLandingsitesVesselTypesCountFromDB
-vesselsLandingSitesVesselTypesCountFromDB <- function(con){
-  vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_ landing_sites_vessel_types_count.sql",
+vesselsLandingSitesVesselTypesCountFromDB <- function(con, sf = FALSE){
+  vesselsitesvesseltype_count_sql <- readSQLScript("data/core/sql/vessels_landing_sites_vessel_types_count.sql",
                                                    language = appConfig$language)
-  sitesvesseltypecount <- suppressWarnings(dbGetQuery(con, vesselsitesvesseltype_count_sql))
-  return(sitesvesseltypecount)
+  sites <- suppressWarnings(dbGetQuery(con, vesselsitesvesseltype_count_sql))
+  if(sf){
+    sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites.sf <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+    sites = cbind(sites.sf, LONGITUDE = sites$LONGITUDE, LATITUDE = sites$LATITUDE)
+  }
+  return(sites)
 }
 
 
@@ -805,7 +810,7 @@ accessVesselLicensePermit <- function(con, registrationNumber){
 }
 
 #accessVesselsCountByLandingSite
-accessVesselsCountByLandingSite <- function(con, sf){
+accessVesselsCountByLandingSite <- function(con, sf = FALSE){
   accessVesselsCountByLandingSiteFromDB(con, sf)
 }
 
@@ -816,8 +821,8 @@ accessVesselsLandingSite <- function(con){
 
 
 #vesselsLandingsitesvesseltypesCount
-vesselsLandingSitesVesselTypesCount <- function(con){
-  vesselsLandingSitesVesselTypesCountFromDB(con)
+vesselsLandingSitesVesselTypesCount <- function(con, sf = FALSE){
+  vesselsLandingSitesVesselTypesCountFromDB(con, sf = sf)
 }
 
 #countVesselCaptains
