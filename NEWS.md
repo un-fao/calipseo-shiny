@@ -6,6 +6,7 @@
 **Core corrections**
 
 * [#201](https://github.com/un-fao/calipseo-shiny/issues/201) JS select2 provider fails when column handle single values
+* [#202](https://github.com/un-fao/calipseo-shiny/issues/202) Sunburst widget fails when single variable is available for breakdown
 
 # **calipseo-shiny [v1.5.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.0) - 2024-03-04**
 
