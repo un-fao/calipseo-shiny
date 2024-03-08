@@ -29,17 +29,12 @@
   "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME" : "total_quantities_by_landingsite",
   "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE" : "Total quantities by landing site",
   "MAP_POPUP_LANDINGSITE_LABEL" : "Landing site",
-  "MAP_POPUP_QUANTITY_LABEL" : "Quantity (kg)",
+  "MAP_POPUP_QUANTITY_LABEL" : "Quantity",
   
   /*species*/
   "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_TITLE" : "Breakdown of total quantities by landing site / species / year",
   "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME" : "species_quantities_by_landingsite",
   "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE" : "Species quantities by landing site",
-  
-  
-  "SPECIES_TABLE_COLNAME_1" : "NAME",
-  "SPECIES_TABLE_COLNAME_12" : "OTHERS",
-  "SPECIES_TABLE_COLNAME_13" : "TOTAL",
   
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
   

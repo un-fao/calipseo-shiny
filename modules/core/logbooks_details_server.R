@@ -219,9 +219,6 @@ logbooks_details_server <- function(id, pool){
         all.y = FALSE
       )
       sites_descriptor <- sites_descriptor[,c("NAME", colnames(resh)[colnames(resh)!="bch_id"])]
-      colnames(sites_descriptor)[1] <- i18n("SPECIES_TABLE_COLNAME_1")
-      colnames(sites_descriptor)[12] <- i18n("SPECIES_TABLE_COLNAME_12")
-      colnames(sites_descriptor)[13] <- i18n("SPECIES_TABLE_COLNAME_13")
       sites_descriptor <- as(sites_descriptor, "Spatial")
       colnames(sites_descriptor@data) <- gsub("\\.", " ", gsub("\\.\\.", "; ", colnames(sites_descriptor@data)))
       
@@ -235,16 +232,16 @@ logbooks_details_server <- function(id, pool){
       maxValue <- max(sites_descriptor$quantity, na.rm = TRUE)
       #build the map
       leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%  
         addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
-                   radius = 7000*sqrt(sites_descriptor$quantity/maxValue), 
+                   radius = 700*sqrt(sites_descriptor$quantity/maxValue), 
                    popup = paste(
                      em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")),sites_descriptor$NAME,br(),
                      em(paste0(i18n("MAP_POPUP_QUANTITY_LABEL"),": ")), sites_descriptor$quantity 
                    ))
     }else{
       leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor$NAME,br()
@@ -263,16 +260,16 @@ logbooks_details_server <- function(id, pool){
     if(nrow(sites_descriptor)>0){
       #build the map
       leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%  
         addMinicharts(
           coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
           type = "pie",
           chartdata = sites_descriptor@data[,colnames(sites_descriptor@data)[2:(ncol(sites_descriptor@data)-1)]], 
-          width = 60 * sqrt(sites_descriptor@data[,13]) / sqrt(max(sites_descriptor@data[,13], na.rm = TRUE)), transitionTime = 0,
+          width = 60 * sqrt(sites_descriptor@data[,"TOTAL"]) / sqrt(max(sites_descriptor@data[,"TOTAL"], na.rm = TRUE)), transitionTime = 0,
           colorPalette = colors)
     }else{
       leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor[,1],br()

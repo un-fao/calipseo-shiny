@@ -1,3 +1,12 @@
+# **calipseo-shiny [v1.5.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.2) - 2024-03-08**
+
+## Corrections
+
+**Module corrections**
+
+_Logbook details_
+
+* [#204](https://github.com/un-fao/calipseo-shiny/issues/204) Fix logbook details by landing sites
 
 # **calipseo-shiny [v1.5.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.1) - 2024-03-07**
 
