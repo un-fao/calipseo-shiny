@@ -63,6 +63,8 @@ CALIPSEO_SHINY_ENV <- new.env()
 core_assets <- list.files("assets/core", pattern = ".R", full.names = T)
 for(core_asset in core_assets) source(core_asset)
 
+addResourcePath(prefix = "calipseo-data", directoryPath = "../calipseo-data")
+
 #country R script utils
 country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 
                              pattern = ".R", recursive = TRUE, full.names = TRUE)

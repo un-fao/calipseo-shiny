@@ -2,6 +2,10 @@
   padding: 0px !important;
 }
 
+.box-title {
+    width: 100%;
+}
+
 footer{
   position:fixed;
   bottom:0;
@@ -58,3 +62,5 @@ ul.vessel li {
   margin-left:10px;
   margin-right:10px;
 }
+
+

@@ -8,6 +8,14 @@ _Logbook details_
 
 * [#204](https://github.com/un-fao/calipseo-shiny/issues/204) Fix logbook details by landing sites
 
+## Enhancements
+
+**Module enhancements**
+
+_computation_
+
+* [#206](https://github.com/un-fao/calipseo-shiny/issues/206) Computation module - rebuild and upgrade
+
 # **calipseo-shiny [v1.5.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.1) - 2024-03-07**
 
 ## Corrections
