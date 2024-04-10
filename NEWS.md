@@ -4,6 +4,10 @@
 
 **Module corrections**
 
+_Pyramid chart_
+
+* [#207](https://github.com/un-fao/calipseo-shiny/issues/207) Pyramid chart - bug with some variable in bar mode
+
 _Logbook details_
 
 * [#204](https://github.com/un-fao/calipseo-shiny/issues/204) Fix logbook details by landing sites
