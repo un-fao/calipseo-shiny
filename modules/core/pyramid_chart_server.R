@@ -120,6 +120,7 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
        var_list<-sapply(setNames(unname(col_av_filter()),unname(col_av_filter())), function(i) {input[[paste0("filter_", i)]]})
        var_to_filter<-var_list[!var_list %in% list(NULL)]
        var_to_remove<-names(var_list[var_list %in% list(NULL)])
+       
        if(input$mode=="pyramid"){
          group_variables<-unique(c("Gender",input$fill_col,"age_gr"))
        }else{
@@ -127,7 +128,7 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
        }
       
        if(length(var_to_remove)>0){
-         new_df<-new_df[,!names(new_df) %in% var_to_remove]
+        # new_df<-new_df[,!names(new_df) %in% var_to_remove]
        }
        
        if(length(var_to_filter)>0){
