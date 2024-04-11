@@ -1,4 +1,4 @@
-# **calipseo-shiny [v1.5.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.2) - 2024-03-08**
+# **calipseo-shiny [v1.5.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.3) - 2024-04-11**
 
 ## Corrections
 
@@ -7,6 +7,12 @@
 _Pyramid chart_
 
 * [#207](https://github.com/un-fao/calipseo-shiny/issues/207) Pyramid chart - bug with some variable in bar mode
+
+# **calipseo-shiny [v1.5.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.2) - 2024-03-08**
+
+## Corrections
+
+**Module corrections**
 
 _Logbook details_
 
