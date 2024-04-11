@@ -1,3 +1,4 @@
+install.packages(c('remotes','jsonlite','yaml'), repos='https://cran.r-project.org/')
 package <- jsonlite::read_json(file.path(getwd(), "package.json"))
 invisible(lapply(package$dependencies, function(pkg){
   from <- 'cran'
