@@ -1,50 +1,80 @@
-FROM rocker/shiny:4.0.5
+FROM rocker/r-ver:4.0.5
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
-# system libraries of general use
-#---------------------------------------------------------------------------------------
+# system libraries for LaTeX reporting & keyring
 RUN apt-get update && apt-get install -y \
     sudo \
+    pandoc \
+    pandoc-citeproc \
+    texlive-xetex \
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    texlive-formats-extra \
+	  libsodium-dev \
+    libsecret-1-dev
+    
+# general system libraries
+# Note: this includes rdf/redland system libraries
+RUN apt-get update && apt-get install -y \
+    cmake \
+    curl \
+    default-jdk \
+    fonts-roboto \
+    ghostscript \
+    hugo \
+    less \
+    libbz2-dev \
+    libglpk-dev \
+    libgmp3-dev \
+    libfribidi-dev \
+    libharfbuzz-dev \
+    libhunspell-dev \
+    libicu-dev \
+    liblzma-dev \
+    libmagick++-dev \
+    libopenmpi-dev \
+    libpcre2-dev \
     libssl-dev \
-    libcurl4-openssl-dev \
+    libv8-dev \
     libxml2-dev \
-    git 
+    libxslt1-dev \
+    libzmq3-dev \
+    lsb-release \
+    qpdf \
+    texinfo \
+    software-properties-common \
+    vim \
+    wget
+    
+RUN apt-get install -y librdf0-dev
+RUN install2.r --error --skipinstalled --ncpus -1 redland
+RUN apt-get install -y \
+    libcurl4-openssl-dev \
+    libgit2-dev \
+    libxslt-dev \
+    librdf0 \
+    redland-utils \
+    rasqal-utils \
+    raptor2-utils
 
-#Install geospatial deps over shiny server
-#---------------------------------------------------------------------------------------
+# geospatial system libraries
 RUN /rocker_scripts/install_geospatial.sh
 
-
-#R shiny server
-#---------------------------------------------------------------------------------------
-# RUN chown shiny:shiny /var/lib/shiny-server
-RUN chown shiny:shiny /srv/shiny-server
-
-#Git clone shiny app
-#---------------------------------------------------------------------------------------
-ADD ./shiny/shiny-calipseo /srv/shiny-server/
-#check dir is created
-RUN ls -ls /srv/shiny-server
-
-RUN mkdir -p /etc/shiny-server
-COPY shinyconfigs/config.yml /etc/shiny-server/config.yml
-RUN ls -ls /etc/shiny-server
-RUN chmod -R a+w /srv/shiny-server
-COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
-RUN ls -ls /srv/shiny-server
-
-#R packages
-#---------------------------------------------------------------------------------------
 # install R core package dependencies
 RUN install2.r --error --skipinstalled --ncpus -1 httpuv
-RUN R -e "install.packages(c('remotes','testthat','jsonlite','yaml'), repos='https://cran.r-project.org/')"
-# install dependencies of the app
-RUN R -e "source('./srv/shiny-server/install.R')"
- 
-# EXPOSE 3838
-EXPOSE 8080
+RUN R -e "install.packages(c('remotes','jsonlite','yaml'), repos='https://cran.r-project.org/')"
+# copy app
+COPY . /srv/calipseo-shiny
 
-#RUN apt-get install -y curl
-#CMD ["R", "-e shiny::runApp('/srv/shiny-server', port=8080, host='0.0.0.0')"]
-CMD ["/init"] 
+# install R app package dependencies
+RUN R -e "source('./srv/calipseo-shiny/install.R')"
+
+#etc dirs (for config)
+RUN mkdir -p /etc/calipseo-shiny/
+
+EXPOSE 3838
+
+CMD ["R", "-e shiny::runApp('/srv/calipseo-shiny',port=3838,host='0.0.0.0')"]
