@@ -23,15 +23,14 @@ setwd(wd)
 
 #prepare local data for a specific country (including definition of statistical indicators)
 #-------------------------------------------------------------------------------
+setwd(wd)
 COUNTRY = "<ISO3>"
 country_data_dir = "../deployment/calipseo-data"
 unlink(paste0(country_data_dir, "-", COUNTRY,".zip"), recursive = TRUE, force = TRUE)
-dir.create(country_data_dir)
-setwd(sprintf("../calipseo-data/country/%s", COUNTRY))
-for(file in list.files()){
-  file.copy(from = file, to = file.path("../..", country_data_dir), overwrite = T, recursive = T)
+dir.create(file.path(country_data_dir, "country", COUNTRY), recursive = T)
+for(file in list.files(path = sprintf("../calipseo-data/country/%s", COUNTRY), full.names = T)){
+  file.copy(from = file, to = file.path(country_data_dir, "country", COUNTRY), overwrite = T, recursive = T)
 }
-setwd(wd)
 setwd("../deployment")
 zip::zip(
   paste0(country_data_dir, "-", COUNTRY,".zip"), 
