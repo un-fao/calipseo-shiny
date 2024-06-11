@@ -5,6 +5,7 @@ artfish_report_server <- function(id, pool){
   
   ns<-session$ns
   estimates<-reactiveVal(NULL)
+  target_data<-reactiveVal(NULL)
   
   fishing_units<-accessFishingUnits(pool)
   
@@ -65,7 +66,7 @@ artfish_report_server <- function(id, pool){
     data<-getStatPeriods(config=appConfig, "artfish_estimates",target = input$mode)
     data<-subset(data,year==input$year&month==paste0("M",input$month))$file
     data<-readr::read_csv(data)
-    estimates<-estimates(data)
+    target_data<-target_data(data)
     
     print(head(data))
     
@@ -86,7 +87,7 @@ artfish_report_server <- function(id, pool){
   
   observeEvent(input$fishing_unit,{
     req(!is.null(input$fishing_unit)&input$fishing_unit!="")
-    subdata<-estimates()
+    subdata<-target_data()
     subdata<-subset(subdata,EST_BGC==input$fishing_unit)
     estimates<-estimates(subdata)
     
