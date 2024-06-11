@@ -1,3 +1,26 @@
+# **calipseo-shiny [v1.5.11062024](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.11062024) - 2024-06-11**
+
+## Corrections
+
+**Module corrections**
+
+_artfish_report_
+
+* [#212](https://github.com/un-fao/calipseo-shiny/issues/212) Issue in actualisation of artfish monthly report
+
+_artfish_overview_
+
+* [#214](https://github.com/un-fao/calipseo-shiny/issues/214) Fix counting for artfish overview graphs
+
+## Enhancements
+
+**Computation enhancements**
+
+_Artfish_method_
+
+* [#213](https://github.com/un-fao/calipseo-shiny/issues/213) Add label for main variables of artfish method result
+
+
 # **calipseo-shiny [v1.5.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.3) - 2024-04-15**
 
 ## Corrections
