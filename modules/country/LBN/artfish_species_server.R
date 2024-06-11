@@ -10,9 +10,11 @@ artfish_species_server <- function(id, pool){
   
   
   ref_species<-accessRefSpecies(pool)
+  ref_species$ID<-as.character(ref_species$ID)
   ref_fishing_units<-accessRefFishingUnits(pool)
+  ref_fishing_units$ID<-as.character(ref_fishing_units$ID)
   
-  estimate<-artfish_estimates(data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
+  estimate<-artfish_estimates(con=pool,data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
   
   output$species_selector<-renderUI({
     
@@ -93,7 +95,7 @@ artfish_species_server <- function(id, pool){
               EST_LND_CATCH=sum(EST_LND_CATCH,na.rm=T),
               EST_LND_PRICE=mean(EST_LND_PRICE,na.rm=T),
               EST_LND_VALUE=sum(EST_LND_VALUE,na.rm=T),
-              EST_EFF_EFFORT=sum(EST_EFF_EFFORT,na.rm=T),
+              EST_EFF_EFFORT=unique(EST_EFF_EFFORT,na.rm=T),
               EST_LND_CPUE=mean(EST_LND_CPUE,na.rm=T)
             )%>%
             ungroup()

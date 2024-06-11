@@ -18,7 +18,7 @@ artfish_fishing_unit_server <- function(id, pool){
   ref_species<-accessRefSpecies(pool)
   ref_fishing_units<-accessRefFishingUnits(pool)
   
-  estimate<-artfish_estimates(data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
+  estimate<-artfish_estimates(con=pool,data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
   
   
   

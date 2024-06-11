@@ -4,10 +4,21 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
   if(is.null(data_effort))data_effort=accessEffortData(con,year,month)
   if(is.null(data_landing))data_landing=accessLandingData(con,year,month)
   
+  fishing_units<-accessFishingUnits(con)
+  fishing_units<-subset(fishing_units,select=c(code,label))
+  names(fishing_units)<-c("EST_BGC","EST_BGC_NAME")
+  
+  ref_species<-accessRefSpecies(con)
+  ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
+  ref_species$ID<-as.character(ref_species$ID)
+  ref_species<-subset(ref_species,select=c(ID,Species))
+  names(ref_species)<-c("EST_SPC","EST_SPC_NAME")
+  
   effort<-data_effort%>%
     dplyr::rename(EST_YEAR=year,
            EST_MONTH=month,
            EST_BGC=fishing_unit)%>%
+    mutate(EST_BGC=as.character(EST_BGC))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
     dplyr::summarise(
       EST_EFF_NSMP=length(days_sampled),
@@ -29,9 +40,12 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
       EST_EFF_TMPACCUR=1,
       EST_EFF_SUI=unif_index(days)
     )%>%
+    ungroup()%>%
+    left_join(fishing_units, by="EST_BGC")%>%
     select(EST_YEAR,
            EST_MONTH,
            EST_BGC,
+           EST_BGC_NAME,
            EST_EFF_NBOATS,
            EST_EFF_NACT,
            EST_EFF_NBDAYS,
@@ -55,6 +69,7 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
    dplyr::rename(EST_YEAR=year,
           EST_MONTH=month,
           EST_BGC=fishing_unit)%>%
+   mutate(EST_BGC=as.character(EST_BGC))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC,days,id)%>%
    dplyr::summarise(quantity=sum(quantity,na.rm = T),value=sum(value,na.rm=T),price=mean(price,na.rm=T))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
@@ -69,10 +84,13 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
      EST_LND_CV=se/EST_LND_CPUE_G,
      EST_LND_SUI=unif_index(days)
    )%>%
+  ungroup()%>%
+  left_join(fishing_units, by="EST_BGC")%>%
   select(
     EST_YEAR,
     EST_MONTH,
     EST_BGC,
+    EST_BGC_NAME,
     EST_YEAR,
     EST_LND_NDAYS,
     EST_LND_SMPCATCH,
@@ -84,6 +102,7 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
  
  estimate<-effort%>%
    left_join(landing)%>%
+   mutate(EST_BGC=as.character(EST_BGC))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
    dplyr::mutate(
      EST_LND_CATCH_G=EST_EFF_EFFORT*EST_LND_CPUE_G,
@@ -97,9 +116,12 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
           EST_MONTH=month,
           EST_BGC=fishing_unit,
           EST_SPC=species)%>%
+   mutate(EST_SPC=as.character(EST_SPC))%>%
+   mutate(EST_BGC=as.character(EST_BGC))%>%
+   left_join(ref_species, by="EST_SPC")%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
    filter(!is.na(EST_SPC))%>%
-   group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_SPC)%>%
+   group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_SPC,EST_SPC_NAME)%>%
    dplyr::summarise(n=sum(quantity),EST_LND_NOFISH=sum(number),EST_LND_PRICE=mean(price))%>%
    group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
    dplyr::mutate(sum=sum(n),ratio=n/sum,EST_NOSPE=length(unique(EST_SPC)))%>%
@@ -118,8 +140,20 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
 ###Artfish estimates
 artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landing=NULL){
   
-  if(is.null(data_effort))data_effort=accessEffortData(con,year,month)
-  if(is.null(data_landing))data_landing=accessLandingData(con,year,month)
+  if(is.null(data_effort))data_effort=accessEffortDataByFleetSegment(con,year,month)
+  if(is.null(data_landing))data_landing=accessLandingDataByFleetSegment(con,year,month)
+  
+  print(data_effort)
+  
+  fishing_units<-accessFishingUnits(con)
+  fishing_units<-subset(fishing_units,select=c(code,label))
+  names(fishing_units)<-c("EST_BGC","EST_BGC_NAME")
+  
+  ref_species<-accessRefSpecies(con)
+  ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
+  ref_species$ID<-as.character(ref_species$ID)
+  ref_species<-subset(ref_species,select=c(ID,Species))
+  names(ref_species)<-c("EST_SPC","EST_SPC_NAME")
   
   
   effort<-data_effort%>%
@@ -127,6 +161,7 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
                   EST_MONTH=month,
                   EST_BGC=fishing_unit,
                   EST_FS=fleet_segment)%>%
+    mutate(EST_BGC=as.character(EST_BGC))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS)%>%
     dplyr::summarise(
       EST_EFF_NSMP=length(days_sampled),
@@ -148,6 +183,8 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
       EST_EFF_TMPACCUR=1,
       EST_EFF_SUI=unif_index(days)
     )%>%
+    ungroup()%>%
+    left_join(fishing_units, by="EST_BGC")%>%
     select(EST_YEAR,
            EST_MONTH,
            EST_BGC,
@@ -176,6 +213,7 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
                   EST_MONTH=month,
                   EST_BGC=fishing_unit,
                   EST_FS=fleet_segment)%>%
+    mutate(EST_BGC=as.character(EST_BGC))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS,days,id)%>%
     dplyr::summarise(quantity=sum(quantity,na.rm = T),value=sum(value,na.rm=T),price=mean(price,na.rm=T))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS)%>%
@@ -190,6 +228,8 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
       EST_LND_CV=se/EST_LND_CPUE_G,
       EST_LND_SUI=unif_index(days)
     )%>%
+    ungroup()%>%
+    left_join(fishing_units, by="EST_BGC")%>%
     select(
       EST_YEAR,
       EST_MONTH,
@@ -206,6 +246,7 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
   
   estimate<-effort%>%
     left_join(landing)%>%
+    mutate(EST_BGC=as.character(EST_BGC))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS)%>%
     dplyr::mutate(
       EST_LND_CATCH_G=EST_EFF_EFFORT*EST_LND_CPUE_G,
@@ -220,6 +261,9 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
                   EST_BGC=fishing_unit,
                   EST_FS=fleet_segment,
                   EST_SPC=species)%>%
+    mutate(EST_SPC=as.character(EST_SPC))%>%
+    mutate(EST_BGC=as.character(EST_BGC))%>%
+    left_join(ref_species, by="EST_SPC")%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS)%>%
     filter(!is.na(EST_SPC))%>%
     group_by(EST_YEAR,EST_MONTH,EST_BGC,EST_FS,EST_SPC)%>%

@@ -17,7 +17,7 @@
   /*labels*/
   "LABEL_VALUE" : "Value",
   
-  "VALUE_LABEL_VALUE" : "Value (kg)",
+  "VALUE_LABEL_VALUE" : "Value ($)",
   
   "LABEL_CATCH" : "Catch",
   
@@ -37,7 +37,7 @@
   
   /*valuebox*/
   
-  "VALUEBOX_TITLE_TOTAL_VALUE" : "Total value (kg)",
+  "VALUEBOX_TITLE_TOTAL_VALUE" : "Total value ($)",
   
   "VALUEBOX_TITLE_TOTAL_CATCH" : "Total catch (kg)",
   
