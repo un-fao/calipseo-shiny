@@ -127,12 +127,60 @@ artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landi
    dplyr::mutate(sum=sum(n),ratio=n/sum,EST_NOSPE=length(unique(EST_SPC)))%>%
    select(-n,-sum)%>%
    left_join(estimate)%>%
+   ungroup()%>%
    dplyr::mutate(EST_LND_CPUE=EST_LND_CPUE_G*ratio,
           EST_LND_CATCH=EST_EFF_EFFORT*EST_LND_CPUE,
           EST_LND_VALUE=EST_LND_CATCH*EST_LND_PRICE,
           EST_LND_AVW=EST_LND_CATCH/EST_LND_NOFISH)%>%
-   select(-ratio,-EST_LND_CPUE_G)
+   select(-ratio)%>%
+   group_by(EST_YEAR,EST_MONTH,EST_BGC)%>%
+   dplyr::mutate(EST_LND_VALUE_G=sum(EST_LND_VALUE,na.rm = T))%>%
+   ungroup()%>%
+   dplyr::mutate(EST_LND_PRICE_G=EST_LND_VALUE_G/EST_LND_CATCH_G)
 
+ estimate<-estimate%>%
+   select(
+     EST_YEAR,
+     EST_MONTH,
+     EST_BGC,
+     EST_BGC_NAME,
+     EST_EFF_EFFORT,
+     EST_EFF_NBOATS,
+     EST_EFF_NACT,
+     EST_EFF_PBA,
+     EST_EFF_ACTDAYS,
+     EST_EFF_EXDAYS,
+     EST_EFF_NSMP,
+     EST_EFF_NBDAYS,
+     EST_EFF_POP,
+     EST_EFF_SRVTYPE,
+     EST_EFF_APPROACH,
+     EST_EFF_CV,
+     EST_EFF_SPAACCUR,
+     EST_EFF_TMPACCUR,
+     EST_EFF_SUI,
+     EST_LND_CATCH_G,
+     EST_LND_CPUE_G,
+     EST_LND_SMPCATCH,
+     EST_LND_NSMP,
+     EST_LND_VALUE_G,
+     EST_LND_PRICE_G,
+     EST_LND_NDAYS,
+     EST_LND_CV,
+     EST_LND_SPAACCUR,
+     EST_LND_TMPACCUR,
+     EST_LND_SUI,
+     EST_ACCUR,
+     EST_NOSPE,
+     EST_SPC,
+     EST_SPC_NAME,
+     EST_LND_NOFISH,
+     EST_LND_CATCH,
+     EST_LND_CPUE,
+     EST_LND_VALUE,
+     EST_LND_PRICE,
+     EST_LND_AVW
+   )
 
  return(estimate)
 }
