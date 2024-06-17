@@ -14,7 +14,7 @@ computation2_ui <- function(id){
     fluidRow(
       style="display:flex;",
       box(width = 6, title = i18n("LABEL_BOX_INDICATOR"),
-          uiOutput(ns("carousel_wrapper"))
+          uiOutput(ns("computation_by"))
       ),
       box(width = 6, title = i18n("LABEL_BOX_PLOT"),
           uiOutput(ns("plot_wrapper"))

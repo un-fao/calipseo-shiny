@@ -279,118 +279,6 @@ computation2_server <- function(id, pool) {
     return(out)
   }
   
-  #function to manage button server outputs
-  manageButtonServerOutputs <- function(df,prefix, type,session){
-    #clean button outputs reactives
-    outs <- outputOptions(output)
-    button_outs <- names(outs)[startsWith(names(outs), ns(prefix))]
-    lapply(button_outs, function(name) {
-      output[[name]] <<- NULL
-    })
-    lapply(1:nrow(df), function(i){
-      idx = df[i,"Period"]
-      button_id <- paste0(prefix,idx)
-      switch(type,
-             #download result handler
-             "result" = {
-               output[[button_id]] <<- downloadHandler(
-                 filename = function() {
-                   paste0(type, "_", out$indicator$id, "_", df[i,"Period"],"_", toupper(df[i,"Status"]), ".csv")
-                 },
-                 content = function(con) {
-                   filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                   filepath<-file.path(appConfig$store, df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
-                   data <- as.data.frame(readr::read_csv(filepath))
-                   readr::write_csv(data, con)
-                 }
-               )
-             },
-             #download report handler
-             "report" = {
-               output[[button_id]] <<- downloadHandler(
-                 filename = function() {
-                   paste0(type, "_", out$indicator$id, "_", df[i,"Period"],"_", toupper(df[i,"Status"]), ".xlsx")
-                 },
-                 content = function(con) {
-                   filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                   filepath<-file.path(appConfig$store, df[i,"Status"], df[i,"Id"], gsub("-","/",df[i,"Period"]), filename)
-                   data <- as.data.frame(readr::read_csv(filepath))
-                   generateReport(session, out$indicator,  df[i,"Period"], data, con)
-                 }
-               )
-             },
-             #release handler
-             "release" = {
-               observeEvent(input[[button_id]],{
-                 filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                 print(filename)
-                 filepath_staging <- file.path(appConfig$store, "staging", out$indicator$id, gsub("-","/",df[i,"Period"]), filename)
-                 print(filepath_staging)
-                 filepath <- file.path(appConfig$store, "release", out$indicator$id, gsub("-","/",df[i,"Period"]), filename)
-                 print(filepath)
-                 torelease(filepath_staging)
-                 print(filepath_staging)
-                 alreadyReleased <- file.exists(filepath)
-                 showModal(releaseModal(session, warning = alreadyReleased))
-               })
-             },
-             "unrelease" = {
-               observeEvent(input[[button_id]],{
-                 filename <- paste0(out$indicator$id, "_", df[i,"Period"], ".csv")
-                 print(filename)
-                 filepath_release <- file.path(appConfig$store, "release", out$indicator$id, gsub("-","/",df[i,"Period"]), filename)
-                 print(filepath_release)
-                 filepath <- file.path(appConfig$store, "staging", out$indicator$id, gsub("-","/",df[i,"Period"]), filename)
-                 print(filepath)
-                 tostaging(filepath_release)
-                 #print(filepath_staging)
-                 #alreadyReleased <- file.exists(filepath)
-                 showModal(stagingModal(session, warning = FALSE))
-               })
-             },
-             "view" = {
-               observeEvent(input[[button_id]],{
-                 
-                 if (input[[button_id]] %% 2 != 0) {
-                   updateActionButton(session, ns(button_id), "", icon = icon("eye-slash", class = "fas" ))
-                 } else {
-                   updateActionButton(session, ns(button_id), "", icon = icon("eye", class = "fas" ))
-                 }
-                 
-                 output[[paste0("table_",idx,"_wrapper")]]<-renderUI({
-                  if (input[[button_id]] %% 2 != 0) {
-                    DTOutput(ns(paste0("table_",idx)))%>%withSpinner(type = 4)
-                  }else{
-                    NULL
-                  }
-                 })
-               })
-             },
-             "compute"  = {
-               observeEvent(input[[button_id]],{
-                 
-                 period<-strsplit(idx,"-")[[1]]
-                 computation_year<-period[1]
-                 computation_month<-NULL
-                 computation_quarter<-NULL
-
-                 if(startsWith(period[2],"M")){
-                   computation_month<-gsub("M","",period[2])
-                 }
-
-                 if(startsWith(period[2],"Q")){
-                   computation_quarter<-gsub("Q","",period[2])
-                 }
-                 
-                 #computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target=input$computation_target,computation_year=input$computation_year,computation_quarter=input$computation_quarter,computation_month=input$computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
-                 
-                 computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target=input$computation_target,computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
-               },once=T)
-             }
-      )
-    })
-  }
-  
   #releaseModal
   releaseModal <- function(session, warning = FALSE) {
     modalDialog(
@@ -410,19 +298,6 @@ computation2_server <- function(id, pool) {
     )
   }
   
-  #stagingModal
-  stagingModal <- function(session, warning = FALSE) {
-    modalDialog(
-      tagList(
-        div(tags$b(i18n("CONFIRMATION_TO_UNRELEASE"))),
-        checkboxInput(ns("unreleaseDependent"), label=i18n("UNRELEASE_DEPENDENT_LABEL"), value = FALSE, width = NULL)
-      ),
-      footer = tagList(
-        actionButton(session$ns("cancelStaging"),i18n("TO_CANCEL_RELEASE_LABEL")),
-        actionButton(session$ns("goStaging"), i18n("TO_CREATE_RELEASE_LABEL"))
-      )
-    )
-  }
   
   #releaseIndicator
   releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
@@ -485,127 +360,84 @@ computation2_server <- function(id, pool) {
     
   }
   
-  #stagingIndicator
-  stagingIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
-    
-    if(release_dependent_indicators){
-      decode_target<-unlist(strsplit(target ,"/release/"))[2]
-      decode_target<-unlist(strsplit(decode_target,"/"))
-      computation_indicator<-decode_target[1]
-      computation_year<-decode_target[2]
-      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
-      indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
-        fun_arg_value <- indicator$compute_with$fun_args[[x]]
-        parts <- unlist(strsplit(fun_arg_value, ":"))
-        key <- ""
-        value <- ""
-        if(length(parts)==2){
-          key <- parts[1]
-          value <- parts[2]
-        }
-        if(key=="process")return(value)}))
-      
-      for(indicator in indicators){
-        process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
-        
-        staging_indicators <- getStatPeriods(config = appConfig, id = indicator, target = "staging")
-        #r
-        indicators_to_release <- staging_indicators[staging_indicators$year == computation_year, ]$file
-        
-        if(length(indicators_to_release)>0){
-          
-          for(dependent_target in indicators_to_release){
-            stagingIndicator(
-              out = out,
-              session = session,
-              target = dependent_target,
-              release_dependent_indicators = TRUE
-            )
-          }
-        }
-        
-      }
-      
-    }
-    
-    file.copy(
-      from = target,
-      to = gsub("release", "staging", target),
-      overwrite = TRUE
-    )
-    file.remove(target)
-    
-    session$userData$computation_new(Sys.time())
-    if(file.exists(gsub("release", "staging", target))){
-      target<-NULL
-      out$results <- getComputationResults(out$indicator)
-    }
-    tostaging(target)
-    
-    return(out)
-    
-  }
-  
-  
-  
   #UI RENDERERS
   #----------------------------------------------------------------------------------------------------
   
-  ##indicator selector (Not use for the moment -> carousel)
-  # output$computation_indicator_wrapper<-renderUI({
-  #   req(AVAILABLE_INDICATORS)
-  # selectizeInput(
-  #   ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
-  #   choices = setNames(sapply(AVAILABLE_INDICATORS, function(x){x$id}),sapply(AVAILABLE_INDICATORS, function(x){x$label})), selected = NULL,
-  #   options = list(
-  #     placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
-  #     onInitialize = I('function() { this.setValue(""); }'),
-  #      render = I('{
-  #                option: function(item, escape) {
-  #                return "<div><strong>" + escape(item.label) + "</strong>"
-  #                }
-  #              }')
-  #   )
-  # )
-  # })
+  #indicator selector
+  
+  output$indicator_wrapper<-renderUI({
+     req(AVAILABLE_INDICATORS)
+   selectizeInput(
+     ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
+     choices = setNames(sapply(AVAILABLE_INDICATORS, function(x){x$id}),sapply(AVAILABLE_INDICATORS, function(x){x$label})), selected = NULL,
+     options = list(
+       placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
+       onInitialize = I('function() { this.setValue(""); }'),
+        render = I('{
+                  option: function(item, escape) {
+                  return "<div><strong>" + escape(item.label) + "</strong>"
+                  }
+                }')
+     )
+   )
+   })
+  
+  output$computation_by <- renderUI({
+    tagList(
+      uiOutput(ns("indicator_wrapper")),
+      uiOutput(ns("description_wrapper")),
+      uiOutput(ns("show_notice_wrapper")),
+      uiOutput(ns("select_indicator_wrapper"))
+    )
+  })
   
   #Selector Block
   #---------------------------------------------------
   
   
-  #Carousel including (selector and notice buttons)
-  output$carousel_wrapper<-renderUI({
-    req(!is.null(AVAILABLE_INDICATORS))
-    carousel(
-      id = ns("mycarousel"),width=12,
-      .list=lapply(AVAILABLE_INDICATORS,function(x){
-        carouselItem(
-          caption = NULL,
-          fluidRow(column(width=10,offset=1,
-                          box(width=12,
-                              title=x$label,
-                              p(x$description),
-                              hr(),
-                              actionButton(ns(paste0("select_indicator","-",x$id)),i18n("LABEL_SELECT_INDICATOR"),style="margin-right:10px;margin-bottom:30px;"),
-                              actionButton(ns(paste0("show_notice","-",x$id)),i18n("LABEL_SHOW_NOTICE"),style="margin-bottom:30px;"),
-                              br()
-                          )
-          ))
-        )
-      })
-    )
-  })
-  
   #Process to react to selection and notice button of each indicator (require in carousel logic) 
-  lapply(AVAILABLE_INDICATORS, function(x){
     
-    observeEvent(input[[paste0("select_indicator","-",x$id)]],{
-      INFO("Selection of indicator : %s",x$id)
-      indicator<-indicator(x$id)
-      indicator_first_compute<-indicator_first_compute(TRUE)
+    observeEvent(input$computation_indicator,{
+      req(!is.null(input$computation_indicator)&input$computation_indicator!="")
+      
+      x<- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
+      print(x)
+      
+      output$description_wrapper<-renderUI({
+        if(!is.null(x$description)){
+          p(x$description)
+        }else{
+          NULL
+        }
+           
+      })
+      
+      output$show_notice_wrapper<-renderUI({
+        if(!is.null(x$notice)){
+          actionButton(ns("show_notice"),i18n("LABEL_SHOW_NOTICE"),style="margin-bottom:30px;")
+        }else{
+          NULL
+        }
+      })
+      
+      output$select_indicator_wrapper<-renderUI({
+          actionButton(ns("select_indicator"),i18n("LABEL_SELECT_INDICATOR"),style="margin-right:10px;margin-bottom:30px;")
+      })
+    
     })
     
-    observeEvent(input[[paste0("show_notice","-",x$id)]],{
+    observeEvent(input$select_indicator,{
+    
+    INFO("Selection of indicator : %s",input$computation_indicator)
+    indicator<-indicator(input$computation_indicator)
+    indicator_first_compute<-indicator_first_compute(TRUE)
+    
+    })
+    
+    observeEvent(input$show_notice,{
+      
+      x<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
+      
       req(!is.na(x$notice))
       showModal(
         modalDialog(
@@ -615,7 +447,6 @@ computation2_server <- function(id, pool) {
       )
       
     })
-  })
   
   #Bar plot block
   #--------------------------------------------
@@ -899,24 +730,13 @@ computation2_server <- function(id, pool) {
         switch (target$Status,
                 "release" = {
                   
-                  #Method 2 (not work react in endless circle)
-                  #manageButtonServerOutputs(target,"button_view_", "view",session=session)
-                  #manageButtonServerOutputs(target,"button_download_report_", "report",session=session)
-                  #manageButtonServerOutputs(target,"button_unrelease_", "unrelease",session=session)
-                  
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_view_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target$Period)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns("select_button"))),
-                    disabled(actionButton(inputId = ns(paste0('button_unrelease_', target$Period)), class="btn btn-light", style = "border-color:transparent", title = i18n("ACTION_UNRELEASE"), label = "", icon = icon("thumbs-down", class = "fas"))),
-                    style = "position: absolute; right: 50px;margin-top: -10px;"
+                    style = "position: absolute; right: 98px;margin-top: -10px;"
                   ))
                 },
                 "staging" = {
-                  
-                  #manageButtonServerOutputs(target,"button_compute_", "compute",session=session)
-                  #manageButtonServerOutputs(target,"button_view_", "view",session=session)
-                  #manageButtonServerOutputs(target,"button_download_report_", "report",session=session)
-                  #manageButtonServerOutputs(target,"button_release_", "release",session=session)
                   
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
@@ -926,8 +746,6 @@ computation2_server <- function(id, pool) {
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "available" = {
-                  
-                  #manageButtonServerOutputs(target,"button_compute_", "compute",session=session)
                   
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_STAGING"), label = "", icon = icon("file-pen")),
@@ -978,9 +796,9 @@ computation2_server <- function(id, pool) {
                               uiOutput(ns(paste0('icon_status_', item$Period)),inline=T),
                               name,
                               uiOutput(ns(paste0('status_label_', item$Period)),inline=T),
-                              uiOutput(ns(paste0('actions_', item$Period)),inline=T)
-                            ),
-                            uiOutput(ns(paste0('table_', item$Period,"_wrapper")),inline=T)
+                              uiOutput(ns(paste0('actions_', item$Period)),inline=T),
+                              uiOutput(ns(paste0('table_', item$Period,"_wrapper")),inline=F)
+                            )
                         )
                       ))
                     })
@@ -991,16 +809,8 @@ computation2_server <- function(id, pool) {
       )
     })
     
-    # Method 1 (view and download not work)
-    # manageButtonServerOutputs(indicator_status(),"button_download_result_", "result",session=session)
-    # manageButtonServerOutputs(indicator_status(),"button_download_report_", "report",session=session)
-    # manageButtonServerOutputs(indicator_status(),"button_release_", "release",session=session)
-    # manageButtonServerOutputs(indicator_status(),"button_compute_", "compute",session=session)
-    # manageButtonServerOutputs(indicator_status(),"button_view_", "view",session=session)
-    # manageButtonServerOutputs(indicator_status(),"button_unrelease_", "unrelease",session=session)
-    
 
-    #Method 3 (view not work)
+    #Method 3
     #Create event assocate to each action button
     lapply(1:nrow(indicator_status()), function(i){
       idx = indicator_status()[i,"Period"]
@@ -1032,23 +842,7 @@ computation2_server <- function(id, pool) {
         print(filepath_staging)
         alreadyReleased <- file.exists(filepath)
         showModal(releaseModal(session, warning = alreadyReleased))
-      })
-      
-      observeEvent(input[[paste0("button_unrelease_",idx)]],{
-        
-        INFO("Click on %s unrelease button",idx)
-        
-        filename <- paste0(out$indicator$id, "_", indicator_status()[i,"Period"], ".csv")
-        print(filename)
-        filepath_release <- file.path(appConfig$store, "release", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
-        print(filepath_release)
-        filepath <- file.path(appConfig$store, "staging", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
-        print(filepath)
-        tostaging(filepath_release)
-        #print(filepath_staging)
-        #alreadyReleased <- file.exists(filepath)
-        showModal(stagingModal(session, warning = FALSE))
-      })
+      },ignoreInit = T)
       
       observeEvent(input[[paste0("button_view_",idx)]],{
         
@@ -1074,8 +868,7 @@ computation2_server <- function(id, pool) {
             
             DTOutput(ns(paste0("table_",idx)))%>%withSpinner(type = 4)
           }else{
-            #NULL
-            p("(click view to see result)")
+            NULL
           }
         })
         
@@ -1088,7 +881,7 @@ computation2_server <- function(id, pool) {
         }
         
         
-      })
+      },ignoreInit = T)
       
       observeEvent(input[[paste0("button_compute_",idx)]],{
         
@@ -1108,7 +901,7 @@ computation2_server <- function(id, pool) {
         }
         
         computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target=input$computation_target,computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
-      },once=T)
+      },ignoreInit = T)
       
       
     })
@@ -1148,20 +941,6 @@ computation2_server <- function(id, pool) {
   #This one cancel the release request and remove the modal
   observeEvent(input$cancelRelease,{
     torelease(NULL)
-    removeModal()
-  })
-  
-  #Manage unrelease of the indicator (deprecated)
-  
-  #This one unrelease the indicator and update the result
-  observeEvent(input$goStaging, {
-    out<-stagingIndicator(out=out,session=session,target=tostaging(),release_dependent_indicators=input$releaseDependent)
-    removeModal()
-  })
-  
-  #This one cancel the unrelease request and remove the modal
-  observeEvent(input$cancelStaging,{
-    tostaging(NULL)
     removeModal()
   })
   
