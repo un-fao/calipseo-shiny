@@ -607,7 +607,7 @@ computation2_server <- function(id, pool) {
     
     #Create full period matrix based on typo of compute_by period
     if("month"%in%selected_indicator$indicator$compute_by$period){
-      years<-unique(available_periods()$year)
+      years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
         year=rep(years,each=12),
         month=rep(1:12,length(years))
@@ -615,7 +615,7 @@ computation2_server <- function(id, pool) {
       full_periods_new$Period<-paste0(full_periods_new$year,"-","M",full_periods_new$month)
     }
     if("quarter"%in%selected_indicator$indicator$compute_by$period){
-      years<-unique(available_periods()$year)
+      years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
         year=rep(years,each=4),
         quarter=rep(1:4,length(years))
@@ -623,14 +623,14 @@ computation2_server <- function(id, pool) {
       full_periods_new$Period<-paste0(full_periods_new$year,"-","Q",full_periods_new$quarter)
     }
     if("year"%in%selected_indicator$indicator$compute_by$period){
-      years<-unique(available_periods()$year)
+      years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
         year=years,
         Period=years
       )
     }
     
-    full_periods<-full_periods(full_periods_new)
+    full_periods<-full_periods(full_periods_new%>%arrange(desc(year)))
     
     #Merge info of results, available period and full period matrix
     

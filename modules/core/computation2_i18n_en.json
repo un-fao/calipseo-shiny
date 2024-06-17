@@ -68,7 +68,7 @@
   "STATUS_APPROVED" : "Approved",
   "STATUS_COMPUTED" : "Completed",
   "STATUS_TO_COMPUTE" : "To compute",
-  "STATUS_NOT_AVAILABLE" : "Not available",
+  "STATUS_NOT_AVAILABLE" : "Not computable",
   "ACTION_VIEW" : "Show/hide result",
   "ACTION_DOWNLOAD_RESULT" : "Download result",
   "ACTION_UNRELEASE" : "Unvalidate indicator",
