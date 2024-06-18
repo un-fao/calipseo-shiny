@@ -363,36 +363,36 @@ computation2_server <- function(id, pool) {
   #UI RENDERERS
   #----------------------------------------------------------------------------------------------------
   
-  #indicator selector
-  
-  output$indicator_wrapper<-renderUI({
-     req(AVAILABLE_INDICATORS)
-   selectizeInput(
-     ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
-     choices = setNames(sapply(AVAILABLE_INDICATORS, function(x){x$id}),sapply(AVAILABLE_INDICATORS, function(x){x$label})), selected = NULL,
-     options = list(
-       placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
-       onInitialize = I('function() { this.setValue(""); }'),
-        render = I('{
-                  option: function(item, escape) {
-                  return "<div><strong>" + escape(item.label) + "</strong>"
-                  }
-                }')
-     )
-   )
-   })
-  
+  #Selector Block
+  #---------------------------------------------------
   output$computation_by <- renderUI({
     tagList(
       uiOutput(ns("indicator_wrapper")),
       uiOutput(ns("description_wrapper")),
+      uiOutput(ns("computation_target_wrapper")),
       uiOutput(ns("show_notice_wrapper")),
       uiOutput(ns("select_indicator_wrapper"))
     )
   })
   
-  #Selector Block
-  #---------------------------------------------------
+  #indicator selector
+  
+  output$indicator_wrapper<-renderUI({
+    req(AVAILABLE_INDICATORS)
+    selectizeInput(
+      ns("computation_indicator"), label = i18n("COMPUTATION_INDICATOR_LABEL"), 
+      choices = setNames(sapply(AVAILABLE_INDICATORS, function(x){x$id}),sapply(AVAILABLE_INDICATORS, function(x){x$label})), selected = NULL,
+      options = list(
+        placeholder = i18n("COMPUTATION_INDICATOR_PLACEHOLDER_LABEL"),
+        onInitialize = I('function() { this.setValue(""); }'),
+        render = I('{
+                  option: function(item, escape) {
+                  return "<div><strong>" + escape(item.label) + "</strong>"
+                  }
+                }')
+      )
+    )
+  })
   
   
   #Process to react to selection and notice button of each indicator (require in carousel logic) 
@@ -401,8 +401,7 @@ computation2_server <- function(id, pool) {
       req(!is.null(input$computation_indicator)&input$computation_indicator!="")
       
       x<- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
-      print(x)
-      
+
       output$description_wrapper<-renderUI({
         if(!is.null(x$description)){
           p(x$description)
@@ -423,18 +422,55 @@ computation2_server <- function(id, pool) {
       output$select_indicator_wrapper<-renderUI({
           actionButton(ns("select_indicator"),i18n("LABEL_SELECT_INDICATOR"),style="margin-right:10px;margin-bottom:30px;")
       })
+      
+        
+        
+        output$computation_target_wrapper <- renderUI({
+          
+          available_periods_parts <- unlist(strsplit(x$compute_by$available_periods[1], ":"))
+          period_key <- available_periods_parts[1]
+          
+          if(period_key=="process"){
+            choices=c(setNames(c("release","release+staging"),c(i18n("COMPUTATION_TARGET_RELEASE_ITEM"),i18n("COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM"))))
+            fluidRow(
+              column(6,
+                     selectizeInput(
+                       ns("computation_target"), label = i18n("COMPUTATION_TARGET_LABEL"), 
+                       choices = choices, selected = "release+staging"
+                     )),
+              column(6,
+                     uiOutput(ns("info_target_message"))
+              )
+            )
+          }else{
+            NULL
+          }
+      })
+      
+      #Target mode informative message
+      observeEvent(input$computation_target,{
+        req(!is.null(input$computation_target))
+        output$info_target_message<-renderUI({
+          tags$span(shiny::icon(c('circle-info')),ifelse(input$computation_target=="release","Only already released indicators will be use in the computation","The missing dependent indicators will be automatically computed"), style="color:blue")
+        })
+      })
     
     })
     
     observeEvent(input$select_indicator,{
     
     INFO("Selection of indicator : %s",input$computation_indicator)
+    indicator_status<-indicator_status(NULL)
+    available_periods<-available_periods(NULL)
+    full_periods<-full_periods(NULL)
     indicator<-indicator(input$computation_indicator)
     indicator_first_compute<-indicator_first_compute(TRUE)
     
     })
     
     observeEvent(input$show_notice,{
+    
+    INFO("Click on show notice button")
       
       x<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
       
@@ -516,37 +552,7 @@ computation2_server <- function(id, pool) {
     
   })
   
-  #Target mode selector logic if dependent indicators
-  observeEvent(indicator(),{
-    req(!is.null(indicator())&indicator()!="")
-    req(!is.null(selected_indicator$period_key))
-    output$computation_target_wrapper <- renderUI({
-      
-      if(selected_indicator$period_key=="process"){
-        choices=c(setNames(c("release","release+staging"),c(i18n("COMPUTATION_TARGET_RELEASE_ITEM"),i18n("COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM"))))
-        fluidRow(
-          column(6,
-        selectizeInput(
-          ns("computation_target"), label = i18n("COMPUTATION_TARGET_LABEL"), 
-          choices = choices, selected = "release+staging"
-        )),
-        column(6,
-          uiOutput(ns("info_target_message"))
-        )
-        )
-      }else{
-        NULL
-      }
-    })
-  })
-  
-  #Target mode informative message
-  observeEvent(input$computation_target,{
-    req(!is.null(input$computation_target))
-    output$info_target_message<-renderUI({
-      tags$span(shiny::icon(c('circle-info')),ifelse(input$computation_target=="release","Only already released indicators will be use in the computation","The missing dependent indicators will be automatically computed"), style="color:blue")
-    })
-  })
+
   
   
   #--------------------------
@@ -560,6 +566,8 @@ computation2_server <- function(id, pool) {
     req(!is.null(indicator_first_compute()))
     req(indicator_first_compute()==TRUE)
     
+    INFO("Indicator '%s' is run for the  first time",indicator())
+    
     available_periods<-available_periods(NULL)
     full_periods<-full_periods(NULL)
     indicator_status<-indicator_status(NULL)
@@ -569,6 +577,7 @@ computation2_server <- function(id, pool) {
     selected_indicator$period_key <- available_periods_parts[1]
     selected_indicator$period_value <- available_periods_parts[2]
     
+    
     out$results <- getComputationResults(selected_indicator$indicator)
     out$computation <- NULL
     out$indicator <- selected_indicator$indicator
@@ -577,11 +586,14 @@ computation2_server <- function(id, pool) {
     #Get periods accessible in the data and clean it
     if(selected_indicator$period_key=="data"){
       available_periods_new<-eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)")))
-      
     }else{
       req(!is.null(input$computation_target)&input$computation_target!="")
       available_periods_new<-eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")")))
-    }
+      
+      available_periods_new<-unique(subset(available_periods_new,select=selected_indicator$indicator$compute_by$period))
+      available_periods_new$year<-as.character(available_periods_new$year)
+      
+      }
     
     available_periods_new<-subset(available_periods_new,!is.na(year))
     if("month"%in%selected_indicator$indicator$compute_by$period){
@@ -590,21 +602,26 @@ computation2_server <- function(id, pool) {
       available_periods_new<- available_periods_new%>%arrange(desc(year),month)
       
     }
+    
     if("quarter"%in%selected_indicator$indicator$compute_by$period){
       available_periods_new<-subset(available_periods_new,!is.na(quarter))
       available_periods_new$period<-paste0(available_periods_new$year,"-","Q",available_periods_new$quarter)
       available_periods_new<- available_periods_new%>%arrange(desc(year),quarter)%>%as.data.frame()
     }
+    
     if("year"%in%selected_indicator$indicator$compute_by$period){
       available_periods_new$period<-available_periods_new$year
       available_periods_new<- available_periods_new%>%arrange(desc(year))%>%as.data.frame()
     }
+    
+    
     
     available_periods<-available_periods(available_periods_new)
     
     req(!is.null(available_periods))
     req(!is.null(available_periods()$period))
     
+    print("TRACKER 1")
     #Create full period matrix based on typo of compute_by period
     if("month"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
@@ -614,6 +631,8 @@ computation2_server <- function(id, pool) {
       )
       full_periods_new$Period<-paste0(full_periods_new$year,"-","M",full_periods_new$month)
     }
+    
+    print("TRACKER 2")
     if("quarter"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
@@ -622,6 +641,8 @@ computation2_server <- function(id, pool) {
       )
       full_periods_new$Period<-paste0(full_periods_new$year,"-","Q",full_periods_new$quarter)
     }
+    
+    print("TRACKER 3")
     if("year"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
@@ -631,33 +652,56 @@ computation2_server <- function(id, pool) {
     }
     
     full_periods<-full_periods(full_periods_new%>%arrange(desc(year)))
-    
+    print("TRACKER 4")
     #Merge info of results, available period and full period matrix
     
+    print(head(available_periods()))
+    print(head(out$results))
+    
+    print("LEFT-JOIN-3-START")
     indicator_status_new<-available_periods()%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
+    print("LEFT-JOIN-3-START")
+    
+    print("TRACKER 5")
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
+      
+      print(head(full_periods()))
+      print(head(indicator_status_new))
+      
+      print("LEFT-JOIN-4-START")
       indicator_status_new<-full_periods()%>%
-        left_join(indicator_status_new)%>%
+        mutate(year=as.character(year))%>%
+        mutate(Period=as.character(Period))%>%
+        left_join(indicator_status_new%>%
+                    mutate(year=as.character(year))%>%
+                    mutate(Period=as.character(Period)))%>%
         mutate(Status=ifelse(is.na(Status),"not available",Status))
+      print("LEFT-JOIN-4-END")
     }
+    
+    print("TRACKER 6")
     
     indicator_status<-indicator_status(indicator_status_new)
     
-    
+    print("TRACKER 7")
     #Generate for each period the UIelements
-    lapply(1:nrow(indicator_status_new), function(x){
-      item<-subset(indicator_status_new)[x,]
+    lapply(1:nrow(indicator_status()), function(x){
+      item<-subset(indicator_status())[x,]
       period<-item$Period
       
       #Status icon of year level summary
       
       output[[paste0("icon_summary_",period)]] <-renderUI({
         
+        req("Period" %in% names(indicator_status()))
+        
         target<-subset(indicator_status(),Period==period)
+        
+        req(nrow(target)>0)
         
         switch (target$Status,
                 "release" = {
@@ -685,6 +729,7 @@ computation2_server <- function(id, pool) {
       
       output[[paste0("icon_status_",period)]] <-renderUI({
         target<-subset(indicator_status(),Period==period)
+        req(nrow(target)>0)
         
         switch (target$Status,
                 "release" = {
@@ -707,6 +752,8 @@ computation2_server <- function(id, pool) {
       output[[paste0("status_label_",period)]] <-renderUI({
         target<-subset(indicator_status(),Period==period)
         
+        req(nrow(target)>0)
+        
         switch (target$Status,
                 "release" = {
                   tags$span(tags$b(sprintf("%s : %s ",i18n("STATUS"),i18n("STATUS_APPROVED"))),tags$em(sprintf("(%s : %s)",i18n("LAST_UPDATE"),target$Date)),style = "color:green;padding-left:200px;")
@@ -726,6 +773,8 @@ computation2_server <- function(id, pool) {
       #Action button UI
       output[[paste0("actions_",period)]] <-renderUI({
         target<-subset(indicator_status(),Period==period)
+        
+        req(nrow(target)>0)
         
         switch (target$Status,
                 "release" = {
@@ -775,7 +824,12 @@ computation2_server <- function(id, pool) {
                       tags$span(
                         lapply(1:nrow(subset(indicator_status_new,year==i)), function(x){
                           item<-subset(indicator_status_new,year==i)[x,]
-                          label<-strsplit(item$Period,"-")[[1]][2]
+                          label<-strsplit(item$Period,"-")[[1]]
+                          if(length(label)==2){
+                            label<-label[2]
+                          }else{
+                            label<-""
+                          }
                           
                           return(tagList(
                             tags$span(label,style = "color:black;padding-right:2px;font-size: 17.9px;"),
@@ -892,18 +946,26 @@ computation2_server <- function(id, pool) {
         computation_month<-NULL
         computation_quarter<-NULL
         
-        if(startsWith(period[2],"M")){
-          computation_month<-gsub("M","",period[2])
+        print("CHECK 1")
+        if(length(period)>1){
+          if(startsWith(period[2],"M")){
+            computation_month<-gsub("M","",period[2])
+          }
         }
         
-        if(startsWith(period[2],"Q")){
-          computation_quarter<-gsub("Q","",period[2])
+        print("CHECK 2")
+        if(length(period)>1){
+          if(startsWith(period[2],"Q")){
+            computation_quarter<-gsub("Q","",period[2])
+          }
         }
         
+        print("CHECK 3")
         computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target=input$computation_target,computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
-      },ignoreInit = T)
+        print("CHECK 4")
+        },ignoreInit = T)
       
-      
+        
     })
     
     #allow to just update the content of the box and not alter box structure
@@ -914,15 +976,24 @@ computation2_server <- function(id, pool) {
   observeEvent(out$results,{
     req(indicator_first_compute()==FALSE)
     
+    print("LEFT-JOIN-1-START")
     indicator_status_new<-available_periods()%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
+    print("LEFT-JOIN-1-END")
+    
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
+      print("LEFT-JOIN-2-START")
       indicator_status_new<-full_periods()%>%
-        left_join(indicator_status_new)%>%
+        mutate(year=as.character(year))%>%
+        mutate(Period=as.character(Period))%>%
+        left_join(indicator_status_new%>%
+            mutate(year=as.character(year))%>%
+            mutate(Period=as.character(Period)))%>%
         mutate(Status=ifelse(is.na(Status),"not available",Status))
+      print("LEFT-JOIN-2-END")
     }
     
     indicator_status<-indicator_status(indicator_status_new)

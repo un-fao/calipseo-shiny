@@ -1,5 +1,5 @@
 ###compute_gfcm_task_II_2
-compute_gfcm_task_II_2<-function(ref_species,data){
+compute_gfcm_task_II_2<-function(con=NULL,year=NULL,ref_species,data){
   
   data<-data%>%
     group_by(EST_YEAR,EST_FS,EST_SPC)%>%

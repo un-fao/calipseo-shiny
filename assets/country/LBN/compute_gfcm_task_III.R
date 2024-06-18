@@ -1,5 +1,5 @@
 ###compute_gfcm_task_III
-compute_gfcm_task_III<-function(data,vulnerable_sp){
+compute_gfcm_task_III<-function(con=NULL,year=NULL,data,vulnerable_sp){
   
   vulnerable_sp<-vulnerable_sp[,c("group","scientific_name")]
   names(vulnerable_sp)<-c("GROUP","SCIENTIFIC_NAME")

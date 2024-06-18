@@ -1,5 +1,5 @@
 ###compute_gfcm_task_II_1
-compute_gfcm_task_II_1<-function(data,socio){
+compute_gfcm_task_II_1<-function(con=NULL,year=NULL,data,socio){
   
   names(socio)<-gsub(" ","_",names(socio))
   socio<-socio[,c("Vessel_register_number","FISHING_SEGMENT_GFCM")]

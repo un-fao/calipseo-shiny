@@ -1,5 +1,5 @@
 ###compute_fao
-compute_fao<-function(data){
+compute_fao<-function(con=NULL,year=NULL,data){
   
   data<-data%>%
     group_by(EST_YEAR)%>%

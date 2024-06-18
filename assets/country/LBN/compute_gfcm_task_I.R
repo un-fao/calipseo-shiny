@@ -1,5 +1,5 @@
 ###compute_gfcm_task_I
-compute_gfcm_task_I<-function(data,socio){
+compute_gfcm_task_I<-function(con=NULL,year=NULL,data,socio){
   
   names(socio)<-gsub(" ","_",names(socio))
   socio<-socio[,c("Vessel_register_number","Net_Tonnage","HP")]
