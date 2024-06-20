@@ -135,6 +135,8 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
             mutate(value=value)%>%
             group_by(date,target,text)%>%
             summarise(agg=ifelse(stat=="mean",mean(value,na.rm=T),sum(value,na.rm=T)))%>%
+            group_by(target,text)%>%
+            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) %>%
             ungroup()
           
         }else{
@@ -142,6 +144,8 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
             mutate(value=value)%>%
             group_by(date)%>%
             summarise(agg=ifelse(stat=="mean",mean(value,na.rm=T),sum(value,na.rm=T)),text="",target=i18n("LEVEL_LABLE_GLOBAL"))%>%
+            group_by(target,text)%>%
+            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) %>%
             ungroup()
         }
 
@@ -155,6 +159,8 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
         data_formating()
         
         if(isTRUE(data_ready())){
+          
+          print(tail(data_formated(),5))
         
           p<-data_formated()%>%plot_ly(
             x = ~date
@@ -163,7 +169,7 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
           
           if(plotType=="line"){
               p<-p%>%    
-               add_trace(type="scatter",mode="lines+markers",y =~ agg,color= ~target,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s",text,date,round(agg,2)))
+               add_trace(type="scatter",mode="lines+markers",y =~ agg,color= ~target,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s",text,date,round(agg,2)),connectgaps = FALSE)
             }else{
               p<-p%>%    
                 add_bars(y =~ agg,color= ~target,line = list(simplyfy = F),text = ~sprintf("%s[%s]: %s",text,date,round(agg,2))) 
@@ -174,6 +180,14 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
             showlegend=ifelse(levels_output()=="detail",T,F),
             hovermode ='closest',
             xaxis = list(
+              rangeslider = list(visible = F),
+              rangeselector=list(
+                buttons=list(
+                  list(count=3, label="3y", step="year", stepmode="backward"),
+                  list(count=2, label="2y", step="year", stepmode="backward"),
+                  list(count=1, label="1y", step="year", stepmode="backward"),
+                  list(step="all")
+                )),
               titlefont = list(size = 10), 
               tickfont = list(size = 10),
               title = xlab,

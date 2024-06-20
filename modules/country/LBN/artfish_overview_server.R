@@ -46,7 +46,7 @@ artfish_overview_server <- function(id, pool){
     req(!is.null(data_bg()))
     
     data<-data_bg()%>%
-     mutate(DATE=as.character(format(as.Date(sprintf("%04d-%02d-01",EST_YEAR,EST_MONTH)),format = "%Y-%m")))%>%
+     mutate(DATE=as.Date(sprintf("%04d-%02d-01",EST_YEAR,EST_MONTH)))%>%
     #left_join(ref_species%>%select(ID,NAME),by=c('EST_SPC'='ID'))%>%
       ungroup()
     
