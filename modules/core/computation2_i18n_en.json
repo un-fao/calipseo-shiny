@@ -78,6 +78,7 @@
   "EMPTY_PLOT_LABEL" : "(Select an indicator to access to completion status)",
   "LABEL_SELECT_INDICATOR" : "Select this indicator",
   "LABEL_SHOW_NOTICE" : "Show notice",
+  "LABEL_SHOW_HIERARCHY" : "Show hierarchy",
   "LABEL_BOX_INDICATOR" : "Select an indicator",
   "LABEL_BOX_PLOT" : "Indicator's status"
   

@@ -4,6 +4,11 @@
 
 * [#215](https://github.com/un-fao/calipseo-shiny/issues/215) Improve line chart
 
+**Computation enhancements**
+_computation module_
+
+* [#217](https://github.com/un-fao/calipseo-shiny/issues/216) Add dependancy between indicators
+
 # **calipseo-shiny [v1.5.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.4) - 2024-06-11**
 
 ## Corrections

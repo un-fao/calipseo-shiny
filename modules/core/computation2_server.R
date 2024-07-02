@@ -138,7 +138,7 @@ computation2_server <- function(id, pool) {
       
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
       indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
-        fun_arg_value <- indicator$compute_with$fun_args[[x]]
+        fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
         parts <- unlist(strsplit(fun_arg_value, ":"))
         key <- ""
         value <- ""
@@ -371,6 +371,7 @@ computation2_server <- function(id, pool) {
       uiOutput(ns("description_wrapper")),
       uiOutput(ns("computation_target_wrapper")),
       uiOutput(ns("show_notice_wrapper")),
+      uiOutput(ns("show_hierarchy_wrapper")),
       uiOutput(ns("select_indicator_wrapper"))
     )
   })
@@ -417,6 +418,10 @@ computation2_server <- function(id, pool) {
         }else{
           NULL
         }
+      })
+      
+      output$show_hierarchy_wrapper<-renderUI({
+          actionButton(ns("show_hierarchy"),i18n("LABEL_SHOW_HIERARCHY"),style="margin-bottom:30px;")
       })
       
       output$select_indicator_wrapper<-renderUI({
@@ -481,6 +486,207 @@ computation2_server <- function(id, pool) {
           easyClose = TRUE, footer = NULL,size="l" 
         )
       )
+      
+    })
+    
+    ##TODO -complete hierarchy con't be provide du to problem when multiple root
+    getIndicatorInfo<-function(id,target=F,indicators=AVAILABLE_INDICATORS,getParent=T,getChild=T){
+      
+      indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
+      print(indicator$id)
+      
+      label<-indicator$id
+      if(!is.null(indicator$label)) label<-indicator$label
+      label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
+      
+      result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
+      
+      if(getParent){
+        
+        parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
+          fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
+          fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
+          parts <- unlist(strsplit(fun_arg_value, ":"))
+          key <- ""
+          value <- ""
+          if(length(parts)==2){
+            key <- parts[1]
+            value <- parts[2]
+          }
+          label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
+          label<-paste0(label,"\n","(",toupper(key),")")
+          return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
+        }))
+        
+        if(length(parent)>0){
+          
+          parent_process<-subset(parent,type=="process")
+          parent_other<-subset(parent,type!="process")
+          
+          if(length(parent_other)>0){
+            parent_result<-parent_other
+          }
+          
+          if(length(parent_process)>0){
+            parent_all<-do.call("rbind",lapply(parent_process$id, function(x){
+              getIndicatorInfo(id=x,getParent = T,getChild = F)
+            }))
+            parent_result<-rbind(parent_all,parent_result)
+          }
+          
+        }
+        
+        result<-rbind(parent_result,result)
+        
+      }
+      
+      print("HERE")
+      
+      child<-unlist(sapply(AVAILABLE_INDICATORS, function(x){
+        sapply(names(x$compute_with$fun_args), function(y){
+          fun_arg_value <- x$compute_with$fun_args[[y]]$source
+          parts <- unlist(strsplit(fun_arg_value, ":"))
+          key <- ""
+          value <- ""
+          if(length(parts)==2){
+            key <- parts[1]
+            value <- parts[2]
+          }
+          
+          if(value==id)return(x$id)
+        })
+      }))
+      
+      if(length(child)>0 & getChild){
+        
+        child<-do.call("rbind",lapply(child, function(x){
+          target<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(y){y$id == x})][[1]]
+          label<-target$id
+          if(!is.null(target$label)) label<-target$label
+          label<-paste0(label,"\n","[computed by :",target$compute_by$period,"]\n","(PROCESS)")
+          return(data.frame("target"=F,"type"="process","id"=target$id,"label"=label))
+        }))
+        
+        if(length(child)>0){
+          
+          print("HAS CHILD")
+          child_process<-subset(child,type=="process")
+          child_other<-subset(child,type!="process")
+          
+          if(length(child_other)>0){
+            child_result<-child_other
+          }
+          
+          if(length(child_process)>0){
+            child_all<-do.call("rbind",lapply(child_process$id, function(x){
+              getIndicatorInfo(id=x,getParent = F,getChild = T)
+            }))
+            child_result<-rbind(child_result,child_all)
+          }
+        }
+        result<-rbind(result,child_result)
+      }
+      return(result)
+    }
+    ##
+    
+    getIndicatorHierarchy<-function(id,target=F,hierarchyTree=NULL,indicators=AVAILABLE_INDICATORS){
+      
+      indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
+      
+      label<-indicator$id
+      if(!is.null(indicator$label)) label<-indicator$label
+      label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
+      
+      result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
+      
+      tmpTree<-Node$new(label)
+      
+      parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
+        fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
+        fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
+        parts <- unlist(strsplit(fun_arg_value, ":"))
+        key <- ""
+        value <- ""
+        if(length(parts)==2){
+          key <- parts[1]
+          value <- parts[2]
+        }
+        label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
+        label<-paste0(label,"\n","(",toupper(key),")")
+        return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
+      }))
+      
+      if(length(parent)>0){
+        
+        parent_process<-subset(parent,type=="process")
+        parent_other<-subset(parent,type!="process")
+        
+        if(nrow(parent_other)>0){
+          parent_result<-parent_other
+          lapply(parent_other$label, function(x){
+            subTree<-Node$new(x)
+            tmpTree$AddChildNode(subTree)
+          })
+        }
+        
+        
+        if(nrow(parent_process)>0){
+          lapply(parent_process$id, function(x){
+            tmpTree<-getIndicatorHierarchy(id=x,target=F,hierarchyTree=tmpTree)
+          })
+          
+          #tmp_result<-do.call("rbind",
+          
+          #parent_all<-tmp$result
+          #parent_result<-rbind(parent_all,parent_result)
+        }
+        
+      }
+      
+      if(!is.null(hierarchyTree)){
+        hierarchyTree$AddChildNode(tmpTree)
+      }else{
+        hierarchyTree<-tmpTree
+      }
+      
+      #result<-rbind(parent_result,result)
+      
+      return(hierarchyTree)
+    }
+    
+    observeEvent(input$show_hierarchy,{
+      
+      INFO("Click on show hierarchy button")
+      
+      indicator<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
+      
+
+      
+      tree<-getIndicatorHierarchy(id=input$computation_indicator,target=T)
+      
+      SetGraphStyle(tree, rankdir = "BT")
+      
+      SetEdgeStyle(tree, arrowhead = "vee", color = "grey35", penwidth = 2,dir="back")
+      
+      level1 <- Traverse(tree, filterFun = function(x) x$level == 1)
+      level2 <- Traverse(tree, filterFun = function(x) x$level > 1)
+      
+      Do(level1,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "darkslategray2", fontname = "helvetica")
+      Do(level2,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "floralwhite", fontname = "helvetica")
+      
+      p<-plot(tree)
+      output$tree_plot<-renderGrViz({
+        p
+      })
+      
+      showModal(
+        modalDialog(
+          grVizOutput(ns("tree_plot")),
+          easyClose = TRUE, footer = NULL,size="l" 
+        )
+      )
+      
       
     })
   
