@@ -600,7 +600,7 @@ computation2_server <- function(id, pool) {
       
       result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
       
-      tmpTree<-Node$new(label)
+      tmpTree<-Node$new(label,id=result$id,type=result$type,target=result$target)
       
       parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
@@ -625,7 +625,7 @@ computation2_server <- function(id, pool) {
         if(nrow(parent_other)>0){
           parent_result<-parent_other
           lapply(parent_other$label, function(x){
-            subTree<-Node$new(x)
+            subTree<-Node$new(x,id=parent_other$id,type=parent_other$type,target=parent_other$target)
             tmpTree$AddChildNode(subTree)
           })
         }
@@ -669,11 +669,21 @@ computation2_server <- function(id, pool) {
       
       SetEdgeStyle(tree, arrowhead = "vee", color = "grey35", penwidth = 2,dir="back")
       
-      level1 <- Traverse(tree, filterFun = function(x) x$level == 1)
-      level2 <- Traverse(tree, filterFun = function(x) x$level > 1)
+      # level1 <- Traverse(tree, filterFun = function(x) x$level == 1)
+      # level2 <- Traverse(tree, filterFun = function(x) x$level > 1)
+      # 
+      # Do(level1,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "darkslategray2", fontname = "helvetica")
+      # Do(level2,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "floralwhite", fontname = "helvetica")
       
-      Do(level1,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "darkslategray2", fontname = "helvetica")
-      Do(level2,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "floralwhite", fontname = "helvetica")
+       target <- Traverse(tree, filterFun = function(x) x$level == 1 & x$type=="process")
+       process <- Traverse(tree, filterFun = function(x) x$level > 1 & x$type=="process")
+       data <- Traverse(tree, filterFun = function(x) x$type =="data")
+       local <- Traverse(tree, filterFun = function(x) x$type =="local")
+       
+       Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
+       Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
+       if(length(data)>0)Do(data,SetNodeStyle,style = "filled", shape = "ellipse", fontcolor="black",fillcolor = "#b9fbc0", fontname = "helvetica",penwidth="2px")
+       if(length(local)>0)Do(local,SetNodeStyle,style = "filled", shape = "box", fontcolor="black",fillcolor = "#fde4cf", fontname = "helvetica",penwidth="2px")
       
       p<-plot(tree)
       output$tree_plot<-renderGrViz({
