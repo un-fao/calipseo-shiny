@@ -1,4 +1,4 @@
-# **calipseo-shiny [v1.5.5](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.5) - 2024-06-20**
+# **calipseo-shiny [v1.5.5](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.5) - 2024-07-12**
 
 ## Enhancements
 
@@ -10,6 +10,8 @@ _computation module_
 * [#216](https://github.com/un-fao/calipseo-shiny/issues/216) Add dependancy between indicators
 
 * [#217](https://github.com/un-fao/calipseo-shiny/issues/217) Adjust indicator period coverage
+
+* [#218](https://github.com/un-fao/calipseo-shiny/issues/218) Conditional release behavior of indivators based on dependant indicators
 
 # **calipseo-shiny [v1.5.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.4) - 2024-06-11**
 

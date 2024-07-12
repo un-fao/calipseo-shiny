@@ -825,6 +825,86 @@ computation2_server <- function(id, pool) {
       return(common_periods)
   }
   
+  #IsReleasable
+  isReleasable<-function(id,target_period,config=appConfig,indicators=AVAILABLE_INDICATORS){
+    print(id)
+    
+    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    
+    available_periods<-unlist(indicator$compute_by$available_periods)
+    
+    result<-sapply(available_periods, function (x) {
+      available_periods_parts <- unlist(strsplit(x, ":"))
+      period_key <- available_periods_parts[1]
+      period_value <- available_periods_parts[2]
+      
+      if(period_key=="data"){
+        print("HERE1")
+        releasable<-TRUE
+        return(releasable)
+      }else{
+        print("HERE2a")
+        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
+        print("HERE2b")
+        target<-unlist(strsplit(target_period, "-"))
+        
+        releasable<-if(length(target)==1){
+          print("HERE3")
+          if("month"%in% names(available_periods_new)){
+            print("HERE4")
+            nrow(subset(available_periods_new,year==target[1]))/12
+          }else if("quarter"%in% names(available_periods_new)){
+            print("HERE5")
+            nrow(subset(available_periods_new,year==target[1]))/4
+          }else{
+            print("HERE6")
+            nrow(subset(available_periods_new,year==target[1]))
+          }
+        }else{
+          print("HERE7")
+          if(grepl("M",target[1])){
+            print("HERE8")
+            target[2]<-gsub("M","",target[2])
+            
+            nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
+          }
+          if(grepl("Q",target[1])){
+            print("HERE9")
+            if("month"%in% names(available_periods_new)){
+              print("HERE10")
+              months<-switch(target[2],
+                             "Q1"=c(1:3),
+                             "Q2"=c(4:6),
+                             "Q3"=c(7:9),
+                             "Q4"=c(10:12))
+              nrow(subset(available_periods_new,year==target[1],month%in%months))/3
+            }else{
+              print("HERE11")
+              nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
+            }
+          }
+        }
+        releasable<-releasable==1
+        
+        if(!releasable){
+          print("not releasable")
+          return(releasable)
+        }else{
+          print("releasable")
+          sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
+          # 
+          releasable<-all(releasable,sub_releasable) 
+        }
+        
+      }
+      
+      return(releasable)
+      
+    })
+    
+    return(all(result))
+    
+  }
   
   #This one is the major part of process
   observeEvent(indicator(),{
@@ -1047,11 +1127,17 @@ computation2_server <- function(id, pool) {
                 },
                 "staging" = {
                   
+                  releasable<-isReleasable(id=indicator(),target_period=period)
+                  
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
                     actionButton(inputId = ns(paste0('button_view_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target$Period)),style = "border-color:transparent;padding-right:10px",title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
-                    actionButton(inputId = ns(paste0('button_release_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas")),
+                    if(releasable){
+                    actionButton(inputId = ns(paste0('button_release_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
+                      }else{
+                    disabled(actionButton(inputId = ns(paste0('button_release_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas")))
+                      },
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "available" = {
