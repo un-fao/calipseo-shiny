@@ -369,7 +369,7 @@ computation2_server <- function(id, pool) {
     tagList(
       uiOutput(ns("indicator_wrapper")),
       uiOutput(ns("description_wrapper")),
-      uiOutput(ns("computation_target_wrapper")),
+      #uiOutput(ns("computation_target_wrapper")),
       uiOutput(ns("show_notice_wrapper")),
       uiOutput(ns("show_hierarchy_wrapper")),
       uiOutput(ns("select_indicator_wrapper"))
@@ -430,35 +430,35 @@ computation2_server <- function(id, pool) {
       
         
         
-        output$computation_target_wrapper <- renderUI({
-          
-          available_periods_parts <- unlist(strsplit(x$compute_by$available_periods[1], ":"))
-          period_key <- available_periods_parts[1]
-          
-          if(period_key=="process"){
-            choices=c(setNames(c("release","release+staging"),c(i18n("COMPUTATION_TARGET_RELEASE_ITEM"),i18n("COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM"))))
-            fluidRow(
-              column(6,
-                     selectizeInput(
-                       ns("computation_target"), label = i18n("COMPUTATION_TARGET_LABEL"), 
-                       choices = choices, selected = "release+staging"
-                     )),
-              column(6,
-                     uiOutput(ns("info_target_message"))
-              )
-            )
-          }else{
-            NULL
-          }
-      })
+      #   output$computation_target_wrapper <- renderUI({
+      #     
+      #     available_periods_parts <- unlist(strsplit(x$compute_by$available_periods[1], ":"))
+      #     period_key <- available_periods_parts[1]
+      #     
+      #     if(period_key=="process"){
+      #       choices=c(setNames(c("release","release+staging"),c(i18n("COMPUTATION_TARGET_RELEASE_ITEM"),i18n("COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM"))))
+      #       fluidRow(
+      #         column(6,
+      #                selectizeInput(
+      #                  ns("computation_target"), label = i18n("COMPUTATION_TARGET_LABEL"), 
+      #                  choices = choices, selected = "release+staging"
+      #                )),
+      #         column(6,
+      #                uiOutput(ns("info_target_message"))
+      #         )
+      #       )
+      #     }else{
+      #       NULL
+      #     }
+      # })
       
       #Target mode informative message
-      observeEvent(input$computation_target,{
-        req(!is.null(input$computation_target))
-        output$info_target_message<-renderUI({
-          tags$span(shiny::icon(c('circle-info')),ifelse(input$computation_target=="release","Only already released indicators will be use in the computation","The missing dependent indicators will be automatically computed"), style="color:blue")
-        })
-      })
+      # observeEvent(input$computation_target,{
+      #   req(!is.null(input$computation_target))
+      #   output$info_target_message<-renderUI({
+      #     tags$span(shiny::icon(c('circle-info')),ifelse(input$computation_target=="release","Only already released indicators will be use in the computation","The missing dependent indicators will be automatically computed"), style="color:blue")
+      #   })
+      # })
     
     })
     
@@ -490,104 +490,104 @@ computation2_server <- function(id, pool) {
     })
     
     ##TODO -complete hierarchy con't be provide du to problem when multiple root
-    getIndicatorInfo<-function(id,target=F,indicators=AVAILABLE_INDICATORS,getParent=T,getChild=T){
-      
-      indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
-      print(indicator$id)
-      
-      label<-indicator$id
-      if(!is.null(indicator$label)) label<-indicator$label
-      label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
-      
-      result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
-      
-      if(getParent){
-        
-        parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
-          fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
-          fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
-          parts <- unlist(strsplit(fun_arg_value, ":"))
-          key <- ""
-          value <- ""
-          if(length(parts)==2){
-            key <- parts[1]
-            value <- parts[2]
-          }
-          label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
-          label<-paste0(label,"\n","(",toupper(key),")")
-          return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
-        }))
-        
-        if(length(parent)>0){
-          
-          parent_process<-subset(parent,type=="process")
-          parent_other<-subset(parent,type!="process")
-          
-          if(length(parent_other)>0){
-            parent_result<-parent_other
-          }
-          
-          if(length(parent_process)>0){
-            parent_all<-do.call("rbind",lapply(parent_process$id, function(x){
-              getIndicatorInfo(id=x,getParent = T,getChild = F)
-            }))
-            parent_result<-rbind(parent_all,parent_result)
-          }
-          
-        }
-        
-        result<-rbind(parent_result,result)
-        
-      }
-      
-      print("HERE")
-      
-      child<-unlist(sapply(AVAILABLE_INDICATORS, function(x){
-        sapply(names(x$compute_with$fun_args), function(y){
-          fun_arg_value <- x$compute_with$fun_args[[y]]$source
-          parts <- unlist(strsplit(fun_arg_value, ":"))
-          key <- ""
-          value <- ""
-          if(length(parts)==2){
-            key <- parts[1]
-            value <- parts[2]
-          }
-          
-          if(value==id)return(x$id)
-        })
-      }))
-      
-      if(length(child)>0 & getChild){
-        
-        child<-do.call("rbind",lapply(child, function(x){
-          target<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(y){y$id == x})][[1]]
-          label<-target$id
-          if(!is.null(target$label)) label<-target$label
-          label<-paste0(label,"\n","[computed by :",target$compute_by$period,"]\n","(PROCESS)")
-          return(data.frame("target"=F,"type"="process","id"=target$id,"label"=label))
-        }))
-        
-        if(length(child)>0){
-          
-          print("HAS CHILD")
-          child_process<-subset(child,type=="process")
-          child_other<-subset(child,type!="process")
-          
-          if(length(child_other)>0){
-            child_result<-child_other
-          }
-          
-          if(length(child_process)>0){
-            child_all<-do.call("rbind",lapply(child_process$id, function(x){
-              getIndicatorInfo(id=x,getParent = F,getChild = T)
-            }))
-            child_result<-rbind(child_result,child_all)
-          }
-        }
-        result<-rbind(result,child_result)
-      }
-      return(result)
-    }
+    # getIndicatorInfo<-function(id,target=F,indicators=AVAILABLE_INDICATORS,getParent=T,getChild=T){
+    #   
+    #   indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    #   print(indicator$id)
+    #   
+    #   label<-indicator$id
+    #   if(!is.null(indicator$label)) label<-indicator$label
+    #   label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
+    #   
+    #   result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
+    #   
+    #   if(getParent){
+    #     
+    #     parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
+    #       fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
+    #       fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
+    #       parts <- unlist(strsplit(fun_arg_value, ":"))
+    #       key <- ""
+    #       value <- ""
+    #       if(length(parts)==2){
+    #         key <- parts[1]
+    #         value <- parts[2]
+    #       }
+    #       label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
+    #       label<-paste0(label,"\n","(",toupper(key),")")
+    #       return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
+    #     }))
+    #     
+    #     if(length(parent)>0){
+    #       
+    #       parent_process<-subset(parent,type=="process")
+    #       parent_other<-subset(parent,type!="process")
+    #       
+    #       if(length(parent_other)>0){
+    #         parent_result<-parent_other
+    #       }
+    #       
+    #       if(length(parent_process)>0){
+    #         parent_all<-do.call("rbind",lapply(parent_process$id, function(x){
+    #           getIndicatorInfo(id=x,getParent = T,getChild = F)
+    #         }))
+    #         parent_result<-rbind(parent_all,parent_result)
+    #       }
+    #       
+    #     }
+    #     
+    #     result<-rbind(parent_result,result)
+    #     
+    #   }
+    #   
+    #   print("HERE")
+    #   
+    #   child<-unlist(sapply(AVAILABLE_INDICATORS, function(x){
+    #     sapply(names(x$compute_with$fun_args), function(y){
+    #       fun_arg_value <- x$compute_with$fun_args[[y]]$source
+    #       parts <- unlist(strsplit(fun_arg_value, ":"))
+    #       key <- ""
+    #       value <- ""
+    #       if(length(parts)==2){
+    #         key <- parts[1]
+    #         value <- parts[2]
+    #       }
+    #       
+    #       if(value==id)return(x$id)
+    #     })
+    #   }))
+    #   
+    #   if(length(child)>0 & getChild){
+    #     
+    #     child<-do.call("rbind",lapply(child, function(x){
+    #       target<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(y){y$id == x})][[1]]
+    #       label<-target$id
+    #       if(!is.null(target$label)) label<-target$label
+    #       label<-paste0(label,"\n","[computed by :",target$compute_by$period,"]\n","(PROCESS)")
+    #       return(data.frame("target"=F,"type"="process","id"=target$id,"label"=label))
+    #     }))
+    #     
+    #     if(length(child)>0){
+    #       
+    #       print("HAS CHILD")
+    #       child_process<-subset(child,type=="process")
+    #       child_other<-subset(child,type!="process")
+    #       
+    #       if(length(child_other)>0){
+    #         child_result<-child_other
+    #       }
+    #       
+    #       if(length(child_process)>0){
+    #         child_all<-do.call("rbind",lapply(child_process$id, function(x){
+    #           getIndicatorInfo(id=x,getParent = F,getChild = T)
+    #         }))
+    #         child_result<-rbind(child_result,child_all)
+    #       }
+    #     }
+    #     result<-rbind(result,child_result)
+    #   }
+    #   return(result)
+    # }
     ##
     
     getIndicatorHierarchy<-function(id,target=F,hierarchyTree=NULL,indicators=AVAILABLE_INDICATORS){
@@ -660,8 +660,6 @@ computation2_server <- function(id, pool) {
       INFO("Click on show hierarchy button")
       
       indicator<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
-      
-
       
       tree<-getIndicatorHierarchy(id=input$computation_indicator,target=T)
       
@@ -761,12 +759,12 @@ computation2_server <- function(id, pool) {
   #------------------------------------------------------------------
   
   #Adjustement of available periods proposed based on computed dependent indicators 
-  observeEvent(c(input$computation_target),{
-    req(!is.null(input$computation_target)&input$computation_target!="")
-    req(selected_indicator$period_key=="process")
-    available_periods(eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")"))))
-    
-  })
+  # observeEvent(c(input$computation_target),{
+  #   req(!is.null(input$computation_target)&input$computation_target!="")
+  #   req(selected_indicator$period_key=="process")
+  #   available_periods(eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")"))))
+  #   
+  # })
   
 
   
@@ -774,6 +772,59 @@ computation2_server <- function(id, pool) {
   #--------------------------
   #Events
   #--------------------------
+  
+  intersection <- function(x, y, ...){
+    if (missing(...)) intersect(x, y)
+    else intersect(x, intersection(y, ...))
+  }
+  
+  getAvailablePeriods<-function(id,config=appConfig,indicators=AVAILABLE_INDICATORS){
+    print(id)
+    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    
+    available_periods<-unlist(indicator$compute_by$available_periods)
+    print(indicator)
+    period<-indicator$compute_by$period
+    print(period)
+    period <- switch(period,
+                     "year" = c("year"),
+                     "quarter" = c("year","quarter"),
+                     "month" = c("year", "month")
+    )
+    
+    
+    common_periods<-lapply(available_periods, function (x) {
+      available_periods_parts <- unlist(strsplit(x, ":"))
+      period_key <- available_periods_parts[1]
+      period_value <- available_periods_parts[2]
+      
+      if(period_key=="data"){
+        available_periods_new<-eval(parse(text=paste0(period_value, "(con = pool)")))
+      }else{
+        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
+      }
+      
+      if(all(period%in%names(available_periods_new))){
+        available_periods_new<-unique(available_periods_new[period])
+      }else{
+        available_periods_new<-available_periods_new%>%
+          mutate("quarter"= case_when(month%in%c(1:3)~"Q1",
+                                      month%in%c(4:6)~"Q2",
+                                      month%in%c(7:9)~"Q3",
+                                      month%in%c(10:12)~"Q4"))
+        available_periods_new<-unique(available_periods_new[period])
+      }
+    })
+      
+      if(length(common_periods)>1){
+        common_periods<-do.call("intersection",common_periods)
+      }else{
+        common_periods<-as.data.frame(common_periods)
+      }
+      
+      return(common_periods)
+  }
+  
   
   #This one is the major part of process
   observeEvent(indicator(),{
@@ -789,9 +840,9 @@ computation2_server <- function(id, pool) {
     indicator_status<-indicator_status(NULL)
     
     selected_indicator$indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator()})][[1]]
-    available_periods_parts <- unlist(strsplit(selected_indicator$indicator$compute_by$available_periods[1], ":"))
-    selected_indicator$period_key <- available_periods_parts[1]
-    selected_indicator$period_value <- available_periods_parts[2]
+    # available_periods_parts <- unlist(strsplit(selected_indicator$indicator$compute_by$available_periods[1], ":"))
+    # selected_indicator$period_key <- available_periods_parts[1]
+    # selected_indicator$period_value <- available_periods_parts[2]
     
     
     out$results <- getComputationResults(selected_indicator$indicator)
@@ -799,17 +850,19 @@ computation2_server <- function(id, pool) {
     out$indicator <- selected_indicator$indicator
     
     
-    #Get periods accessible in the data and clean it
-    if(selected_indicator$period_key=="data"){
-      available_periods_new<-eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)")))
-    }else{
-      req(!is.null(input$computation_target)&input$computation_target!="")
-      available_periods_new<-eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")")))
-      
-      available_periods_new<-unique(subset(available_periods_new,select=selected_indicator$indicator$compute_by$period))
-      available_periods_new$year<-as.character(available_periods_new$year)
-      
-      }
+    # #Get periods accessible in the data and clean it
+    # if(selected_indicator$period_key=="data"){
+    #   available_periods_new<-eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)")))
+    # }else{
+    #   req(!is.null(input$computation_target)&input$computation_target!="")
+    #   available_periods_new<-eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")")))
+    #   
+    #   available_periods_new<-unique(subset(available_periods_new,select=selected_indicator$indicator$compute_by$period))
+    #   available_periods_new$year<-as.character(available_periods_new$year)
+    #   
+    # }
+    
+    available_periods_new<-getAvailablePeriods(id=selected_indicator$indicator$id,config=appConfig,indicators=AVAILABLE_INDICATORS)
     
     available_periods_new<-subset(available_periods_new,!is.na(year))
     if("month"%in%selected_indicator$indicator$compute_by$period){
@@ -837,7 +890,6 @@ computation2_server <- function(id, pool) {
     req(!is.null(available_periods))
     req(!is.null(available_periods()$period))
     
-    print("TRACKER 1")
     #Create full period matrix based on typo of compute_by period
     if("month"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
@@ -848,7 +900,6 @@ computation2_server <- function(id, pool) {
       full_periods_new$Period<-paste0(full_periods_new$year,"-","M",full_periods_new$month)
     }
     
-    print("TRACKER 2")
     if("quarter"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
@@ -858,7 +909,6 @@ computation2_server <- function(id, pool) {
       full_periods_new$Period<-paste0(full_periods_new$year,"-","Q",full_periods_new$quarter)
     }
     
-    print("TRACKER 3")
     if("year"%in%selected_indicator$indicator$compute_by$period){
       years<-seq(min(available_periods()$year),max(available_periods()$year))
       full_periods_new<-data.frame(
@@ -868,7 +918,7 @@ computation2_server <- function(id, pool) {
     }
     
     full_periods<-full_periods(full_periods_new%>%arrange(desc(year)))
-    print("TRACKER 4")
+
     #Merge info of results, available period and full period matrix
     
     print(head(available_periods()))
@@ -876,12 +926,12 @@ computation2_server <- function(id, pool) {
     
     print("LEFT-JOIN-3-START")
     indicator_status_new<-available_periods()%>%
+      mutate(period=as.character(period))%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
     print("LEFT-JOIN-3-START")
     
-    print("TRACKER 5")
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
       
@@ -899,11 +949,9 @@ computation2_server <- function(id, pool) {
       print("LEFT-JOIN-4-END")
     }
     
-    print("TRACKER 6")
     
     indicator_status<-indicator_status(indicator_status_new)
     
-    print("TRACKER 7")
     #Generate for each period the UIelements
     lapply(1:nrow(indicator_status()), function(x){
       item<-subset(indicator_status())[x,]
@@ -918,7 +966,6 @@ computation2_server <- function(id, pool) {
         target<-subset(indicator_status(),Period==period)
         
         req(nrow(target)>0)
-        
         switch (target$Status,
                 "release" = {
                   icon<-icon("square-check", class = "fas")
@@ -946,7 +993,6 @@ computation2_server <- function(id, pool) {
       output[[paste0("icon_status_",period)]] <-renderUI({
         target<-subset(indicator_status(),Period==period)
         req(nrow(target)>0)
-        
         switch (target$Status,
                 "release" = {
                   tags$span(tags$span(icon("lock"),style = "color:gray;padding-right:15px;"),tags$span(icon("square-check", class = "fas"),style = "color:green;"),style = "padding-right:24px;margin-left:3.5px;")
@@ -969,7 +1015,6 @@ computation2_server <- function(id, pool) {
         target<-subset(indicator_status(),Period==period)
         
         req(nrow(target)>0)
-        
         switch (target$Status,
                 "release" = {
                   tags$span(tags$b(sprintf("%s : %s ",i18n("STATUS"),i18n("STATUS_APPROVED"))),tags$em(sprintf("(%s : %s)",i18n("LAST_UPDATE"),target$Date)),style = "color:green;padding-left:200px;")
@@ -991,7 +1036,6 @@ computation2_server <- function(id, pool) {
         target<-subset(indicator_status(),Period==period)
         
         req(nrow(target)>0)
-        
         switch (target$Status,
                 "release" = {
                   
@@ -1177,7 +1221,7 @@ computation2_server <- function(id, pool) {
         }
         
         print("CHECK 3")
-        computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target=input$computation_target,computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=if(!is.null(input$computation_target))if(input$computation_target=="release+staging"){TRUE}else{FALSE}else{FALSE})
+        computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target="release+staging",computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=TRUE)
         print("CHECK 4")
         },ignoreInit = T)
       
@@ -1194,6 +1238,7 @@ computation2_server <- function(id, pool) {
     
     print("LEFT-JOIN-1-START")
     indicator_status_new<-available_periods()%>%
+      mutate(period=as.character(period))%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)

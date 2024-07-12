@@ -7,7 +7,9 @@
 **Computation enhancements**
 _computation module_
 
-* [#217](https://github.com/un-fao/calipseo-shiny/issues/216) Add dependancy between indicators
+* [#216](https://github.com/un-fao/calipseo-shiny/issues/216) Add dependancy between indicators
+
+* [#217](https://github.com/un-fao/calipseo-shiny/issues/217) Adjust indicator period coverage
 
 # **calipseo-shiny [v1.5.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.4) - 2024-06-11**
 
