@@ -135,7 +135,6 @@ computation2_server <- function(id, pool) {
   computeIndicator<-function(out,session,computation_indicator,computation_target,computation_year,computation_quarter=NULL,computation_month=NULL,compute_dependent_indicators=FALSE){
     
     if(compute_dependent_indicators){
-      
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
       indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
@@ -221,7 +220,7 @@ computation2_server <- function(id, pool) {
                                             if(length(indicator$compute_with$fun_args)>0)","),
                                      if(length(indicator$compute_with$fun_args)>0){
                                        paste0(names(indicator$compute_with$fun_args), " = ", sapply(names(indicator$compute_with$fun_args), function(x){
-                                         fun_arg_value <- indicator$compute_with$fun_args[[x]]
+                                         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
                                          parts <- unlist(strsplit(fun_arg_value, ":"))
                                          key <- ""
                                          value <- ""
@@ -298,7 +297,6 @@ computation2_server <- function(id, pool) {
     )
   }
   
-  
   #releaseIndicator
   releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
     
@@ -309,7 +307,7 @@ computation2_server <- function(id, pool) {
       computation_year<-decode_target[2]
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
       indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
-        fun_arg_value <- indicator$compute_with$fun_args[[x]]
+        fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
         parts <- unlist(strsplit(fun_arg_value, ":"))
         key <- ""
         value <- ""
@@ -360,6 +358,279 @@ computation2_server <- function(id, pool) {
     
   }
   
+  #getIndicatorInfo (not work -> extension of getIndicatorHierarchy)
+  #complete hierarchy can't be provide due to problem when multiple root
+  getIndicatorInfo<-function(id,target=F,indicators=AVAILABLE_INDICATORS,getParent=T,getChild=T){
+  #   
+  #   indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
+  #   print(indicator$id)
+  #   
+  #   label<-indicator$id
+  #   if(!is.null(indicator$label)) label<-indicator$label
+  #   label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
+  #   
+  #   result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
+  #   
+  #   if(getParent){
+  #     
+  #     parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
+  #       fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
+  #       fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
+  #       parts <- unlist(strsplit(fun_arg_value, ":"))
+  #       key <- ""
+  #       value <- ""
+  #       if(length(parts)==2){
+  #         key <- parts[1]
+  #         value <- parts[2]
+  #       }
+  #       label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
+  #       label<-paste0(label,"\n","(",toupper(key),")")
+  #       return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
+  #     }))
+  #     
+  #     if(length(parent)>0){
+  #       
+  #       parent_process<-subset(parent,type=="process")
+  #       parent_other<-subset(parent,type!="process")
+  #       
+  #       if(length(parent_other)>0){
+  #         parent_result<-parent_other
+  #       }
+  #       
+  #       if(length(parent_process)>0){
+  #         parent_all<-do.call("rbind",lapply(parent_process$id, function(x){
+  #           getIndicatorInfo(id=x,getParent = T,getChild = F)
+  #         }))
+  #         parent_result<-rbind(parent_all,parent_result)
+  #       }
+  #       
+  #     }
+  #     
+  #     result<-rbind(parent_result,result)
+  #     
+  #   }
+  #   
+  #   print("HERE")
+  #   
+  #   child<-unlist(sapply(AVAILABLE_INDICATORS, function(x){
+  #     sapply(names(x$compute_with$fun_args), function(y){
+  #       fun_arg_value <- x$compute_with$fun_args[[y]]$source
+  #       parts <- unlist(strsplit(fun_arg_value, ":"))
+  #       key <- ""
+  #       value <- ""
+  #       if(length(parts)==2){
+  #         key <- parts[1]
+  #         value <- parts[2]
+  #       }
+  #       
+  #       if(value==id)return(x$id)
+  #     })
+  #   }))
+  #   
+  #   if(length(child)>0 & getChild){
+  #     
+  #     child<-do.call("rbind",lapply(child, function(x){
+  #       target<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(y){y$id == x})][[1]]
+  #       label<-target$id
+  #       if(!is.null(target$label)) label<-target$label
+  #       label<-paste0(label,"\n","[computed by :",target$compute_by$period,"]\n","(PROCESS)")
+  #       return(data.frame("target"=F,"type"="process","id"=target$id,"label"=label))
+  #     }))
+  #     
+  #     if(length(child)>0){
+  #       
+  #       print("HAS CHILD")
+  #       child_process<-subset(child,type=="process")
+  #       child_other<-subset(child,type!="process")
+  #       
+  #       if(length(child_other)>0){
+  #         child_result<-child_other
+  #       }
+  #       
+  #       if(length(child_process)>0){
+  #         child_all<-do.call("rbind",lapply(child_process$id, function(x){
+  #           getIndicatorInfo(id=x,getParent = F,getChild = T)
+  #         }))
+  #         child_result<-rbind(child_result,child_all)
+  #       }
+  #     }
+  #     result<-rbind(result,child_result)
+  #   }
+  #   return(result)
+   }
+  
+  #getIndicatorHierarchy
+  getIndicatorHierarchy<-function(id,target=F,hierarchyTree=NULL,indicators=AVAILABLE_INDICATORS){
+    
+    indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    
+    label<-indicator$id
+    if(!is.null(indicator$label)) label<-indicator$label
+    label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
+    
+    result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
+    
+    tmpTree<-Node$new(label,id=result$id,type=result$type,target=result$target)
+    
+    parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
+      fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
+      fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
+      parts <- unlist(strsplit(fun_arg_value, ":"))
+      key <- ""
+      value <- ""
+      if(length(parts)==2){
+        key <- parts[1]
+        value <- parts[2]
+      }
+      label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
+      label<-paste0(label,"\n","(",toupper(key),")")
+      
+      return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
+    }))
+    
+    if(length(parent)>0){
+      parent_process<-subset(parent,type=="process")
+      parent_other<-subset(parent,type!="process")
+      
+      if(nrow(parent_other)>0){
+        parent_result<-parent_other
+        lapply(parent_other$label, function(x){
+          subTree<-Node$new(x,id=parent_other$id,type=parent_other$type,target=parent_other$target)
+          tmpTree$AddChildNode(subTree)
+        })
+      }
+      
+      if(nrow(parent_process)>0){
+        lapply(parent_process$id, function(x){
+          tmpTree<-getIndicatorHierarchy(id=x,target=F,hierarchyTree=tmpTree)
+        })
+      }
+    }
+    
+    if(!is.null(hierarchyTree)){
+      hierarchyTree$AddChildNode(tmpTree)
+    }else{
+      hierarchyTree<-tmpTree
+    }
+    
+    return(hierarchyTree)
+  }
+  
+  #getAvailablePeriods
+  getAvailablePeriods<-function(id,config=appConfig,indicators=AVAILABLE_INDICATORS){
+    print(id)
+    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    
+    available_periods<-unlist(indicator$compute_by$available_periods)
+    print(indicator)
+    period<-indicator$compute_by$period
+    print(period)
+    period <- switch(period,
+                     "year" = c("year"),
+                     "quarter" = c("year","quarter"),
+                     "month" = c("year", "month")
+    )
+    
+    
+    common_periods<-lapply(available_periods, function (x) {
+      available_periods_parts <- unlist(strsplit(x, ":"))
+      period_key <- available_periods_parts[1]
+      period_value <- available_periods_parts[2]
+      
+      if(period_key=="data"){
+        available_periods_new<-eval(parse(text=paste0(period_value, "(con = pool)")))
+      }else{
+        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
+      }
+      
+      if(all(period%in%names(available_periods_new))){
+        available_periods_new<-unique(available_periods_new[period])
+      }else{
+        available_periods_new<-available_periods_new%>%
+          mutate("quarter"= case_when(month%in%c(1:3)~"Q1",
+                                      month%in%c(4:6)~"Q2",
+                                      month%in%c(7:9)~"Q3",
+                                      month%in%c(10:12)~"Q4"))
+        available_periods_new<-unique(available_periods_new[period])
+      }
+    })
+    
+    if(length(common_periods)>1){
+      common_periods<-do.call("intersection",common_periods)
+    }else{
+      common_periods<-as.data.frame(common_periods)
+    }
+    
+    return(common_periods)
+  }
+  
+  #IsReleasable
+  isReleasable<-function(id,target_period,config=appConfig,indicators=AVAILABLE_INDICATORS){
+
+    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    
+    available_periods<-unlist(indicator$compute_by$available_periods)
+    
+    result<-sapply(available_periods, function (x) {
+      available_periods_parts <- unlist(strsplit(x, ":"))
+      period_key <- available_periods_parts[1]
+      period_value <- available_periods_parts[2]
+      
+      if(period_key=="data"){
+        releasable<-TRUE
+        return(releasable)
+      }else{
+        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
+        
+        target<-unlist(strsplit(target_period, "-"))
+          
+        releasable<-if(length(target)==1){
+          if("month"%in% names(available_periods_new)){
+            nrow(subset(available_periods_new,year==target[1]))/12
+          }else if("quarter"%in% names(available_periods_new)){
+            nrow(subset(available_periods_new,year==target[1]))/4
+          }else{
+            nrow(subset(available_periods_new,year==target[1]))
+          }
+        }else{
+          if(grepl("M",target[1])){
+            target[2]<-gsub("M","",target[2])
+              
+            nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
+          }
+          if(grepl("Q",target[1])){
+            if("month"%in% names(available_periods_new)){
+              months<-switch(target[2],
+                              "Q1"=c(1:3),
+                              "Q2"=c(4:6),
+                              "Q3"=c(7:9),
+                              "Q4"=c(10:12))
+              nrow(subset(available_periods_new,year==target[1],month%in%months))/3
+            }else{
+              nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
+            }
+          }
+        }
+        
+        releasable<-releasable==1
+          
+        if(!releasable){
+          return(releasable)
+        }else{
+          sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
+          releasable<-all(releasable,sub_releasable) 
+        }
+      }
+        
+      return(releasable)
+    })
+  
+  releasable<-all(result)
+  INFO("[ISReleasable] '%s' indicator is %s for the period '%s'",id,ifelse(releasable,"releasable","not releasable"),target_period)
+  return(releasable)
+    
+  }
+  
   #UI RENDERERS
   #----------------------------------------------------------------------------------------------------
   
@@ -369,7 +640,6 @@ computation2_server <- function(id, pool) {
     tagList(
       uiOutput(ns("indicator_wrapper")),
       uiOutput(ns("description_wrapper")),
-      #uiOutput(ns("computation_target_wrapper")),
       uiOutput(ns("show_notice_wrapper")),
       uiOutput(ns("show_hierarchy_wrapper")),
       uiOutput(ns("select_indicator_wrapper"))
@@ -377,7 +647,6 @@ computation2_server <- function(id, pool) {
   })
   
   #indicator selector
-  
   output$indicator_wrapper<-renderUI({
     req(AVAILABLE_INDICATORS)
     selectizeInput(
@@ -395,10 +664,8 @@ computation2_server <- function(id, pool) {
     )
   })
   
-  
-  #Process to react to selection and notice button of each indicator (require in carousel logic) 
-    
-    observeEvent(input$computation_indicator,{
+  #indicator additional info
+  observeEvent(input$computation_indicator,{
       req(!is.null(input$computation_indicator)&input$computation_indicator!="")
       
       x<- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
@@ -462,242 +729,6 @@ computation2_server <- function(id, pool) {
     
     })
     
-    observeEvent(input$select_indicator,{
-    
-    INFO("Selection of indicator : %s",input$computation_indicator)
-    indicator_status<-indicator_status(NULL)
-    available_periods<-available_periods(NULL)
-    full_periods<-full_periods(NULL)
-    indicator<-indicator(input$computation_indicator)
-    indicator_first_compute<-indicator_first_compute(TRUE)
-    
-    })
-    
-    observeEvent(input$show_notice,{
-    
-    INFO("Click on show notice button")
-      
-      x<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
-      
-      req(!is.na(x$notice))
-      showModal(
-        modalDialog(
-          tags$iframe(style="height:600px; width:100%", src=x$notice),
-          easyClose = TRUE, footer = NULL,size="l" 
-        )
-      )
-      
-    })
-    
-    ##TODO -complete hierarchy con't be provide du to problem when multiple root
-    # getIndicatorInfo<-function(id,target=F,indicators=AVAILABLE_INDICATORS,getParent=T,getChild=T){
-    #   
-    #   indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
-    #   print(indicator$id)
-    #   
-    #   label<-indicator$id
-    #   if(!is.null(indicator$label)) label<-indicator$label
-    #   label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
-    #   
-    #   result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
-    #   
-    #   if(getParent){
-    #     
-    #     parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
-    #       fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
-    #       fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
-    #       parts <- unlist(strsplit(fun_arg_value, ":"))
-    #       key <- ""
-    #       value <- ""
-    #       if(length(parts)==2){
-    #         key <- parts[1]
-    #         value <- parts[2]
-    #       }
-    #       label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
-    #       label<-paste0(label,"\n","(",toupper(key),")")
-    #       return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
-    #     }))
-    #     
-    #     if(length(parent)>0){
-    #       
-    #       parent_process<-subset(parent,type=="process")
-    #       parent_other<-subset(parent,type!="process")
-    #       
-    #       if(length(parent_other)>0){
-    #         parent_result<-parent_other
-    #       }
-    #       
-    #       if(length(parent_process)>0){
-    #         parent_all<-do.call("rbind",lapply(parent_process$id, function(x){
-    #           getIndicatorInfo(id=x,getParent = T,getChild = F)
-    #         }))
-    #         parent_result<-rbind(parent_all,parent_result)
-    #       }
-    #       
-    #     }
-    #     
-    #     result<-rbind(parent_result,result)
-    #     
-    #   }
-    #   
-    #   print("HERE")
-    #   
-    #   child<-unlist(sapply(AVAILABLE_INDICATORS, function(x){
-    #     sapply(names(x$compute_with$fun_args), function(y){
-    #       fun_arg_value <- x$compute_with$fun_args[[y]]$source
-    #       parts <- unlist(strsplit(fun_arg_value, ":"))
-    #       key <- ""
-    #       value <- ""
-    #       if(length(parts)==2){
-    #         key <- parts[1]
-    #         value <- parts[2]
-    #       }
-    #       
-    #       if(value==id)return(x$id)
-    #     })
-    #   }))
-    #   
-    #   if(length(child)>0 & getChild){
-    #     
-    #     child<-do.call("rbind",lapply(child, function(x){
-    #       target<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(y){y$id == x})][[1]]
-    #       label<-target$id
-    #       if(!is.null(target$label)) label<-target$label
-    #       label<-paste0(label,"\n","[computed by :",target$compute_by$period,"]\n","(PROCESS)")
-    #       return(data.frame("target"=F,"type"="process","id"=target$id,"label"=label))
-    #     }))
-    #     
-    #     if(length(child)>0){
-    #       
-    #       print("HAS CHILD")
-    #       child_process<-subset(child,type=="process")
-    #       child_other<-subset(child,type!="process")
-    #       
-    #       if(length(child_other)>0){
-    #         child_result<-child_other
-    #       }
-    #       
-    #       if(length(child_process)>0){
-    #         child_all<-do.call("rbind",lapply(child_process$id, function(x){
-    #           getIndicatorInfo(id=x,getParent = F,getChild = T)
-    #         }))
-    #         child_result<-rbind(child_result,child_all)
-    #       }
-    #     }
-    #     result<-rbind(result,child_result)
-    #   }
-    #   return(result)
-    # }
-    ##
-    
-    getIndicatorHierarchy<-function(id,target=F,hierarchyTree=NULL,indicators=AVAILABLE_INDICATORS){
-      
-      indicator<-indicators[sapply(indicators, function(x){x$id == id})][[1]]
-      
-      label<-indicator$id
-      if(!is.null(indicator$label)) label<-indicator$label
-      label<-paste0(label,"\n","[computed by :",indicator$compute_by$period,"]\n","(PROCESS)")
-      
-      result<-data.frame("target"=target,"type"="process","id"=indicator$id,"label"=label)
-      
-      tmpTree<-Node$new(label,id=result$id,type=result$type,target=result$target)
-      
-      parent<-depends<-do.call("rbind",lapply(names(indicator$compute_with$fun_args), function(x){
-        fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
-        fun_arg_info <- indicator$compute_with$fun_args[[x]]$info
-        parts <- unlist(strsplit(fun_arg_value, ":"))
-        key <- ""
-        value <- ""
-        if(length(parts)==2){
-          key <- parts[1]
-          value <- parts[2]
-        }
-        label<-if(is.null(fun_arg_info)){value}else{fun_arg_info}
-        label<-paste0(label,"\n","(",toupper(key),")")
-        return(data.frame("target"=F,"type"=key,"id"=value,"label"=label))
-      }))
-      
-      if(length(parent)>0){
-        
-        parent_process<-subset(parent,type=="process")
-        parent_other<-subset(parent,type!="process")
-        
-        if(nrow(parent_other)>0){
-          parent_result<-parent_other
-          lapply(parent_other$label, function(x){
-            subTree<-Node$new(x,id=parent_other$id,type=parent_other$type,target=parent_other$target)
-            tmpTree$AddChildNode(subTree)
-          })
-        }
-        
-        
-        if(nrow(parent_process)>0){
-          lapply(parent_process$id, function(x){
-            tmpTree<-getIndicatorHierarchy(id=x,target=F,hierarchyTree=tmpTree)
-          })
-          
-          #tmp_result<-do.call("rbind",
-          
-          #parent_all<-tmp$result
-          #parent_result<-rbind(parent_all,parent_result)
-        }
-        
-      }
-      
-      if(!is.null(hierarchyTree)){
-        hierarchyTree$AddChildNode(tmpTree)
-      }else{
-        hierarchyTree<-tmpTree
-      }
-      
-      #result<-rbind(parent_result,result)
-      
-      return(hierarchyTree)
-    }
-    
-    observeEvent(input$show_hierarchy,{
-      
-      INFO("Click on show hierarchy button")
-      
-      indicator<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
-      
-      tree<-getIndicatorHierarchy(id=input$computation_indicator,target=T)
-      
-      SetGraphStyle(tree, rankdir = "BT")
-      
-      SetEdgeStyle(tree, arrowhead = "vee", color = "grey35", penwidth = 2,dir="back")
-      
-      # level1 <- Traverse(tree, filterFun = function(x) x$level == 1)
-      # level2 <- Traverse(tree, filterFun = function(x) x$level > 1)
-      # 
-      # Do(level1,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "darkslategray2", fontname = "helvetica")
-      # Do(level2,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "floralwhite", fontname = "helvetica")
-      
-       target <- Traverse(tree, filterFun = function(x) x$level == 1 & x$type=="process")
-       process <- Traverse(tree, filterFun = function(x) x$level > 1 & x$type=="process")
-       data <- Traverse(tree, filterFun = function(x) x$type =="data")
-       local <- Traverse(tree, filterFun = function(x) x$type =="local")
-       
-       Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
-       Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
-       if(length(data)>0)Do(data,SetNodeStyle,style = "filled", shape = "ellipse", fontcolor="black",fillcolor = "#b9fbc0", fontname = "helvetica",penwidth="2px")
-       if(length(local)>0)Do(local,SetNodeStyle,style = "filled", shape = "box", fontcolor="black",fillcolor = "#fde4cf", fontname = "helvetica",penwidth="2px")
-      
-      p<-plot(tree)
-      output$tree_plot<-renderGrViz({
-        p
-      })
-      
-      showModal(
-        modalDialog(
-          grVizOutput(ns("tree_plot")),
-          easyClose = TRUE, footer = NULL,size="l" 
-        )
-      )
-      
-      
-    })
-  
   #Bar plot block
   #--------------------------------------------
   #Bar plot box
@@ -754,159 +785,76 @@ computation2_server <- function(id, pool) {
   })
   #--------------------------------------------
   
-  
-  #Dependent indicators management Block
-  #------------------------------------------------------------------
-  
-  #Adjustement of available periods proposed based on computed dependent indicators 
-  # observeEvent(c(input$computation_target),{
-  #   req(!is.null(input$computation_target)&input$computation_target!="")
-  #   req(selected_indicator$period_key=="process")
-  #   available_periods(eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")"))))
-  #   
-  # })
-  
-
-  
-  
   #--------------------------
   #Events
   #--------------------------
   
-  intersection <- function(x, y, ...){
-    if (missing(...)) intersect(x, y)
-    else intersect(x, intersection(y, ...))
-  }
-  
-  getAvailablePeriods<-function(id,config=appConfig,indicators=AVAILABLE_INDICATORS){
-    print(id)
-    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+  observeEvent(input$select_indicator,{
     
-    available_periods<-unlist(indicator$compute_by$available_periods)
-    print(indicator)
-    period<-indicator$compute_by$period
-    print(period)
-    period <- switch(period,
-                     "year" = c("year"),
-                     "quarter" = c("year","quarter"),
-                     "month" = c("year", "month")
+    INFO("Selection of indicator : %s",input$computation_indicator)
+    indicator_status<-indicator_status(NULL)
+    available_periods<-available_periods(NULL)
+    full_periods<-full_periods(NULL)
+    indicator<-indicator(input$computation_indicator)
+    indicator_first_compute<-indicator_first_compute(TRUE)
+    
+  })
+  
+  observeEvent(input$show_notice,{
+    
+    INFO("Click on show notice button")
+    
+    x<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
+    
+    req(!is.na(x$notice))
+    showModal(
+      modalDialog(
+        tags$iframe(style="height:600px; width:100%", src=x$notice),
+        easyClose = TRUE, footer = NULL,size="l" 
+      )
     )
     
-    
-    common_periods<-lapply(available_periods, function (x) {
-      available_periods_parts <- unlist(strsplit(x, ":"))
-      period_key <- available_periods_parts[1]
-      period_value <- available_periods_parts[2]
-      
-      if(period_key=="data"){
-        available_periods_new<-eval(parse(text=paste0(period_value, "(con = pool)")))
-      }else{
-        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-      }
-      
-      if(all(period%in%names(available_periods_new))){
-        available_periods_new<-unique(available_periods_new[period])
-      }else{
-        available_periods_new<-available_periods_new%>%
-          mutate("quarter"= case_when(month%in%c(1:3)~"Q1",
-                                      month%in%c(4:6)~"Q2",
-                                      month%in%c(7:9)~"Q3",
-                                      month%in%c(10:12)~"Q4"))
-        available_periods_new<-unique(available_periods_new[period])
-      }
-    })
-      
-      if(length(common_periods)>1){
-        common_periods<-do.call("intersection",common_periods)
-      }else{
-        common_periods<-as.data.frame(common_periods)
-      }
-      
-      return(common_periods)
-  }
+  })
   
-  #IsReleasable
-  isReleasable<-function(id,target_period,config=appConfig,indicators=AVAILABLE_INDICATORS){
-    print(id)
+  observeEvent(input$show_hierarchy,{
     
-    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
+    INFO("Click on show hierarchy button")
     
-    available_periods<-unlist(indicator$compute_by$available_periods)
+    indicator<-AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == input$computation_indicator})][[1]]
     
-    result<-sapply(available_periods, function (x) {
-      available_periods_parts <- unlist(strsplit(x, ":"))
-      period_key <- available_periods_parts[1]
-      period_value <- available_periods_parts[2]
-      
-      if(period_key=="data"){
-        print("HERE1")
-        releasable<-TRUE
-        return(releasable)
-      }else{
-        print("HERE2a")
-        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-        print("HERE2b")
-        target<-unlist(strsplit(target_period, "-"))
-        
-        releasable<-if(length(target)==1){
-          print("HERE3")
-          if("month"%in% names(available_periods_new)){
-            print("HERE4")
-            nrow(subset(available_periods_new,year==target[1]))/12
-          }else if("quarter"%in% names(available_periods_new)){
-            print("HERE5")
-            nrow(subset(available_periods_new,year==target[1]))/4
-          }else{
-            print("HERE6")
-            nrow(subset(available_periods_new,year==target[1]))
-          }
-        }else{
-          print("HERE7")
-          if(grepl("M",target[1])){
-            print("HERE8")
-            target[2]<-gsub("M","",target[2])
-            
-            nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
-          }
-          if(grepl("Q",target[1])){
-            print("HERE9")
-            if("month"%in% names(available_periods_new)){
-              print("HERE10")
-              months<-switch(target[2],
-                             "Q1"=c(1:3),
-                             "Q2"=c(4:6),
-                             "Q3"=c(7:9),
-                             "Q4"=c(10:12))
-              nrow(subset(available_periods_new,year==target[1],month%in%months))/3
-            }else{
-              print("HERE11")
-              nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
-            }
-          }
-        }
-        releasable<-releasable==1
-        
-        if(!releasable){
-          print("not releasable")
-          return(releasable)
-        }else{
-          print("releasable")
-          sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
-          # 
-          releasable<-all(releasable,sub_releasable) 
-        }
-        
-      }
-      
-      return(releasable)
-      
+    tree<-getIndicatorHierarchy(id=input$computation_indicator,target=T)
+    
+    SetGraphStyle(tree, rankdir = "BT")
+    
+    SetEdgeStyle(tree, arrowhead = "vee", color = "grey35", penwidth = 2,dir="back")
+    
+    target <- Traverse(tree, filterFun = function(x) x$level == 1 & x$type=="process")
+    process <- Traverse(tree, filterFun = function(x) x$level > 1 & x$type=="process")
+    data <- Traverse(tree, filterFun = function(x) x$type =="data")
+    local <- Traverse(tree, filterFun = function(x) x$type =="local")
+    
+    Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
+    Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
+    
+    if(length(data)>0)Do(data,SetNodeStyle,style = "filled", shape = "ellipse", fontcolor="black",fillcolor = "#b9fbc0", fontname = "helvetica",penwidth="2px")
+    if(length(local)>0)Do(local,SetNodeStyle,style = "filled", shape = "box", fontcolor="black",fillcolor = "#fde4cf", fontname = "helvetica",penwidth="2px")
+    
+    p<-plot(tree)
+    
+    output$tree_plot<-renderGrViz({
+      p
     })
     
-    return(all(result))
+    showModal(
+      modalDialog(
+        grVizOutput(ns("tree_plot")),
+        easyClose = TRUE, footer = NULL,size="l" 
+      )
+    )
     
-  }
+  })
   
-  #This one is the major part of process
+  #This event is the major part of process
   observeEvent(indicator(),{
     
     req(!is.null(indicator())&indicator()!="")
@@ -920,27 +868,10 @@ computation2_server <- function(id, pool) {
     indicator_status<-indicator_status(NULL)
     
     selected_indicator$indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator()})][[1]]
-    # available_periods_parts <- unlist(strsplit(selected_indicator$indicator$compute_by$available_periods[1], ":"))
-    # selected_indicator$period_key <- available_periods_parts[1]
-    # selected_indicator$period_value <- available_periods_parts[2]
-    
     
     out$results <- getComputationResults(selected_indicator$indicator)
     out$computation <- NULL
     out$indicator <- selected_indicator$indicator
-    
-    
-    # #Get periods accessible in the data and clean it
-    # if(selected_indicator$period_key=="data"){
-    #   available_periods_new<-eval(parse(text=paste0(selected_indicator$period_value, "(con = pool)")))
-    # }else{
-    #   req(!is.null(input$computation_target)&input$computation_target!="")
-    #   available_periods_new<-eval(parse(text=paste0("getStatPeriods(config = appConfig ,id = \"",selected_indicator$period_value,"\",target = \"",input$computation_target,"\")")))
-    #   
-    #   available_periods_new<-unique(subset(available_periods_new,select=selected_indicator$indicator$compute_by$period))
-    #   available_periods_new$year<-as.character(available_periods_new$year)
-    #   
-    # }
     
     available_periods_new<-getAvailablePeriods(id=selected_indicator$indicator$id,config=appConfig,indicators=AVAILABLE_INDICATORS)
     
@@ -1004,13 +935,11 @@ computation2_server <- function(id, pool) {
     print(head(available_periods()))
     print(head(out$results))
     
-    print("LEFT-JOIN-3-START")
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
-    print("LEFT-JOIN-3-START")
     
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
@@ -1018,7 +947,6 @@ computation2_server <- function(id, pool) {
       print(head(full_periods()))
       print(head(indicator_status_new))
       
-      print("LEFT-JOIN-4-START")
       indicator_status_new<-full_periods()%>%
         mutate(year=as.character(year))%>%
         mutate(Period=as.character(Period))%>%
@@ -1026,7 +954,6 @@ computation2_server <- function(id, pool) {
                     mutate(year=as.character(year))%>%
                     mutate(Period=as.character(Period)))%>%
         mutate(Status=ifelse(is.na(Status),"not available",Status))
-      print("LEFT-JOIN-4-END")
     }
     
     
@@ -1292,23 +1219,19 @@ computation2_server <- function(id, pool) {
         computation_month<-NULL
         computation_quarter<-NULL
         
-        print("CHECK 1")
         if(length(period)>1){
           if(startsWith(period[2],"M")){
             computation_month<-gsub("M","",period[2])
           }
         }
         
-        print("CHECK 2")
         if(length(period)>1){
           if(startsWith(period[2],"Q")){
             computation_quarter<-gsub("Q","",period[2])
           }
         }
         
-        print("CHECK 3")
         computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target="release+staging",computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=TRUE)
-        print("CHECK 4")
         },ignoreInit = T)
       
         
@@ -1318,21 +1241,18 @@ computation2_server <- function(id, pool) {
     indicator_first_compute<-indicator_first_compute(FALSE)
   })
   
-  #This event actualise the computations status
+  #This event actualize the computations status
   observeEvent(out$results,{
     req(indicator_first_compute()==FALSE)
     
-    print("LEFT-JOIN-1-START")
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
       left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
-    print("LEFT-JOIN-1-END")
     
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
-      print("LEFT-JOIN-2-START")
       indicator_status_new<-full_periods()%>%
         mutate(year=as.character(year))%>%
         mutate(Period=as.character(Period))%>%
@@ -1340,23 +1260,20 @@ computation2_server <- function(id, pool) {
             mutate(year=as.character(year))%>%
             mutate(Period=as.character(Period)))%>%
         mutate(Status=ifelse(is.na(Status),"not available",Status))
-      print("LEFT-JOIN-2-END")
     }
     
     indicator_status<-indicator_status(indicator_status_new)
   })
   
-  
   #Manage release of the indicator
   #--------------------------------------------------------
-  
-  #This one release the indicator and update the result
+  #This event release the indicator and update the result
   observeEvent(input$goRelease, {
     out<-releaseIndicator(out=out,session=session,target=torelease(),release_dependent_indicators=input$releaseDependent)
     removeModal()
   })
   
-  #This one cancel the release request and remove the modal
+  #This event cancel the release request and remove the modal
   observeEvent(input$cancelRelease,{
     torelease(NULL)
     removeModal()

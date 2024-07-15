@@ -73,3 +73,10 @@ dateformating<- function(date,period="start"){
   }
   return(dates)
 }
+
+#intersection
+##Extension of intersect() function, allow intersection of more than two dataframe 
+intersection <- function(x, y, ...){
+  if (missing(...)) intersect(x, y)
+  else intersect(x, intersection(y, ...))
+}
