@@ -43,10 +43,12 @@
   "CREATE_RELEASE_LABEL" : "Create a release",
   "RELEASE_NO_DATA_LABEL" : "No data released yet!",
   "RELEASE_DEPENDENT_LABEL" : "Release also dependent indicators",
+  "UNRELEASE_DEPENDENT_LABEL" : "Unrelease also dependent indicators",
   "LAST_RELEASE_LABEL" : "Last release",
   "GENERATE_DOWNLOAD_REPORT_LABEL" : "Generate & download report",
   "DATASET_RELEASED_LABEL" : "Dataset already released. Click OK to overwrite release, or cancel.",
   "CONFIRMATION_TO_CREATE_RELEASE" : "Are your sure to want to create a release? If yes click OK to confirm, or cancel.",
+  "CONFIRMATION_TO_UNRELEASE" : "Are your sure to want to unvalidate your indicator? If yes click OK to confirm, or cancel.",
   "TO_CANCEL_RELEASE_LABEL" : "Cancel",
   "TO_CREATE_RELEASE_LABEL" : "OK",
   "BUTTON_DOWNLOAD_RESULT_TITLE" : "Download result",
@@ -60,6 +62,25 @@
   "EXPORT_RESULTS_STAGING_LABEL" : "Export result to 'staging' area...",
   "LANDING1_RELEASE_RESULT_MISSIG_YEAR" : "Landings 1 released results missing for year",
   
-  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "LAST_UPDATE" : "last update",
+  "STATUS" : "Status",
+  "STATUS_APPROVED" : "Approved",
+  "STATUS_COMPUTED" : "Completed",
+  "STATUS_TO_COMPUTE" : "To compute",
+  "STATUS_NOT_AVAILABLE" : "Not computable",
+  "ACTION_VIEW" : "Show/hide result",
+  "ACTION_DOWNLOAD_RESULT" : "Download result",
+  "ACTION_UNRELEASE" : "Unvalidate indicator",
+  "ACTION_RELEASE" : "Validate indicator",
+  "ACTION_STAGING" : "Compute indicator",
+  "ACTION_UPDATE" : "Update indicator",
+  "EMPTY_PLOT_LABEL" : "(Select an indicator to access to completion status)",
+  "LABEL_SELECT_INDICATOR" : "Select this indicator",
+  "LABEL_SHOW_NOTICE" : "Show notice",
+  "LABEL_SHOW_HIERARCHY" : "Show hierarchy",
+  "LABEL_BOX_INDICATOR" : "Select an indicator",
+  "LABEL_BOX_PLOT" : "Indicator's status"
+  
   
 }
