@@ -828,10 +828,90 @@ computation_server <- function(id, pool) {
     
     SetEdgeStyle(tree, arrowhead = "vee", color = "grey35", penwidth = 2,dir="back")
     
-    target <- Traverse(tree, filterFun = function(x) x$level == 1 & x$type=="process")
-    process <- Traverse(tree, filterFun = function(x) x$level > 1 & x$type=="process")
+    
+    #patch for R 4.3 (issue of double || operator)
+    Traverse = function(node, 
+                        traversal = c("pre-order", "post-order", "in-order", "level", "ancestor"), 
+                        pruneFun = NULL,
+                        filterFun = NULL) {
+      #traverses in various orders. See http://en.wikipedia.org/wiki/Tree_traversal
+      
+      nodes <- list()
+      
+      if(length(traversal) > 1L) {
+        traversal <- traversal[1L]
+      }
+      print(traversal)
+      if(is.function(traversal) | traversal == "pre-order" | traversal == "post-order") {
+        
+        if (length(pruneFun) == 0 || pruneFun(node)) {
+          
+          if (is.function(traversal)) {
+            children <- traversal(node)
+            if (is(children, "Node")) children <- list(children)
+            if (is.null(children)) children <- list()
+          } else children <- node$children
+          
+          for(child in children) {
+            nodes <- c(nodes, Traverse(child, traversal = traversal, pruneFun = pruneFun, filterFun = filterFun))
+          }
+          test = filterFun(node)
+          print(test)
+          print(length(test))
+          if(length(filterFun) == 0 || any(filterFun(node))) {
+            if(is.function(traversal) || traversal == "pre-order") nodes <- c(node, nodes)
+            else nodes <- c(nodes, node)
+          }
+        }
+        
+      } else if(traversal == "in-order") {
+        if(!node$isBinary) stop("traversal in-order valid only for binary trees")
+        if(length(pruneFun) == 0 | pruneFun(node)) {
+          if(!node$isLeaf) {
+            n1 <- Traverse(node$children[[1]], traversal = traversal, pruneFun = pruneFun, filterFun = filterFun)
+            if(length(filterFun) == 0 | filterFun(node)) n2 <- node
+            else n2 <- list()
+            n3 <- Traverse(node$children[[2]], traversal = traversal, pruneFun = pruneFun, filterFun = filterFun)
+            nodes <- c(n1, n2, n3)
+          } else {
+            if(length(filterFun) == 0 | filterFun(node)) n2 <- node
+            else n2 <- list()
+            nodes <- c(nodes, n2)
+          }
+        }
+        
+      } else if (traversal == "ancestor") {
+        
+        
+        if (!isRoot(node)) {
+          nodes <- Traverse(node$parent, traversal = traversal, pruneFun = pruneFun, filterFun = filterFun)
+        }
+        
+        if(length(filterFun) == 0 || any(filterFun(node))) {
+          nodes <- c(node, nodes)
+        }
+        
+      } else if (traversal == "level") {
+        
+        nodes <- Traverse(node, filterFun = filterFun, pruneFun = pruneFun)
+        if (length(nodes) > 0) nodes <- nodes[order(Get(nodes, function(x) x$level))]
+        
+        
+      } else {
+        stop("traversal must be pre-order, post-order, in-order, ancestor, or level")
+      }
+      return (nodes)
+    }
+    
+    
+    print("pipo")
+    target <- Traverse(tree, filterFun = function(x){ x$level == 1 & x$type=="process" })
+    print("pipo2")
+    process <- Traverse(tree, filterFun = function(x){ x$level > 1 & x$type=="process"})
     data <- Traverse(tree, filterFun = function(x) x$type =="data")
     local <- Traverse(tree, filterFun = function(x) x$type =="local")
+    
+   
     
     Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
     Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
