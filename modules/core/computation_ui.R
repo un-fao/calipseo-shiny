@@ -17,6 +17,7 @@ computation_ui <- function(id){
           uiOutput(ns("computation_by"))
       ),
       box(width = 6, title = i18n("LABEL_BOX_PLOT"),
+          #maximizable = T,
           uiOutput(ns("plot_wrapper"))
       )
     ),
