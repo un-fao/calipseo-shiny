@@ -19,7 +19,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/fdiwg/calipseo-shiny
+          images: ghcr.io/un-fao/calipseo-shiny
           flavor: latest=true
           tags: |
             type=ref,event=branch
