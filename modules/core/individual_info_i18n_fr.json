@@ -1,0 +1,28 @@
+{
+  /*individual title*/
+    "INDIVIDUAL_INFO_TITLE" : "Information sur l'individu",
+  
+  /*Link back to individual list*/
+   "BACK_TO_LIST_OF_INDIVIDUALS" : "Retour à la liste des individus",
+  /*individual labels*/
+  "INDIVIDUAL_NAME" : "Nom",
+  "INDIVIDUAL_DOB" : "Date de naissance",
+  "INDIVIDUAL_GENDER" : "Genre",
+  "INDIVIDUAL_EDUCATIONAL_LEVEL" : "Niveau d'éducation",
+  "INDIVIDUAL_ENT_DOC_TYPE" : "Type de document d'identité",
+  "INDIVIDUAL_ENT_DOC_NUMBER" : "Numéro d'identité",
+  
+  /*verticaltab roles*/
+  
+  "VERTICALTABPANEL_INDIVIDUAL_ROLES" : "Roles",
+  
+  "INDIVIDUAL_ROLES_TITLE" : "Rôles de l'individu liés à la pêche",
+  
+  /*status fishing role*/
+  
+  "INDIVIDUAL_ROLE_TABLE_COLNAME_1" : "Rôle",
+  
+  "INDIVIDUAL_ROLE_TABLE_COLNAME_2" : "Statut",
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
+}

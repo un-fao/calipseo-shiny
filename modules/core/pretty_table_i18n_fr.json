@@ -1,0 +1,17 @@
+{
+    
+  /*Pretty table keys on the SERVER*/
+  "BUCKET_HEADER" : "Déplacer les items sur les emplacement pour afficher les statistiques souhaitées",
+  "AVAILABLE_VARIABLES" : "Variables non sélectionnées",
+  "ROW_VARIABLES" : "Afficher en lignes",
+  "COL_VARIABLES" : "Afficher en colonnes",
+  
+  
+  /*Plot and datatable/export labels*/
+  "TOTAL_LABEL" : "Grand Total",
+  "EMPTY_TABLE_MESSAGE" :"(Sélectionner les variables pour afficher la table statistique)",
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "table_statistiques",
+  "STATISTIC_PDF_TITLE" : "Table statistique"
+   
+}

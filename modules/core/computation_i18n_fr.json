@@ -1,0 +1,86 @@
+{
+  /*computation title and subtitle*/
+  "COMPUTATION_TITLE" : "Statistiques",
+  "COMPUTATION_SUBTITLE" : "Caluler les statistiques et télécharger les rapports statistiques",
+  
+  /*computation*/
+  "COMPUTATION_RUN_LABEL": "Lancer les statistiques",
+  "LOAD_R_COMPUTE_SCRIPT_LABEL" : "Chargement du script R de traitement",
+  "LOAD_R_COMPUTE_SCRIPT_PROGRESS_LABEL" : "Préparation du script R...",
+  "EXECUTE_INDICATOR_LABEL" : "Exécuter l'indicateur",
+  "EXECUTE_R_SCRIPT_LABEL" : "Execute le script R...",
+  "COMPUTATION_SUCCESSFUL_LABEL" : "Traitement avec succès!",
+  "DRAFT_LABEL" : "Brouillon",
+  
+  /*computation indicator*/
+  "COMPUTATION_INDICATOR_LABEL" : "Indicateur statistique",
+  "COMPUTATION_INDICATOR_PLACEHOLDER_LABEL" : "Sélectionner un indicateur",
+  "RETRIEVE_INDICATOR_FOR_LABEL" : "Récupérer un indicateur pour",
+  
+  /*computation year*/
+  "COMPUTATION_YEAR_LABEL" : "Année",
+  "COMPUTATION_YEAR_PLACEHOLDER_LABEL" : "Sélectionner une année",
+  "COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY" : "Pas d'année disponible",
+  "COMPUTATION_TARGET_LABEL" : "Calculer indicateur sur la base de",
+  "COMPUTATION_TARGET_RELEASE_ITEM" : "Indicateurs releases uniquement",
+  "COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM" : "Indicateurs releases et brouillons",
+  "COMPUTATION_QUARTER_LABEL" : "Trimestre",
+  "COMPUTATION_QUARTER_PLACEHOLDER_LABEL" : "Sélectionner un trimestre",
+  "COMPUTATION_MONTH_LABEL" : "Mois",
+  "COMPUTATION_MONTH_PLACEHOLDER_LABEL" : "Sélectionner un mois",
+  "COMPUTATION_ACTIONBUTTON_LABEL" : "Calculer",
+  "COMPUTATION_RESULTS_LABEL" : "Résultats de calcul",
+  "COMPUTATION_PROGRESS_SUB_LABEL" : "Initialisation et lecture de données...",
+  
+  /*Computation results*/
+  "COMPUTATION_RESULTS_TABLE_COLNAME_PERIOD" : "Période",
+  "COMPUTATION_RESULTS_TABLE_COLNAME_FILE" : "Fichier",
+  "COMPUTATION_RESULTS_TABLE_COLNAME_STATUS" : "Statut",
+  "COMPUTATION_RESULTS_TABLE_COLNAME_DATE" : "Date",
+  "COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS" : "Actions",
+  
+  /*release information*/
+  "CREATE_RELEASE_LABEL" : "Créer un release",
+  "RELEASE_NO_DATA_LABEL" : "Pas encore de données en release",
+  "RELEASE_DEPENDENT_LABEL" : "Effectuer un release pour les indicateurs dépendants",
+  "UNRELEASE_DEPENDENT_LABEL" : "Retirer le release des indicateurs dépendants",
+  "LAST_RELEASE_LABEL" : "Dernier release",
+  "GENERATE_DOWNLOAD_REPORT_LABEL" : "Générer et télécharger un rapport",
+  "DATASET_RELEASED_LABEL" : "Jeu de données déjà en release. Cliquer OK pour écraser le release, ou annuler.",
+  "CONFIRMATION_TO_CREATE_RELEASE" : " Etes-vous sûr de vouloir créer un release? Si oui cliquez OK pour confirmer, sinon Annuler.",
+  "CONFIRMATION_TO_UNRELEASE" : "Etes vous sûr de vouloir supprimer le release? Si oui, cliquez OK pour confirmer, sinon Annuler.",
+  "TO_CANCEL_RELEASE_LABEL" : "Annuler",
+  "TO_CREATE_RELEASE_LABEL" : "OK",
+  "BUTTON_DOWNLOAD_RESULT_TITLE" : "Télécharger résultat",
+  "BUTTON_DOWNLOAD_REPORT_TITLE" : "Télécharger rapport",
+  "BUTTON_RELEASE_TITLE" : "Release",
+  /*errors*/
+  
+  "ERROR_EXECUTING_INDICATORS_LABEL": "Erreur pendant l'exécution de l'indicateur",
+  "ERROR_DURING_COMPUTATION" : "Erreur pendant le calcul",
+  "SUCCESS_COMPUTATION_INDICATOR_LABEL" : "Indicateur calculé avec succès",
+  "EXPORT_RESULTS_STAGING_LABEL" : "Exporter le résultat vers la zone temporaire",
+  "LANDING1_RELEASE_RESULT_MISSIG_YEAR" : "Les résultats release des Débarquements 1 manquent pour l'année",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  "LAST_UPDATE" : "Dernière mise à jour",
+  "STATUS" : "Statut",
+  "STATUS_APPROVED" : "Approuvé",
+  "STATUS_COMPUTED" : "Terminé",
+  "STATUS_TO_COMPUTE" : "A calculer",
+  "STATUS_NOT_AVAILABLE" : "Non calculable",
+  "ACTION_VIEW" : "Montrer/Cacher le résultat",
+  "ACTION_DOWNLOAD_RESULT" : "Télécharger le résultat",
+  "ACTION_UNRELEASE" : "Dereleaser l'indicateur",
+  "ACTION_RELEASE" : "Valider l'indicateur",
+  "ACTION_STAGING" : "Calculer l'indicateur",
+  "ACTION_UPDATE" : "Mettre à jour l'indicateur",
+  "EMPTY_PLOT_LABEL" : "(Sélectionner un indicateur pour accéder à son statut d'achèvement)",
+  "LABEL_SELECT_INDICATOR" : "Sélectionner cet indicateur",
+  "LABEL_SHOW_NOTICE" : "Montrer la notice",
+  "LABEL_SHOW_HIERARCHY" : "Montrer la hiérarchie",
+  "LABEL_BOX_INDICATOR" : "Sélectionner un indicateur",
+  "LABEL_BOX_PLOT" : "Statut de l'indicateur"
+  
+  
+}

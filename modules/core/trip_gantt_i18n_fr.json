@@ -1,0 +1,50 @@
+{
+  /*Trip keys on the server*/
+  "DISPLAY_TRIP_MSG" : "Cliquer sur une sortie de pêche pour voir plus d'informations",
+  "NO_TRIP_MSG" : "Pas de sortie de pêche à afficher pour ce navire",
+  "SELECT_TRIP_MSG" : "Sélectionner un critère pour voir les sorties de pêche correspondantes",
+  "PERIOD" : "Période",
+  "DAYS" : "jours",
+  "DATE_SEPARATOR_TO" : "au",
+  "VESSEL TYPE" : "Type de navire",
+  "TRIP_FROM" : "Sortie de pêche de",
+  
+  /*Pickers*/
+  "PICKER_LABEL_VESSELS" : "Navires",
+  "PICKER_LABEL_VESSELS_HINT" : "Seuls cinq navires peuvent être sélectionnés en même temps",
+  "PICKER_LABEL_VESSELS_BY_PAGE" : "Navires par page",
+  "RUN_SELECTION_LABEL" : "Lancer la sélection",
+  "VESSELS_LABEL" : "Navires ",
+  
+  /*Infoboxes*/
+  "INFOBOX_TITLE_NUMBER_OF_VESSELS" : "Nombre de navires",
+  "INFOBOX_TITLE_NUMBER_OF_TRIPS" : "Nombre de sorties de pêche",
+  "LANDING_SITE_COORDINATES_NOT_AVAILABLE" : "coordonnées de sites de débarquement indisponibles",
+  "FISHING_ZONE_COORDINATES_NOT_AVAILABLE" : "coordonnées des zones de pêche indisponibles",
+  
+  /*Labels*/
+  "1_YEAR_LABEL" : "1a",
+  "2_YEAR_LABEL" : "2a",
+  "3_YEAR_LABEL" : "3a",
+  "ALL_YEAR_LABEL" : "toutes",
+  "LABEL_FISHING_GEAR" : "Engin de pêche",
+  "LABEL_FISHING_ZONE" : "Zone de pêche",
+  "LABEL_LANDING_SITE" : "Site de débarquement",
+  "LABEL_QUANTITY_CAUGHT" : "Quantité pêchée",
+  "LABEL_QUANTITY_CAUGHT_SUBTITLE" : "tonnes",
+  "LABEL_CONTENT" : "Diversité",
+  "LABEL_CONTENT_SUBTITLE" : "Espèces",
+  "LABEL_GLOBAL_CPUE" : "CPUE globale",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_KG" : "kg/jour",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_LB" : "livre/jour",
+  "LABEL_GLOBAL_CPUE_SUBTITLE_OTHER" : "/jour",
+  "TITLE_TRIP_DETAILS_FOR_VESSEL" : "Détail de la sortie de pêche pour le navire",
+  
+  /*Trip table*/
+  
+  "TRIP_TABLE_COLNAME_1" : "Espèce",
+  "TRIP_TABLE_COLNAME_2" : "Quantité",
+  "TRIP_TABLE_COLNAME_3" : "Pourcentage",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
+  
+}

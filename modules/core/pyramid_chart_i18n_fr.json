@@ -1,0 +1,30 @@
+{ 
+  /*Pyramid chart keys on the SERVER*/
+  "MODE_SELECTOR_LABEL" : "Mode :",
+  "PYRAMID_CHOICE" : "Graphique en pyramide",
+  "STACKED_CHOICE" : "Diagramme en bâton",
+  "PERCENT_CHOICE" : "Histogramme",
+  "AGE_SELECTOR_LABEL" : "Classe d'âge :",
+  "STEP_SELECTOR_LABEL" : "Grouper les âges par :",
+  "FILL_SELECTOR_LABEL" : "Remplir par",
+  "FILTER_SELECTOR_LABEL" : "Filtrer '%s' items :",
+  "FILTER_NO_VALUE" : "Pas d'item sélectionné",
+  "PYRAMID_X_LABEL" :"Nombre",
+  "PYRAMID_Y_LABEL" :"Âge",
+  "STACKED_X_LABEL" :"Âge",
+  "STACKED_Y_LABEL" :"Nombre",
+  "PERCENT_X_LABEL" :"Âge",
+  "PERCENT_Y_LABEL" :"Pourcentage",
+  
+  /*Plot and datatable/export labels*/
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "table_repartition_ages",
+  "STATISTIC_PDF_TITLE" : "Table de répartition des âges",
+  
+  /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistiques",
+  "TABPANEL_PLOT" : "Graphique",
+  
+  "MESSAGE_NO_DATA" : "(Pas de données disponibles)"
+   
+}

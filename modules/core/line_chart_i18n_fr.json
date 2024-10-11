@@ -1,0 +1,52 @@
+{
+  /*Line chart keys on the UI*/
+  "TEMPORAL_RESOLUTION" : "Résolution temporelle",
+  "YEARLY" : "Annuelle",
+  "MONTHLY" : "Mensuelle",
+  "WEEKLY" : "Hebdomadaire",
+  "STATISTIC" : "Statistique",
+  "TOTAL" : "Total",
+  "AVERAGE" : "Moyenne",
+  "MEDIAN" : "Médiane",
+  "GRANU_LABEL_YEAR" : "Année",
+  "GRANU_LABEL_MONTH" : "Mois",
+  "GRANU_LABEL_WEEK" : "Semaine",
+  
+  
+  /*Line chart keys on the SERVER*/
+  "RANK_LABEL" : "Afficher les x espèces les plus pêchées :",
+  "RANK_METHOD" : "Méthode de classement :",
+  "TOTAL_CATCH_OVER_THE_PERIOD" : "Capture totale sur la période",
+  "CATCH_UNIT" : "tonnes",
+  "LAST_YEAR_TOTAL_CATCH" : "Capture totale de la dernière année",
+  "ANNUAL_CATCH_AVERAGE" : "Moyenne annuelle de capture",
+  
+  /*Projecton variation*/
+  "PROJECTION_VARIATION" : "Projeter la variabilité",
+  "NONE" : "Aucune",
+  "STANDARD_DEVIATION" : "Déviation Standard (SD)",
+  "STANDARD_ERROR" : "Erreur standard (SE)",
+  "CONFIDENCE_INTERVAL_QUANTILE_METHOD" : "Intervalle de confiance (CI) - méthode par quantile",
+  "CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION" : "Intervalle de confiance (CI) - distribution normale",
+  "CONFIDENCE_INTERVAL_T_DISTRIBUTION" : "Intervalle de confiance (CI) - distribution t",
+  "QUARTILES" : "quartiles",
+  
+  /*Plot and datatable/export labels*/
+  "PLOT_XLAB" : "Temps",
+  "PLOT_YLAB" : "Quantité",
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  "STATISTIC_TABLE_COLNAME_1" : "Année",
+  "STATISTIC_TABLE_COLNAME_4" : "Somme",
+  "STATISTIC_TABLE_COLNAME_5" : "Moyenne",
+  "STATISTIC_TABLE_COLNAME_6" : "Médiane",
+  "SPECIES_STATISTIC_LABEL" : "Espèce",
+  "SPECIES_GROUP_STATISTIC_LABEL" : "Groupes d'espèces",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "%s_%s_statistiques",
+  "STATISTIC_PDF_TITLE" : "Statistiques par %s - %s",
+  
+  
+  /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistiques",
+  "TABPANEL_PLOT" : "Graphique"
+   
+}

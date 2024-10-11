@@ -1,4 +1,21 @@
 {
   "VESSEL_LIST_TITLE" : "Liste des navires",
-  "VESSEL_LIST_SUBTITLE": "Accéder à l'information relative aux navires"
+  "VESSEL_LIST_SUBTITLE": "Accéder à l'information relative aux navires",
+  "VESSELS": "Navires",
+  "VESSEL_LIST_VESSEL_STATUS_ACTIVE": "Actif",
+  "VESSEL_LIST_VESSEL_STATUS_INACTIVE": "Inactif",
+  "VESSEL_LIST_VESSEL_STATUS_UNDEFINED": "Indéfini",
+  
+  /*vessel list table*/
+  "VESSEL_LIST_TABLE_COLNAME_REGNUMBER": "Numéro d'enregistrement",
+  "VESSEL_LIST_TABLE_COLNAME_NAME": "Nom",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELSTATUS": "Statut du navire",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELTYPE": "Type de navire",
+  "VESSEL_LIST_TABLE_COLNAME_OPSTATUS": "Type opérationnel de navire",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELSTATTYPE": "type statistique de navire",
+  "VESSEL_LIST_TABLE_COLNAME_HOMEPORT": "Port d'attache/site de débarquement",
+  "VESSEL_LIST_TABLE_COLNAME_REGPORT": "Port d'enregistrement/site de débarquement",
+  "VESSEL_LIST_TABLE_COLNAME_LICENSESTATUS": "Statut de license",
+  "VESSEL_LIST_TABLE_COLNAME_DETAILS": "",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
 }

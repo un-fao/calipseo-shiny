@@ -1,0 +1,54 @@
+{ 
+  /*Main title and subtitle*/
+  "VESSEL_OVERVIEW_TITLE" : "aperçu des navires",
+  "VESSEL_OVERVIEW_SUBTITLE" : "Visualiser l'aperçu des navires",
+  
+  "OVERVIEW_VESSEL_TITLE_PIECHART" : "Détail des navires en %s par type de navire",
+  "OVERVIEW_VESSEL_TITLE_MAP" : "Carte",
+  "OVERVIEW_VESSEL_TITLE_DATA" : "Données",
+  /*Homeport*/
+  "OVERVIEW_VESSEL_TITLE_HOMEPORT" : "Détail des navires en %s par port d'attache",
+  "OVERVIEW_VESSEL_HOMEPORT_TABLE_COLNAME_1" : "Type de navire",
+  "OVERVIEW_VESSEL_HOMEPORT_TABLE_COLNAME_2" : "Comptage",
+  "OVERVIEW_VESSEL_HOMEPORT_MAP_LABEL_HOMEPORT" : "Port d'attache",
+  "OVERVIEW_VESSEL_HOMEPORT_MAP_LABEL_NUMBER_OF_VESSELS" : "Nombre de navires",
+  "OVERVIEW_VESSEL_HOMEPORT_DATA_EXPORT_FILENAME" : "Détail par type de navire en",
+  "OVERVIEW_VESSEL_HOMEPORT_PDF_TITLE" : "Détail par type de navire en",
+  /*Vesseltype Homeport*/
+  "OVERVIEW_VESSEL_TITLE_VESSELTYPE_HOMEPORT" : "Détail des types de navires en %s par port d'attache",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_1" : "Port d'attache",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_TABLE_COLNAME_2" : "Comptage",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_DATA_EXPORT_FILENAME" : "Détail par port d'attache en",
+  "OVERVIEW_VESSEL_VESSELTYPE_HOMEPORT_PDF_TITLE" : "Détail par port d'attache en",
+  /*Datatable*/
+  "OVERVIEW_VESSEL_TITLE_TABLE" : "Détail des navires en %s par type de navire",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  
+  /*LandingSite data breakdown*/
+  
+  "OVERVIEW_VESSELTYPE_TITLE_LANDINGSITE" : "Détail des types de navires en %s par site de débarquement",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_1" : "Site de débarquement/port d'attacheT",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_2" : "Type de navire",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_TABLE_COLNAME_3" : "Comptage",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_DATA_EXPORT_FILENAME" : "Détail par port d'attache-site de débarquement en",
+  "OVERVIEW_VESSELTYPE_LANDINGSITE_PDF_TITLE" : "Détail par port d'attache/site de débarquement en",
+  "OVERVIEW_VESSEL_SUNBURST_BOX_LABEL" : "Profil du navire",
+  "OVERVIEW_VESSEL_TABLE_BOX_LABEL" : "Nombre de navires",
+  "OVERVIEW_VESSEL_PYRAMID_BOX_LABEL" : "Répartition par âge de la flotte",
+  "OVERVIEW_VESSEL_VERTICALTABPANEL_GRAPHS" :"Profil d'individu",
+  "OVERVIEW_VESSEL_VERTICALTABPANEL_MAPS" :"Cartes",
+  "OVERVIEW_VESSEL_VERTICALTABPANEL_TABLE" : "Statistiquess",
+  "INFOBOX_TITLE_VESSEL_TOTAL" : "Total de navires",
+  "INFOBOX_TITLE_VESSEL_ACTIVE" : "Navire actifs",
+  "VESSEL_STATUS_INACTIVE": "Navire non actif",
+  "VESSEL_STATUS_ACTIVE": "Navire actif",
+  "VESSEL_UNKNOWN_VALUE": "Inconnu",
+  "VESSEL_PROPERTY_STATUS": "Statut",
+  "VESSEL_PROPERTY_OPERATIONAL_STATUS": "Statut opérationnel",
+  "VESSEL_PROPERTY_VESSELTYPE": "Type de navire",
+  "VESSEL_PROPERTY_HOMEPORT": "Port d'attache",
+  "VESSEL_PROPERTY_REGPORT": "Port d'enregistrement",
+  "VESSEL_PROPERTY_MANUFACTURER": "Fabricant",
+  "VESSEL_PROPERTY_ENGINETYPE": "Type de moteur",
+  "VESSEL_PROPERTY_ENERGYTYPE": "Type d'énergie"
+}

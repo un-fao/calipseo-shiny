@@ -1,0 +1,70 @@
+{
+  /*vessel_qa title and subtitle*/
+  "VESSEL_QA_TITLE" : "Evaluation de la qualité de l'information des navires",
+  "VESSEL_QA_SUBTITLE": "Accéder aux indicateurs de qualité de l'information des navires",
+  
+  /*vessel_qa titles*/ 
+"VESSEL_QA_TITLE_NAMES": "Evaluation de la qualité - Noms des navires",
+"VESSEL_QA_TITLE_PORTS": "Evaluation de la qualité - Port d'attache/enregistrement",
+"VESSEL_QA_TITLE_CHARACTERISTICS": "Evaluation de la qualité - Noms des navires - Caractéristiques des navires",
+"VESSEL_QA_TITLE_LICENSE": "Evaluation de la qualité - Noms des navires - Navires sans licence ou avec license expirée l'année en cours",
+"VESSEL_QA_TITLE_VOP_STATUS": "Evaluation de la qualité - Statut opérationnel des navires",
+"VESSEL_QA_TITLE_ACTIVITY": "Evaluation de la qualité - Navires avec/sans activité de pêche",
+  
+  /*vessel_qa verticalpanels*/
+  "VERTICALTABPANEL_VESSEL_QA_NAMES": "Noms des navires",
+  "VERTICALTABPANEL_VESSEL_QA_PORTS": "Ports d'attache/enregistrement",
+  "VERTICALTABPANEL_VESSEL_QA_CHARACTERISTICS": "Caractéristiques",
+  "VERTICALTABPANEL_VESSEL_QA_LICENSE": "Licence de navire",
+  "VERTICALTABPANEL_VESSEL_QA_ACTIVITY": "Activité de pêche",
+  "VERTICALTABPANEL_VESSEL_QA_VOP_STATUS": "Statut opérationnel",
+  
+  /*vessel_qa table*/
+  "VESSEL_QA_TABLE_COLNAME_1": "Action",
+  "VESSEL_QA_TABLE_COLNAME_2": "Comptage",
+  
+  /*vessel_qa_ports table*/
+  "VESSEL_QA_TABLE_PORT_COLNAME_1": "Action",
+  "VESSEL_QA_TABLE_PORT_COLNAME_2": "Port d'attache",
+  "VESSEL_QA_TABLE_PORT_COLNAME_3": "Port d'enregistrement",
+  
+  /*vessel_qa_characteristics table*/
+  "VESSEL_QA_TABLE_CHAR_COLNAME_1": "Action",
+  "VESSEL_QA_TABLE_CHAR_COLNAME_2": "LOA",
+  "VESSEL_QA_TABLE_CHAR_COLNAME_3": "DRA",
+  "VESSEL_QA_TABLE_CHAR_COLNAME_4": "Tonnage",
+  "VESSEL_QA_TABLE_CHAR_COLNAME_5": "Vitesse",
+  "VESSEL_QA_TABLE_CHAR_COLNAME_6": "Puissance",
+  
+  /*vessel_qa_operational_status table*/
+  "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_1": "Statut opérationnel",
+  "VESSEL_QA_TABLE_VOP_STATUS_COLNAME_2": "Comptage",
+  
+  /*vessel_qa_fishingtrips table*/
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_1": "Statut d'activité",
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_2": "Période historique",
+  "VESSEL_QA_TABLE_FISHINGTRIPS_COLNAME_3": "Anée en cours",
+  
+  /*vessel_qa_fishingtrip status*/
+  "VESSEL_QA_STATUS_INACTIVITY": "En activité",
+  "VESSEL_QA_STATUS_NOACTIVITY": "Sans activité",
+  
+  /*vessel_qa status*/
+  "VESSEL_QA_STATUS_VALID": "Valide",
+  "VESSEL_QA_STATUS_TOCHECK": "A vérifier",
+  
+  /*vessel_qa_license status*/
+  "VESSEL_QA_LICENSE_STATUS_VALID": "Valide",
+  "VESSEL_QA_LICENSE_STATUS_NOTCOMPLETED": "Incomplet",
+  "VESSEL_QA_LICENSE_STATUS_EXPIRED": "Expirée",
+  
+  /*vessel_qa_license table*/
+  "VESSEL_QA_TABLE_LICENSE_COLNAME_1": "Statut de license",
+  "VESSEL_QA_TABLE_LICENSE_COLNAME_2": "Comptage",
+  
+  /*vessel_qa_characteristics status*/
+  "VESSEL_QA_STATUS_CHAR_VALID": "Complété",
+  "VESSEL_QA_STATUS_CHAR_TOCHECK": "A compléter",
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+}

@@ -1,0 +1,33 @@
+{ 
+  /*Main title and subtitle*/
+  "INDIVIDUAL_OVERVIEW_TITLE" : "Aperçu es individus",
+  "INDIVIDUAL_OVERVIEW_SUBTITLE" : "Visualiser un aperçu des individus",
+   
+   /*Individual Overview infoboxes*/
+  "INFOBOX_TITLE_TOTAL" : "Total d'individus",
+  "INFOBOX_TITLE_NON_FISHER" : "Non pêcheur",
+  "INFOBOX_TITLE_FISHER" : "Pêcheur",
+  "INFOBOX_TITLE_FISHER_ACTIVE" : "Pêcheur actif",
+  "INFOBOX_TITLE_LICENSE" : "Licence",
+  "INFOBOX_TITLE_LICENSE_ACTIVE" : "Licence active",
+  "INDIVIDUAL_UNKNOWN_VALUE": "Inconnu(e)",
+  "INDIVIDUAL_PROPERTY_TYPE": "Type",
+  "INDIVIDUAL_PROPERTY_STATUS": "Statut",
+  "INDIVIDUAL_PROPERTY_GENDER": "Genre",
+  "INDIVIDUAL_PROPERTY_EDUCATION": "Education",
+  "INDIVIDUAL_PROPERTY_WORKTIME": "Temps de travail",
+  "INDIVIDUAL_PROPERTY_LICENSE": "Licence",
+  "INDIVIDUAL_PROPERTY_ROLE": "Rôle",
+  "INDIVIDUAL_PROPERTY_SITE": "Site",
+  "INDIVIDUAL_TYPE_FISHER": "Pêcheur",
+  "INDIVIDUAL_TYPE_NONFISHER": "Non pêcheur",
+  "INDIVIDUAL_FISHER_STATUS_ACTIVE": "Pêcheur actif",
+  "INDIVIDUAL_FISHER_STATUS_INACTIVE": "Pêcheur non actif",
+  "INDIVIDUAL_OVERVIEW_INDICATORS_BOX_LABEL" : "Indicateurs",
+  "INDIVIDUAL_OVERVIEW_MAP_BOX_LABEL" : "Carte",
+  "INDIVIDUAL_OVERVIEW_SUNBURST_BOX_LABEL" : "Distribution par catégorie",
+  "INDIVIDUAL_OVERVIEW_PYRAMID_BOX_LABEL" : "Distribution by âge",
+  "INDIVIDUAL_OVERVIEW_TABLE_BOX_LABEL" : "Nombre d'individus",
+  "INDIVIDUAL_OVERVIEW_VERTICALTABPANEL_GRAPHS" :"Profil de l'individu",
+  "INDIVIDUAL_OVERVIEW_VERTICALTABPANEL_TABLE" : "Statistiques"
+}

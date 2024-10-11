@@ -1,0 +1,56 @@
+{
+  /*Logbooks title and subtitle*/
+  "LOGBOOKS_OVERVIEW_TITLE" : "Aperçu des activités de pêche industrielle",
+  "LOGBOOKS_OVERVIEW_SUBTITLE" : "Basé sur le suivi des journaux de bord",
+  
+    /*Line chart keys on the UI*/
+  "TEMPORAL_RESOLUTION" : "Résolution temporelle",
+  "YEARLY" : "Annuelle",
+  "MONTHLY" : "Mensuelle",
+  "WEEKLY" : "Hebdomadaire",
+  "GRANU_LABEL_YEAR" : "Année",
+  "GRANU_LABEL_MONTH" : "Mois",
+  "GRANU_LABEL_WEEK" : "Semaine",
+  
+  /*Information boxes*/
+  "VERTICALTABPANEL_GLOBAL_VESSEL" : "Total de navires",
+  "VERTICALTABPANEL_GLOBAL_QUANTITY" : "Quantité totale",
+  "VERTICALTABPANEL_BREAKDOWN_BY_VESSEL_TYPES" : "Détail par type de navire",
+  "VERTICALTABPANEL_BREAKDOWN_BY_GEAR_TYPES" : "Détail par type d'engin de pêche",
+  
+  /*verticaltab Breakdown species*/
+  "VERTICALTABPANEL_BREAKDOWN_BY_SPECIES" : "Détail par espèce",
+  "TABPANEL_BREAKDOWN_BY_SPECIES" : "Espèce",
+  "TABPANEL_BREAKDOWN_BY_SPECIES_GROUPS" : "Groupes d'espèces",
+  
+  "VERTICALTABPANEL_BREAKDOWN_BY_LANDING_SITES" : "Détail par site de débarquement",
+  "VERTICALTABPANEL_BREAKDOWN_BY_FISHING_ZONE" : "Détail par zone de pêche",
+  
+  /*Information boxes*/
+  "INFOBOX_OVERVIEW_TOTAL_QUANTITY" : "Quantité totale",
+  "TOTAL_QUANTITY_UNITS_TONS" : "tonnes",
+  "INFOBOX_OVERVIEW_LOGBOOK_REPORTING_PERCENTAGE" : "Pourcentage de rapportage de journaux de bords",
+  "INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS" : "Total de navires",
+  "GLOBAL_VESSEL_LABEL" : "Nombre de navires",
+  "GLOBAL_QUANTITY_LABEL" : "Quantité globale",
+  "VESSEL_TYPE_LABEL" : "Type de navire",
+  "GEAR_TYPE_LABEL" : "Type d'engin de pêche",
+  "SPECIES_LABEL" : "Espèce",
+  "FISHING_GEAR_LABEL" : "Engin de pêche",
+  "LANDING_SITES_LABEL" : "Site de débarquement",
+  "FISHING_ZONE_LABEL" : "Zone de pêche",
+  "GLOBAL_VESSEL_PLOT_XLAB" : "Temps",
+  "GLOBAL_VESSEL_PLOT_YLAB" : "Nombre de navires",
+  "GLOBAL_VESSEL_PLOT_UNIT" : "Navires",
+  
+    /*tabpanels*/
+  "TABPANEL_STATISTIC" : "Statistiques",
+  "TABPANEL_PLOT" : "Graphique",
+  
+  "STATISTIC_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  "STATISTIC_DATA_EXPORT_FILENAME" : "%s_%s_statistiques",
+  "STATISTIC_PDF_TITLE" : "Statistiques par %s - %s",
+  
+  /*plots*/
+  "QUANTITY_PLOT_YLAB" : "Quantité"
+}

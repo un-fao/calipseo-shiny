@@ -1,7 +1,7 @@
 {
   /*vessel_qa title and subtitle*/
   "VESSEL_QA_TITLE" : "Vessel quality assessment",
-  "VESSEL_QA_SUBTITLE": "Access quaility assessment indicators on the vessel registry",
+  "VESSEL_QA_SUBTITLE": "Access quality assessment indicators on the vessel registry",
   
   /*vessel_qa titles*/ 
 "VESSEL_QA_TITLE_NAMES": "Quality assessment on vessel names",

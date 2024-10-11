@@ -1,0 +1,44 @@
+{
+  /*Ui keys*/
+  "TOTAL_QUANTITIES_GRAPH_TITLE" : "Quantités totales par an",
+  "GRAPH_TABPANEL_TITLE" : "Graphique",
+  "MAP_TABPANEL_TITLE" : "Carte",
+  "DATA_TABPANEL_TITLE" : "Données",
+  
+  /*tabpanel by vessel*/
+  "TABPANEL_BY_VESSEL" : "Par navire",
+  "TABPANEL_BY_VESSEL_SELECT_LABEL" : "Navire",
+  "TABPANEL_BY_VESSEL_SELECT_PLACEHOLDER_LABEL" : "Sélectionner un navire",
+  "BY_VESSEL_DATA_EXPORT_FILENAME" : "Quantités par navire",
+  "BY_VESSEL_PDF_TITLE" : "Quantités par navire",
+  
+  /*tabpanel by owner*/
+  "TABPANEL_BY_OWNER" : "Par propriétaire",
+  "TABPANEL_BY_OWNER_SELECT_LABEL" : "Propriétaire de navire (entreprise)",
+  "TABPANEL_BY_OWNER_SELECT_PLACEHOLDER_LABEL" : "Sélectionner un propriétaire de navire",
+  "BY_OWNER_DATA_EXPORT_FILENAME" : "quantités_par_propriétaire_de_navire",
+  "BY_OWNER_PDF_TITLE" : "Quantités par propriétaire de navire",
+  
+  /*tabpanel by landing site*/
+  "TABPANEL_BY_LANDING_SITE" : "By site de débarquement",
+  "TABPANEL_BY_LANDING_SITE_SELECT_LABEL" : "Année",
+  "TABPANEL_BY_LANDING_SITE_SELECT_PLACEHOLDER_LABEL" : "Sélectionner une année",
+  
+  /*totals*/
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_TITLE" : "Détail des quantités totales par site de débarquement / année",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_DATA_EXPORT_FILENAME" : "quantités_totales_par_site",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_PDF_TITLE" : "Quantités totales par site de débarquement",
+  "MAP_POPUP_LANDINGSITE_LABEL" : "Site de débarquement",
+  "MAP_POPUP_QUANTITY_LABEL" : "Quantité",
+  
+  /*species*/
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_TITLE" : "Détail des quantités totales par site de débarquement / espèce / année",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_DATA_EXPORT_FILENAME" : "quantités_espèces_par_site",
+  "BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_PDF_TITLE" : "Quantités d'espèces par site de débarquement",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json",
+  
+  "TABLE_COLNAME_YEAR" : "Année",
+  "TABLE_COLNAME_QUANTITY" : "Quantité",
+  "TABLE_COLNAME_NAME" : "Nom"
+}

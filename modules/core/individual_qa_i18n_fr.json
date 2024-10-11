@@ -1,0 +1,25 @@
+{
+  /*individual qa title and subtitle*/
+  "INDIVIDUAL_QA_TITLE" : "Evalutation de la qualité l'information des individus",
+  "INDIVIDUAL_QA_SUBTITLE": "Accéder à l'information sur les individus",
+  
+   /*individual_qa titles*/ 
+"INDIVIDUAL_QA_TITLE_DOB": "Evalutation de la qualité - date de naissance",
+
+ /*individual_qa verticalpanels*/
+  "VERTICALTABPANEL_INDIVIDUAL_QA_DOB": "Date de naissance",
+  
+ /*individual_qa status*/ 
+"INDIVIDUAL_QA_STATUS_VALID": "Disponible",
+"INDIVIDUAL_QA_STATUS_TOCHECK": "Manquant",
+ 
+  /*individual_qa table*/
+  "INDIVIDUAL_QA_TABLE_COLNAME_1": "Statut",
+  "INDIVIDUAL_QA_TABLE_COLNAME_2": "Comptage",
+  
+  
+   /*Individual qa table*/
+ 
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
+  
+}
