@@ -1,0 +1,140 @@
+{
+  /*Vessel title*/
+    "VESSEL_INFO_TITLE" : "Information de navire",
+  
+  /*Link back to vessel list*/
+    "BACK_TO_LIST_OF_VESSELS" : "<< Retour à la liste des navires",
+  
+  /*Vessel Finder*/
+    "VESSEL_FINDER" : "VesselFinder",
+  "IMAGE_SOURCE" : "Source de l'image",
+  
+  /*Information tab*/
+    "TABPANEL_INFO" : "Info",
+  "VESSEL_NAME" : "Nom du navire",
+  "VESSEL_TYPE" : "Type de navire",
+  "VESSEL_STAT_TYPE" : "Type statistique",
+  "HOME_PORT" : "Port d'attache: ",
+  
+  /*Registration tab*/
+    "TABPANEL_REGISTRATION" : "Enregistrement",
+  "REGISTRATION_NUMBER" : "Numéro d'enregistrement",
+  "REGISTRATION_PORT" : "Port d'enregistrement",
+  
+  /*Characteristics tab*/
+    "TABPANEL_CHARACTERISTICS" : "Caractéristiques",
+  "CALIPSEO_DATA_COLNAME" : "Calipseo",
+  "VESSEL_FINDER_DATA_COLNAME" : "VesselFinder*",
+  "LENGTH_OVERALL" : "Longueur (m)",
+  "DRAUGHT" : "Tirant d'eau (m)",
+  "BEAM" : "Faisceau (m)",
+  "GROSS TONNAGE" : "Tonnage brut",
+  "SUMMER_DEADWEIGHT" : "Poids mort d'été (t)",
+  "SPEED" : "Vitesse",
+  "TRAWLING_SPEED" : "Vitesse de chalutage",
+  "POWER" : "Puissance",
+  
+  /*Vertical tab history*/
+    "VERTICALTABPANEL_HISTORY" : "Historique",
+  "HISTORY_TABLE_COLNAME_1" : "Type",
+  "HISTORY_TABLE_COLNAME_2" : "Description",
+  "HISTORY_TABLE_COLNAME_3" : "Ancienne valeur",
+  "HISTORY_TABLE_COLNAME_4" : "Nouvelle valeur",
+  "HISTORY_TABLE_COLNAME_5" : "Date de changement",
+  "HISTORY_DATA_EXPORT_FILENAME" : "navire_caractéristiques_historiques_%s",
+  "HISTORY_PDF_TITLE" : "Navire '%s' (%s) - Caractéristiques historiques",
+  
+  /*Vertical tab ownership*/
+    "VERTICALTABPANEL_OWNERSHIP" : "Propriété",
+  "OWNERSHIP_TABLE_COLNAME_0" : "Type d'entité",
+  "OWNERSHIP_TABLE_COLNAME_1" : "Nom complet",
+  "OWNERSHIP_TABLE_COLNAME_2" : "Numéro de document d'identité",
+  "OWNERSHIP_TABLE_COLNAME_3" : "Addresse",
+  "OWNERSHIP_TABLE_COLNAME_4" : "Ville",
+  "OWNERSHIP_TABLE_COLNAME_5" : "Code postal",
+  "OWNERSHIP_TABLE_COLNAME_6" : "Numéro de téléphone",
+  "OWNERSHIP_TABLE_COLNAME_7" : "Numéro de portable",
+  "OWNERSHIP_DATA_EXPORT_FILENAME" : "navire_propriétaires_%s",
+  "OWNERSHIP_PDF_TITLE" : "Vessel '%s' (%s) - Propriété",
+  
+  /*Vertical tab licenses*/
+    "VERTICALTABPANEL_LICENCES" : "Licenses",
+  "LICENCES_TABLE_COLNAME_1" : "Numéro de permis",
+  "LICENCES_TABLE_COLNAME_2" : "Date de candidature",
+  "LICENCES_TABLE_COLNAME_3" : "Date de permis",
+  "LICENCES_TABLE_COLNAME_4" : "Valide à partir de (Date)",
+  "LICENCES_TABLE_COLNAME_5" : "Valide jusqu'à (Date)",
+  "LICENCES_TABLE_COLNAME_6" : "Engins",
+  "LICENCES_TABLE_COLNAME_7" : "Validité",
+  "LICENCES_DATA_EXPORT_FILENAME" : "navires_permis_licenses_%s",
+  "LICENCES_PDF_TITLE" : "Navire '%s' (%s) - Permis de licenses (à la date du %s)",
+  
+  
+  /*Vertical tab fishing trips*/
+    "VERTICALTABPANEL_FISHING_TRIPS" : "Sorties de pêche",
+  
+  
+  /*Vertical tab catches and its dependent tabpanels*/
+    "VERTICALTABPANEL_CATCHES" : "Captures",
+  /*Summary tabpanel*/
+    "TABPANEL_SUMMARY" : "Résumé",
+  "SUMMARY_CATCHES_COLNAME_1" : "Années",
+  "SUMMARY_CATCHES_COLNAME_2" : "Jours en mer",
+  "SUMMARY_CATCHES_COLNAME_3" : "Quantité",
+  "SUMMARY_CATCHES_DATA_EXPORT_FILENAME" : "navire_résumé_captures_%s",
+  "SUMMARY_CATCHES_PDF_TITLE" : "Navire '%s' (%s) - Résumé de captures (à la date du %s)",
+  
+  /*History tabpanel*/
+    "TABPANEL_HISTORY" : "Historique",
+  "HISTORY_CATCHES_COLNAME_1" : "Année",
+  "HISTORY_CATCHES_COLNAME_2" : "Date/heure de sortie",
+  "HISTORY_CATCHES_COLNAME_3" : "Date/heure de retour",
+  "HISTORY_CATCHES_COLNAME_4" : "Jours en mer",
+  "HISTORY_CATCHES_COLNAME_5" : "Equipage",
+  "HISTORY_CATCHES_COLNAME_6" : "Grande zone de pêche",
+  "HISTORY_CATCHES_COLNAME_7" : "Nom de plage",
+  "HISTORY_CATCHES_COLNAME_8" : "Méthode de pêche",
+  "HISTORY_CATCHES_COLNAME_9" : "Description d'espèce",
+  "HISTORY_CATCHES_COLNAME_10" : "Quantité",
+  "HISTORY_CATCHES_COLNAME_11" : "Valeur",
+  "HISTORY_CATCHES_DATA_EXPORT_FILENAME" : "navire_historique_captures_%s",
+  "HISTORY_CATCHES_PDF_TITLE" : "Navire '%s' (%s) - Historique de capture (à la date du %s)",
+  
+  /*Breakdown by species tabpanel*/
+    "TABPANEL_BREAKDOWN_BY_SPECIES" : "Détail par espèce",
+  "TABPANEL_SPECIES" : "Espèce",
+  "TABPANEL_SPECIES_GROUPS" : "Groupes d'espèces",
+  
+  /*Catches data sources*/
+    "CATCHES_DATA_SOURCE_ART" : "Issu d'enquêtes par échantillonage",
+  "CATCHES_DATA_SOURCE_INDUS" : "Issu des journaux de bord",
+  
+  /*Information boxes*/
+    "INFOBOX_VESSEL_OPERATIONAL_STATUS" : "Statut opérationnel",
+  "INFOBOX_NUMBER_OF_OWNERS" : "Propriétaires",
+  "INFOBOX_NUMBER_OF_LICENSES" : "Licenses",
+  "INFOBOX_NUMBER_OF_FISHING_GEARS" : "Engins de pêche",
+  "INFOBOX_MEAN_FISHING_TRIPS_YEAR" : "Moyenne de sorties de pêche/an",
+  "INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS" : "Moyenne de jours en mer/sortie de pêche",
+  "INFOBOX_NUMBER_OF_LANDING_SITES" : "Sites de débarquement",
+  "INFOBOX_NUMBER_OF_SPECIES_CAUGHT" : "Espèces pêchées",
+  
+  /*License status*/
+    "INFOBOX_LICENSE_STATUS" : "Statut de licence",
+  "LICENSE_STATUS_VALID" : "Valide",
+  "LICENSE_STATUS_EXPIRED" : "expirée",
+  "LICENSE_STATUS_NO_LICENSE" : "pas de licence",
+  
+  /*License status tooltip*/
+    "LICENSE_STATUS_VALID_TOOLTIP": "La licence est valide",
+  "LICENSE_STATUS_EXPIRED_TOOLTIP": "La licence est expirée",
+  
+  /*Warning message*/
+    "WARNING_MESSAGE" : "Les captures rapportées ici sont le résultat d'enquêtes par échantilonnage (pêcheries artisanales) et ne reflètent pas les captures totales pour le navire sélectionné",
+    
+  /*Catches plots*/
+  "SPECIES_YLAB" : "Quantité",
+  "SPECIES_GROUP_YLAB" : "Quantité",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
+}
