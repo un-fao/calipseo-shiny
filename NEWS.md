@@ -1,19 +1,26 @@
-# **calipseo-shiny [v1.6.0](https://github.com/un-fao/calipseo-shiny) - ONGOING**
+# **calipseo-shiny [v1.6.0.dev](https://github.com/un-fao/calipseo-shiny) - ONGOING**
+
+## Corrections
+
+* [#222](https://github.com/un-fao/calipseo-shiny/issues/222) i18n call for missing labels fails with sprintf for R >= 4.2
+
+_pyramid_chart_server_
+
+* [#226](https://github.com/un-fao/calipseo-shiny/issues/226) Bug in pyramid layout when limited data
 
 ## Enhancements
 
 * [#215](https://github.com/un-fao/calipseo-shiny/issues/215) Improve line chart
+* [#223](https://github.com/un-fao/calipseo-shiny/issues/223) Provide translated vocabularies for French
 
 **Computation enhancements**
 _computation module_
 
 * [#216](https://github.com/un-fao/calipseo-shiny/issues/216) Add dependancy between indicators
-
 * [#217](https://github.com/un-fao/calipseo-shiny/issues/217) Adjust indicator period coverage
-
 * [#218](https://github.com/un-fao/calipseo-shiny/issues/218) Conditional release behavior of indivators based on dependant indicators
-
 * [#219](https://github.com/un-fao/calipseo-shiny/issues/219) Clean computation module
+
 
 # **calipseo-shiny [v1.5.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.5.4) - 2024-06-11**
 
