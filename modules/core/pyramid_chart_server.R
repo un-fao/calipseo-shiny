@@ -198,6 +198,9 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
            
            print(summary(data_formated()))
            
+          maxValue = max(abs(data_formated()%>%filter(Gender=="Male")%>%pull(value)))
+          if(maxValue < 50) maxValue = 50
+           
           p<-data_formated() %>% 
             mutate(value = ifelse(Gender == "Male",  -value, value)) %>%
             mutate(abs_value = abs(value))%>%
@@ -206,8 +209,8 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
             layout(bargap = 0.1, barmode = 'relative',
                    yaxis = list(title = i18n("PYRAMID_Y_LABEL"),autotypenumbers = 'strict',tickfont=list(size=10)),
                    
-                   xaxis =  list(title = i18n("PYRAMID_X_LABEL"),tickmode = 'array', tickvals = c(-rev(seq(50,max(abs(data_formated()%>%filter(Gender=="Male")%>%pull(value))),50)),0,50),
-                                 ticktext = c(as.character(rev(seq(50,max(abs(data_formated()%>%filter(Gender=="Male")%>%pull(value))),50)),0,50)))
+                   xaxis =  list(title = i18n("PYRAMID_X_LABEL"),tickmode = 'array', tickvals = c(-rev(seq(50,maxValue,50)),0,50),
+                                 ticktext = c(as.character(rev(seq(50,maxValue,50)),0,50)))
             )
          }else if(input$mode=="stacked_bar"){
            p<-data_formated()%>%plot_ly(
