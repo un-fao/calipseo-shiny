@@ -51,7 +51,7 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
 }
 
 ###Artfish year summary
-artfish_year_summary<-function(data,year=NULL,variable,value,levels=NULL){
+artfish_year_summary<-function(data,year=NULL,variable,value, value_fun = sum, levels=NULL){
   
   if(!is.null(year)){
     data<-subset(data,EST_YEAR==year)
@@ -64,11 +64,11 @@ artfish_year_summary<-function(data,year=NULL,variable,value,levels=NULL){
   if(!is.null(levels)){
     summary<-summary%>%filter(!!sym(variable)%in%levels)
   }
-    
+  
   summary<-summary%>%
     select(!!sym(variable),EST_MONTH,!!sym(value)) %>%
     group_by(!!sym(variable),EST_MONTH)%>%
-    dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T))%>%
+    dplyr::summarise(!!value:=value_fun(!!sym(value),na.rm=T))%>%
     dplyr::mutate(EST_MONTH=sprintf('%02d',EST_MONTH),
            !!variable:= as.character(!!sym(variable))) %>%
     ungroup() %>% 

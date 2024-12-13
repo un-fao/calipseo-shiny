@@ -3,6 +3,7 @@
 ## Corrections
 
 * [#222](https://github.com/un-fao/calipseo-shiny/issues/222) i18n call for missing labels fails with sprintf for R >= 4.2
+* [#227](https://github.com/un-fao/calipseo-shiny/issues/227) Aberrant values obtained with function 'artfish_year_summary'
 
 _pyramid_chart_server_
 

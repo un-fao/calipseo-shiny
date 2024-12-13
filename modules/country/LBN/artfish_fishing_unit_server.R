@@ -100,8 +100,13 @@ artfish_fishing_unit_server <- function(id, pool){
                   "cpue" = "EST_LND_CPUE"
     )
     
-    table<-artfish_year_summary(data=estimate,year=input$year,variable="EST_BGC",value=value)
-
+    INFO("Compute yearly summary - by fishing unit (EST_BGC)")
+    table<-artfish_year_summary(
+      data = estimate, year = input$year,
+      variable = "EST_BGC", value = value,
+      value_fun = if(indicator_output == "effort") unique else sum
+    )
+    
     summary<-table$summary%>%
       left_join(ref_fishing_units%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_BGC'='ID'))%>%
       relocate(NAME)%>%
@@ -413,8 +418,12 @@ artfish_fishing_unit_server <- function(id, pool){
       levels<-input$bg
       data<-subset(estimate,EST_BGC == input$bg)
     }
-    
-    table<-artfish_year_summary(data=data,year=input$year,variable="EST_SPC",value=value)
+    INFO("Compute yearly summary - by species (EST_SPC)")
+    table<-artfish_year_summary(
+      data = data, year = input$year,
+      variable = "EST_SPC", value = value, 
+      value_fun = sum
+    )
     
     summary<-table$summary%>%
       left_join(ref_species%>%select(ID,NAME)%>%dplyr::mutate(ID=as.character(ID)),by=c('EST_SPC'='ID'))%>%
