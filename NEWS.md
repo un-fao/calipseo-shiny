@@ -12,6 +12,7 @@ _pyramid_chart_server_
 ## Enhancements
 
 * [#215](https://github.com/un-fao/calipseo-shiny/issues/215) Improve line chart
+* [#220](https://github.com/un-fao/calipseo-shiny/issues/220) Artfish standardization & packaging - use for legacy Artfish computation (for now applied to LBN)
 * [#223](https://github.com/un-fao/calipseo-shiny/issues/223) Provide translated vocabularies for French
 
 **Computation enhancements**
