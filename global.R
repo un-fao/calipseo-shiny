@@ -43,6 +43,7 @@ if(!dir.exists(appConfig$store) && Sys.info()[["sysname"]] != "Windows") dir.cre
 
 #DB connections
 #---------------------------------------------------------------------------------------
+require(RMariaDB)
 pool <- pool::dbPool(
   drv = DBI::dbDriver(appConfig$openfismis$dbi$drv),
   dbname = appConfig$openfismis$dbi$dbname,
