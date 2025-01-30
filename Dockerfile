@@ -1,6 +1,11 @@
-FROM rocker/r-ver:4.0.5
+FROM rocker/r-ver:4.3.0
 
-MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
+LABEL org.opencontainers.image.title="calipseo-shiny"
+LABEL org.opencontainers.image.url="https://github.com/un-fao/calipseo-shiny"
+LABEL org.opencontainers.image.source="https://github.com/un-fao/calipseo-shiny"
+LABEL org.opencontainers.image.description="R shiny app for fisheries data analytics with Calipseo"
+LABEL org.opencontainers.image.authors="Emmanuel Blondel <emmanuel.blondel@fao.org>"
+
 
 # system libraries for LaTeX reporting & keyring
 RUN apt-get update && apt-get install -y \
@@ -13,8 +18,13 @@ RUN apt-get update && apt-get install -y \
     texlive-fonts-recommended \
     texlive-fonts-extra \
     texlive-formats-extra \
-	  libsodium-dev \
-    libsecret-1-dev
+    libssl-dev \
+    libxml2-dev \
+    libv8-dev \
+    libsodium-dev \
+    libsecret-1-dev \
+    librdf0 \
+    librdf0-dev
     
 # general system libraries
 # Note: this includes rdf/redland system libraries
@@ -49,10 +59,9 @@ RUN apt-get update && apt-get install -y \
     vim \
     wget
     
-RUN apt-get install -y librdf0-dev
 RUN install2.r --error --skipinstalled --ncpus -1 redland
 RUN apt-get install -y \
-    libcurl4-openssl-dev \
+    libcurl4 \
     libgit2-dev \
     libxslt-dev \
     librdf0 \
@@ -65,13 +74,33 @@ RUN /rocker_scripts/install_geospatial.sh
 
 # install R core package dependencies
 RUN install2.r --error --skipinstalled --ncpus -1 httpuv
-RUN R -e "install.packages(c('remotes','jsonlite','yaml'), repos='https://cran.r-project.org/')"
-# copy app
+
+#working directory
+WORKDIR /srv/calipseo-shiny
+
+# Set environment variables for renv cache, see doc https://docs.docker.com/build/cache/backends/
+ARG RENV_PATHS_ROOT
+
+# Make a directory in the container
+RUN mkdir -p ${RENV_PATHS_ROOT}
+
+#copy renv configuration
+RUN R -e "install.packages(c('renv'), repos='https://cran.r-project.org/')"
+COPY renv.lock renv.lock
+COPY .Rprofile  .Rprofile
+COPY renv/activate.R renv/activate.R
+COPY renv/settings.json renv/settings.json
+
+# Set renv cache location: change default location of cache to project folder
+# see documentation for Multi-stage builds => https://cran.r-project.org/web/packages/renv/vignettes/docker.html
+RUN mkdir renv/.cache
+ENV RENV_PATHS_CACHE=renv/.cache
+
+# Restore the R environment
+RUN R -e "renv::restore()"
+
+#copy app
 COPY . /srv/calipseo-shiny
-
-# install R app package dependencies
-RUN R -e "source('./srv/calipseo-shiny/install.R')"
-
 #etc dirs (for config)
 RUN mkdir -p /etc/calipseo-shiny/
 
