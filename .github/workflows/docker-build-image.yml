@@ -5,7 +5,15 @@ on:
     branches:
       - 'main'
     tags:
-      - "v*"
+      - "*"
+  pull_request:
+    branches:
+      - 'main'
+
+env:
+  CACHE_IMAGE: ghcr.io/un-fao/calipseo-shiny-cache
+  DOCKER_BUILDKIT: 1
+  RENV_PATHS_ROOT: ~/.cache/R/renv
 
 jobs:
   docker:
@@ -25,27 +33,46 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
-          labels: |
-            org.opencontainers.image.url=https://github.com/un-fao/calipseo-shiny
-            org.opencontainers.image.source=https://github.com/un-fao/calipseo-shiny
-            org.opencontainers.image.title=calipseo-shiny
-            org.opencontainers.image.description=Calipseo R Shiny dashboard
-            org.opencontainers.image.vendor=UN-FAO
-            org.opencontainers.image.author=UN-FAO
-            org.opencontainers.image.authors=Emmanuel Blondel <emmanuel.blondel@fao.org>
+            
       - name: Login to image repository
-        if: github.ref_type == 'tag'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN_CALIPSEO }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
         with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.ref_type == 'tag' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          driver-opts: image=moby/buildkit:master,network=host
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build Docker image
+        run: |
+          docker buildx build \
+            --cache-from type=registry,ref=$CACHE_IMAGE:latest \
+            --cache-to type=registry,ref=$CACHE_IMAGE:latest,mode=max \
+            --tag ghcr.io/un-fao/calipseo-shiny:latest \
+            --build-arg RENV_PATHS_ROOT=${{ env.RENV_PATHS_ROOT }} \
+            --output type=docker,dest=/tmp/docker-image.tar \
+            .
+
+      - name: Load Docker image
+        if: github.ref_type == 'tag'
+        run: |
+          docker load -i /tmp/docker-image.tar
+
+      - name: Conditional push Docker image
+        if: github.ref_type == 'tag'
+        run: |
+          TAG_NAME=$(basename ${GITHUB_REF})
+          docker tag ghcr.io/un-fao/calipseo-shiny:latest ghcr.io/un-fao/calipseo-shiny:${TAG_NAME}
+          docker push ghcr.io/un-fao/calipseo-shiny:latest
+          docker push ghcr.io/un-fao/calipseo-shiny:${TAG_NAME}
