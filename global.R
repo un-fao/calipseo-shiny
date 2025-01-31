@@ -60,16 +60,21 @@ require(artfishr)
 #config
 #---------------------------------------------------------------------------------------
 #default config_file path for DEPLOYMENT
-config_file <- "/etc/shiny-server/config.yml"
+config_file <- "/etc/calipseo-shiny/config.yml"
 
 #local configuration
 #If you are an R developer, you need to create a .REnviron file (no file extension) in /shiny-calipseo dir
 #The file should include the local path for your shiny config file in that way:
 #CALIPSEO_SHINY_CONFIG=<your config path>
 
+local <- FALSE
 local_config_file <- Sys.getenv("CALIPSEO_SHINY_CONFIG")
-if(nzchar(local_config_file)) config_file <- local_config_file
+if(nzchar(local_config_file)){
+  config_file <- local_config_file
+  local <- TRUE
+}
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
+appConfig$local <- local
 
 if(is.null(appConfig$auth)) appConfig$auth <- FALSE
 
@@ -77,7 +82,7 @@ if(is.null(appConfig$auth)) appConfig$auth <- FALSE
 if(is.null(appConfig$language)) appConfig$language <- "en"
 
 #shiny-storage check
-default_store_dir <- "/srv/shiny-server/shiny-calipseo-store"
+default_store_dir <- "/srv/calipseo-shiny-store"
 #shiny-storage in dev (assume Windows OS for now)
 if(Sys.info()[["sysname"]] == "Windows") default_store_dir <- "out"
 if(is.null(appConfig$store)) appConfig$store <- default_store_dir
@@ -105,8 +110,6 @@ CALIPSEO_SHINY_ENV <- new.env()
 #core R script utils
 core_assets <- list.files("assets/core", pattern = ".R", full.names = T)
 for(core_asset in core_assets) source(core_asset)
-
-#addResourcePath(prefix = "calipseo-data", directoryPath = "../calipseo-data")
 
 #country R script utils
 country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 

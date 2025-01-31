@@ -1016,7 +1016,8 @@ loadLocalDataset <- function(filename){
 #loadLocalCountryDatasets
 #@deprecated
 loadLocalCountryDatasets <- function(config){
-  country_dir <- sprintf("./data/country/%s", config$country_profile$iso3)
+  local_dir <- if(config$local) "../calipseo-data" else "data"
+  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
   if(dir.exists(country_dir)){
     files <- list.files(path = country_dir, full.names = TRUE)
     for(file in files){
@@ -1028,8 +1029,8 @@ loadLocalCountryDatasets <- function(config){
 
 #getLocalCountryDataset
 getLocalCountryDataset <- function(config,filename){
-  #get(name, envir = CALIPSEO_SHINY_ENV)
-  country_dir <- sprintf("../calipseo-data/country/%s", config$country_profile$iso3)
+  local_dir <- if(config$local) "../calipseo-data" else "data"
+  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
   filename <- file.path(country_dir, filename)
   data <- switch(mime::guess_type(filename),
    "application/json" = jsonlite::read_json(filename),
@@ -1042,7 +1043,8 @@ getLocalCountryDataset <- function(config,filename){
 #@deprecated
 getLocalCountryDatasets <- function(config){
   out <- list()
-  country_dir <- sprintf("../calipseo-data/country/%s", config$country_profile$iso3)
+  local_dir <- if(config$local) "../calipseo-data" else "data"
+  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
   if(dir.exists(country_dir)){
     files <- list.files(path = country_dir, full.names = TRUE)
     out <- lapply(files, function(file){
