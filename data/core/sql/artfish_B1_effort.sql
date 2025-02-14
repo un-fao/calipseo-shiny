@@ -2,6 +2,7 @@ SELECT
 s.YEAR as year, 
 s.CL_APP_MONTH_ID as month, 
 s.DAYS as day, 
+s.CL_FISH_LANDING_SITE_ID as landing_site,
 s.CL_FISH_FISHING_UNIT_ID as fishing_unit,
 st.MAXIMUM_NUMBER_DAYS_SAMPLED as effort_type,
 s.NB_DAYS_SAMPLED as effort_fishing_duration 
