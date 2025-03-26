@@ -1,0 +1,48 @@
+language: en
+country_profile:
+    iso3: LCA
+    website: https://www.govt.lc/ministries/agriculture-food-production-fisheries-and-rural-development/fisheries-department
+    logo: ./assets/img/LCAlogo.png
+    timezone: America/St_Lucia
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: lcacalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home
+    vessels:
+        title: Vessels
+    individuals: 
+        title: Individual
+    logbooks:
+        title: Logbooks
+    statistics:
+        title: Statistics
+    
+modules:
+    logbooks_details:
+      enabled: FALSE
+    logbooks_overview:
+      enabled: FALSE
+    logbooks_trips:
+      enabled: FALSE
+    vessel_list:
+        title: Vessels register
+        icon: table
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+    individual_list: 
+        title: Individuals register
+    individual_qa: 
+        title: Individual quality assessment

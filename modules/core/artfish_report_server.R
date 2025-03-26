@@ -70,7 +70,7 @@ artfish_report_server <- function(id, pool){
     
     print(head(data))
     
-    fishing_units_selection<-subset(fishing_units,code%in%unique(data$EST_BGC))
+    fishing_units_selection<-subset(fishing_units,code%in%unique(data$fishing_unit))
     
     choices<-setNames(fishing_units_selection$code,fishing_units_selection$label)
     
@@ -88,7 +88,7 @@ artfish_report_server <- function(id, pool){
   observeEvent(input$fishing_unit,{
     req(!is.null(input$fishing_unit)&input$fishing_unit!="")
     subdata<-target_data()
-    subdata<-subset(subdata,EST_BGC==input$fishing_unit)
+    subdata<-subset(subdata,fishing_unit==input$fishing_unit)
     estimates<-estimates(subdata)
     
     output$button<-renderUI({
@@ -123,16 +123,18 @@ artfish_report_server <- function(id, pool){
                 i18n("EFFORT_LABEL_10")
       )
       
-      values<-c(formatC(estimate$EST_EFF_EFFORT[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_EFF_NBOATS[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_EFF_NACT[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_EFF_PBA[1],digits = 3, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_EFF_ACTDAYS[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_EFF_EXDAYS[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                paste0(format(round(estimate$EST_EFF_CV[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$EST_EFF_SPAACCUR[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$EST_EFF_TMPACCUR[1]*100,1), nsmall = 1)," %"),
-                format(round(estimate$EST_EFF_SUI[1],1), nsmall = 1))
+      values<-c(formatC(estimate$effort_nominal[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$fleet_engagement_number[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$effort_fishable_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$effort_activity_coefficient[1],digits = 3, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$effort_total_fishing_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$effort_fishing_reference_period[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                paste0(format(round(estimate$effort_coefficient_variation[1]*100,1), nsmall = 1)," %"),
+                paste0(format(round(estimate$effort_activity_coefficient_spatial_accuracy[1]*100,1), nsmall = 1)," %"),
+                paste0(format(round(estimate$effort_activity_coefficient_temporal_accuracy[1]*100,1), nsmall = 1)," %"),
+                format(round(estimate$effort_sui[1],1), nsmall = 1))
+      
+      print(values)
       
       effort<-data.frame(code=codes,
                          label=labels,
@@ -164,16 +166,16 @@ artfish_report_server <- function(id, pool){
                 i18n("LANDINGSITE_LABEL_7"),i18n("LANDINGSITE_LABEL_8"),i18n("LANDINGSITE_LABEL_9"),
                 i18n("LANDINGSITE_LABEL_10"))
       
-      values<-c(formatC(estimate$EST_LND_CATCH_G[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$EST_LND_CPUE,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_LND_SMPCATCH[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$EST_LND_NSMP[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$EST_LND_VALUE,na.rm=T)/estimate$EST_LND_CATCH_G[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$EST_LND_VALUE,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                paste0(format(round(estimate$EST_LND_CV[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$EST_LND_SPAACCUR[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$EST_LND_TMPACCUR[1]*100,1), nsmall = 1)," %"),
-                format(round(estimate$EST_LND_SUI[1],1), nsmall = 1))
+      values<-c(formatC(sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(sum(estimate$catch_cpue,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$catch_nominal_landed_sampled[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$catch_sample_size[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(sum(estimate$trade_value,na.rm=T)/sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(sum(estimate$trade_value,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                paste0(format(round(estimate$catch_coefficient_variation[1]*100,1), nsmall = 1)," %"),
+                paste0(format(round(estimate$catch_cpue_spatial_accuracy[1]*100,1), nsmall = 1)," %"),
+                paste0(format(round(estimate$catch_cpue_temporal_accuracy[1]*100,1), nsmall = 1)," %"),
+                format(round(estimate$catch_sui[1],1), nsmall = 1))
       
       landing<-data.frame(code=codes,
                           label=labels,
@@ -196,7 +198,7 @@ artfish_report_server <- function(id, pool){
       
       OvAcc<-data.frame(code="",
                           label=i18n("LABEL_ACCURACY"),
-                          value=paste0(format(round(estimate$EST_ACCUR[1]*100,1), nsmall = 1)," %"))
+                          value=paste0(format(round(estimate$overall_accuracy[1]*100,1), nsmall = 1)," %"))
       
       DT::datatable(
         OvAcc,
@@ -213,7 +215,7 @@ artfish_report_server <- function(id, pool){
     
     output$species<- DT::renderDT(server = FALSE, {
       
-      species<-subset(estimate,select=c(EST_SPC,EST_LND_CATCH,EST_EFF_EFFORT,EST_LND_CPUE,EST_LND_PRICE,EST_LND_VALUE,EST_LND_AVW))
+      species<-subset(estimate,select=c(species,catch_nominal_landed,effort_nominal,catch_cpue,trade_price,trade_value,catch_fish_average_weight ))
       names(species)<-c('NAME',i18n("SPECIES_TABLE_COLNAME_2"),
                         i18n("SPECIES_TABLE_COLNAME_3"),i18n("SPECIES_TABLE_COLNAME_4"),
                         i18n("SPECIES_TABLE_COLNAME_5"),i18n("SPECIES_TABLE_COLNAME_6"),

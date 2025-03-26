@@ -1,0 +1,61 @@
+language: en
+country_profile:
+    iso3: LBN
+    website: http://portail.gov.lb
+    logo: ./assets/img/LBNlogo.png
+    timezone: Asia/Beirut
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: lbncalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+
+auth: false
+auth_ui: true
+auth_endpoint: https://calipseo-lebanon.review.fao.org
+    
+structure:
+    home:
+        title: Home page
+    artfish:
+        title: Artfish
+    statistics:
+        title: Statistics
+        
+modules:
+    artfish_overview:
+      enabled: TRUE
+    artfish_report:
+      enabled: TRUE
+    artfish_species:
+      enabled: TRUE
+    artfish_fishing_unit:
+      enabled: TRUE
+    logbooks_details:
+      enabled: FALSE
+    logbooks_overview:
+      enabled: FALSE
+    logbooks_trips:
+      enabled: FALSE
+    vessel_breakdown:
+      enabled: FALSE
+    vessel_info:
+      enabled: FALSE
+    vessel_list:
+      enabled: FALSE
+    vessel_qa:
+      enabled: FALSE
+    individual_list:
+      enabled: FALSE    
+    individual_info:
+      enabled: FALSE 
+    individual_overview:
+      enabled: FALSE    
+    individual_qa:
+      enabled: FALSE 
+    individual_breakdown:
+      enabled: FALSE       

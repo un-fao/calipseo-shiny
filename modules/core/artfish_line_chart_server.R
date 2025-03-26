@@ -18,10 +18,10 @@
 #' @param nbToShow numeric, only use if rank=TRUE, indicate number of ranked value to display
 #' @param rankLabel character string to specify rank label name
 #' @param plotType type of maine trace type : 'line' or 'bar'
-#' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
+#' @param mode indicate mode to display result, 4 modes avaiLABEL ,'plot','table','plot+table','table+plot'
 #'    
 
-artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("X_LABEL_TITLE"),ylab="",levels=c(i18n("LEVEL_LABLE_GLOBAL"),i18n("LEVEL_LABLE_DETAIL")),stat="sum", rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot",prefered_colnames = FALSE) {
+artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("X_LABEL_TITLE"),ylab="",levels=c(i18n("LEVEL_LABEL_GLOBAL"),i18n("LEVEL_LABEL_DETAIL")),stat="sum", rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot",prefered_colnames = FALSE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -29,9 +29,9 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
     data_ready<-reactiveVal(FALSE)
     
     levels_output <- reactive({
-    levels_output <- if(input$levels==i18n("LEVEL_LABLE_GLOBAL")){
+    levels_output <- if(input$levels==i18n("LEVEL_LABEL_GLOBAL")){
       'global'
-    }else if(input$levels==i18n("LEVEL_LABLE_DETAIL")){
+    }else if(input$levels==i18n("LEVEL_LABEL_DETAIL")){
       'detail'
     }
     
@@ -143,7 +143,7 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
           df<-df%>%
             mutate(value=value)%>%
             group_by(date)%>%
-            summarise(agg=ifelse(stat=="mean",mean(value,na.rm=T),sum(value,na.rm=T)),text="",target=i18n("LEVEL_LABLE_GLOBAL"))%>%
+            summarise(agg=ifelse(stat=="mean",mean(value,na.rm=T),sum(value,na.rm=T)),text="",target=i18n("LEVEL_LABEL_GLOBAL"))%>%
             group_by(target,text)%>%
             complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) %>%
             ungroup()

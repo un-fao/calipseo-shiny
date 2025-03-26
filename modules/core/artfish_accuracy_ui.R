@@ -43,9 +43,9 @@ artfish_accuracy_ui <- function(id){
             tabPanel(i18n("TABPANEL_UNIFORMITY"),
               fluidRow(
                 p(i18n("UNIFORMITY_HINT")),
-                actionButton(ns("addColumn"), i18n("ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABLE")),
+                actionButton(ns("addColumn"), i18n("ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABEL")),
                 DTOutput(ns("table")),
-                actionButton(ns("compute"), i18n("ACTIONBUTTON_COMPUTE_LABLE"))
+                actionButton(ns("compute"), i18n("ACTIONBUTTON_COMPUTE_LABEL"))
               ),
               fluidRow(uiOutput(ns("index")))
             )

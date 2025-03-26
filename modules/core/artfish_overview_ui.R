@@ -7,6 +7,7 @@ artfish_overview_ui <- function(id){
           fluidRow(
             tags$h2(i18n("OVERVIEW_TITLE")),
           ),
+          uiOutput(ns("no_release")),
           uiOutput(ns("fishing_unit_selector")),
           uiOutput(ns("results"))
   )

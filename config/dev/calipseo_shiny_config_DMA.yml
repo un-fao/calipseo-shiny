@@ -1,0 +1,42 @@
+language: en
+country_profile:
+    iso3: DMA
+    website: https://agriculture.gov.dm/division/fisheries-division
+    logo: ./assets/img/DMAlogo.png
+    timezone: America/Dominica
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: dmacalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home page
+    vessels:
+        title: Vessels dashboard
+    individuals: 
+        title: Individual dashboard
+    logbooks:
+        title: Logbooks dashboard
+    
+modules:
+    vessel_list:
+        title: Vessels register
+        icon: table
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+    individual_list: 
+        title: Individual list
+    individual_qa: 
+        title: Individual quality assessment
+
+    

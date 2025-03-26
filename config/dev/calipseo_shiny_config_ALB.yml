@@ -1,0 +1,37 @@
+language: en
+country_profile:
+    iso3: ALB
+    website: https://www.bujqesia.gov.al
+    logo: ./assets/img/logo.png
+    timezone: Europe/Tirane
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: albcalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+auth: false
+auth_ui: true
+auth_endpoint: https://calipseo-albania.review.fao.org        
+structure:
+    home:
+        title: Home
+    vessels:
+        title: Vessels dashboard
+    
+modules:
+    logbooks_details:
+      enabled: FALSE
+    logbooks_overview:
+      enabled: FALSE
+    logbooks_trips:
+      enabled: FALSE
+    individual_overview:
+      enabled: FALSE    
+    individual_qa:
+      enabled: FALSE 
+    individual_breakdown:
+      enabled: FALSE      

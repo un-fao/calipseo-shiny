@@ -8,7 +8,7 @@ artfish_accuracy_server <- function(id, pool){
   
   output$button<-renderUI({
     if(!is.na(input$days)&!is.na(input$boats)&!is.na(input$effort_smp)&!is.na(input$effort_days_smp)&!is.na(input$landing_smp)&!is.na(input$landing_days_smp)){
-    actionButton(ns("run"),i18n("ACTIONBUTTON_COMPUTE_LABLE"))}else{NULL}
+    actionButton(ns("run"),i18n("ACTIONBUTTON_COMPUTE_LABEL"))}else{NULL}
   })
   
   iconChoice<-function(x){ifelse(x<0.9,"exclamation-triangle","check-circle")}

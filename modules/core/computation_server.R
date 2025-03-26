@@ -233,6 +233,7 @@ computation_server <- function(id, pool) {
                                                                 #TODO add mode (release/staging) to getProcessOutput
                                                                 "process" = paste0("getProcessOutputs(config = appConfig, id = \"", value,"\", ","target = \"",computation_target,"\", ", paste0(indicator_args, sprintf(" = computation_%s", indicator_args), collapse = ", "),")"),
                                                                 "local" = paste0("getLocalCountryDataset(appConfig, \"",value,"\")"),
+                                                                "text" = paste0("\"",value,"\""),
                                                                 fun_arg_value
                                          )
                                          return(fun_arg_eval)

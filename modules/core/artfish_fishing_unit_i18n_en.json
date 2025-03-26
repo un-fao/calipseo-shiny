@@ -3,6 +3,8 @@
   
   "ARTFISH_FISHING_UNIT_TITLE" : "Annual Statistics by Fishing Unit",
   
+  "NO_RELEASE" : "No released indicators available for artfish estimates",
+  
   "SELECT_INPUT_TITLE_YEAR" : "Year",
   
   "ALL_FISHING_UNITS_LABEL" : "All fishing units",
@@ -48,7 +50,7 @@
   
   "INDICATOR_LABEL_TOTAL_CPUE" : "Total CPUE",
   
-  "GUAGE_TITLE_ACCURACY" : "Accuracy",
+  "GAUGE_TITLE_ACCURACY" : "Accuracy",
   
   "EFFORT_LABEL" : "Effort",
   
@@ -88,9 +90,9 @@
   
   "SELECT_INPUT_TITLE_LEVEL" : "Level",
   
-  "LEVEL_LABLE_GLOBAL" : "Global",
+  "LEVEL_LABEL_GLOBAL" : "Global",
   
-  "LEVEL_LABLE_DETAIL" : "Detail",
+  "LEVEL_LABEL_DETAIL" : "Detail",
   
   "BOX_TITLE_TOP_RANKING_SPECIES" : "Top Ranking Species",
   

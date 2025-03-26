@@ -160,13 +160,13 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20241121",
+      "Version": "0.1.20250311",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteSha": "d9c6c618ca9917e7f970fb7bfaf65f5ace44dee3",
+      "RemoteSha": "1463e2474621680bc021f38085c6013a54bec264",
       "Requirements": [
         "R",
         "dplyr",
@@ -177,7 +177,7 @@
         "tidyr",
         "vrule"
       ],
-      "Hash": "97504168d8633919c16732faa35dd006"
+      "Hash": "4c0e90f54dbdb2a9505f252eaae603eb"
     },
     "askpass": {
       "Package": "askpass",
@@ -1981,7 +1981,7 @@
         "rhandsontable",
         "stringi"
       ],
-      "Hash": "5a06935336b2b6aa118d917f5ba70998"
+      "Hash": "e9e7e70240a3732ce67bcfd8971ff7d8"
     },
     "waiter": {
       "Package": "waiter",

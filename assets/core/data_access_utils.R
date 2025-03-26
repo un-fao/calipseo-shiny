@@ -649,6 +649,64 @@ accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
   return(fa)
 }
 
+#accessArtfishAFromDB
+accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/artfish_A_active_vessels.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+    fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessArtfishB1FromDB
+accessArtfishB1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/artfish_B1_effort.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessArtfishCFromDB
+accessArtfishCFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/artfish_C_active_days.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
+#accessArtfishDFromDB
+accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/artfish_D_landings.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_TO_PORT_SITE_ID = %s",fishing_unit ))
+  }
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -984,6 +1042,26 @@ accessFishingDaysPerMonth <- function(con){
 #accessEffortSurvey
 accessEffortSurvey <- function(con){
   accessEffortSurveyFromDB(con)
+}
+
+#accessArtfishA
+accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessArtfishB1
+accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessArtfishC
+accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessArtfishD
+accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
 #Country profile

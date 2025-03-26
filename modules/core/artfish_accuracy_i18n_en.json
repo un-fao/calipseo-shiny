@@ -31,9 +31,9 @@
   
   "UNIFORMITY_HINT" : "Click on 'New Column' to add a day and double click on cell to edit",
   
-  "ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABLE" : "New Column",
+  "ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABEL" : "New Column",
   
-  "ACTIONBUTTON_COMPUTE_LABLE" : "Compute",
+  "ACTIONBUTTON_COMPUTE_LABEL" : "Compute",
   
   /*valueboxes*/
   

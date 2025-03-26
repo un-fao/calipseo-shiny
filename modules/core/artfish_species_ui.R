@@ -7,6 +7,7 @@ artfish_species_ui <- function(id){
             div(class="row",
             column(3,
               tags$h2(i18n("ARTFISH_SPECIES_TITLE")),
+              uiOutput(ns("no_release")),
               uiOutput(ns("species_selector")),
               uiOutput(ns("fishing_unit_selector"))
             ),

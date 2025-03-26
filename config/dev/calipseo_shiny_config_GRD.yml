@@ -1,0 +1,46 @@
+language: en
+country_profile:
+    iso3: GRD
+    website: http://lvv.gov.sr
+    logo: ./assets/img/GRDlogo.png
+    timezone: America/Grenada 
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: grdcalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home page
+    vessels:
+        title: Vessels dashboard
+    individuals: 
+        title: Individual dashboard
+    logbooks:
+        title: Logbooks dashboard
+    
+modules:
+    vessel_list:
+        title: Vessels register
+        icon: table
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+    individual_list: 
+        title: Individual list
+    individual_overview:
+      enabled: FALSE    
+    individual_qa:
+      enabled: FALSE 
+    individual_breakdown:
+      enabled: FALSE      
+
+    
