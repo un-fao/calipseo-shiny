@@ -1,0 +1,50 @@
+language: en
+country_profile:
+    iso3: BGD
+    website: http://www.fisheries.gov.bd/
+    logo: ./assets/img/BGDlogo.png
+    timezone: Asia/Dacca 
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: bgdcalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+
+auth: false
+auth_ui: true
+auth_endpoint: https://calipseo-bangladesh.review.fao.org
+    
+structure:
+    home:
+        title: Home page
+    vessels:
+        title: Vessels dashboard
+    individuals: 
+        title: Individual dashboard
+    logbooks:
+        title: Logbooks dashboard
+    
+modules:
+    vessel_list:
+        title: Vessels register
+        icon: table
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+    individual_list: 
+        title: Individual list
+    individual_overview:
+      enabled: FALSE    
+    individual_qa:
+      enabled: FALSE 
+    individual_breakdown:
+      enabled: FALSE      
+
+    

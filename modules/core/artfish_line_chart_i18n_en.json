@@ -1,8 +1,8 @@
 {
   /*levels*/
-  "LEVEL_LABLE_GLOBAL" : "Global",
+  "LEVEL_LABEL_GLOBAL" : "Global",
   
-  "LEVEL_LABLE_DETAIL" : "Detail",
+  "LEVEL_LABEL_DETAIL" : "Detail",
   
   /*labels*/
   

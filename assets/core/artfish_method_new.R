@@ -1,4 +1,4 @@
-artfish_estimates<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landing=NULL){
+artfish_estimates_b<-function(con,year=NULL,month=NULL,data_effort=NULL,data_landing=NULL){
 
   #Access to countries_param
   country_params<-accessCountryParam(con)

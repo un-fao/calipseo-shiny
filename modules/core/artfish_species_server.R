@@ -14,7 +14,36 @@ artfish_species_server <- function(id, pool){
   ref_fishing_units<-accessRefFishingUnits(pool)
   ref_fishing_units$ID<-as.character(ref_fishing_units$ID)
   
-  estimate<-artfish_estimates(con=pool,data_effort=accessEffortData(pool),data_landing=accessLandingData(pool))
+  # estimate<-artfish_estimates(con=pool,
+  #                             effort_source="fisher_interview",
+  #                             active_vessels=accessArtfishA(pool),
+  #                             effort = accessArtfishB1(pool),
+  #                             active_vessels_strategy="latest",
+  #                             active_days=accessArtfishC(pool),
+  #                             landings=accessArtfishD(pool),
+  #                             minor_strata=NULL)
+  
+  files<-getStatPeriods(config=appConfig, "artfish_estimates",target = "release")
+  
+  output$no_release<-renderUI({
+    div(
+      if(nrow(files)>0){
+        NULL
+      }else{
+        p(i18n("NO_RELEASE"))
+      }
+    )
+  })
+  
+  req(nrow(files)>0)
+  
+  estimate<-do.call(rbind,lapply(files$file, readr::read_csv))
+  
+  ref_species<-subset(ref_species,ID%in%unique(na.omit(estimate$species)))
+  
+  print("DEBUG-1")
+  print(unique(estimate$species))
+  print(unique(ref_species$ID))
   
   output$species_selector<-renderUI({
     
@@ -34,7 +63,7 @@ artfish_species_server <- function(id, pool){
     print(input$species)
     if(input$species!=""){
       
-      selection<-subset(estimate,EST_SPC==input$species)
+      selection<-subset(estimate,species==input$species)
       data_sp(selection)
     }
   })
@@ -46,7 +75,7 @@ artfish_species_server <- function(id, pool){
       output$fishing_unit_selector<-renderUI({
         
         selection<-data_sp()
-        bg_sp<-unique(selection$EST_BGC)
+        bg_sp<-unique(selection$fishing_unit)
         
         ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
@@ -66,11 +95,11 @@ artfish_species_server <- function(id, pool){
     
     if(as.integer(input$bg)>0){
       
-      selection<-subset(selection,EST_BGC==input$bg,
-                   select=c(EST_YEAR,EST_MONTH,EST_BGC,EST_LND_CATCH,EST_LND_PRICE,EST_LND_VALUE,EST_EFF_EFFORT,EST_LND_CPUE))
+      selection<-subset(selection,fishing_unit==input$bg,
+                   select=c(year,month,fishing_unit,catch_nominal_landed,trade_price,trade_value,effort_nominal,catch_cpue))
     }else{
       selection<-subset(selection,
-                   select=c(EST_YEAR,EST_MONTH,EST_BGC,EST_LND_CATCH,EST_LND_PRICE,EST_LND_VALUE,EST_EFF_EFFORT,EST_LND_CPUE))
+                   select=c(year,month,fishing_unit,catch_nominal_landed,trade_price,trade_value,effort_nominal,catch_cpue))
     }
     data_sp_bg(selection)
 
@@ -89,30 +118,30 @@ artfish_species_server <- function(id, pool){
     output$timeline<-renderPlotly({
           
           data<-data%>%
-            mutate(DATE=as.Date(sprintf("%04d-%02d-01",EST_YEAR,EST_MONTH)))%>%
+            mutate(DATE=as.Date(sprintf("%04d-%02d-01",year,month)))%>%
             group_by(DATE)%>%
             summarise(
-              EST_LND_CATCH=sum(EST_LND_CATCH,na.rm=T),
-              EST_LND_PRICE=mean(EST_LND_PRICE,na.rm=T),
-              EST_LND_VALUE=sum(EST_LND_VALUE,na.rm=T),
-              EST_EFF_EFFORT=unique(EST_EFF_EFFORT,na.rm=T),
-              EST_LND_CPUE=mean(EST_LND_CPUE,na.rm=T)
+              catch_nominal_landed=sum(catch_nominal_landed,na.rm=T),
+              trade_price=mean(trade_price,na.rm=T),
+              trade_value=sum(trade_value,na.rm=T),
+              effort_nominal=unique(effort_nominal,na.rm=T),
+              catch_cpue=mean(catch_cpue,na.rm=T)
             )%>%
             ungroup()
           
-          fig1 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_VALUE, type = 'scatter', mode = 'lines',fill = 'tozeroy',name=i18n("LABEL_VALUE"))%>%  
+          fig1 <- data%>%plot_ly(x = ~DATE, y = ~trade_value, type = 'scatter', mode = 'lines',fill = 'tozeroy',name=i18n("LABEL_VALUE"))%>%  
             layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_VALUE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig2 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CATCH, type = 'bar',name=i18n("LABEL_CATCH"))%>%  
+          fig2 <- data%>%plot_ly(x = ~DATE, y = ~catch_nominal_landed, type = 'bar',name=i18n("LABEL_CATCH"))%>%  
             layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_CATCH"), showarrow = F, xref='paper', yref='paper')))
           
-          fig3 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_PRICE, type = 'scatter', mode = 'lines',name=i18n("LABEL_PRICE"))%>%  
+          fig3 <- data%>%plot_ly(x = ~DATE, y = ~trade_price, type = 'scatter', mode = 'lines',name=i18n("LABEL_PRICE"))%>%  
             layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_PRICE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig4 <- data%>%plot_ly(x = ~DATE, y = ~EST_LND_CPUE, type = 'scatter', mode = 'lines',name=i18n("LABEL_CPUE"))%>%  
+          fig4 <- data%>%plot_ly(x = ~DATE, y = ~catch_cpue, type = 'scatter', mode = 'lines',name=i18n("LABEL_CPUE"))%>%  
             layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_CPUE"), showarrow = F, xref='paper', yref='paper')))
           
-          fig5 <- data%>%plot_ly(x = ~DATE, y = ~EST_EFF_EFFORT, type = 'bar',name=i18n("LABEL_EFFORT"))%>%  
+          fig5 <- data%>%plot_ly(x = ~DATE, y = ~effort_nominal, type = 'bar',name=i18n("LABEL_EFFORT"))%>%  
             layout(height= 120,annotations = list( list(x = 0 , y = 1, text = i18n("VALUE_LABEL_EFFORT"), showarrow = F, xref='paper', yref='paper'))) 
   
           fig <- subplot(fig1, fig2, fig3,fig4,fig5, nrows = 5, shareX = TRUE)%>% 
@@ -142,11 +171,11 @@ artfish_species_server <- function(id, pool){
           
           tagList(
             fluidRow(
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_VALUE"),style="font-size: 40%"), subtitle=round(sum(data$EST_LND_VALUE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color = "blue" ),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_CATCH"),style="font-size: 40%"), subtitle=round(sum(data$EST_LND_CATCH,na.rm=T),2), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 2,color="orange"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_PRICE"),style="font-size: 40%"), subtitle=round(mean(data$EST_LND_PRICE,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color="green"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_CPUE"),style="font-size: 40%"), subtitle=round(mean(data$EST_LND_CPUE,na.rm=T),5), icon = tags$i(class = "fas fa-ship", style="font-size: 30px"), width = 2,color="red"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_EFFORT"),style="font-size: 40%"), subtitle=round(sum(data$EST_EFF_EFFORT,na.rm=T),0), icon = tags$i(class = "fas fa-clock", style="font-size: 30px"), width = 2,color="purple")
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_VALUE"),style="font-size: 40%"), subtitle=round(sum(data$trade_value,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color = "blue" ),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_CATCH"),style="font-size: 40%"), subtitle=round(sum(data$catch_nominal_landed,na.rm=T),2), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 2,color="orange"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_PRICE"),style="font-size: 40%"), subtitle=round(mean(data$trade_price,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color="green"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_CPUE"),style="font-size: 40%"), subtitle=round(mean(data$catch_cpue,na.rm=T),5), icon = tags$i(class = "fas fa-ship", style="font-size: 30px"), width = 2,color="red"),
+              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_EFFORT"),style="font-size: 40%"), subtitle=round(sum(data$effort_nominal,na.rm=T),0), icon = tags$i(class = "fas fa-clock", style="font-size: 30px"), width = 2,color="purple")
               )
           )
           
@@ -162,22 +191,22 @@ artfish_species_server <- function(id, pool){
           
           selection<-data_sp()
           
-          bg_sp<-unique(selection$EST_BGC)
+          bg_sp<-unique(selection$fishing_unit)
           
           ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
           
           selection%>%
-            group_by(EST_BGC)%>%
+            group_by(fishing_unit)%>%
             summarise(
-              EST_LND_CATCH=sum(EST_LND_CATCH,na.rm=T),
-              EST_LND_PRICE=mean(EST_LND_PRICE,na.rm=T),
-              EST_LND_VALUE=sum(EST_LND_VALUE,na.rm=T),
-              EST_EFF_EFFORT=sum(EST_EFF_EFFORT,na.rm=T),
-              EST_LND_CPUE=mean(EST_LND_CPUE,na.rm=T)
+              catch_nominal_landed=sum(catch_nominal_landed,na.rm=T),
+              trade_price=mean(trade_price,na.rm=T),
+              trade_value=sum(trade_value,na.rm=T),
+              effort_nominal=sum(effort_nominal,na.rm=T),
+              catch_cpue=mean(catch_cpue,na.rm=T)
             )%>%
-            left_join(ref_bg_sp%>%select(ID,NAME),by=c('EST_BGC'='ID'))%>%
+            merge(ref_bg_sp%>%select(ID,NAME)%>%rename(fishing_unit=ID))%>%
             ungroup()%>%
-            mutate(PERCENT=EST_LND_CATCH/sum(EST_LND_CATCH,na.rm=T))%>%
+            mutate(PERCENT=catch_nominal_landed/sum(catch_nominal_landed,na.rm=T))%>%
           plot_ly(labels = ~NAME, values = ~PERCENT)%>% 
             add_pie(hole = 0.6)%>% 
             layout(showlegend = T,
@@ -192,24 +221,24 @@ artfish_species_server <- function(id, pool){
         
         output$rank<-renderPlotly({
           rank<-estimate%>%
-            group_by(EST_SPC)%>%
+            group_by(species)%>%
             summarise(
-              EST_LND_CATCH=sum(EST_LND_CATCH,na.rm=T)
+              catch_nominal_landed=sum(catch_nominal_landed,na.rm=T)
             )%>%
-            mutate(rank = rank(-EST_LND_CATCH)) %>%
+            mutate(rank = rank(-catch_nominal_landed)) %>%
             arrange(rank)%>%
-            mutate(color=ifelse(EST_SPC==input$species,"target","others"))%>%
+            mutate(color=ifelse(species==input$species,"target","others"))%>%
             ungroup()
           
           target_rank<-subset(rank,color=="target")$rank
           
           rank<-rank%>%
             filter(rank%in%c(seq(target_rank-5,target_rank+5,1)))%>%
-            left_join(ref_species%>%select(ID,NAME),by=c('EST_SPC'='ID'))%>%
+            merge(ref_species%>%select(ID,NAME)%>%rename(species=ID))%>%
             ungroup()
           
           rank%>%
-            plot_ly(y = ~rank, x = ~EST_LND_CATCH, type = "bar",  orientation = "h",color=~factor(color),colors = c("grey","orange"),hoverinfo='none',text = ~NAME,
+            plot_ly(y = ~rank, x = ~catch_nominal_landed, type = "bar",  orientation = "h",color=~factor(color),colors = c("grey","orange"),hoverinfo='none',text = ~NAME,
                     textposition = "auto",textfont = list(color = "black")) %>%
               layout(showlegend = FALSE,
                      uniformtext=list(minsize=8, mode='show'),

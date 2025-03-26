@@ -168,7 +168,7 @@ artfish_report_server <- function(id, pool){
       
       values<-c(formatC(sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
                 formatC(sum(estimate$catch_cpue,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+                formatC(estimate$catch_nominal_landed_sampled[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
                 formatC(estimate$catch_sample_size[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
                 formatC(sum(estimate$trade_value,na.rm=T)/sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
                 formatC(sum(estimate$trade_value,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),

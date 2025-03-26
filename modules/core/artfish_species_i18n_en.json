@@ -2,6 +2,8 @@
   /* artfish species title*/
   "ARTFISH_SPECIES_TITLE" : "Detail by Species",
   
+  "NO_RELEASE" : "No released indicators available for artfish estimates",
+  
   /*Species*/
   
   "SELECT_INPUT_TITLE_SPECIES" : "Species",

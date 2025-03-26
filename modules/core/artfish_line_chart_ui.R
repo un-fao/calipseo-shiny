@@ -14,12 +14,12 @@
 artfish_line_chart_ui <- function(id,title="",sliderWidth = 25) {
   ns<-NS(id)
   
-  level_choices <- c(i18n("LEVEL_LABLE_GLOBAL"),i18n("LEVEL_LABLE_DETAIL"))
+  level_choices <- c(i18n("LEVEL_LABEL_GLOBAL"),i18n("LEVEL_LABEL_DETAIL"))
   
   ranK_choices <- c(i18n("RANK_LABEL_TOTAL_CATCH_OVER_THE_PERIOD"),i18n("RANK_LABEL_LAST_YEAR_TOTAL_CATCH"),
                     i18n("RANK_LABEL_ANNUAL_CATCH_AVERAGE"))
   
-  cond <- paste0("input.levels =='",i18n("LEVEL_LABLE_DETAIL"),"'")
+  cond <- paste0("input.levels =='",i18n("LEVEL_LABEL_DETAIL"),"'")
   
   tagList(
     box(
