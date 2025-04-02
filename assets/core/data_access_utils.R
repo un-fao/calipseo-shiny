@@ -566,6 +566,13 @@ accessEffortSurveyPeriodsFromDB <- function(con){
   return(out)
 }
 
+#accessLandingsSurveyPeriodsFromDB
+accessLandingsSurveyPeriodsFromDB <- function(con){
+  sql <- readSQLScript("data/core/sql/landings_survey_periods.sql")
+  out <- suppressWarnings(dbGetQuery(con, sql))
+  return(out)
+}
+
 #accessEffortDataFromDB
 accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/effort_data.sql")
@@ -652,9 +659,6 @@ accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
 #accessArtfishAFromDB
 accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/artfish_A_active_vessels.sql")
-  if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
-  }
   if(!is.null(fishing_unit)){
     fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
@@ -1002,6 +1006,11 @@ accessSurveyPeriods <- function(con){
 #accessEffortSurveyPeriods
 accessEffortSurveyPeriods <- function(con){
   accessEffortSurveyPeriodsFromDB(con)
+}
+
+#accessLandingsSurveyPeriods
+accessLandingsSurveyPeriods <- function(con){
+  accessLandingsSurveyPeriodsFromDB(con)
 }
 
 #accessEffortData
