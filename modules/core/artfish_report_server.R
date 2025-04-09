@@ -7,7 +7,7 @@ artfish_report_server <- function(id, pool){
   estimates<-reactiveVal(NULL)
   target_data<-reactiveVal(NULL)
   
-  fishing_units<-accessFishingUnits(pool)
+  fishing_units<-accessRefFishingUnits(pool)
   
   ref_species<-accessRefSpecies(pool)
   ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
@@ -70,9 +70,9 @@ artfish_report_server <- function(id, pool){
     
     print(head(data))
     
-    fishing_units_selection<-subset(fishing_units,code%in%unique(data$fishing_unit))
+    fishing_units_selection<-subset(fishing_units,ID%in%unique(data$fishing_unit))
     
-    choices<-setNames(fishing_units_selection$code,fishing_units_selection$label)
+    choices<-setNames(fishing_units_selection$ID,fishing_units_selection$NAME)
     
      output$fishing_unit_selector<-renderUI({
        selectizeInput(ns("fishing_unit"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=choices,multiple = F,selected=NULL,
