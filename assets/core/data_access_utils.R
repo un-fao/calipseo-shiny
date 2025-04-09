@@ -660,7 +660,7 @@ accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
 accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQLScript("data/core/sql/artfish_A_active_vessels.sql")
   if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
     fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")

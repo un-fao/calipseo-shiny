@@ -27,26 +27,31 @@ artfish_overview_server <- function(id, pool){
   req(nrow(files)>0)
   
   estimate<-do.call(rbind,lapply(files$file, readr::read_csv))
-  
+
   estimate<-estimate%>%
     merge(ref_fishing_units%>%
-    select(CODE,NAME)%>%
-    rename(fishing_unit=CODE,
+    select(ID,NAME)%>%
+    rename(fishing_unit=ID,
            fishing_unit_label=NAME)
     )%>%
     ungroup()
   
   estimate<-estimate%>%
     merge(ref_species%>%
-            select(CODE,NAME)%>%
-            rename(species=CODE,
+            select(ID,NAME)%>%
+            rename(species=ID,
                    species_label=NAME)
     )%>%
     ungroup()
   
+  print("DEBUG-Start3")
+  print(head(estimate))
+  print("DEBUG-End")
+  
   output$fishing_unit_selector<-renderUI({
         
     bg_sp<-unique(estimate$fishing_unit)
+    
         
     ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
         
