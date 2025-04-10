@@ -1,5 +1,5 @@
 #individual_qa_server
-individual_qa_server <- function(id, pool) {
+individual_qa_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {
     

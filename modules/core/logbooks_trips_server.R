@@ -1,5 +1,5 @@
 #logbooks_trips_server
-logbooks_trips_server <- function(id, pool){
+logbooks_trips_server <- function(id, pool, reloader){
 
  moduleServer(id, function(input, output, session) {
   

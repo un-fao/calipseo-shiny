@@ -1,5 +1,5 @@
 #artfish_accuracy_server
-artfish_accuracy_server <- function(id, pool){
+artfish_accuracy_server <- function(id, pool, reloader){
  
  moduleServer(id, function(input, output, session){   
    

@@ -1,5 +1,5 @@
 #landings1_maps_server
-landings1_maps_server <- function(id, pool){
+landings1_maps_server <- function(id, pool, reloader){
   
  moduleServer(id, function(input, output, session){  
    

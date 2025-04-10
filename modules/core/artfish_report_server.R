@@ -1,5 +1,5 @@
 #artfish_report_server
-artfish_report_server <- function(id, pool){
+artfish_report_server <- function(id, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
   

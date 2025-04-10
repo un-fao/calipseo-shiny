@@ -42,7 +42,7 @@ server <- function(input, output, session) {
             INFO("Set-up shiny-calipseo in auth mode")
             shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
             shinyjs::show(selector = "header")
-            loadModuleServers(appConfig, pool) #TODO pass auth_info to all modules?
+            loadModuleServers(appConfig, pool, reloader = NULL) #TODO pass auth_info to all modules?
           }
           
         } else {
@@ -62,10 +62,10 @@ server <- function(input, output, session) {
   }else{
     #anonymous usage
     observe({
-      INFO("Set-up geoflow-shiny in anonymous mode")
+      INFO("Set-up calipseo-shiny in anonymous mode")
       #shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
       #shinyjs::show(selector = "header")
-      loadModuleServers(appConfig, pool)
+      loadModuleServers(appConfig, pool, reloader)
     })
   }
   
@@ -132,5 +132,23 @@ server <- function(input, output, session) {
       updatePageUrl(PageUrl, session)
     }
   })
+  
+  reloader<-reactiveVal(NULL)
+  initialized<-reactiveVal(FALSE)
+  
+  observeEvent(reloader(),{
+    INFO("Reloading modules triggered by '%s' module", reloader())
+    req(!is.null(initialized()))
+    
+    if(!initialized()){
+      loadModuleServers(appConfig, pool, reloader)
+      initialized<-initialized(TRUE)
+    }else{
+      req(!is.null(reloader()))
+      #load module servers
+      loadModuleServers(appConfig, pool, reloader)
+      reloader<-reloader(NULL)
+    }
+  },ignoreNULL = F)
   
 }
