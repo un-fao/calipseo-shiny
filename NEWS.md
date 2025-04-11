@@ -1,3 +1,14 @@
+# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny/v2.0.0) - 2025-04-11**
+
+# New features
+
+* [#228](https://github.com/un-fao/calipseo-shiny/issues/228) Support renv and docker caching
+* [#237](https://github.com/un-fao/calipseo-shiny/issues/237) Implement reactivity of modules after tasks are performed in other modules
+
+# Enhancements
+
+* [#235](https://github.com/un-fao/calipseo-shiny/issues/235) Artfish standardization & packaging - refactoring of computation/visualization modules
+
 # **calipseo-shiny [v1.6.0](https://github.com/un-fao/calipseo-shiny/v1.6.0) - 2024-12-13**
 
 ## Corrections
