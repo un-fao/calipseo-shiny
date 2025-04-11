@@ -1,5 +1,5 @@
 #individual_overview_server
-individual_overview_server <- function(id, pool) {
+individual_overview_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {  
     

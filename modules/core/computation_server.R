@@ -1,5 +1,5 @@
 #computation_server
-computation_server <- function(id, pool) {
+computation_server <- function(id, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
   
@@ -301,6 +301,8 @@ computation_server <- function(id, pool) {
   #releaseIndicator
   releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
     
+    req(!is.null(torelease()))
+    
     if(release_dependent_indicators){
       decode_target<-unlist(strsplit(target ,"/staging/"))[2]
       decode_target<-unlist(strsplit(decode_target,"/"))
@@ -328,6 +330,7 @@ computation_server <- function(id, pool) {
         if(length(indicators_to_release)>0){
           
           for(dependent_target in indicators_to_release){
+            print(dependent_target)
             releaseIndicator(
               out = out,
               session = session,
@@ -350,10 +353,9 @@ computation_server <- function(id, pool) {
     
     session$userData$computation_new(Sys.time())
     if(file.exists(gsub("staging", "release", target))){
-      target<-NULL
       out$results <- getComputationResults(out$indicator)
+      torelease(NULL) #reinitialize reactive
     }
-    torelease(target)
     
     return(out)
     
@@ -1241,13 +1243,9 @@ computation_server <- function(id, pool) {
         INFO("Click on %s release button",idx)
         
         filename <- paste0(out$indicator$id, "_", indicator_status()[i,"Period"], ".csv")
-        print(filename)
         filepath_staging <- file.path(appConfig$store, "staging", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
-        print(filepath_staging)
         filepath <- file.path(appConfig$store, "release", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
-        print(filepath)
         torelease(filepath_staging)
-        print(filepath_staging)
         alreadyReleased <- file.exists(filepath)
         showModal(releaseModal(session, warning = alreadyReleased))
       },ignoreInit = T)
@@ -1312,7 +1310,17 @@ computation_server <- function(id, pool) {
           }
         }
         
-        computeIndicator(out=out,session=session,computation_indicator=indicator(),computation_target="release+staging",computation_year=computation_year,computation_quarter=computation_quarter,computation_month=computation_month,compute_dependent_indicators=TRUE)
+        computeIndicator(
+          out = out,
+          session = session,
+          computation_indicator = indicator(),
+          computation_target = "release+staging",
+          computation_year = computation_year,
+          computation_quarter = computation_quarter,
+          computation_month = computation_month,
+          compute_dependent_indicators = TRUE
+        )
+        
         },ignoreInit = T)
       
         
@@ -1350,7 +1358,9 @@ computation_server <- function(id, pool) {
   #--------------------------------------------------------
   #This event release the indicator and update the result
   observeEvent(input$goRelease, {
+    WARN("Triggered Release!!!")
     out<-releaseIndicator(out=out,session=session,target=torelease(),release_dependent_indicators=input$releaseDependent)
+    reloader <- reloader(id)
     removeModal()
   })
   

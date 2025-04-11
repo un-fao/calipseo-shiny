@@ -17,6 +17,15 @@ listModuleProfiles <- function(config, core = TRUE, country = TRUE){
   return(default_module_profiles)
 }
 
+#loadModuleProfile
+loadModuleProfile <- function(filename){
+  profile <- jsonlite::read_json(filename)
+  if(is.null(profile$enabled)) profile$enabled <- TRUE
+  if(is.null(profile$menu)) profile$menu <- FALSE
+  if(is.null(profile$icon)) profile$icon <- "angle-double-right"
+  return(profile)
+}
+
 #loadModuleScripts
 loadModuleScripts <- function(config){
   default_module_profiles <- listModuleProfiles(config)
@@ -70,27 +79,68 @@ i18n <- function(term){
 }
 
 #loadModuleServers
-loadModuleServers <- function(config, pool){
+loadModuleServers <- function(config, pool, reloader){
+  INFO("=> Loading Module Servers")							   
   default_module_profiles <- listModuleProfiles(config)
+  if(!is.null(reloader())){
+    core_module_file = paste0("./modules/core/",reloader(),".json")
+    is_core_module = file.exists(core_module_file)
+    is_cnt_module = FALSE
+    if(!is_core_module){
+      cnt_module_file = sprintf("./modules/country/%s/%s.json", config$country_profile$iso3, reloader())
+      is_cnt_module = file.exists(cnt_module_file)
+      if(is_cnt_module) module_file = cnt_module_file
+    }else{
+      module_file = core_module_file
+    }
+    if(!is_core_module & !is_cnt_module) return(NULL);
+    
+    reloader_profile<-loadModuleProfile(module_file)
+    modules_to_reload<-reloader_profile$linked_modules
+    if("*" %in% modules_to_reload){
+      modules_to_reload = list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
+    }
+    if(length(modules_to_reload)>0){
+      INFO("Module '%s' has triggered reloading event. The following modules are going to be reload: %s",reloader(),paste0(modules_to_reload,collapse =", "))
+      default_module_profiles<-lapply(modules_to_reload, function(x){
+        module_out = NULL
+        module_path = paste0("./modules/core/",x,".json")
+        if(file.exists(module_path)){
+          module_out = module_path
+        }else{
+          module_path = sprintf("./modules/country/%s/%s.json", config$country_profile$iso3, x)
+          if(file.exists(module_path)){
+            module_out = module_path
+          }
+        }
+        return(module_out)
+      })
+      default_module_profiles = unlist(default_module_profiles[!sapply(default_module_profiles, is.null)])
+    }else{
+      return(NULL)
+    }
+  }  
   for(module_profile in default_module_profiles){
     module <- unlist(strsplit(unlist(strsplit(module_profile, paste0(dirname(module_profile),"/")))[2], ".json"))[1]
-    outp <- jsonlite::read_json(module_profile)
-    if(outp$type != "internal"){
+    outp <- loadModuleProfile(module_profile)
+    if(outp$type != "internal" && !outp$menu){
       enabled = TRUE
       module_config = config$modules[[module]]
       has_config = !is.null(module_config)
       if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
       if(enabled){
-        INFO("Loading shiny module '%s' server functions...", module)
+        INFO("%s shiny module '%s' server functions...",ifelse(!is.null(reloader()),"Reloading","Loading"),module)
         server_fun_name <- paste0(module, "_server")
-        server_fun <- try(eval(expr = parse(text = server_fun_name)))
-        if(!is(server_fun, "try-error")){
-          called <- try(server_fun(module, pool))
-          if(is(called, "try-error")){
-            ERROR("Error while calling shiny module '%s'", module)
+        server_fun <- try(eval(expr = parse(text = server_fun_name)), silent = TRUE)
+        if(!is.null(server_fun)){
+          if(!is(server_fun, "try-error")){
+            called <- try(server_fun(module, pool, reloader))
+            if(is(called, "try-error")){
+              ERROR("Error while calling shiny module '%s'", module)
+            }
+          }else{
+            ERROR("Error while evaluating server function '%s'", server_fun_name)
           }
-        }else{
-          ERROR("Error while evaluating server function '%s'", server_fun_name)
         }
       }
     }

@@ -1,5 +1,5 @@
 #landings1_charts_server
-landings1_charts_server <- function(id, pool){
+landings1_charts_server <- function(id, pool, reloader){
 
  moduleServer(id, function(input, output, session){    
     

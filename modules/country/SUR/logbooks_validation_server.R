@@ -1,5 +1,5 @@
 #logbooks_validation_server
-logbooks_validation_server <- function(id, pool) {
+logbooks_validation_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
     

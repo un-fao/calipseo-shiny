@@ -1,5 +1,5 @@
 #logbooks_export_server
-logbooks_export_server <- function(id, pool) {
+logbooks_export_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
     

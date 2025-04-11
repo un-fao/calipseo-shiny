@@ -1,5 +1,5 @@
 #individual_info_server
-individual_info_server <- function(id, pool) {
+individual_info_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {
     
