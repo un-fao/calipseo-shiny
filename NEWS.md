@@ -3,6 +3,7 @@
 # New features
 
 * [#228](https://github.com/un-fao/calipseo-shiny/issues/228) Support renv and docker caching
+* [#236](https://github.com/un-fao/calipseo-shiny/issues/236) Allow text as argument of statistical indicator computation setting
 * [#237](https://github.com/un-fao/calipseo-shiny/issues/237) Implement reactivity of modules after tasks are performed in other modules
 
 # Enhancements
