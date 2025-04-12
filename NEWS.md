@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny/v2.0.0) - 2025-04-11**
+# **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
 
 # New features
 
@@ -9,7 +9,7 @@
 
 * [#235](https://github.com/un-fao/calipseo-shiny/issues/235) Artfish standardization & packaging - refactoring of computation/visualization modules
 
-# **calipseo-shiny [v1.6.0](https://github.com/un-fao/calipseo-shiny/v1.6.0) - 2024-12-13**
+# **calipseo-shiny [v1.6.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.6.0) - 2024-12-13**
 
 ## Corrections
 
