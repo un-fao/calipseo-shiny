@@ -1,0 +1,43 @@
+{
+  /*Logbook validation title*/
+  "LOGBOOKS_VALIDATION_TITLE" : "Validate Artisanal data",
+  "LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE" : "Import a data file",
+  "ACTIONBUTTON_LABEL_TEST_VALIDITY" : "Test file validity",
+  "VALIDATION_PROGRESS_MESSAGE" : "Dataset validation in progress ... ",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPID" : "Trip ID",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_ON" : "on",
+  "VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPS" : "trips",
+  
+  /*Referentials*/
+  "REFERENTIAL_UPDATE_LABEL" : "Referential(s) to update",
+  "NUMBER_REFERENTIAL_INSPECT" : "Number of referential(s) to inspect",
+  "NUMBER_REFERENTIAL_UPDATE" : "Number of referential(s) to update",
+  "NUMBER_REFERENTIAL_UPTODATE" : "All referentials used in this dataset are up-to-date",
+  "REFERENTIAL_TABLE_COLNAME_1" : "Table",
+  "REFERENTIAL_TABLE_COLNAME_2" : "Value",
+  "REFERENTIAL_TABLE_COLNAME_3" : "Issue Level",
+  "REFERENTIAL_TABLE_COLNAME_4" : "Description",
+  "REFERENTIAL_TABLE_DATA_FILENAME" : "ref_to_add_",
+  
+  /*Errors*/
+  "ERROR_IN_DATA_TITLE" : "Error(s) in data",
+  "NUMBER_NON_BLOCKING_ISSUES" : "Number of non-blocking issue(s)",
+  "NUMBER_BLOCKING_ISSUES" : "Number of blocking issue(s)",
+  "NO_ISSUES_DETECTED" : "No issues detected in this dataset",
+  "ERROR_TABLE_COLNAME_1" : "Trip ID",
+  "ERROR_TABLE_COLNAME_2" : "Vessel Registration",
+  "ERROR_TABLE_COLNAME_3" : "Issue Level",
+  "ERROR_TABLE_COLNAME_4" : "Issue Domain",
+  "ERROR_TABLE_COLNAME_5" : "Description",
+  "ERROR_TABLE_DATA_FILENAME" : "errors_",
+  
+  "LOGBOOK_VALIDATION_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
+  
+  /*sql file*/
+  
+  "GENERATE_SQL_FILE" : "Generate SQL file",
+  "GENERATE_REPORT_FILE" : "Download report file",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+  
+}
