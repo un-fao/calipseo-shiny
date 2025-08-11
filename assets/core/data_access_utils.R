@@ -711,6 +711,20 @@ accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
   return(fa)
 }
 
+#accessArtfishARegionFromDB
+accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQLScript("data/core/sql/artfish_A_active_vessels_region.sql")
+  
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- suppressWarnings(dbGetQuery(con, fa_sql))
+  return(fa)
+}
+
 
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -1071,6 +1085,11 @@ accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 #accessArtfishD
 accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessArtfishARegion
+accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
 
 #Country profile
