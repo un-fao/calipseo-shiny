@@ -1,4 +1,4 @@
-SELECT
+SELECT 
 fs.`YEAR` as year, 
 fs.CL_APP_MONTH_ID as month, 
 fs.CL_FISH_LANDING_SITE_ID as landing_site, 

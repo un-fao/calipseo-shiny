@@ -12,12 +12,11 @@
 #'@param artfish_results cvs produce by artfish_compute_report
 #'@param active_vessels from sql query with region (cl_ref_admin_level_1)
 #'@param active_vessels_strategy latest (takes the previous frame survey) or closest (takes the closest frame survey)
+#'@param repartition_var a label for the repartition column
 #'@return a \link[tibble]{tibble} object giving catch by the choosen parameter
 #'@export
 
-
-
-compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NULL, artfish_results, active_vessels, active_vessels_strategy){
+compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NULL, artfish_results, active_vessels, active_vessels_strategy,repartition_label=NULL){
   
   # select_active with ref_period from artfish results
   ref_period <- as.Date(paste0(unique(artfish_results$year),"-",unique(sprintf("%02d", artfish_results$month)),"-01"))
@@ -53,7 +52,13 @@ compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NUL
   
   estimates_expanded$catch_repart_var<-estimates_expanded$ratio*estimates_expanded$catch_nominal_landed
   
-  
+  if(!is.null(repartition_label)){
+    estimates_expanded<-estimates_expanded%>%
+      rename(setNames("repart_var",repartition_label))%>%
+      rename(setNames("catch_repart_var",paste0("catch_",repartition_label)))
+  }
+    
+      
   return(estimates_expanded)
 }
 
