@@ -1,3 +1,18 @@
+# **calipseo-shiny [v1.7.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.1) - PENDING**
+
+# Corrections
+
+_TBD_
+
+# Enhancements
+
+- [#251](https://github.com/un-fao/calipseo-shiny/issues/251) Cleanout `shinyauthr` related codes (not used anymore in context of ShinyProxy deployments)
+
+# New features
+
+_TBD_
+
+
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
 
 # New features

@@ -149,14 +149,14 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.0.10",
+      "Version": "1.0.14",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Requirements": [
         "methods",
         "utils"
       ],
-      "Hash": "e749cae40fa9ef469b6050959517453c"
+      "Hash": "e7bdd9ee90e96921ca8a0f1972d66682"
     },
     "artfishr": {
       "Package": "artfishr",
@@ -164,10 +164,9 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "fdiwg",
       "RemoteRepo": "artfishr",
-      "RemoteRef": "main",
-      "RemoteSha": "f8075c54154ced7031b18e23c1f8b71a891711ee",
+      "RemoteUsername": "fdiwg",
+      "RemoteSha": "68e82ce701518a456860198cd9549fc01ad550d2",
       "Requirements": [
         "R",
         "dplyr",
@@ -178,7 +177,7 @@
         "tidyr",
         "vrule"
       ],
-      "Hash": "3f02aaca34fcc5193ac9312b698e10bc"
+      "Hash": "ad0359b72efc82116758b93a08b14cec"
     },
     "askpass": {
       "Package": "askpass",
@@ -1600,21 +1599,6 @@
       ],
       "Hash": "4c00b64347509091f39c01c52f8d9e4c"
     },
-    "shinyauthr": {
-      "Package": "shinyauthr",
-      "Version": "1.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "dplyr",
-        "glue",
-        "rlang",
-        "shiny",
-        "shinyjs",
-        "sodium"
-      ],
-      "Hash": "44eb8cee6d3f7a84ea56008ffecb209b"
-    },
     "shinycssloaders": {
       "Package": "shinycssloaders",
       "Version": "1.1.0",
@@ -1671,13 +1655,6 @@
         "shiny"
       ],
       "Hash": "802e4786b353a4bb27116957558548d5"
-    },
-    "sodium": {
-      "Package": "sodium",
-      "Version": "1.3.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "dd86d6fd2a01d4eb3777dfdee7076d56"
     },
     "sortable": {
       "Package": "sortable",
@@ -1970,7 +1947,7 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "vrule",
       "RemoteUsername": "fdiwg",
-      "RemoteSha": "3afcd6263bfc567ae3532fa5063a47a925906894",
+      "RemoteSha": "4683584e0deeba091912fb77d5bed936211a7dd0",
       "Requirements": [
         "R",
         "R6",
@@ -1982,7 +1959,7 @@
         "rhandsontable",
         "stringi"
       ],
-      "Hash": "e9e7e70240a3732ce67bcfd8971ff7d8"
+      "Hash": "86c6757de12922b5995741aabf5e7d58"
     },
     "waiter": {
       "Package": "waiter",
