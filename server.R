@@ -3,7 +3,7 @@
 server <- function(input, output, session) {
   
   onStop(function(){
-    resetAuthSessionVariables(session)
+    
   })
   
   #page management
@@ -12,98 +12,11 @@ server <- function(input, output, session) {
   loadedSideUI <- reactiveVal(FALSE)
   loadedMainUI <- reactiveVal(FALSE)
   
-  if(appConfig$auth){
-    #auth mode    
-    auth_info <- reactiveVal(NULL)
-    
-    if(appConfig$auth_ui){
-      #auth with UI
-      credentials <- authLoginServer(
-        id = "login",
-        config = appConfig,
-        log_out = reactive(logout_init())
-      )
-    
-      #call the logout module with reactive trigger to hide/show
-      logout_init <- shinyauthr::logoutServer(
-        id = "logout",
-        active = reactive(credentials()$user_auth)
-      )
-      
-      observe({
-        if (credentials()$user_auth) {
-          
-          info = credentials()$auth_info
-          info$logged <- credentials()$user_auth
-          auth_info(info)
-          
-          if(!is.null(auth_info())){
-            initAuthSessionVariables(session, auth_info())
-            INFO("Set-up shiny-calipseo in auth mode")
-            shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
-            shinyjs::show(selector = "header")
-            loadModuleServers(appConfig, pool, reloader = NULL) #TODO pass auth_info to all modules?
-          }
-          
-        } else {
-          shinyjs::addClass(selector = "body", class = "sidebar-collapse")
-          shinyjs::hide(selector = "header")
-        }
-      })
-    }else{
-      #auth without UI
-      shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
-      shinyjs::show(selector = "header")
-      
-      #TODO auth through URL token passing?
-      #Shiny proxy?
-      
-    }
-  }else{
-    #anonymous usage
-    observe({
-      INFO("Set-up calipseo-shiny in anonymous mode")
-      #shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
-      #shinyjs::show(selector = "header")
-      loadModuleServers(appConfig, pool, reloader)
-    })
-  }
-  
-  #side UI
-  #output$side_ui <- renderUI({
-  #  print(loadedSideUI())
-  #  if(!loadedSideUI()){
-  #    loadedSideUI(TRUE)
-  #    if(appConfig$auth){
-  #      if(appConfig$auth_ui){
-  #        req(credentials()$user_auth)
-  #        sidebarMenuFromModules(appConfig)
-  #      }else{
-  #        sidebarMenuFromModules(appConfig)
-  #      }
-  #    }else{
-  #      sidebarMenuFromModules(appConfig)
-  #    }
-  #  }
-    
-  #})
-  #main UI
-  #output$main_ui <- renderUI({
-  #  print(loadedMainUI())
-  #  if(!loadedMainUI()){
-  #    loadedMainUI(TRUE)
-  #    if(appConfig$auth){
-  #      if(appConfig$auth_ui){
-  #        req(credentials()$user_auth)
-  #        loadModuleUIs(appConfig)
-  #      }else{
-  #        loadModuleUIs(appConfig)
-  #      }
-  #    }else{
-  #      loadModuleUIs(appConfig)
-  #    }
-  #  }
-  #})
+  #anonymous usage
+  observe({
+    INFO("Set-up calipseo-shiny")
+    loadModuleServers(appConfig, pool, reloader)
+  })
   
   observe({
     currentPage <- NA

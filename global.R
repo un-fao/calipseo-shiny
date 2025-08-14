@@ -17,7 +17,6 @@ source("assets/core/package_utils.R")
 require(dotenv)
 require(htmltools)
 require(shiny)
-require(shinyauthr)
 require(shinydashboard)
 require(shinydashboardPlus)
 require(shinyWidgets)
@@ -75,8 +74,6 @@ if(nzchar(local_config_file)){
 }
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 appConfig$local <- local
-
-if(is.null(appConfig$auth)) appConfig$auth <- FALSE
 
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"

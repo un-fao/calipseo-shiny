@@ -13,10 +13,6 @@ openfismis:
         port: 3306
         user: root
         password: root
-
-auth: false
-auth_ui: true
-auth_endpoint: https://calipseo-lebanon.review.fao.org
     
 structure:
     home:
