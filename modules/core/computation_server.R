@@ -136,6 +136,9 @@ computation_server <- function(id, pool, reloader) {
     
     if(compute_dependent_indicators){
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
+      
+      target_period <-indicator$compute_by$period
+      
       indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
         parts <- unlist(strsplit(fun_arg_value, ":"))
@@ -148,36 +151,48 @@ computation_server <- function(id, pool, reloader) {
         if(key=="process")return(value)}))
       
       for(indicator in indicators){
+        
         process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
         
-        release_periods <- getStatPeriods(config = appConfig, id = indicator, target = "release")
-        #release_periods df(year, month)
-        year_already_computed <- release_periods[release_periods$year == computation_year, ]
+        process_period<-process_def$compute_by$period
         
-        if(nrow(year_already_computed)>0){
-          periods_already_computed <- year_already_computed[,process_def$compute_by$period]
-          periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = setdiff(rep(1:12), periods_already_computed),
-                                       "quarter" = setdiff(rep(1:4), periods_already_computed)
-          )
-        }else{
-          periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = rep(1:12),
-                                       "quarter" = rep(1:4)
-          )
-        }
+        if(target_period=="year"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="year"&process_period=="quarter")period_to_compute<-data.frame(year=rep(computation_year,4),month=NA,quarter=c(1:4))
+        if(target_period=="year"&process_period=="month")period_to_compute<-data.frame(year=rep(computation_year,12),month=c(1:12),quarter=NA)
+        if(target_period=="quarter"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="quarter"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=computation_quarter)
+        if(target_period=="quarter"&process_period=="month")period_to_compute<-data.frame(year=rep(computation_year,3),month=switch(as.character(computation_quarter),
+                                                                                                                   "1"=c(1:3),
+                                                                                                                   "2"=c(4:6),
+                                                                                                                   "3"=c(7,9),
+                                                                                                                   "4"=c(10,12)),quarter=NA)
+        if(target_period=="month"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
+        if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        if(length(periods_to_compute)>0){
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= indicator))
+        
+        release_periods<-getStatPeriods(config = appConfig, id = indicator, target = "release")
+        
+        if(process_period == "month") release_periods$month=as.numeric(gsub("M","",release_periods$month))
+        if(process_period == "quarter") release_periods$quarter=as.numeric(gsub("Q","",release_periods$quarter))
+        
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%anti_join(release_periods%>%mutate(year=as.numeric(year)))
+
+        if(nrow(period_to_compute)>0){
           
-          for(period in periods_to_compute){
+          for(i in 1:nrow(period_to_compute)){
+            
+            period<-period_to_compute[i,]
+            
             computeIndicator(
               out = out,
               session = session,
               computation_indicator = indicator,
               computation_target = computation_target,
               computation_year = computation_year,
-              computation_quarter = if(process_def$compute_by$period == "quarter") period else NULL ,
-              computation_month = if(process_def$compute_by$period == "month") period else NULL,
+              computation_quarter = if(process_period == "quarter") period$quarter else NULL ,
+              computation_month = if(process_period == "month") period$month else NULL,
               compute_dependent_indicators = TRUE
             )
           }
@@ -579,51 +594,51 @@ computation_server <- function(id, pool, reloader) {
       period_key <- available_periods_parts[1]
       period_value <- available_periods_parts[2]
       
-      if(period_key=="data"){
+      #if(period_key=="data"){
         releasable<-TRUE
         return(releasable)
-      }else{
-        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-        
-        target<-unlist(strsplit(target_period, "-"))
-          
-        releasable<-if(length(target)==1){
-          if("month"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new,year==target[1]))/12
-          }else if("quarter"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new,year==target[1]))/4
-          }else{
-            nrow(subset(available_periods_new,year==target[1]))
-          }
-        }else{
-          if(grepl("M",target[1])){
-            target[2]<-gsub("M","",target[2])
-              
-            nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
-          }
-          if(grepl("Q",target[1])){
-            if("month"%in% names(available_periods_new)){
-              months<-switch(target[2],
-                              "Q1"=c(1:3),
-                              "Q2"=c(4:6),
-                              "Q3"=c(7:9),
-                              "Q4"=c(10:12))
-              nrow(subset(available_periods_new,year==target[1],month%in%months))/3
-            }else{
-              nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
-            }
-          }
-        }
-        
-        releasable<-releasable==1
-          
-        if(!releasable){
-          return(releasable)
-        }else{
-          sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
-          releasable<-all(releasable,sub_releasable) 
-        }
-      }
+      # }else{
+      #   available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
+      #   
+      #   target<-unlist(strsplit(target_period, "-"))
+      #     
+      #   releasable<-if(length(target)==1){
+      #     if("month"%in% names(available_periods_new)){
+      #       nrow(subset(available_periods_new,year==target[1]))/12
+      #     }else if("quarter"%in% names(available_periods_new)){
+      #       nrow(subset(available_periods_new,year==target[1]))/4
+      #     }else{
+      #       nrow(subset(available_periods_new,year==target[1]))
+      #     }
+      #   }else{
+      #     if(grepl("M",target[1])){
+      #       target[2]<-gsub("M","",target[2])
+      #         
+      #       nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
+      #     }
+      #     if(grepl("Q",target[1])){
+      #       if("month"%in% names(available_periods_new)){
+      #         months<-switch(target[2],
+      #                         "Q1"=c(1:3),
+      #                         "Q2"=c(4:6),
+      #                         "Q3"=c(7:9),
+      #                         "Q4"=c(10:12))
+      #         nrow(subset(available_periods_new,year==target[1],month%in%months))/3
+      #       }else{
+      #         nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
+      #       }
+      #     }
+      #   }
+      #   
+      #   releasable<-releasable==1
+      #     
+      #   if(!releasable){
+      #     return(releasable)
+      #   }else{
+      #     sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
+      #     releasable<-all(releasable,sub_releasable) 
+      #   }
+      # }
         
       return(releasable)
     })
