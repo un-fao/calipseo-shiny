@@ -11,13 +11,7 @@ server <- function(input, output, session) {
   
   loadedSideUI <- reactiveVal(FALSE)
   loadedMainUI <- reactiveVal(FALSE)
-  
-  #anonymous usage
-  observe({
-    INFO("Set-up calipseo-shiny")
-    loadModuleServers(appConfig, pool, reloader)
-  })
-  
+
   observe({
     currentPage <- NA
     #look if there is a page in URL, if yes use it
