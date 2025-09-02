@@ -1,8 +1,8 @@
-# **calipseo-shiny [v1.7.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.1) - PENDING**
+# **calipseo-shiny [v1.7.0.9999](https://github.com/un-fao/calipseo-shiny) - PENDING**
 
 # Corrections
 
-_TBD_
+- [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
 
 # Enhancements
 
