@@ -3,6 +3,7 @@
 # Corrections
 
 - [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
+- [#255](https://github.com/un-fao/calipseo-shiny/issues/255) Computation module UI button events are not destroyed after UI update
 
 # Enhancements
 
