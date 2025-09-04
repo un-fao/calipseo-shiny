@@ -719,8 +719,6 @@ accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL,fishing_unit =
     fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
 }
@@ -732,8 +730,6 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
   if(!is.null(fishing_unit)){
     fa_sql <- paste0(fa_sql, sprintf("fs.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
-  
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, fs.CL_FISH_FISHING_UNIT_ID")
   
   fa <- suppressWarnings(dbGetQuery(con, fa_sql))
   return(fa)
