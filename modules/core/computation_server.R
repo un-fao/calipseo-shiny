@@ -594,51 +594,51 @@ computation_server <- function(id, pool, reloader) {
       period_key <- available_periods_parts[1]
       period_value <- available_periods_parts[2]
       
-      #if(period_key=="data"){
-        releasable<-TRUE
+      releasable<-TRUE
+      if(period_key=="data"){
+        #TODO?
+        #for now there check over input data coverage
+        #to discuss if we need to be more permissive on isReleasable and leave this to user
+        #with a warning in case data coverage is not full for the indicator to be released
+        #instead of disabling the 'release' button
         return(releasable)
-      # }else{
-      #   available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-      #   
-      #   target<-unlist(strsplit(target_period, "-"))
-      #     
-      #   releasable<-if(length(target)==1){
-      #     if("month"%in% names(available_periods_new)){
-      #       nrow(subset(available_periods_new,year==target[1]))/12
-      #     }else if("quarter"%in% names(available_periods_new)){
-      #       nrow(subset(available_periods_new,year==target[1]))/4
-      #     }else{
-      #       nrow(subset(available_periods_new,year==target[1]))
-      #     }
-      #   }else{
-      #     if(grepl("M",target[1])){
-      #       target[2]<-gsub("M","",target[2])
-      #         
-      #       nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
-      #     }
-      #     if(grepl("Q",target[1])){
-      #       if("month"%in% names(available_periods_new)){
-      #         months<-switch(target[2],
-      #                         "Q1"=c(1:3),
-      #                         "Q2"=c(4:6),
-      #                         "Q3"=c(7:9),
-      #                         "Q4"=c(10:12))
-      #         nrow(subset(available_periods_new,year==target[1],month%in%months))/3
-      #       }else{
-      #         nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
-      #       }
-      #     }
-      #   }
-      #   
-      #   releasable<-releasable==1
-      #     
-      #   if(!releasable){
-      #     return(releasable)
-      #   }else{
-      #     sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
-      #     releasable<-all(releasable,sub_releasable) 
-      #   }
-      # }
+      }else{
+        #check over dependent indicator available periods
+        available_periods_new <- getAvailablePeriods(id = period_value, config = config, indicators = indicators)
+        target <- unlist(strsplit(target_period, "-"))
+        releasable <- if(length(target) == 1){
+          if("month"%in% names(available_periods_new)){
+            nrow(subset(available_periods_new, year == as.integer(target[1])))/12
+          }else if("quarter"%in% names(available_periods_new)){
+            nrow(subset(available_periods_new, year == as.integer(target[1])))/4
+          }else{
+            nrow(subset(available_periods_new, year == as.integer(target[1])))
+          }
+        }else{
+          if(grepl("M",target[2])){
+            target[2] <- gsub("M","",target[2])
+            nrow(subset(available_periods_new, year == as.integer(target[1]) & month == as.integer(target[2])))/1
+          }else if(grepl("Q",target[2])){
+            if("month"%in% names(available_periods_new)){
+              months<-switch(target[2],
+                              "Q1"=c(1:3),
+                              "Q2"=c(4:6),
+                              "Q3"=c(7:9),
+                              "Q4"=c(10:12))
+              nrow(subset(available_periods_new, year == as.integer(target[1]) & month %in% months))/3
+            }else{
+              nrow(subset(available_periods_new,year == as.integer(target[1]) & quarter == target[2]))/1
+            }
+          }
+        }
+        releasable <- releasable == 1
+        if(!releasable){
+          return(releasable)
+        }else{
+          sub_releasable <- isReleasable(id = period_value, target, config = config, indicators = indicators)
+          releasable <- all(releasable, sub_releasable)
+        }
+      }
         
       return(releasable)
     })
