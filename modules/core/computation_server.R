@@ -888,16 +888,11 @@ computation_server <- function(id, pool, reloader) {
       }
       return (nodes)
     }
-    
-    
-    print("pipo")
+
     target <- Traverse(tree, filterFun = function(x){ x$level == 1 & x$type=="process" })
-    print("pipo2")
     process <- Traverse(tree, filterFun = function(x){ x$level > 1 & x$type=="process"})
     data <- Traverse(tree, filterFun = function(x) x$type =="data")
     local <- Traverse(tree, filterFun = function(x) x$type =="local")
-    
-   
     
     Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
     Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
