@@ -3,6 +3,9 @@ home_server <- function(id, pool, reloader){
   
  moduleServer(id, function(input, output, session) {
   
+  INFO("home: START")
+  MODULE_START_TIME <- Sys.time()
+  
   infos_fetched <- reactiveVal(FALSE)
   infos <- reactiveValues(
     count_vessels = NULL,
@@ -40,6 +43,9 @@ home_server <- function(id, pool, reloader){
       )
     })
     
+    MODULE_END_TIME <- Sys.time()
+    INFO("home: END")
+    DEBUG_MODULE_PROCESSING_TIME("Home", MODULE_START_TIME, MODULE_END_TIME)
   })
   
  })

@@ -39,7 +39,7 @@ getFromSQL <- function(con, sql){
   sql_data <- suppressWarnings(dbGetQuery(con, sql))
   end <- Sys.time()
   time = end-start
-  DEBUG("=> Query processing time: %s %s", as(time, "numeric"), attr(time, "units"))
+  DEBUG("\u23F3 Query processing time: %s %s", as(time, "numeric"), attr(time, "units"))
   return(sql_data)
 }
 

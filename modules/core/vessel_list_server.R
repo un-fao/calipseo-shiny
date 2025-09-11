@@ -3,6 +3,9 @@ vessel_list_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {  
     
+    INFO("vessel-list: START")
+    MODULE_START_TIME = Sys.time()
+    
     ns <- session$ns
     
     output$vessel_list_info <- renderText({
@@ -152,5 +155,12 @@ vessel_list_server <- function(id, pool, reloader) {
       )
       
     )
+    
+    MODULE_END_TIME <- Sys.time()
+    MODULE_TIME <- MODULE_END_TIME - MODULE_START_TIME
+    INFO("vessel-list: END")
+    DEBUG_MODULE_PROCESSING_TIME("Home", MODULE_START_TIME, MODULE_END_TIME)
+    
+    
   }) 
 }
