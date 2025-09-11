@@ -75,6 +75,9 @@ if(nzchar(local_config_file)){
 appConfig <- suppressWarnings(yaml::read_yaml(config_file))
 appConfig$local <- local
 
+#debug
+if(is.null(appConfig$debug)) appConfig$debug <- FALSE
+
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
 

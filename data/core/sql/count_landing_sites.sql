@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM cl_fish_landing_sites 

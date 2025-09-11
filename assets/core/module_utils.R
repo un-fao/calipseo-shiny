@@ -41,7 +41,6 @@ loadModuleScripts <- function(config){
     has_config = !is.null(module_config)
     if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
     if(enabled){
-      print(module$name)
       INFO("Loading shiny module '%s' scripts...", module$name)
       source(file.path(module$dirname, paste0(module$name, "_server.R")))
       source(file.path(module$dirname, paste0(module$name, "_ui.R")))
