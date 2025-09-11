@@ -82,7 +82,7 @@ accessCountryPrefCurrencyFromDB <- function(con){
   return(country_param)
 }
 
-#<HOME>
+#<MODULE:HOME>
 #countVesselsFromDB
 countVesselsFromDB <- function(con){
   DEBUG("Count vessels")
@@ -116,14 +116,37 @@ countLandingSitesFromDB <- function(con){
   sql <- readSQL("data/core/sql/count_landing_sites.sql")
   count <- getFromSQL(con, sql)$COUNT
 }
-#countYearsFromDB
-countYearsFromDB <- function(con){
-  DEBUG("Count landing sites")
-  sql <- readSQL("data/core/sql/count_years.sql")
-  count <- getFromSQL(con, sql)$COUNT
+
+#<COMMON:VESSELS>
+#accessVesselsFromDB
+accessVesselsFromDB <- function(con){
+  DEBUG("Query Vessel list")
+  vessels_sql <- readSQL("data/core/sql/vessels.sql", language = appConfig$language)
+  vessels <- getFromSQL(con, vessels_sql)
+  return(vessels)
+}
+#accessVesselLicensePermitFromDB
+accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
+  
+  if(!is.null(registrationNumber)){
+    DEBUG("Query vessel license permits for '%s'", registrationNumber)
+    licensePermit_sql <- readSQL("data/core/sql/vessel_license_permits.sql", 
+                                 key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                 language = appConfig$language)
+    licensePermit <- getFromSQL(con, licensePermit_sql)
+  }else{
+    DEBUG("Query vessel license permits")
+    licensePermit_sql <- readSQL("data/core/sql/vessel_license_permits.sql",
+                                 language = appConfig$language)
+    licensePermit <- getFromSQL(con, licensePermit_sql)
+    
+  }
+  return(licensePermit)
 }
 
-
+#<MODULE:VESSEL_LIST>
+#accessVesselsFromDB - see <COMMON:VESSELS>
+#accessVesselLicensePermitFromDB - see <COMMON:VESSELS>
 
 #<INDIVIDUALS>
 #accessIndividualInfoFromDB
@@ -220,14 +243,6 @@ accessLandingSiteNamesFromDB <- function(con){
   landingsites <- getFromSQL(con, landingsites_sql)[,1]
   return(landingsites)
 }  
-
-#accessVesselsFromDB
-accessVesselsFromDB <- function(con){
-  DEBUG("Query Vessel list")
-  vessels_sql <- readSQL("data/core/sql/vessels.sql", language = appConfig$language)
-  vessels <- getFromSQL(con, vessels_sql)
-  return(vessels)
-}
 
 #accessVesselInfoFromDB
 accessVesselInfoFromDB <- function(con){
@@ -343,25 +358,6 @@ accessVesselsCountByStatTypeFromDB <- function(con){
   vesselstattypes_count_sql <- readSQL("data/core/sql/vessels_stat_types_count.sql",
                                              language = appConfig$language)
   getFromSQL(con, vesselstattypes_count_sql)
-}
-
-#accessVesselLicensePermitFromDB
-accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
-  
-  if(!is.null(registrationNumber)){
-    DEBUG("Query vessel license permits for '%s'", registrationNumber)
-    licensePermit_sql <- readSQL("data/core/sql/vessel_license_permits.sql", 
-                                       key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
-                                       language = appConfig$language)
-    licensePermit <- getFromSQL(con, licensePermit_sql)
-  }else{
-    DEBUG("Query vessel license permits")
-    licensePermit_sql <- readSQL("data/core/sql/vessel_license_permits.sql",
-                                       language = appConfig$language)
-    licensePermit <- getFromSQL(con, licensePermit_sql)
-    
-  }
-  return(licensePermit)
 }
 
 #accessVesselsCountByLandingSiteFromDB
@@ -800,13 +796,20 @@ accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
 
-#<HOME COUNTERS>
+#<MODULE:HOME>
 countVessels <- function(con){ countVesselsFromDB(con) }
 countVesselOwners <- function(con){ countVesselOwnersFromDB(con) }
 countVesselCaptains <- function(con){ countVesselCaptainsFromDB(con) }
 countFishingTrips <- function(con){ countFishingTripsFromDB(con) }
 countLandingSites <- function(con){ countLandingSitesFromDB(con) }
 
+#<COMMON:VESSELS>
+accessVessels <- function(con){ accessVesselsFromDB(con) }
+accessVesselLicensePermit <- function(con, registrationNumber){ accessVesselLicensePermitFromDB(con, registrationNumber) }
+
+#<MODULE:VESSEL_LIST>
+#accessVessels - see <COMMON:VESSELS>
+#accessVesselLicensePermit - see <COMMON:VESSELS>
 
 #accessIndividualInfoFromDB
 accessIndividualInfo <- function(con){
@@ -868,10 +871,7 @@ accessLandingSiteNames <- function(con){
   accessLandingSiteNamesFromDB(con)
 }
 
-#accessVessels
-accessVessels <- function(con){
-  accessVesselsFromDB(con)
-}
+
 
 #accessVesselInfo
 accessVesselInfo <- function(con){
@@ -932,13 +932,6 @@ accessIndividualCountByEdulevel <- function(con, gender_id){
 #accessIndividualOverview
 accessIndividualOverview <- function(con){
   accessIndividualOverviewFromDB(con)
-}
-
-
-
-#accessVesselLicensePermitFromDB
-accessVesselLicensePermit <- function(con, registrationNumber){
-  accessVesselLicensePermitFromDB(con, registrationNumber)
 }
 
 #accessVesselsCountByLandingSite

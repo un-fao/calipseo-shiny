@@ -265,7 +265,7 @@ vessel_info_server <- function(id, pool, reloader) {
           vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
           
           INFO("vessel-info server: Computing valid and expired license permits")
-          vessellicensepermits <- LicenseValidity(vessellicensepermits, validity_names = c('ok', 'remove'))
+          vessellicensepermits <- get_vessel_license_status(vessellicensepermits, validity_names = c('ok', 'remove'))
           
           INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
