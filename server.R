@@ -2,10 +2,6 @@
 #==========================================================================================
 server <- function(input, output, session) {
   
-  onStop(function(){
-    
-  })
-  
   #page management
   session$userData$page <- reactiveVal(NULL)
   
