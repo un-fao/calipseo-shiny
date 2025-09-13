@@ -25,7 +25,7 @@ individual_info_server <- function(id, pool, reloader) {
       
       if(!is.null(individualId)){
         
-        individual <- accessIndividual(pool,individualId)
+        individual <- accessIndividual(pool, individualNumber = individualId)
         INFO("individual-info server: Fetching individual info data with rows '%s'", nrow(individual))
         
         fishing_roles <- individual$FSH_CODE
@@ -73,8 +73,7 @@ individual_info_server <- function(id, pool, reloader) {
                   
           )
         })
-        
-        
+
         output$individual_picture <- renderUI({
           
           INFO("individual-info server: Returning Placeholder image for individual")
@@ -84,7 +83,7 @@ individual_info_server <- function(id, pool, reloader) {
           
         })
         
-        ind_roles <- accessIndividual(pool,individualNumber = NULL)[,c("FSH_CODE","FSH_ROLE")]
+        ind_roles <- accessIndividuals(pool)[,c("FSH_CODE","FSH_ROLE")]
         
         INFO("individual-info server: Fetching entire individual info data and their fishing roles with rows '%s'", nrow(ind_roles))
 

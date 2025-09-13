@@ -148,7 +148,33 @@ accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
 #accessVesselsFromDB - see <COMMON:VESSELS>
 #accessVesselLicensePermitFromDB - see <COMMON:VESSELS>
 
-#<INDIVIDUALS>
+#<MODULE:INDIVIDUAL_LIST>
+#accessIndividualFromDB
+accessIndividualsFromDB <- function(con){
+  DEBUG("Query individuals")
+  individuals_sql <- readSQL("data/core/sql/individuals.sql",
+                            language = appConfig$language)
+  individuals <- getFromSQL(con, individuals_sql)
+  return(individuals)
+}
+
+#<MODULE:INDIVIDUAL_INFO>
+#accessIndividualFromDB
+accessIndividualFromDB <- function(con, individualNumber){
+  DEBUG("Query individual '%s'", individualNumber)
+  individual_sql <- readSQL("data/core/sql/individuals.sql", 
+                            key = "ind.REG_ENTITY_ID", value = paste0("'", individualNumber, "'"), 
+                            language = appConfig$language)
+  individual <- getFromSQL(con, individual_sql)
+  return(individual)
+} 
+
+
+
+
+
+
+
 #accessIndividualInfoFromDB
 accessIndividualInfoFromDB <- function(con){
   DEBUG("Query country parameter - preferred weight unit")
@@ -262,21 +288,7 @@ accessVesselFromDB <- function(con, registrationNumber){
   return(vessel)
 }
 
-#accessIndividualFromDB
-accessIndividualFromDB <- function(con, individualNumber = NULL){
-  if(!is.null(individualNumber)){
-    DEBUG("Query vessel '%s'", registrationNumber)
-    individual_sql <- readSQL("data/core/sql/individuals.sql", 
-                                    key = "ind.REG_ENTITY_ID", value = paste0("'", individualNumber, "'"), 
-                                    language = appConfig$language)
-  }else{
-    DEBUG("Query individuals")
-    individual_sql <- readSQL("data/core/sql/individuals.sql",
-                                    language = appConfig$language)
-  }
-  individuals <- getFromSQL(con, individual_sql)
-  return(individuals)
-} 
+
 
 #accessVesselHistoricalCharacteristicsFromDB
 accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber){
@@ -811,6 +823,14 @@ accessVesselLicensePermit <- function(con, registrationNumber){ accessVesselLice
 #accessVessels - see <COMMON:VESSELS>
 #accessVesselLicensePermit - see <COMMON:VESSELS>
 
+#<MODULE:INDIVIDUAL_LIST>
+#accessIndividuals
+accessIndividuals <- function(con){ accessIndividualsFromDB(con) }
+
+#<MODULE:INDIVIDUAL_INFO>
+#accessIndividual
+accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con, individualNumber) }
+
 #accessIndividualInfoFromDB
 accessIndividualInfo <- function(con){
   accessIndividualInfoFromDB(con)
@@ -885,10 +905,7 @@ accessVessel <- function(con, registrationNumber){
 }
 
 
-#accessIndividual
-accessIndividual <- function(con, individualNumber = NULL){
-  accessIndividualFromDB(con, individualNumber)
-}
+
 
 
 #accessVesselHistoricalCharacteristics
