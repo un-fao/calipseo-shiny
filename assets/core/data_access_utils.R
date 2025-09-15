@@ -56,6 +56,19 @@ accessAvailableYearsFromDB <- function(con){
   fishing_trip_years <- getFromSQL(con, fishing_trip_years_sql)
   return(fishing_trip_years)
 }
+#accessLandingSitesFromDB
+accessLandingSitesFromDB <- function(con, sf = TRUE){
+  DEBUG("Query landing sites")
+  landingsites_sql <- readSQL("data/core/sql/landing_sites.sql",
+                              language = appConfig$language)
+  landingsites <- getFromSQL(con, landingsites_sql)
+  if(sf){
+    landingsites <- landingsites[!is.na(landingsites$LONGITUDE) & !is.na(landingsites$LATITUDE),]
+    landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  }
+  return(landingsites)
+}  
+
 
 #<COUNTRY PARAMETERS>
 #accessCountryParamFromDB
@@ -256,11 +269,23 @@ accessIndividualQaDOBFromDB <- function(con){
   return(individual_qa_dob_sql)
 }
 
-#<MODULE:LOGBOOKS_OVERVIEW>
+#<COMMON:LOGBOOKS>
 #accessLogBooksFromDB
 accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
 }
+
+#<MODULE:LOGBOOKS_OVERVIEW>
+#accessFishingActivitiesMultiyearFromDB
+accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
+  fa_sql <- readSQL("data/core/sql/fishing_activities_multiyear.sql",
+                    language = appConfig$language)
+  if(!is.null(vessel_stat_type)){
+    fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+} 
 #accessLogBooksMultiyearFromDB
 accessLogBooksMultiyearFromDB <- function(con){
   accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
@@ -308,18 +333,6 @@ accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
   return(species_catches_year)
 }
 
-#accessLandingSitesFromDB
-accessLandingSitesFromDB <- function(con, sf = TRUE){
-  DEBUG("Query landing sites")
-  landingsites_sql <- readSQL("data/core/sql/landing_sites.sql",
-                                    language = appConfig$language)
-  landingsites <- getFromSQL(con, landingsites_sql)
-  if(sf){
-    landingsites <- landingsites[!is.na(landingsites$LONGITUDE) & !is.na(landingsites$LATITUDE),]
-    landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-  }
-  return(landingsites)
-}  
 
 #accessLandingSiteNamesFromDB
 accessLandingSiteNamesFromDB <- function(con){
@@ -534,16 +547,7 @@ accessFishingActivitiesFromDB <- function(con, year,
   return(fa)
 } 
 
-#accessFishingActivitiesMultiyearFromDB
-accessFishingActivitiesMultiyearFromDB <- function(con,vessel_stat_type = NULL){
-  fa_sql <- readSQL("data/core/sql/fishing_activities_multiyear.sql",
-                          language = appConfig$language)
-  if(!is.null(vessel_stat_type)){
-    fa_sql <- paste0(fa_sql, " WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
-  }
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-} 
+
 
 #accessFishingTripsFromDB
 accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL){
@@ -803,6 +807,7 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
 #-----------------------------------------------------------------------------------------------------
 #<COMMON>
 accessAvailableYears <- function(con){ accessAvailableYearsFromDB(con) }
+accessLandingSites <- function(con, sf = TRUE){ accessLandingSitesFromDB(con, sf = sf) }
 
 #<COUNTRY PARAMETERS>
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
@@ -856,8 +861,10 @@ accessIndividualIsFisher <- function(con){
   accessIndividualIsFisherFromDB(con)
 }
 
-#<MODULE:LOGBOOKS_OVERVIEW>
+#<COMMON:LOGBOOKS>
 accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){ accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner) }
+
+#<MODULE:LOGBOOKS_OVERVIEW>
 accessLogBooksMultiyear <- function(con){ accessLogBooksMultiyearFromDB(con) }
 
 
@@ -877,10 +884,6 @@ accessSpeciesCatchesYear <- function(con, registrationNumber) {
   accessSpeciesCatchesYearFromDB(con, registrationNumber)
 }
 
-#accessLandingSites
-accessLandingSites <- function(con, sf = TRUE){
-  accessLandingSitesFromDB(con, sf = sf)
-}
 
 #accessLandingSiteNames
 accessLandingSiteNames <- function(con){
