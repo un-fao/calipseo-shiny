@@ -148,6 +148,75 @@ accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
 #accessVesselsFromDB - see <COMMON:VESSELS>
 #accessVesselLicensePermitFromDB - see <COMMON:VESSELS>
 
+#<MODULE:VESSEL_OVERVIEW>
+#accessVesselInfoFromDB
+accessVesselInfoFromDB <- function(con){
+  DEBUG("Query Vessel info list")
+  vessel_info_sql <- readSQL("data/core/sql/vessel_info.sql", language = appConfig$language)
+  vessel_info <- getFromSQL(con, vessel_info_sql)
+  return(vessel_info)
+}
+#countVesselsByLandingSiteFromDB
+countVesselsByLandingSiteFromDB <- function(con, sf = FALSE){
+  DEBUG("Count vessels by landing site")
+  vesselsites_count_sql <- readSQL("data/core/sql/vessels_landing_sites_count.sql",
+                                   language = appConfig$language)
+  sites <- getFromSQL(con,  vesselsites_count_sql)
+  if(sf){
+    sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  }
+  return(sites)
+}
+#countVesselTypesByLandingSiteFromDB
+countVesselTypesByLandingSiteFromDB <- function(con, sf = FALSE){
+  DEBUG("Count vessel types by landing site / vessel type")
+  vesselsitesvesseltype_count_sql <- readSQL("data/core/sql/vessels_landing_sites_vessel_types_count.sql",
+                                             language = appConfig$language)
+  sites <- getFromSQL(con, vesselsitesvesseltype_count_sql)
+  if(sf){
+    sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites.sf <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+    sites = cbind(sites.sf, LONGITUDE = sites$LONGITUDE, LATITUDE = sites$LATITUDE)
+  }
+  return(sites)
+}
+
+
+#<MODULE:VESSEL_QA>
+#accessVesselQaNamesFromDB
+accessVesselQaNamesFromDB <- function(con){
+  DEBUG("Query Vessel QA names")
+  vessel_qa_names_sql <- readSQL("data/core/sql/vessel_qa_names.sql")
+  vessel_qa_names <- getFromSQL(con, vessel_qa_names_sql)
+  return(vessel_qa_names)
+}
+#accessVesselQPortsFromDB
+accessVesselQaPortsFromDB <- function(con){
+  DEBUG("Query Vessel QA ports")
+  vessel_qa_ports_sql <- readSQL("data/core/sql/vessel_qa_ports.sql")
+  vessel_qa_ports <- getFromSQL(con, vessel_qa_ports_sql)
+  return(vessel_qa_ports)
+} 
+#accessVesselQaCharacteristicsFromDB
+accessVesselQaCharacteristicsFromDB <- function(con){
+  DEBUG("Query Vessel QA characteristics")
+  vessel_qa_characteristics_sql <- readSQL("data/core/sql/vessel_qa_characteristics.sql")
+  vessel_qa_characteristics <- getFromSQL(con, vessel_qa_characteristics_sql)
+  return(vessel_qa_characteristics)
+}
+#accessVesselsWithFishingTripsFromDB
+accessVesselsWithFishingTripsFromDB <- function(con, year = NULL){
+  sql <- readSQL("data/core/sql/vessels_with_fishing_trips.sql")
+  if(!is.null(year)){
+    sql <- paste0(sql, " WHERE year(ft.DATE_FROM) = '", year, "'") 
+  }
+  vessel_with_fishing_trips <- getFromSQL(con, sql)
+  return(vessel_with_fishing_trips)
+}
+#accessVesselLicensePermitFromDB -> see <COMMON:VESSELS>
+
+
 #<MODULE:INDIVIDUAL_LIST>
 #accessIndividualFromDB
 accessIndividualsFromDB <- function(con){
@@ -190,29 +259,6 @@ accessIndividualIsFisherFromDB <- function(con){
   return(individual_isfisher)
 } 
 
-#accessVesselQaNamesFromDB
-accessVesselQaNamesFromDB <- function(con){
-  DEBUG("Query Vessel QA names")
-  vessel_qa_names_sql <- readSQL("data/core/sql/vessel_qa_names.sql")
-  vessel_qa_names <- getFromSQL(con, vessel_qa_names_sql)
-  return(vessel_qa_names)
-}
-
-#accessVesselQPortsFromDB
-accessVesselQaPortsFromDB <- function(con){
-  DEBUG("Query Vessel QA ports")
-  vessel_qa_ports_sql <- readSQL("data/core/sql/vessel_qa_ports.sql")
-  vessel_qa_ports <- getFromSQL(con, vessel_qa_ports_sql)
-  return(vessel_qa_ports)
-} 
-
-#accessVesselQaCharacteristicsFromDB
-accessVesselQaCharacteristicsFromDB <- function(con){
-  DEBUG("Query Vessel QA characteristics")
-  vessel_qa_characteristics_sql <- readSQL("data/core/sql/vessel_qa_characteristics.sql")
-  vessel_qa_characteristics <- getFromSQL(con, vessel_qa_characteristics_sql)
-  return(vessel_qa_characteristics)
-} 
 
 #accessIndividualQaDOBFromDB
 accessIndividualQaDOBFromDB <- function(con){
@@ -269,14 +315,6 @@ accessLandingSiteNamesFromDB <- function(con){
   landingsites <- getFromSQL(con, landingsites_sql)[,1]
   return(landingsites)
 }  
-
-#accessVesselInfoFromDB
-accessVesselInfoFromDB <- function(con){
-  DEBUG("Query Vessel info list")
-  vessel_info_sql <- readSQL("data/core/sql/vessel_info.sql", language = appConfig$language)
-  vessel_info <- getFromSQL(con, vessel_info_sql)
-  return(vessel_info)
-}
 
 #accessVesselFromDB
 accessVesselFromDB <- function(con, registrationNumber){
@@ -372,19 +410,6 @@ accessVesselsCountByStatTypeFromDB <- function(con){
   getFromSQL(con, vesselstattypes_count_sql)
 }
 
-#accessVesselsCountByLandingSiteFromDB
-accessVesselsCountByLandingSiteFromDB <- function(con, sf = FALSE){
-  DEBUG("Count vessels by landing site")
-  vesselsites_count_sql <- readSQL("data/core/sql/vessels_landing_sites_count.sql",
-                                         language = appConfig$language)
-  sites <- getFromSQL(con,  vesselsites_count_sql)
-  if(sf){
-    sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
-    sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-  }
-  return(sites)
-}
-
 #accessVesselsLandingSiteFromDB
 accessVesselsLandingSiteFromDB <- function(con){
   DEBUG("Query vessel landing sites")
@@ -395,19 +420,6 @@ accessVesselsLandingSiteFromDB <- function(con){
 }
 
 
-#vesselsLandingsitesVesselTypesCountFromDB
-vesselsLandingSitesVesselTypesCountFromDB <- function(con, sf = FALSE){
-  DEBUG("Count vessel types by landing site")
-  vesselsitesvesseltype_count_sql <- readSQL("data/core/sql/vessels_landing_sites_vessel_types_count.sql",
-                                                   language = appConfig$language)
-  sites <- getFromSQL(con, vesselsitesvesseltype_count_sql)
-  if(sf){
-    sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
-    sites.sf <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-    sites = cbind(sites.sf, LONGITUDE = sites$LONGITUDE, LATITUDE = sites$LATITUDE)
-  }
-  return(sites)
-}
 
 
 
@@ -467,20 +479,6 @@ countFishingTripsPerVesselFromDB <- function(con, registrationNumber){
   return(fishingTripsPerVessel_sql)
 }
 
-
-#countVesselsWithOrWithoutFishingTripsFromDB
-countVesselsWithOrWithoutFishingTripsFromDB <- function(con, ftpv_activity_year = NULL){
-  
-  VesselsWithOrWithoutFishingTrips_sql <- readSQL("data/core/sql/count_vessels_with_or_without_fishing_trips.sql")
-  if(!is.null(ftpv_activity_year)){
-    VesselsWithOrWithoutFishingTrips_sql <- paste0(VesselsWithOrWithoutFishingTrips_sql, " WHERE year(ft.DATE_FROM) = '", ftpv_activity_year, "'") 
-  }
-  
-  
-  VesselsWithOrWithoutFishingTrips <- getFromSQL(con, VesselsWithOrWithoutFishingTrips_sql)
-  
-  return(VesselsWithOrWithoutFishingTrips)
-}  
 
 
 #countVesselFishingGearsFromDB
@@ -823,6 +821,18 @@ accessVesselLicensePermit <- function(con, registrationNumber){ accessVesselLice
 #accessVessels - see <COMMON:VESSELS>
 #accessVesselLicensePermit - see <COMMON:VESSELS>
 
+#<MODULE:VESSEL_OVERVIEW>
+accessVesselInfo <- function(con){ accessVesselInfoFromDB(con) }
+countVesselsByLandingSite <- function(con, sf = FALSE){ countVesselsByLandingSiteFromDB(con, sf) }
+countVesselTypesByLandingSite <- function(con, sf = FALSE){ countVesselTypesByLandingSiteFromDB(con, sf = sf) }
+
+#<MODULE:VESSEL_QA>
+accessVesselQaNames <- function(con){ accessVesselQaNamesFromDB(con) }
+accessVesselQaPorts <- function(con){ accessVesselQaPortsFromDB(con) }
+accessVesselQaCharacteristics <- function(con){ accessVesselQaCharacteristicsFromDB(con) }
+accessVesselsWithFishingTrips <- function(con, year){ accessVesselsWithFishingTripsFromDB(con, year) }
+
+
 #<MODULE:INDIVIDUAL_LIST>
 #accessIndividuals
 accessIndividuals <- function(con){ accessIndividualsFromDB(con) }
@@ -840,25 +850,6 @@ accessIndividualInfo <- function(con){
 accessIndividualIsFisher <- function(con){
   accessIndividualIsFisherFromDB(con)
 }
-
-
-#accessVesselQaNamesFromDB
-accessVesselQaNames <- function(con){
-  accessVesselQaNamesFromDB(con)
-}
-
-
-#accessVesselQaPortsFromDB
-accessVesselQaPorts <- function(con){
-  accessVesselQaPortsFromDB(con)
-}
-
-
-#accessVesselQaCharacteristicsFromDB
-accessVesselQaCharacteristics <- function(con){
-  accessVesselQaCharacteristicsFromDB(con)
-}
-
 
 #accessIndividualQaDOBFromDB
 accessIndividualQaDOB <- function(con){
@@ -892,11 +883,6 @@ accessLandingSiteNames <- function(con){
 }
 
 
-
-#accessVesselInfo
-accessVesselInfo <- function(con){
-  accessVesselInfoFromDB(con)
-}
 
 
 #accessVessel
@@ -951,10 +937,6 @@ accessIndividualOverview <- function(con){
   accessIndividualOverviewFromDB(con)
 }
 
-#accessVesselsCountByLandingSite
-accessVesselsCountByLandingSite <- function(con, sf = FALSE){
-  accessVesselsCountByLandingSiteFromDB(con, sf)
-}
 
 #accessVesselsLandingSite
 accessVesselsLandingSite <- function(con){
@@ -962,10 +944,7 @@ accessVesselsLandingSite <- function(con){
 }
 
 
-#vesselsLandingsitesvesseltypesCount
-vesselsLandingSitesVesselTypesCount <- function(con, sf = FALSE){
-  vesselsLandingSitesVesselTypesCountFromDB(con, sf = sf)
-}
+
 
 #countVesselOwnersPerVessel
 countVesselOwnersPerVessel <- function(con, registrationNumber) {
@@ -992,12 +971,6 @@ accessVesselsOwnersWithLogBooks <- function(con){
 #countFishingTripPerVessel
 countFishingTripsPerVessel <- function(con, registrationNumber){
   countFishingTripsPerVesselFromDB(con, registrationNumber)
-}
-
-
-#countVesselsWithOrWithoutFishingTripsFromDB
-countVesselsWithOrWithoutFishingTrips <- function(con, ftpv_activity_year){
-  countVesselsWithOrWithoutFishingTripsFromDB(con, ftpv_activity_year)
 }
 
 

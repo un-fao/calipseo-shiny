@@ -159,7 +159,7 @@ vessel_list_server <- function(id, pool, reloader) {
     MODULE_END_TIME <- Sys.time()
     MODULE_TIME <- MODULE_END_TIME - MODULE_START_TIME
     INFO("vessel-list: END")
-    DEBUG_MODULE_PROCESSING_TIME("Home", MODULE_START_TIME, MODULE_END_TIME)
+    DEBUG_MODULE_PROCESSING_TIME("Vessel-list", MODULE_START_TIME, MODULE_END_TIME)
     
     
   }) 
