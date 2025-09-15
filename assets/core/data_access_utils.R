@@ -256,9 +256,20 @@ accessIndividualQaDOBFromDB <- function(con){
   return(individual_qa_dob_sql)
 }
 
+#<MODULE:LOGBOOKS_OVERVIEW>
+#accessLogBooksFromDB
+accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
+}
+#accessLogBooksMultiyearFromDB
+accessLogBooksMultiyearFromDB <- function(con){
+  accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
+}
 
 
 
+
+  
 
 
 
@@ -577,16 +588,6 @@ accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = N
   accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1, vesselId = vesselId, entityOwner = entityOwner)
 }
 
-#accessLogBooksFromDB
-accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
-  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
-}
-
-#accessLogBooksMultiyearFromDB
-accessLogBooksMultiyearFromDB <- function(con){
-  accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
-}
-
 #accessLogBooksWecafcFromDB
 accessLogBooksWecafcFromDB <- function(con, year){
   accessFishingActivitiesWecafcFromDB(con, year, vessel_stat_type = 2)
@@ -855,6 +856,11 @@ accessIndividualIsFisher <- function(con){
   accessIndividualIsFisherFromDB(con)
 }
 
+#<MODULE:LOGBOOKS_OVERVIEW>
+accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){ accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner) }
+accessLogBooksMultiyear <- function(con){ accessLogBooksMultiyearFromDB(con) }
+
+
 
 #accessRefSpecies
 accessRefSpecies <- function(con,year=NULL){
@@ -990,16 +996,6 @@ countVesselLicensePermit <- function(con, registrationNumber) {
 #accessLandingForms
 accessLandingForms <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessLandingFormsFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
-}
-
-#accessLogBooks
-accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){
-  accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
-}
-
-#accessLogBooksMultiyear
-accessLogBooksMultiyear <- function(con){
-  accessLogBooksMultiyearFromDB(con)
 }
 
 #accessLogBooksWecafc
