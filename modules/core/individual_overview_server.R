@@ -3,6 +3,9 @@ individual_overview_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {  
     
+    INFO("individual-overview: START")
+    MODULE_START_TIME <- Sys.time()
+    
     ns <- session$ns
     
     output$individual_overview_info <- renderText({
@@ -11,41 +14,42 @@ individual_overview_server <- function(id, pool, reloader) {
     })
     
     ind_info <- accessIndividualInfo(pool)
-    ind_info <- ind_info[!names(ind_info)%in%c("First_name","Middle_name","Suffix_name","Salutations","FisherID")]
+    ind_info <- ind_info[!names(ind_info) %in% c("First_name","Middle_name","Suffix_name","Salutations","FisherID")]
     
-    country_params<-accessCountryParam(pool)
-    
-    is_fisher_query<-subset(country_params,CODE=="ISFISHER")$TEXT
-    if(length(is_fisher_query)>0){
-      is_fisher_table<-suppressWarnings(dbGetQuery(pool, is_fisher_query))
-      names(is_fisher_table)<-c("ID","Type")
-      is_fisher_table$Type[is_fisher_table$Type==0]<- i18n("INDIVIDUAL_TYPE_NONFISHER")
-      is_fisher_table$Type[is_fisher_table$Type==1]<- i18n("INDIVIDUAL_TYPE_FISHER")
+    is_fisher_query<-subset(COUNTRY_PARAMS,CODE=="ISFISHER")$TEXT
+    if(length(is_fisher_query) > 0){
+      DEBUG("Query 'is_fisher_table'")
+      is_fisher_table <- getFromSQL(pool, is_fisher_query)
+      names(is_fisher_table) <- c("ID","Type")
+      is_fisher_table$Type[is_fisher_table$Type==0] <- i18n("INDIVIDUAL_TYPE_NONFISHER")
+      is_fisher_table$Type[is_fisher_table$Type==1] <- i18n("INDIVIDUAL_TYPE_FISHER")
       ind_info<-merge(ind_info,is_fisher_table)
     }else{
       ind_info$Type<-NA
     }
     
-    is_fisher_active_query<-subset(country_params,CODE=="ISFISHERACTIVE")$TEXT
-    if(length(is_fisher_active_query)>0){
-      is_fisher_active_table<-suppressWarnings(dbGetQuery(pool, is_fisher_active_query))
-      names(is_fisher_active_table)<-c("ID","Status")
-      is_fisher_active_table$Status[is_fisher_active_table$Status==0]<-i18n("INDIVIDUAL_FISHER_STATUS_INACTIVE")
-      is_fisher_active_table$Status[is_fisher_active_table$Status==1]<-i18n("INDIVIDUAL_FISHER_STATUS_ACTIVE")
-      is_fisher_active_table$Status[is.na(is_fisher_active_table$Status)]<-i18n("INDIVIDUAL_TYPE_NONFISHER")
-      ind_info<-merge(ind_info,is_fisher_active_table)
+    is_fisher_active_query<-subset(COUNTRY_PARAMS,CODE=="ISFISHERACTIVE")$TEXT
+    if(length(is_fisher_active_query) > 0){
+      DEBUG("Query 'is_fisher_active_table'")
+      is_fisher_active_table <- getFromSQL(pool, is_fisher_active_query)
+      names(is_fisher_active_table) <- c("ID","Status")
+      is_fisher_active_table$Status[is_fisher_active_table$Status==0] <- i18n("INDIVIDUAL_FISHER_STATUS_INACTIVE")
+      is_fisher_active_table$Status[is_fisher_active_table$Status==1] <- i18n("INDIVIDUAL_FISHER_STATUS_ACTIVE")
+      is_fisher_active_table$Status[is.na(is_fisher_active_table$Status)] <- i18n("INDIVIDUAL_TYPE_NONFISHER")
+      ind_info<-merge(ind_info, is_fisher_active_table)
     }else{
       ind_info$Status<-NA
     }
     
     total_nb<-length(unique(ind_info$ID))
-    non_fisher_nb<-length(unique(subset(ind_info,Type==i18n("INDIVIDUAL_TYPE_NONFISHER"))$ID))
-    fisher_nb<-length(unique(subset(ind_info,Type==i18n("INDIVIDUAL_TYPE_FISHER"))$ID))
-    fisher_active_nb<-length(unique(subset(ind_info,Status==i18n("INDIVIDUAL_FISHER_STATUS_ACTIVE"))$ID))
-    license_nb<-nrow(unique(subset(ind_info,!is.na(License),select=c(ID,License))))
-    license_active_nb<-nrow(unique(subset(ind_info,!is.na(License),select=c(ID,License))))
+    non_fisher_nb<-length(unique(subset(ind_info, Type==i18n("INDIVIDUAL_TYPE_NONFISHER"))$ID))
+    fisher_nb<-length(unique(subset(ind_info, Type==i18n("INDIVIDUAL_TYPE_FISHER"))$ID))
+    fisher_active_nb<-length(unique(subset(ind_info, Status==i18n("INDIVIDUAL_FISHER_STATUS_ACTIVE"))$ID))
+    license_nb<-nrow(unique(subset(ind_info, !is.na(License), select=c(ID, License))))
+    license_active_nb<-nrow(unique(subset(ind_info, !is.na(License), select=c(ID, License))))
     
     
+    #UI for individual indicators
     output$indicators<-renderUI({
                 div(
                   column(12,
@@ -63,29 +67,24 @@ individual_overview_server <- function(id, pool, reloader) {
     })
     
     colVariables<-c()
-    
     if(!all(is.na(ind_info$Type))){
-      colVariables<-c(colVariables,c("Type"=i18n("INDIVIDUAL_PROPERTY_TYPE")))
+      colVariables<-c(colVariables,c("Type" = i18n("INDIVIDUAL_PROPERTY_TYPE")))
       ind_info$Type[is.na(ind_info$Type)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-    
     if(!all(is.na(ind_info$Status))){
-      colVariables<-c(colVariables,c("Status"=i18n("INDIVIDUAL_PROPERTY_STATUS")))
+      colVariables<-c(colVariables,c("Status" = i18n("INDIVIDUAL_PROPERTY_STATUS")))
       ind_info$Status[is.na(ind_info$Status)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-    
     if(!all(is.na(ind_info$Gender))){
       colVariables<-c(colVariables,c("Gender"=i18n("INDIVIDUAL_PROPERTY_GENDER")))
       ind_info$Gender[is.na(ind_info$Gender)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-    
     if(!all(is.na(ind_info$Education))){
-      colVariables<-c(colVariables,c("Education"=i18n("INDIVIDUAL_PROPERTY_EDUCATION")))
+      colVariables<-c(colVariables,c("Education" = i18n("INDIVIDUAL_PROPERTY_EDUCATION")))
       ind_info$Education[is.na(ind_info$Education)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-
     if(!all(is.na(ind_info$Worktime))){
-      colVariables<-c(colVariables,c("Worktime"=i18n("INDIVIDUAL_PROPERTY_WORKTIME")))
+      colVariables<-c(colVariables,c("Worktime" = i18n("INDIVIDUAL_PROPERTY_WORKTIME")))
       ind_info$Worktime[is.na(ind_info$Worktime)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
 
@@ -93,49 +92,74 @@ individual_overview_server <- function(id, pool, reloader) {
       colVariables<-c(colVariables,c("License"=i18n("INDIVIDUAL_PROPERTY_LICENSE")))
       ind_info$License[is.na(ind_info$License)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-
     if(!all(is.na(ind_info$Role))){
-      colVariables<-c(colVariables,c("Role"=i18n("INDIVIDUAL_PROPERTY_ROLE")))
+      colVariables<-c(colVariables,c("Role" = i18n("INDIVIDUAL_PROPERTY_ROLE")))
       ind_info$Role[is.na(ind_info$Role)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
     }
-     
-   if(!all(is.na(ind_info$Site))){
-      colVariables<-c(colVariables,c("Site"=i18n("INDIVIDUAL_PROPERTY_SITE")))
+    if(!all(is.na(ind_info$Site))){
+      colVariables<-c(colVariables,c("Site" = i18n("INDIVIDUAL_PROPERTY_SITE")))
       ind_info$Site[is.na(ind_info$Site)] <- i18n("INDIVIDUAL_UNKNOWN_VALUE")
-   }
+    }
      
-      pyramid_data<-ind_info%>%
-        filter(!is.na(DOB))%>%
-         mutate(Age=round(time_length(interval(DOB,Sys.Date()),"years"),0))%>%
-         select(-DOB,-Regdate,-GenderCode)%>%
-        arrange(ID,License,Role,Site)%>%
+    #pyramid data
+    pyramid_data <- ind_info %>%
+        filter(!is.na(DOB)) %>%
+         mutate(Age = round(time_length(interval(DOB, Sys.Date()),"years"),0)) %>%
+         select(-DOB,-Regdate,-GenderCode) %>%
+        arrange(ID,License,Role,Site) %>%
         group_by(ID) %>%
         mutate(License=paste0(unique(License),collapse = "+"),
                Role=paste0(unique(Role),collapse = "+"),
-               Site=paste0(unique(Site),collapse = "+"))%>%
-        ungroup()%>%
-        distinct()%>%
+               Site=paste0(unique(Site),collapse = "+")) %>%
+        ungroup() %>%
+        distinct() %>%
          filter(Age>0)
-    
     py_colVariables<-setNames(names(colVariables),colVariables)
-    print(py_colVariables)
-     pyramid_chart_server("py", df=pyramid_data,colAge="Age",colGender=c("Gender"="Gender"),colVariables=py_colVariables[py_colVariables!="Gender"],mode="plot+table")
+    
+    #pyramid chart server
+    pyramid_chart_server(
+      id = "py", 
+      df = pyramid_data,
+      colAge = "Age",
+      colGender = c("Gender"="Gender"),
+      colVariables = py_colVariables[py_colVariables!="Gender"],
+      mode = "plot+table"
+    )
      
-     sunburst_data<-ind_info%>%
-       select(-DOB,-Regdate,-GenderCode)%>%
-       arrange(ID,License,Role,Site)%>%
+    #sunburst data
+    sunburst_data <- ind_info %>%
+       select(-DOB,-Regdate,-GenderCode) %>%
+       arrange(ID,License,Role,Site) %>%
        group_by(ID) %>%
        mutate(License=paste0(unique(License),collapse = "+"),
               Role=paste0(unique(Role),collapse = "+"),
-              Site=paste0(unique(Site),collapse = "+"))%>%
-       ungroup()%>%
-       distinct()%>%
-       mutate(value=1)
+              Site=paste0(unique(Site),collapse = "+")) %>%
+       ungroup() %>%
+       distinct() %>%
+       mutate(value = 1)
 
-     sunburst_chart_server("sb", df=sunburst_data,colVariables=colVariables,colValue="value",mode="plot+table")
-     
-     pretty_table_server("pt", df=sunburst_data,colVariables=colVariables,colValue="value")
+    #sunburst chart server
+    sunburst_chart_server(
+      id = "sb", 
+      df = sunburst_data,
+      colVariables = colVariables,
+      colValue = "value",
+      mode = "plot+table"
+    )
     
+    #pretty table server 
+    pretty_table_server(
+      id = "pt", 
+      df = sunburst_data,
+      colVariables = colVariables,
+      colValue = "value"
+    )
+    
+     
+    MODULE_END_TIME <- Sys.time()
+    INFO("individual-overview: END")
+    DEBUG_MODULE_PROCESSING_TIME("Individual-overview", MODULE_START_TIME, MODULE_END_TIME)
+     
   }
   
   )}

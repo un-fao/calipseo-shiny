@@ -236,7 +236,16 @@ accessIndividualFromDB <- function(con, individualNumber){
                             language = appConfig$language)
   individual <- getFromSQL(con, individual_sql)
   return(individual)
-} 
+}
+
+#<MODULE:INDIVIDUAL_OVERVIEW>
+#accessIndividualInfoFromDB
+accessIndividualInfoFromDB <- function(con){
+  DEBUG("Query country parameter - preferred weight unit")
+  individual_info_sql <- readSQL("data/core/sql/individual_info.sql")
+  individual_info <- getFromSQL(con, individual_info_sql)
+  return(individual_info)
+}
 
 #<MODULE:INDIVIDUAL_QA>
 #accessIndividualQaDOBFromDB
@@ -245,7 +254,7 @@ accessIndividualQaDOBFromDB <- function(con){
   individual_qa_dob_sql <- readSQL("data/core/sql/individual_qa_dob.sql")
   individual_qa_dob_sql <- getFromSQL(con, individual_qa_dob_sql)
   return(individual_qa_dob_sql)
-} 
+}
 
 
 
@@ -253,13 +262,6 @@ accessIndividualQaDOBFromDB <- function(con){
 
 
 
-#accessIndividualInfoFromDB
-accessIndividualInfoFromDB <- function(con){
-  DEBUG("Query country parameter - preferred weight unit")
-  individual_info_sql <- readSQL("data/core/sql/individual_info.sql")
-  individual_info <- getFromSQL(con, individual_info_sql)
-  return(individual_info)
-} 
 
 #accessIndividualIsFisherFromDB
 accessIndividualIsFisherFromDB <- function(con){
@@ -837,6 +839,9 @@ accessVesselsWithFishingTrips <- function(con, year){ accessVesselsWithFishingTr
 #accessIndividuals
 accessIndividuals <- function(con){ accessIndividualsFromDB(con) }
 
+#<MODULE:INDIVIDUAL_OVERVIEW>
+accessIndividualInfo <- function(con){ accessIndividualInfoFromDB(con) }
+
 #<MODULE:INDIVIDUAL_INFO>
 #accessIndividual
 accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con, individualNumber) }
@@ -844,11 +849,6 @@ accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con,
 #<MODULE:INDIVIDUAL_QA>
 #accessIndividualQaDOBFromDB
 accessIndividualQaDOB <- function(con){ accessIndividualQaDOBFromDB(con) n}
-
-#accessIndividualInfoFromDB
-accessIndividualInfo <- function(con){
-  accessIndividualInfoFromDB(con)
-}
 
 #accessIndividualIsFisherFromDB
 accessIndividualIsFisher <- function(con){

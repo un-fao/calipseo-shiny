@@ -3,12 +3,14 @@ individual_info_server <- function(id, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {
     
+    INFO("individual-info: START")
+    MODULE_START_TIME <- Sys.time()
+    
     output$individual_header <- renderText({
       text <- paste0("<a href=\"./?page=individual-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">","<< ",i18n("BACK_TO_LIST_OF_INDIVIDUALS"),"</a>")
       text
     })
-    
-    
+
     observe({
 
       individualId <- NULL
@@ -130,6 +132,9 @@ individual_info_server <- function(id, pool, reloader) {
         
       }
       
+      MODULE_END_TIME <- Sys.time()
+      INFO("individual-info: END")
+      DEBUG_MODULE_PROCESSING_TIME("Individual-info", MODULE_START_TIME, MODULE_END_TIME)
       
     })
     
