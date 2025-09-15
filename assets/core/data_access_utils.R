@@ -238,6 +238,15 @@ accessIndividualFromDB <- function(con, individualNumber){
   return(individual)
 } 
 
+#<MODULE:INDIVIDUAL_QA>
+#accessIndividualQaDOBFromDB
+accessIndividualQaDOBFromDB <- function(con){
+  DEBUG("Query Individuals QA DOB")
+  individual_qa_dob_sql <- readSQL("data/core/sql/individual_qa_dob.sql")
+  individual_qa_dob_sql <- getFromSQL(con, individual_qa_dob_sql)
+  return(individual_qa_dob_sql)
+} 
+
 
 
 
@@ -257,15 +266,6 @@ accessIndividualIsFisherFromDB <- function(con){
   individual_isfisher_sql <- readSQL("data/core/sql/individual_isfisher.sql")
   individual_isfisher <- getFromSQL(con, individual_isfisher_sql)
   return(individual_isfisher)
-} 
-
-
-#accessIndividualQaDOBFromDB
-accessIndividualQaDOBFromDB <- function(con){
-  DEBUG("Query Individuals QA DOB")
-  individual_qa_dob_sql <- readSQL("data/core/sql/individual_qa_dob.sql")
-  individual_qa_dob_sql <- getFromSQL(con, individual_qa_dob_sql)
-  return(individual_qa_dob_sql)
 } 
 
 #accessRefSpeciesFromDB
@@ -841,6 +841,10 @@ accessIndividuals <- function(con){ accessIndividualsFromDB(con) }
 #accessIndividual
 accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con, individualNumber) }
 
+#<MODULE:INDIVIDUAL_QA>
+#accessIndividualQaDOBFromDB
+accessIndividualQaDOB <- function(con){ accessIndividualQaDOBFromDB(con) n}
+
 #accessIndividualInfoFromDB
 accessIndividualInfo <- function(con){
   accessIndividualInfoFromDB(con)
@@ -849,11 +853,6 @@ accessIndividualInfo <- function(con){
 #accessIndividualIsFisherFromDB
 accessIndividualIsFisher <- function(con){
   accessIndividualIsFisherFromDB(con)
-}
-
-#accessIndividualQaDOBFromDB
-accessIndividualQaDOB <- function(con){
-  accessIndividualQaDOBFromDB(con)
 }
 
 
