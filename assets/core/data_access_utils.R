@@ -848,7 +848,7 @@ accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con,
 
 #<MODULE:INDIVIDUAL_QA>
 #accessIndividualQaDOBFromDB
-accessIndividualQaDOB <- function(con){ accessIndividualQaDOBFromDB(con) n}
+accessIndividualQaDOB <- function(con){ accessIndividualQaDOBFromDB(con) }
 
 #accessIndividualIsFisherFromDB
 accessIndividualIsFisher <- function(con){
