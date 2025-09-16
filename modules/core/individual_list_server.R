@@ -45,43 +45,40 @@ individual_list_server <- function(id, pool, reloader) {
       individuals$Status <- NA
     }
     
-    test_start_time = Sys.time()
     individuals <- unique(subset(individuals, select = c(Type,Status,FisherID,Salutations,First_name,Middle_name,Suffix_name,Last_name,GenderCode,Gender,ID)))
     INFO("individual-list server: Fetching individual list after applying unique - %s rows", nrow(individuals))
-    test_end_time = Sys.time()
-    test_test = test_end_time-test_start_time
-    DEBUG("!!!!!!!!!!!!! %s %s", as(test_test, "numeric"), attr(test_test, "units"))
+    
     
     # individuals$Details <- sapply(individuals$ID, function(x){
     #  ind_outhtml <- sprintf("<a href=\"./?page=individual-info&individualNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
     #  return(ind_outhtml)
     # })
-              
+       
+    #postprocessing       
     individuals <- individuals[names(individuals) != "ID"]
-      
-    js <- js_select2_filter_provider(ns("individual_list"))
-     
-    individuals$Status<-ifelse(individuals$Status=="active",paste0(icon("anchor-circle-check",style = 'color:green'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_ACTIVE")),style='color:green;')),
-                              ifelse(individuals$Status=="inactive",paste0(icon("anchor-circle-exclamation",style = 'color:orange'),span(paste0(" ", i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_INACTIVE")),style='color:orange;')),
-                                     paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_NOTCONCERNED")),style='color:gray;'))))
-      
-    individuals$Gender <- sapply(1:nrow(individuals), function(i){
-        if(is.null(individuals[i,]$GenderCode)) return(paste0(icon("ban",style = 'color:gray'),span(paste0(" ",i18n("INDIVIDUAL_LIST_TABLE_COLNAME_GENDER_UNDEFINED")),style='color:gray;')))
-        switch(individuals[i,]$GenderCode,
-          "MALE" = paste0(icon("mars"),span(paste0(" ",individuals[i,]$Gender))),
-          "FEMALE" = paste0(icon("venus"),span(paste0(" ",individuals[i,]$Gender)))
-        )
-    })
+    
+    #post-process status for UI
+    if(any(is.na(individuals$Status))) individuals$Status[is.na(individuals$Status)] <- paste0(icon("ban",style = 'color:gray;margin-right:5px;'),span(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_NOTCONCERNED"),style='color:gray;'))
+    individuals$Status[!is.na(individuals$Status) & individuals$Status == "active"] <- paste0(icon("anchor-circle-check",style = 'color:green;margin-right:5px;'),span(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_ACTIVE"),style='color:green;'))
+    individuals$Status[!is.na(individuals$Status) & individuals$Status == "inactive"] <- paste0(icon("anchor-circle-exclamation",style = 'color:orange;margin-right:5px;'),span(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_STATUS_INACTIVE"),style='color:orange;'))
+
+    #post-process gender for UI
+    if(any(is.na(individuals$GenderCode))) individuals$Gender[is.na(individuals$GenderCode)] <- paste0(icon("ban",style = 'color:gray;margin-right:5px;'),span(i18n("INDIVIDUAL_LIST_TABLE_COLNAME_GENDER_UNDEFINED"),style='color:gray;'))
+    individuals$Gender[individuals$GenderCode=="MALE"] <- paste0(icon("mars"),span(paste0(" ", individuals[individuals$GenderCode=="MALE",][1,]$Gender)))
+    individuals$Gender[individuals$GenderCode=="FEMALE"] <- paste0(icon("venus"),span(paste0(" ", individuals[individuals$GenderCode=="FEMALE",][1,]$Gender)))
+    
+    #colnames
     individuals$GenderCode = NULL
     for(i in 1:length(names(individuals))){
       names(individuals)[i] <- i18n(sprintf("INDIVIDUAL_LIST_TABLE_COLNAME_%s",toupper(names(individuals)[i])))
     }
-
+    
     INFO("individual-list: Rendering the individual list data to the table")
+    js <- js_select2_filter_provider(ns("individual_list"))
     output$individual_list <- renderDT(
       individuals,
       container = initDTContainer(individuals),
-      server = FALSE,
+      server = TRUE,
       escape = FALSE,
       rownames = FALSE,
       extensions = c("Buttons"),
