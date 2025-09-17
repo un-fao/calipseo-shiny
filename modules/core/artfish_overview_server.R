@@ -3,6 +3,9 @@ artfish_overview_server <- function(id, parent.session, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
     
+  INFO("artfish-overview: START")
+  MODULE_START_TIME <- Sys.time()
+  
   ns<-session$ns
   
   data_bg<-reactiveVal(NULL)
@@ -124,6 +127,11 @@ artfish_overview_server <- function(id, parent.session, pool, reloader){
     )
     })
     })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("artfish-overview: END")
+  DEBUG_MODULE_PROCESSING_TIME("Artfish-overview", MODULE_START_TIME, MODULE_END_TIME)
+  
   
  })
   

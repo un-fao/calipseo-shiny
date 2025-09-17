@@ -3,6 +3,9 @@ landings1_species_maps_server <- function(id, parent.session, pool, reloader){
   
  moduleServer(id, function(input, output, session){  
    
+   INFO("TTO_landings1-species-maps: START")
+   MODULE_START_TIME = Sys.time() 
+   
    ns<-session$ns
    
    output$mode_selector<-renderUI({
@@ -144,6 +147,10 @@ landings1_species_maps_server <- function(id, parent.session, pool, reloader){
   output$map_species_VAL <- renderLeaflet({
     mapDescriptorYearSpecies(tsr$data, input$year_map_species, "VAL", 15)
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("TTO_landings1-species-maps: END")
+  DEBUG_MODULE_PROCESSING_TIME("TTO_landings1-species-maps", MODULE_START_TIME, MODULE_END_TIME)
   
  })
   

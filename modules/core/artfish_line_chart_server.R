@@ -22,7 +22,11 @@
 #'    
 
 artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget, colValue,colText=colTarget,xlab=i18n("X_LABEL_TITLE"),ylab="",levels=c(i18n("LEVEL_LABEL_GLOBAL"),i18n("LEVEL_LABEL_DETAIL")),stat="sum", rank=FALSE, nbToShow=5,rankLabel=paste0(i18n("RANK_LABEL"),":"),plotType="line",mode="plot",prefered_colnames = FALSE) {
+  
   moduleServer(id, function(input, output, session) {
+    
+    INFO("artfish-linechart: START")
+    MODULE_START_TIME <- Sys.time()
     ns <- session$ns
     
     data_formated<-reactiveVal(NULL)
@@ -262,6 +266,10 @@ artfish_line_chart_server <- function(id, df,colDate, colTarget,label=colTarget,
         }
       )
   })
+    
+    MODULE_END_TIME <- Sys.time()
+    INFO("artfish-linechart: END")
+    DEBUG_MODULE_PROCESSING_TIME("Artfish-linechart", MODULE_START_TIME, MODULE_END_TIME)
   
   })  
 }

@@ -3,11 +3,13 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
  
  moduleServer(id, function(input, output, session){   
    
+  INFO("artfish-species: START")
+  MODULE_START_TIME <- Sys.time()  
+   
   ns<-session$ns
   
   data_sp<-reactiveVal(NULL)
   data_sp_bg<-reactiveVal(NULL)
-  
   
   ref_species<-accessRefSpecies(pool)
   ref_species$ID<-as.character(ref_species$ID)
@@ -250,6 +252,10 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
         })
         
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("artfish-species: END")
+  DEBUG_MODULE_PROCESSING_TIME("Artfish-species", MODULE_START_TIME, MODULE_END_TIME)
 
  })  
   

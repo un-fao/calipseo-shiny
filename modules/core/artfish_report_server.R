@@ -3,6 +3,9 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
   
+  INFO("artfish-report: START")
+  MODULE_START_TIME <- Sys.time() 
+   
   ns<-session$ns
   estimates<-reactiveVal(NULL)
   target_data<-reactiveVal(NULL)
@@ -267,6 +270,10 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
       )
     })
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("artfish-report: END")
+  DEBUG_MODULE_PROCESSING_TIME("Artfish-report", MODULE_START_TIME, MODULE_END_TIME)
   
  })
 }

@@ -3,6 +3,9 @@ landings1_charts_server <- function(id, parent.session, pool, reloader){
 
  moduleServer(id, function(input, output, session){    
     
+  INFO("TTO_landings1-charts: START")
+  MODULE_START_TIME = Sys.time() 
+   
   output$landings1_charts_info <- renderText({
     text <- paste0("<h2>", i18n("LANDINGS1_CHARTS_TITLE")," <small>", i18n("LANDINGS1_CHARTS_SUBTITLE"),
                    userTooltip("These charts represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",
@@ -57,6 +60,10 @@ landings1_charts_server <- function(id, parent.session, pool, reloader){
     d <- event_data("plotly_hover")
     if (is.null(d)) i18n("HOVER_ON_POINT_LABEL") else d
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("TTO_landings1-charts: END")
+  DEBUG_MODULE_PROCESSING_TIME("TTO_landings1-charts", MODULE_START_TIME, MODULE_END_TIME)
   
  })
 }

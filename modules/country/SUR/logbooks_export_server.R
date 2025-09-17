@@ -3,6 +3,9 @@ logbooks_export_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
     
+    INFO("SUR_logbooks-export: START")
+    MODULE_START_TIME = Sys.time()
+    
     ns <- session$ns
     
     output$year_wrapper<-renderUI({
@@ -109,5 +112,9 @@ logbooks_export_server <- function(id, parent.session, pool, reloader) {
        }
      )
     
+     MODULE_END_TIME <- Sys.time()
+     INFO("SUR_logbooks-export: END")
+     DEBUG_MODULE_PROCESSING_TIME("SUR_logbooks-export", MODULE_START_TIME, MODULE_END_TIME)
+     
   })
 }
