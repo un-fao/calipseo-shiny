@@ -6,8 +6,8 @@ artfish_estimates<-function(con,year=NULL,month=NULL,effort=NULL,effort_source=N
   if(is.null(active_days))active_days=accessArtfishC(con,year,month)
   if(is.null(landings))landings=accessArtfishD(con,year,month)
   
-  # fishing_units<-accessFishingUnits(con)
-  # fishing_units<-subset(fishing_units,select=c(code,label))
+  # fishing_units<-accessRefFishingUnits(con)
+  # fishing_units<-subset(fishing_units,select=c(CODE,NAME))
   # names(fishing_units)<-c("EST_BGC","EST_BGC_NAME")
   # 
   # ref_species<-accessRefSpecies(con)

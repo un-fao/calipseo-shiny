@@ -210,6 +210,27 @@ accessLandingSitesFromDB <- function(con, sf = TRUE){
   }
   return(landingsites)
 }  
+#accessLandingSiteNamesFromDB
+accessLandingSiteNamesFromDB <- function(con){
+  DEBUG("Query landing site names")
+  landingsites_sql <- readSQL("data/core/sql/landing_sites_names.sql")
+  landingsites <- getFromSQL(con, landingsites_sql)[,1]
+  return(landingsites)
+}
+#accessRefSpeciesFromDB
+accessRefSpeciesFromDB <- function(con, year = NULL){
+  DEBUG("Query Ref Species")
+  ref_species_sql <- readSQL("data/core/sql/ref_species.sql", language = appConfig$language)
+  ref_species <- getFromSQL(con, ref_species_sql)
+  return(ref_species)
+}  
+#accessRefFishingUnitsFromDB
+accessRefFishingUnitsFromDB <- function(con){
+  DEBUG("Query Ref fishing units")
+  ref_fishing_units_sql <- readSQL("data/core/sql/ref_fishing_units.sql", language = appConfig$language)
+  ref_fishing_units <- getFromSQL(con, ref_fishing_units_sql)
+  return(ref_fishing_units)
+}
 
 
 #<COUNTRY PARAMETERS>
@@ -512,9 +533,51 @@ accessIndividualQaDOBFromDB <- function(con){
 }
 
 #<COMMON:LOGBOOKS>
+#accessFishingActivitiesFromDB
+accessFishingActivitiesFromDB <- function(con, year, 
+                                          vessel_stat_type = NULL, vesselId = NULL,
+                                          entityOwner = NULL){
+  fa_sql <- readSQL("data/core/sql/fishing_activities.sql",
+                    add_filter_on_year = year, datetime_field = "ft.DATE_TO",
+                    language = appConfig$language)
+  if(!is.null(vessel_stat_type)){
+    fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  }
+  if(!is.null(vesselId)){
+    fa_sql <- paste0(fa_sql, " AND v.REGISTRATION_NUMBER = '", vesselId, "'")
+  }
+  if(!is.null(entityOwner)){
+    fa_sql <- paste0(fa_sql, " AND ent.NAME = '", entityOwner, "'")
+  }
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+#accessLandingFormsFromDB
+accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
+  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1, vesselId = vesselId, entityOwner = entityOwner)
+}
 #accessLogBooksFromDB
 accessLogBooksFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
   accessFishingActivitiesFromDB(con, year, vessel_stat_type = 2, vesselId = vesselId, entityOwner = entityOwner)
+}
+
+#<MODULE:LOGBOOKS_DETAILS>
+#accessVesselsWithLogBooksFromDB
+accessVesselsWithLogBooksFromDB <- function(con){
+  DEBUG("Query vessels with logbooks")
+  sql <- readSQL("data/core/sql/vessels_reporting_logbooks.sql")
+  out <- getFromSQL(con, sql)
+  outids <- out$REGISTRATION_NUMBER
+  names(outids) <- out$NAME
+  return(outids) 
+} 
+
+#accessVesselsOwnersWithLogBooksFromDB
+accessVesselsOwnersWithLogBooksFromDB <- function(con){
+  DEBUG("Query vessel owners with logbooks")
+  sql <- readSQL("data/core/sql/vessels_owners_reporting_logbooks.sql")
+  out <- getFromSQL(con, sql)
+  return(out$NAME)
 }
 
 #<MODULE:LOGBOOKS_OVERVIEW>
@@ -533,142 +596,97 @@ accessLogBooksMultiyearFromDB <- function(con){
   accessFishingActivitiesMultiyearFromDB(con,vessel_stat_type = 2)
 }
 
-
-
-
-  
-########################## TO REVIEW #############################################
-
-
-
-#accessIndividualIsFisherFromDB
-accessIndividualIsFisherFromDB <- function(con){
-  individual_isfisher_sql <- readSQL("data/core/sql/individual_isfisher.sql")
-  individual_isfisher <- getFromSQL(con, individual_isfisher_sql)
-  return(individual_isfisher)
-} 
-
-#accessRefSpeciesFromDB
-accessRefSpeciesFromDB <- function(con,year=NULL){
-  DEBUG("Query Ref Species")
-  ref_species_sql <- readSQL("data/core/sql/ref_species.sql", language = appConfig$language)
-  ref_species <- getFromSQL(con, ref_species_sql)
-  return(ref_species)
-}  
-
-#accessRefFishingUnitsFromDB
-accessRefFishingUnitsFromDB <- function(con){
-  DEBUG("Query Ref fishing units")
-  ref_fishing_units_sql <- readSQL("data/core/sql/ref_fishing_units.sql", language = appConfig$language)
-  ref_fishing_units <- getFromSQL(con, ref_fishing_units_sql)
-  return(ref_fishing_units)
-}
-
-
-#accessLandingSiteNamesFromDB
-accessLandingSiteNamesFromDB <- function(con){
-  DEBUG("Query landing site names")
-  landingsites_sql <- readSQL("data/core/sql/landing_sites_names.sql")
-  landingsites <- getFromSQL(con, landingsites_sql)[,1]
-  return(landingsites)
-}  
-
-#accessIndividualCountByGenderFromDB
-accessIndividualCountByGenderFromDB <- function(con){
-  DEBUG("Count individuals by gender")
-  individualgender_count_sql <- readSQL("data/core/sql/individual_gender_count.sql",
-                                              language = appConfig$language)
-  getFromSQL(con, individualgender_count_sql)
-}
-
-#accessIndividualCountByEdulevelFromDB
-accessIndividualCountByEdulevelFromDB <- function(con, gender_id = NULL){
-  
-  if(gender_id=="All"){
-    DEBUG("Count individuals by gender type")
-    individualedulevel_count_sql <- readSQL("data/core/sql/individual_edulevel_count.sql",
-                                                  language = appConfig$language)
-    
-  }else{
-    DEBUG("Count individuals for gender type '%s'", gender_id)
-    individualedulevel_count_sql <- readSQL("data/core/sql/individual_edulevel_count.sql",
-                                                  key = "gend.ID", value = paste0("'", gender_id, "'"),
-                                                  language = appConfig$language)
-    
-  }
-  
-  individualedulevel_count_sql <- getFromSQL(con, individualedulevel_count_sql)
-}
-
-
-#accessIndividualOverviewFromDB
-accessIndividualOverviewFromDB <- function(con){
-  DEBUG("Query individual overview")
-  ind_overview_sql <- readSQL("data/core/sql/individual_overview.sql")
-  ind_overview_sql <- getFromSQL(con, ind_overview_sql)
-  return(ind_overview_sql)
-} 
-
-#accessVesselsLandingSiteFromDB
-accessVesselsLandingSiteFromDB <- function(con){
-  DEBUG("Query vessel landing sites")
-  vesselsites_sql <- readSQL("data/core/sql/vessels_landing_sites_list.sql",
-                                         language = appConfig$language)
-  sites <- getFromSQL(con,  vesselsites_sql)
-  return(sites)
-}
-
-
-
-#accessVesselsWithLogBooksFromDB
-accessVesselsWithLogBooksFromDB <- function(con){
-  DEBUG("Query vessels with logbooks")
-  sql <- readSQL("data/core/sql/vessels_reporting_logbooks.sql")
+#<MODULE:COMPUTATION>
+#accessSurveyPeriodsFromDB
+accessSurveyPeriodsFromDB <- function(con){
+  sql <- readSQL("data/core/sql/survey_periods.sql")
   out <- getFromSQL(con, sql)
-  outids <- out$REGISTRATION_NUMBER
-  names(outids) <- out$NAME
-  return(outids) 
-} 
+  return(out)
+}
 
-#accessVesselsOwnersWithLogBooksFromDB
-accessVesselsOwnersWithLogBooksFromDB <- function(con){
-  DEBUG("Query vessel owners with logbooks")
-  sql <- readSQL("data/core/sql/vessels_owners_reporting_logbooks.sql")
+#accessEffortSurveyPeriodsFromDB
+accessEffortSurveyPeriodsFromDB <- function(con){
+  sql <- readSQL("data/core/sql/effort_survey_periods.sql")
   out <- getFromSQL(con, sql)
-  return(out$NAME)
-}  
-
-
-#DATA
-
-
- 
-
-
-
-
-#accessFishingActivitiesFromDB
-accessFishingActivitiesFromDB <- function(con, year, 
-                                          vessel_stat_type = NULL, vesselId = NULL,
-                                          entityOwner = NULL){
-  fa_sql <- readSQL("data/core/sql/fishing_activities.sql",
-                          add_filter_on_year = year, datetime_field = "ft.DATE_TO",
-                          language = appConfig$language)
-  if(!is.null(vessel_stat_type)){
-    fa_sql <- paste0(fa_sql, " AND v.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
+  return(out)
+}
+#accessors for Artfish methodology
+#accessArtfishAFromDB
+accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels.sql")
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
-  if(!is.null(vesselId)){
-    fa_sql <- paste0(fa_sql, " AND v.REGISTRATION_NUMBER = '", vesselId, "'")
+  
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+#accessArtfishB1FromDB
+accessArtfishB1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_B1_effort.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
   }
-  if(!is.null(entityOwner)){
-    fa_sql <- paste0(fa_sql, " AND ent.NAME = '", entityOwner, "'")
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
-} 
+}
+#accessArtfishCFromDB
+accessArtfishCFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_C_active_days.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+#accessArtfishDFromDB
+accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_D_landings.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_TO_PORT_SITE_ID = %s",fishing_unit ))
+  }
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+#accessArtfishARegionFromDB
+accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels_region.sql")
+  
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+#accessArtfishAFleetSegmentFromDB
+accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels_fleet_segment.sql")
+  
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf("fs.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
 
-
-
+#GENERIC SERVER FUNCTIONS
+#<TRIP_GANTT_SERVER>
 #accessFishingTripsFromDB
 accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL){
   fa_sql <- readSQL("data/core/sql/fishing_trips.sql",language = appConfig$language)
@@ -685,7 +703,7 @@ accessFishingTripsFromDB <- function(con,vessel_stat_type = NULL,vesselId = NULL
 #accessFishingTripDetailFromDB
 accessFishingTripDetailFromDB <- function(con,trip_id = NULL){
   fa_sql <- readSQL("data/core/sql/fishing_trip_details.sql", 
-                          language = appConfig$language)
+                    language = appConfig$language)
   if(!is.null(trip_id)){
     fa_sql <- paste0(fa_sql, " WHERE ft.ID = ", trip_id)
   }
@@ -693,10 +711,13 @@ accessFishingTripDetailFromDB <- function(con,trip_id = NULL){
   return(fa)
 }
 
+
+#<MISCS>
+#-> SUR/logbooks_export
 #accessFishingActivitiesWecafcFromDB
 accessFishingActivitiesWecafcFromDB <- function(con,year,vessel_stat_type = NULL){
   fa_sql <- readSQL("data/core/sql/fishing_activities_wecafc.sql",
-                          language = appConfig$language)
+                    language = appConfig$language)
   if(!is.null(vessel_stat_type)){
     fa_sql <- paste0(fa_sql, " AND t.CL_APP_VESSEL_STAT_TYPE_ID = ", vessel_stat_type)
   }
@@ -706,70 +727,13 @@ accessFishingActivitiesWecafcFromDB <- function(con,year,vessel_stat_type = NULL
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
-
-#accessLandingFormsFromDB
-accessLandingFormsFromDB <- function(con, year, vesselId = NULL, entityOwner = NULL){
-  accessFishingActivitiesFromDB(con, year, vessel_stat_type = 1, vesselId = vesselId, entityOwner = entityOwner)
-}
-
 #accessLogBooksWecafcFromDB
 accessLogBooksWecafcFromDB <- function(con, year){
   accessFishingActivitiesWecafcFromDB(con, year, vessel_stat_type = 2)
 }
 
-#accessLogBooksTripsFromDB
-accessLogBooksTripsFromDB <- function(con,vesselId=NULL){
-  accessFishingTripsFromDB(con,vessel_stat_type = 2,vesselId = vesselId)
-}
 
-#accessMonthlyFishingActivityFromDB
-accessMonthlyFishingActivityFromDB <- function(con){
-  sql <- readSQL("data/core/sql/fishing_activities_totalbymonth.sql")
-  out <- getFromSQL(con, sql)
-  return(out)
-} 
-
-#accessSurveyDateAndStratumFromDB
-accessSurveyDateAndStratumFromDB <- function(con){
-  sql <- readSQL("data/core/sql/survey_date.sql", language = appConfig$language)
-  out <- getFromSQL(con, sql)
-  return(out)
-}
-
-#accessSurveyPeriodsFromDB
-accessSurveyPeriodsFromDB <- function(con){
-  sql <- readSQL("data/core/sql/survey_periods.sql")
-  out <- getFromSQL(con, sql)
-  return(out)
-}
-
-#accessEffortSurveyPeriodsFromDB
-accessEffortSurveyPeriodsFromDB <- function(con){
-  sql <- readSQL("data/core/sql/effort_survey_periods.sql")
-  out <- getFromSQL(con, sql)
-  return(out)
-}
-
-#accessLandingsSurveyPeriodsFromDB
-accessLandingsSurveyPeriodsFromDB <- function(con){
-  sql <- readSQL("data/core/sql/landings_survey_periods.sql")
-  out <- getFromSQL(con, sql)
-  return(out)
-}
-
-#accessEffortDataFromDB
-accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/effort_data.sql")
-  if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
+#-> LBN/Old method for artfish estimates by fleet segment
 #accessEffortDataByFleetSegmentFromDB
 accessEffortDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQL("data/core/sql/effort_by_fleet_segment_data.sql")
@@ -782,7 +746,20 @@ accessEffortDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fish
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
+#accessLandingDataByFleetSegmentFromDB
+accessLandingDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/landing_by_fleet_segment_data.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s ",year,month))
+  }
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND l.fishing_unit = %s",fishing_unit ))
+  }
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}  
 
+#-> LCA/Artfish-like computation
 #accessLandingDataFromDB
 accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQL("data/core/sql/landing_data.sql")
@@ -795,27 +772,18 @@ accessLandingDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NU
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
-
-#accessLandingDataByFleetSegmentFromDB
-accessLandingDataByFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/landing_by_fleet_segment_data.sql")
+#accessEffortDataFromDB
+accessEffortDataFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/effort_data.sql")
   if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE l.year = %s AND l.month = %s ",year,month))
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
   }
   if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND l.fishing_unit = %s",fishing_unit ))
+    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
-
-#accessFishingUnitsFromDB
-accessFishingUnitsFromDB <- function(con){
-  fa_sql <- readSQL("data/core/sql/fishing_units.sql")
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
 #accessFishingDaysPerMonthFromDB
 accessFishingDaysPerMonthFromDB <- function(con){
   fa_sql <- readSQL("data/core/sql/dt_fishing_days_per_month.sql")
@@ -840,85 +808,15 @@ accessTripDetailByFleetSegmentFromDB <- function(con,year = NULL,month=NULL){
   return(fa)
 }
 
-#accessArtfishAFromDB
-accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels.sql")
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-    fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
+#-> GFCM/Task III
+#accessVesselsLandingSiteFromDB
+accessVesselsLandingSiteFromDB <- function(con){
+  DEBUG("Query vessel landing sites")
+  vesselsites_sql <- readSQL("data/core/sql/vessels_landing_sites_list.sql",
+                             language = appConfig$language)
+  sites <- getFromSQL(con,  vesselsites_sql)
+  return(sites)
 }
-
-#accessArtfishB1FromDB
-accessArtfishB1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_B1_effort.sql")
-  if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
-#accessArtfishCFromDB
-accessArtfishCFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_C_active_days.sql")
-  if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
-#accessArtfishDFromDB
-accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_D_landings.sql")
-  if(!is.null(month)&!is.null(year)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_TO_PORT_SITE_ID = %s",fishing_unit ))
-  }
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
-#accessArtfishARegionFromDB
-accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels_region.sql")
-  
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
-#accessArtfishAFleetSegmentFromDB
-accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
-  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels_fleet_segment.sql")
-  
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("fs.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-  fa <- getFromSQL(con, fa_sql)
-  return(fa)
-}
-
 
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -928,6 +826,8 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
 #<COMMON>
 accessAvailableYears <- function(con){ accessAvailableYearsFromDB(con) }
 accessLandingSites <- function(con, sf = TRUE){ accessLandingSitesFromDB(con, sf = sf) }
+accessLandingSiteNames <- function(con){accessLandingSiteNamesFromDB(con) }
+accessRefSpecies <- function(con, year=NULL){ accessRefSpeciesFromDB(con) }
 
 #<COUNTRY PARAMETERS>
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
@@ -990,189 +890,48 @@ accessIndividual <- function(con, individualNumber){ accessIndividualFromDB(con,
 #accessIndividualQaDOBFromDB
 accessIndividualQaDOB <- function(con){ accessIndividualQaDOBFromDB(con) }
 
-#accessIndividualIsFisherFromDB
-accessIndividualIsFisher <- function(con){
-  accessIndividualIsFisherFromDB(con)
-}
-
 #<COMMON:LOGBOOKS>
+accessLandingForms <- function(con, year, vesselId = NULL, entityOwner = NULL){ accessLandingFormsFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner) }
 accessLogBooks <- function(con, year, vesselId = NULL, entityOwner = NULL){ accessLogBooksFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner) }
 
 #<MODULE:LOGBOOKS_OVERVIEW>
 accessLogBooksMultiyear <- function(con){ accessLogBooksMultiyearFromDB(con) }
 
+#<MODULE:LOGBOOKS_DETAILS>
+accessVesselsWithLogBooks <- function(con){ accessVesselsWithLogBooksFromDB(con) }
+accessVesselsOwnersWithLogBooks <- function(con){ accessVesselsOwnersWithLogBooksFromDB(con) }
 
+#<MODULE:COMPUTATION>
+accessSurveyPeriods <- function(con){ accessSurveyPeriodsFromDB(con) }
+accessEffortSurveyPeriods <- function(con){ accessEffortSurveyPeriodsFromDB(con)}
+#accessors for Artfish methodology
+accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 
-####################### TO REVIEW #######################################
+#GENERIC SERVER FUNCTIONS
+#<TRIP_GANTT_SERVER>
+accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL) { accessFishingTripsFromDB(con,vessel_stat_type,vesselId) }
+accessFishingTripDetails <- function(con,trip_id){ accessFishingTripDetailFromDB(con,trip_id) }
 
+#<MISCS>
+#-> SUR/logbooks_export
+accessLogBooksWecafc <- function(con, year){ accessLogBooksWecafcFromDB(con, year) }
 
-#accessRefSpecies
-accessRefSpecies <- function(con,year=NULL){
-  accessRefSpeciesFromDB(con)
-}
+#-> LBN/Old method for artfish estimates by fleet segment
+accessLandingDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){accessLandingDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit = NULL){ accessEffortDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 
-#accessRefFishingUnits
-accessRefFishingUnits <- function(con){
-  accessRefFishingUnitsFromDB(con)
-}
+#-> LCA/Artfish-like computation
+accessLandingData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessLandingDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessVesselsLandingSite <- function(con){ accessVesselsLandingSiteFromDB(con) }
+accessFishingDaysPerMonth <- function(con){ accessFishingDaysPerMonthFromDB(con) }
+accessEffortSurvey <- function(con){ accessEffortSurveyFromDB(con) }
 
-#accessLandingSiteNames
-accessLandingSiteNames <- function(con){
-  accessLandingSiteNamesFromDB(con)
-}
-
-#accessIndividualCountByGender
-accessIndividualCountByGender <- function(con){
-  accessIndividualCountByGenderFromDB(con)
-}
-
-
-#accessIndividualCountByEdulevel
-accessIndividualCountByEdulevel <- function(con, gender_id){
-  accessIndividualCountByEdulevelFromDB(con, gender_id)
-}
-
-
-#accessIndividualOverview
-accessIndividualOverview <- function(con){
-  accessIndividualOverviewFromDB(con)
-}
-
-
-#accessVesselsLandingSite
-accessVesselsLandingSite <- function(con){
-  accessVesselsLandingSiteFromDB(con)
-}
-
-#accessVesselsWithLogBooks
-accessVesselsWithLogBooks <- function(con){
-  accessVesselsWithLogBooksFromDB(con)
-}
-
-#accessVesselsOwnersWithLogBooks
-accessVesselsOwnersWithLogBooks <- function(con){
-  accessVesselsOwnersWithLogBooksFromDB(con)
-}
-
-#DATA
-
-
-#accessLandingForms
-accessLandingForms <- function(con, year, vesselId = NULL, entityOwner = NULL){
-  accessLandingFormsFromDB(con, year, vesselId = vesselId, entityOwner = entityOwner)
-}
-
-#accessLogBooksWecafc
-accessLogBooksWecafc <- function(con, year){
-  accessLogBooksWecafcFromDB(con, year)
-}
-
-#accessLogBooksTrips
-accessLogBooksTrips <- function(con){
-  accessLogBooksTripsFromDB(con)
-}
-
-#accessFishingTrips
-accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL)
-  accessFishingTripsFromDB(con,vessel_stat_type,vesselId)
-
-#accessFishingTripDetails
-accessFishingTripDetails <- function(con,trip_id){
-  accessFishingTripDetailFromDB(con,trip_id)
-}
-
-#accessMonthlyFishingActivity
-accessMonthlyFishingActivity <- function(con){
-  accessMonthlyFishingActivityFromDB(con)
-}
-
-#accessSurveyDateAndStratum
-accessSurveyDateAndStratum <- function(con){
-  accessSurveyDateAndStratumFromDB(con)
-}
-
-#accessSurveyPeriods
-accessSurveyPeriods <- function(con){
-  accessSurveyPeriodsFromDB(con)
-}
-
-#accessEffortSurveyPeriods
-accessEffortSurveyPeriods <- function(con){
-  accessEffortSurveyPeriodsFromDB(con)
-}
-
-#accessLandingsSurveyPeriods
-accessLandingsSurveyPeriods <- function(con){
-  accessLandingsSurveyPeriodsFromDB(con)
-}
-
-#accessEffortData
-accessEffortData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessEffortDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessEffortDataByFleetSegment
-accessEffortDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit = NULL){
-  accessEffortDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessLandingData
-accessLandingData <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessLandingDataFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessLandingData
-accessLandingDataByFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessLandingDataByFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessFishingUnits
-accessFishingUnits<- function(con){
-  accessFishingUnitsFromDB(con)
-}
-
-#accessTripDetailByFleetSegment
-accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){
-  accessTripDetailByFleetSegmentFromDB(con,year=year,month=month)
-}
-
-#accessFishingDaysPerMonth
-accessFishingDaysPerMonth <- function(con){
-  accessFishingDaysPerMonthFromDB(con)
-}
-
-#accessEffortSurvey
-accessEffortSurvey <- function(con){
-  accessEffortSurveyFromDB(con)
-}
-
-#accessArtfishA
-accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessArtfishB1
-accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessArtfishC
-accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessArtfishD
-accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessArtfishARegion
-accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
-
-#accessArtfishAFleetSegment
-accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
-}
+#-> GFCM/Task III 
+accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){ accessTripDetailByFleetSegmentFromDB(con,year=year,month=month) }
 
