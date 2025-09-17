@@ -353,6 +353,7 @@ accessVesselCatchesByYearSpeciesFromDB <- function(con, id){
   species_catches_year <- getFromSQL(con,species_catches_year_sql)
   return(species_catches_year)
 }
+#accessVesselLicensePermitsFromDB -> see <COMMON:VESSELS>
 
 #countVesselOwnersPerVesselFromDB
 countVesselOwnersPerVesselFromDB <- function(con, id){
@@ -361,7 +362,7 @@ countVesselOwnersPerVesselFromDB <- function(con, id){
                                           key = "v.ID", value = id)
   vessel_Owners_Per_vessel <- getFromSQL(con, vessel_Owners_Per_vessel_sql)
   return(vessel_Owners_Per_vessel)
-} 
+}
 
 #countVesselDaysAtSeaFromDB
 countVesselDaysAtSeaFromDB <- function(con, id){
@@ -959,6 +960,7 @@ countVesselDaysAtSea <- function(con, id) { countVesselDaysAtSeaFromDB(con, id) 
 countFishingTripsPerVessel <- function(con, id){ countFishingTripsPerVesselFromDB(con, id) }
 countVesselFishingGears <- function(con, id) { countVesselFishingGearsFromDB(con, id) }
 countVesselLicensePermit <- function(con, id) { countVesselLicensePermitFromDB(con, id) }
+#accessVesselLicensePermits - see <COMMON:VESSELS>
 
 
 #<MODULE:VESSEL_OVERVIEW>
