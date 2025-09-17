@@ -210,7 +210,7 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
               list(extend = 'csv', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
               list(extend = 'excel', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
               list(extend = "pdf", filename = sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), 
-                   title = sprintf("HISTORY_PDF_TITLE", vesselId, vessel$NAME), header = TRUE)
+                   title = sprintf(i18n("HISTORY_PDF_TITLE"), vesselId, vessel$NAME), header = TRUE)
             ),
             exportOptions = list(
               modifiers = list(page = "all", selected = TRUE)
