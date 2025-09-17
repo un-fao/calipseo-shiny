@@ -106,7 +106,10 @@ loadModuleServer <- function(id, session, config, pool, module_state){
     attr(id_out, "status") = "initialize"
   }else{
     INFO("Module server '%s' already initialized. Check if it needs to be reloaded", id)
-    load_module <- id %in% module_state$toreload | '*' %in% module_state$toreload | regexpr("_info", id) > 0
+    load_module <- id %in% module_state$toreload | #exact matching
+                   any(sapply(module_state$toreload, regexpr, id) > 0) | #regexpr matching
+                   '*' %in% module_state$toreload | #wildcard matching
+                   regexpr("_info", id) > 0 #specific matching for '_info' modules (systematic reload for record handling)
     if(load_module){
       INFO("Module '%s' is listed in modules to be reloaded.", id)
       attr(id_out, "status") = "reload"
