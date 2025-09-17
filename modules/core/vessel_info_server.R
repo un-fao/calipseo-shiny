@@ -9,7 +9,7 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
   
   output$vessel_header <- renderText({
     sprintf(
-      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});">%s</a>',
+      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});" style="margin-left:15px;font-weight:bold;">%s</a>',
       ns("back_to_vessels"), 1, i18n("BACK_TO_LIST_OF_VESSELS")
     )
   })
