@@ -1,5 +1,5 @@
 {
-  /*veseel list title and subtitle*/
+  /*vessel list title and subtitle*/
   "VESSEL_LIST_TITLE" : "List of vessels",
   "VESSEL_LIST_SUBTITLE": "Access information on vessels",
   "VESSELS": "Vessels",
@@ -18,5 +18,6 @@
   "VESSEL_LIST_TABLE_COLNAME_REGPORT": "REGISTRATION PORT/LANDING SITE",
   "VESSEL_LIST_TABLE_COLNAME_LICENSESTATUS": "LICENSE STATUS",
   "VESSEL_LIST_TABLE_COLNAME_DETAILS": "",
+  "VESSEL_LIST_TABLE_RECORD_ACCESS": "Details",
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }

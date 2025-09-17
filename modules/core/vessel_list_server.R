@@ -33,8 +33,8 @@ vessel_list_server <- function(id, parent.session, pool, reloader) {
     INFO("vessel-list: Fetching vessel list data after enriching with ISVESSELACTIVE - %s rows", nrow(outp))
     
     outp$Details <- sprintf(
-      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});">Click me</a>',
-      ns("access_vessel_info"), outp$ID
+      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});">%s</a>',
+      ns("access_vessel_info"), outp$ID, i18n("VESSEL_LIST_TABLE_RECORD_ACCESS")
     )
     observeEvent(input$access_vessel_info, {
       DEBUG("Click to access details for vessel '%s'", input$access_vessel_info)

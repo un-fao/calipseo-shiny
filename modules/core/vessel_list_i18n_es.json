@@ -1,4 +1,23 @@
 {
+  /*vessel list title and subtitle*/
   "VESSEL_LIST_TITLE" : "Lista de buques",
-  "VESSEL_LIST_SUBTITLE": "Acceder a la información sobre los buques"
+  "VESSEL_LIST_SUBTITLE": "Acceder a la información sobre los buques",
+  "VESSELS": "Buques",
+  "VESSEL_LIST_VESSEL_STATUS_ACTIVE": "Activo",
+  "VESSEL_LIST_VESSEL_STATUS_INACTIVE": "Inactivo",
+  "VESSEL_LIST_VESSEL_STATUS_UNDEFINED": "Indefinido",
+  
+  /*vessel list table*/
+  "VESSEL_LIST_TABLE_COLNAME_REGNUMBER": "Número de matrícula",
+  "VESSEL_LIST_TABLE_COLNAME_NAME": "Nombre",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELSTATUS": "Estatuto del buque",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELTYPE": "Tipo de buque",
+  "VESSEL_LIST_TABLE_COLNAME_OPSTATUS": "Tipo operacional de buque",
+  "VESSEL_LIST_TABLE_COLNAME_VESSELSTATTYPE": "Tipo estadístico de buque",
+  "VESSEL_LIST_TABLE_COLNAME_HOMEPORT": "Puerto de origen/Sitio de desembarque",
+  "VESSEL_LIST_TABLE_COLNAME_REGPORT": "Puerto de matrícula/Sitio de desembarque",
+  "VESSEL_LIST_TABLE_COLNAME_LICENSESTATUS": "Estatuto de licencia",
+  "VESSEL_LIST_TABLE_COLNAME_DETAILS": "",
+  "VESSEL_LIST_TABLE_RECORD_ACCESS": "Detalles",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json"
 }
