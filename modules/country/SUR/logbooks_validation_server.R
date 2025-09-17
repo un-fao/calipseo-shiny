@@ -1,7 +1,10 @@
 #logbooks_validation_server
-logbooks_validation_server <- function(id, pool, reloader) {
+logbooks_validation_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
+    
+    INFO("SUR_logbooks-validation: START")
+    MODULE_START_TIME = Sys.time()
     
     ns <- session$ns
     
@@ -160,6 +163,9 @@ logbooks_validation_server <- function(id, pool, reloader) {
       output$generate_SQL_btn<-renderUI(NULL)
     })
     
+    MODULE_END_TIME <- Sys.time()
+    INFO("SUR_logbooks-validation: END")
+    DEBUG_MODULE_PROCESSING_TIME("SUR_logbooks-validation", MODULE_START_TIME, MODULE_END_TIME)
     
   })
   

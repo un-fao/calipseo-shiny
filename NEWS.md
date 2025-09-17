@@ -9,6 +9,11 @@
 # Enhancements
 
 - [#251](https://github.com/un-fao/calipseo-shiny/issues/251) Cleanout `shinyauthr` related codes (not used anymore in context of ShinyProxy deployments)
+- [#257](https://github.com/un-fao/calipseo-shiny/issues/257) Computation module - further code cleaning & improvement of logs
+- [#262](https://github.com/un-fao/calipseo-shiny/issues/262) Improve overall application logs and 1st benchmarking iteration
+- [#263](https://github.com/un-fao/calipseo-shiny/issues/263) Optimize the module loading strategy
+- [#264](https://github.com/un-fao/calipseo-shiny/issues/264) Individual-list - Performance issue with individuals processing for UI
+- [#265](https://github.com/un-fao/calipseo-shiny/issues/265) Optimize the URL resolver
 
 # New features
 

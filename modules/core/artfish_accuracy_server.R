@@ -1,7 +1,10 @@
 #artfish_accuracy_server
-artfish_accuracy_server <- function(id, pool, reloader){
+artfish_accuracy_server <- function(id, parent.session, pool, reloader){
  
  moduleServer(id, function(input, output, session){   
+   
+  INFO("artfish-accuracy: START")
+  MODULE_START_TIME <- Sys.time()
    
   ns<-session$ns
   
@@ -84,6 +87,10 @@ artfish_accuracy_server <- function(id, pool, reloader){
        )
      })
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("artfish-accuracy: END")
+  DEBUG_MODULE_PROCESSING_TIME("Artfish-accuracy", MODULE_START_TIME, MODULE_END_TIME)
   
  })
 }

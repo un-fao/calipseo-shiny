@@ -41,7 +41,6 @@ loadModuleScripts <- function(config){
     has_config = !is.null(module_config)
     if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
     if(enabled){
-      print(module$name)
       INFO("Loading shiny module '%s' scripts...", module$name)
       source(file.path(module$dirname, paste0(module$name, "_server.R")))
       source(file.path(module$dirname, paste0(module$name, "_ui.R")))
@@ -78,7 +77,66 @@ i18n <- function(term){
   return(i18n_term)
 }
 
+#listLinkedModules
+listLinkedModules <- function(id, config){
+  module_file <- NULL
+  core_module_file = paste0("./modules/core/",id,".json")
+  is_core_module = file.exists(core_module_file)
+  is_cnt_module = FALSE
+  if(!is_core_module){
+    cnt_module_file = sprintf("./modules/country/%s/%s.json", config$country_profile$iso3, id)
+    is_cnt_module = file.exists(cnt_module_file)
+    if(is_cnt_module) module_file = cnt_module_file
+  }else{
+    module_file = core_module_file
+  }
+  if(!is_core_module & !is_cnt_module) return(list());
+  
+  print(module_file)
+  module_profile <- loadModuleProfile(module_file)
+  return(module_profile$linked_modules)
+}
+
+#loadModuleServer
+loadModuleServer <- function(id, session, config, pool, module_state){
+  id_out = id
+  load_module <- !id %in% module_state$initialized
+  if(load_module){
+    INFO("Module server '%s' not yet initialized.", id)
+    attr(id_out, "status") = "initialize"
+  }else{
+    INFO("Module server '%s' already initialized. Check if it needs to be reloaded", id)
+    load_module <- id %in% module_state$toreload | #exact matching
+                   any(sapply(module_state$toreload, regexpr, id) > 0) | #regexpr matching
+                   '*' %in% module_state$toreload | #wildcard matching
+                   regexpr("_info", id) > 0 #specific matching for '_info' modules (systematic reload for record handling)
+    if(load_module){
+      INFO("Module '%s' is listed in modules to be reloaded.", id)
+      attr(id_out, "status") = "reload"
+    }else{
+      INFO("Module '%s' is not reloaded", id)
+      attr(id_out, "status") = "display"
+    }
+  }
+  if(load_module){
+    server_fun_name <- paste0(id, "_server")
+    server_fun <- try(eval(expr = parse(text = server_fun_name)), silent = TRUE)
+    if(!is.null(server_fun)){
+      if(!is(server_fun, "try-error")){
+        called <- try(server_fun(id, session, pool, reloader))
+        if(is(called, "try-error")){
+          ERROR("Error while calling shiny module '%s'", id)
+        }
+      }else{
+        ERROR("Error while evaluating server function '%s'", server_fun_name)
+      }
+    }
+  }
+  return(id_out)
+}
+
 #loadModuleServers
+#@deprecated
 loadModuleServers <- function(config, pool, reloader){
   INFO("=> Loading Module Servers")							   
   default_module_profiles <- listModuleProfiles(config)

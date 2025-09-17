@@ -4,5 +4,5 @@
   "rank": 1,
   "title": "Compute indicators",
   "icon": "database",
-  "linked_modules": "*"
+  "linked_modules": ["artfish_*", "landings1_*"]
 }

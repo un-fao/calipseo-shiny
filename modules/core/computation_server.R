@@ -1,10 +1,13 @@
 #computation_server
-computation_server <- function(id, pool, reloader) {
+computation_server <- function(id, parent.session, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
   
   session$userData$computation_new <- reactiveVal(NULL)
-   
+
+  INFO("computation: START")
+  MODULE_START_TIME <- Sys.time()    
+  
   ns <- session$ns
 
   #--------------------------------
@@ -1387,6 +1390,10 @@ computation_server <- function(id, pool, reloader) {
     torelease(NULL)
     removeModal()
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("computation: END")
+  DEBUG_MODULE_PROCESSING_TIME("computation", MODULE_START_TIME, MODULE_END_TIME)
   
  })
 }

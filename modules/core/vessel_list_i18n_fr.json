@@ -1,4 +1,5 @@
 {
+  /*vessel list title and subtitle*/
   "VESSEL_LIST_TITLE" : "Liste des navires",
   "VESSEL_LIST_SUBTITLE": "Accéder à l'information relative aux navires",
   "VESSELS": "Navires",
@@ -17,5 +18,6 @@
   "VESSEL_LIST_TABLE_COLNAME_REGPORT": "Port d'enregistrement/site de débarquement",
   "VESSEL_LIST_TABLE_COLNAME_LICENSESTATUS": "Statut de license",
   "VESSEL_LIST_TABLE_COLNAME_DETAILS": "",
+  "VESSEL_LIST_TABLE_RECORD_ACCESS": "Détails",
   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
 }

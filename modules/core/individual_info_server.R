@@ -1,14 +1,16 @@
 #individual_info_server
-individual_info_server <- function(id, pool, reloader) {
+individual_info_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {
+    
+    INFO("individual-info: START")
+    MODULE_START_TIME <- Sys.time()
     
     output$individual_header <- renderText({
       text <- paste0("<a href=\"./?page=individual-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">","<< ",i18n("BACK_TO_LIST_OF_INDIVIDUALS"),"</a>")
       text
     })
-    
-    
+
     observe({
 
       individualId <- NULL
@@ -25,7 +27,7 @@ individual_info_server <- function(id, pool, reloader) {
       
       if(!is.null(individualId)){
         
-        individual <- accessIndividual(pool,individualId)
+        individual <- accessIndividual(pool, individualNumber = individualId)
         INFO("individual-info server: Fetching individual info data with rows '%s'", nrow(individual))
         
         fishing_roles <- individual$FSH_CODE
@@ -73,8 +75,7 @@ individual_info_server <- function(id, pool, reloader) {
                   
           )
         })
-        
-        
+
         output$individual_picture <- renderUI({
           
           INFO("individual-info server: Returning Placeholder image for individual")
@@ -84,7 +85,7 @@ individual_info_server <- function(id, pool, reloader) {
           
         })
         
-        ind_roles <- accessIndividual(pool,individualNumber = NULL)[,c("FSH_CODE","FSH_ROLE")]
+        ind_roles <- accessIndividuals(pool)[,c("FSH_CODE","FSH_ROLE")]
         
         INFO("individual-info server: Fetching entire individual info data and their fishing roles with rows '%s'", nrow(ind_roles))
 
@@ -131,6 +132,9 @@ individual_info_server <- function(id, pool, reloader) {
         
       }
       
+      MODULE_END_TIME <- Sys.time()
+      INFO("individual-info: END")
+      DEBUG_MODULE_PROCESSING_TIME("Individual-info", MODULE_START_TIME, MODULE_END_TIME)
       
     })
     

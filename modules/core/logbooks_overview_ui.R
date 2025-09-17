@@ -10,29 +10,10 @@ logbooks_overview_ui <- function(id){
               htmlOutput(ns("logbooks_overview_info"))
             )
           ),
-           uiOutput(ns("nb_infos")),
-          # fluidRow(
-          #   div(
-          #     class = "col-md-6",
-          #     h3(sprintf("Statistics (tons) by vessel type - %s", as.integer(format(Sys.Date(), "%Y"))-1)), hr(),
-          #     box(
-          #       width = 12,
-          #       DT::dataTableOutput(ns("stats_by_type_lastyear_table"))
-          #     )
-          #   ),
-          #   div(
-          #     class = "col-md-6",
-          #     h3(sprintf("Statistics (tons) by vessel type - %s", format(Sys.Date(), "%Y"))), hr(),
-          #     box(
-          #       width = 12,
-          #       DT::dataTableOutput(ns("stats_by_type_currentyear_table"))
-          #     )
-          #   )
-          #),
+          uiOutput(ns("nb_infos")),
           fluidRow(
             div(
               class = "col-md-12",
-             # h3(sprintf("Breakdown of quantity caught")), hr(),
               shinyWidgets::verticalTabsetPanel(
                 shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_GLOBAL_QUANTITY"),box_height='70px', line_chart_ui(ns("gq"),sliderWidth =25)),
                 shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_GLOBAL_VESSEL"),box_height='70px', 
