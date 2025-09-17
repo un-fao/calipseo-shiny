@@ -1,5 +1,5 @@
 #vessel_qa_server
-vessel_qa_server <- function(id, pool, reloader) {
+vessel_qa_server <- function(id, parent.session, pool, reloader) {
   
  moduleServer(id, function(input, output, session) {
     
@@ -15,7 +15,7 @@ vessel_qa_server <- function(id, pool, reloader) {
   vessel_qa_names_df <- accessVesselQaNames(pool)
   vessel_qa_ports_df <- accessVesselQaPorts(pool)
   vessel_qa_characteristics_df <- accessVesselQaCharacteristics(pool)
-  vessel_qa_license_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
+  vessel_qa_license_permits <- accessVesselLicensePermits(pool,id = NULL)
   vessel_qa_vop_status <- data.frame(VOP_STATUS = accessVessels(pool)$VESSEL_OPERATIONAL_STATUS)
   ftpv_activity_count <- dplyr::distinct(accessVesselsWithFishingTrips(pool, year = format(Sys.Date(), "%Y")), REGISTRATION_NUMBER, .keep_all = TRUE)
   ftpv_GrandTotal <- nrow(dplyr::distinct(accessVesselsWithFishingTrips(pool, year = NULL), REGISTRATION_NUMBER, .keep_all = TRUE))

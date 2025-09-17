@@ -138,13 +138,13 @@ accessVesselsFromDB <- function(con){
   vessels <- getFromSQL(con, vessels_sql)
   return(vessels)
 }
-#accessVesselLicensePermitFromDB
-accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
+#accessVesselLicensePermitsFromDB
+accessVesselLicensePermitsFromDB <- function(con, id = NULL){
   
-  if(!is.null(registrationNumber)){
-    DEBUG("Query vessel license permits for '%s'", registrationNumber)
+  if(!is.null(id)){
+    DEBUG("Query vessel license permits for '%s'", id)
     licensePermit_sql <- readSQL("data/core/sql/vessel_license_permits.sql", 
-                                 key = "vlp.PERMIT_NUMBER != ''AND v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
+                                 key = "vlp.PERMIT_NUMBER != '' AND v.REGISTRATION_NUMBER", value = id,
                                  language = appConfig$language)
     licensePermit <- getFromSQL(con, licensePermit_sql)
   }else{
@@ -159,7 +159,106 @@ accessVesselLicensePermitFromDB <- function(con, registrationNumber = NULL){
 
 #<MODULE:VESSEL_LIST>
 #accessVesselsFromDB - see <COMMON:VESSELS>
-#accessVesselLicensePermitFromDB - see <COMMON:VESSELS>
+#accessVesselLicensePermitsFromDB - see <COMMON:VESSELS>
+
+#<MODULE:VESSEL_INFO>
+#accessVesselFromDB
+accessVesselFromDB <- function(con, id){
+  DEBUG("Query vessel '%s'", id)
+  vessel_sql <- readSQL("data/core/sql/vessels.sql", 
+                        key = "v.ID", value = id, 
+                        language = appConfig$language)
+  vessel <- getFromSQL(con, vessel_sql)
+  return(vessel)
+}
+#accessVesselHistoricalCharacteristicsFromDB
+accessVesselHistoricalCharacteristicsFromDB <- function(con, id){
+  DEBUG("Query vessel historical characteristics for '%s'", id)
+  vessel_historical_char_sql <- readSQL("data/core/sql/vessel_historical_characteristics.sql", 
+                                        key = "v.ID", value = id,
+                                        language = appConfig$language)
+  vessel_historical_char <- getFromSQL(con, vessel_historical_char_sql)
+  return(vessel_historical_char)
+}
+
+#accessVesselOwnersFromDB
+accessVesselOwnersFromDB <- function(con, id = NULL){
+  DEBUG("Query vessel owners for '%s'", id)
+  vessel_owners_sql <- readSQL("data/core/sql/vessels_owners.sql",
+                               key = "v.ID", value = id
+  )
+  vessel_owners <- getFromSQL(con, vessel_owners_sql)
+  return(vessel_owners)
+}  
+
+#accessVesselCatchesFromDB
+accessVesselCatchesFromDB <- function(con, id){
+  DEBUG("Query vessel catches for '%s'", id)
+  landing_forms_sql <- readSQL("data/core/sql/fishing_activities.sql", 
+                               key = "v.ID", value = id,
+                               language = appConfig$language)
+  landing_forms <- getFromSQL(con, landing_forms_sql)
+  return(landing_forms)
+}
+
+#accessVesselCatchesByYearSpeciesFromDB
+accessVesselCatchesByYearSpeciesFromDB <- function(con, id){
+  DEBUG("Query Species catches total by year for vessel '%s'", id)
+  species_catches_year_sql <- readSQL("data/core/sql/fish_species_catches_totalbyyear.sql",
+                                      key = "v.ID", value = id,
+                                      language = appConfig$language)
+  
+  species_catches_year <- getFromSQL(con,species_catches_year_sql)
+  return(species_catches_year)
+}
+
+#countVesselOwnersPerVesselFromDB
+countVesselOwnersPerVesselFromDB <- function(con, id){
+  DEBUG("Count vessel owners for vessel '%s'", id)
+  vessel_Owners_Per_vessel_sql <- readSQL("data/core/sql/count_vessel_owner_per_vessel.sql", 
+                                          key = "v.ID", value = id)
+  vessel_Owners_Per_vessel <- getFromSQL(con, vessel_Owners_Per_vessel_sql)
+  return(vessel_Owners_Per_vessel)
+} 
+
+#countVesselDaysAtSeaFromDB
+countVesselDaysAtSeaFromDB <- function(con, id){
+  DEBUG("Count vessel days at sea for vessel '%s'", id)
+  vessel_days_at_sea_sql <- readSQL("data/core/sql/count_vessel_daysatsea.sql", 
+                                    key = "v.ID", value = id)
+  vessel_days_at_sea <- getFromSQL(con, vessel_days_at_sea_sql)
+  return(vessel_days_at_sea)
+}
+#countFishingTripsPerVesselFromDB
+countFishingTripsPerVesselFromDB <- function(con, id){
+  fishingTripsPerVessel_sql <- readSQL("data/core/sql/count_fishing_trip_per_vessel.sql", 
+                                       key = "v.ID", value = id)
+  
+  if(!is.null(id)){
+    fishingTripsPerVessel_sql <- paste0(fishingTripsPerVessel_sql, " GROUP BY year(ft.DATE_TO);")
+  }
+  
+  fishingTripsPerVessel_sql <- getFromSQL(con, fishingTripsPerVessel_sql)
+  return(fishingTripsPerVessel_sql)
+}
+
+#countVesselFishingGearsFromDB
+countVesselFishingGearsFromDB <- function(con, id){
+  vessel_fishing_gears_sql <- readSQL("data/core/sql/count_vessel_fishing_gears.sql", 
+                                      key = "v.ID", value = id)
+  vessel_fishing_gears <- getFromSQL(con, vessel_fishing_gears_sql)
+  return(vessel_fishing_gears)
+} 
+
+#countVesselLicensePermitFromDB
+countVesselLicensePermitFromDB <- function(con, id){
+  vessel_license_permit_sql <- readSQL("data/core/sql/count_vessel_license_permits.sql", 
+                                       key = "v.ID", value = id)
+  vessel_license_permit <- getFromSQL(con, vessel_license_permit_sql)
+  return(vessel_license_permit)
+}
+
+
 
 #<MODULE:VESSEL_OVERVIEW>
 #accessVesselInfoFromDB
@@ -227,7 +326,7 @@ accessVesselsWithFishingTripsFromDB <- function(con, year = NULL){
   vessel_with_fishing_trips <- getFromSQL(con, sql)
   return(vessel_with_fishing_trips)
 }
-#accessVesselLicensePermitFromDB -> see <COMMON:VESSELS>
+#accessVesselLicensePermitsFromDB -> see <COMMON:VESSELS>
 
 
 #<MODULE:INDIVIDUAL_LIST>
@@ -295,7 +394,7 @@ accessLogBooksMultiyearFromDB <- function(con){
 
 
   
-
+########################## TO REVIEW #############################################
 
 
 
@@ -322,17 +421,6 @@ accessRefFishingUnitsFromDB <- function(con){
   return(ref_fishing_units)
 }
 
-#accessSpeciesCatchesYearFromDB
-accessSpeciesCatchesYearFromDB <- function(con, registrationNumber){
-  DEBUG("Query Species catches total by year for vessel '%s'", registrationNumber)
-  species_catches_year_sql <- readSQL("data/core/sql/fish_species_catches_totalbyyear.sql",
-                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
-                                            language = appConfig$language)
-  
-  species_catches_year <- getFromSQL(con,species_catches_year_sql)
-  return(species_catches_year)
-}
-
 
 #accessLandingSiteNamesFromDB
 accessLandingSiteNamesFromDB <- function(con){
@@ -341,56 +429,6 @@ accessLandingSiteNamesFromDB <- function(con){
   landingsites <- getFromSQL(con, landingsites_sql)[,1]
   return(landingsites)
 }  
-
-#accessVesselFromDB
-accessVesselFromDB <- function(con, registrationNumber){
-  DEBUG("Query vessel '%s'", registrationNumber)
-  vessel_sql <- readSQL("data/core/sql/vessels.sql", 
-                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"), 
-                              language = appConfig$language)
-  vessel <- getFromSQL(con, vessel_sql)
-  return(vessel)
-}
-
-
-
-#accessVesselHistoricalCharacteristicsFromDB
-accessVesselHistoricalCharacteristicsFromDB <- function(con, registrationNumber){
-  DEBUG("Query vessel historical characteristics for '%s'", registrationNumber)
-  vessel_historical_char_sql <- readSQL("data/core/sql/vessel_historical_characteristics.sql", 
-                                              key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
-                                              language = appConfig$language)
-  vessel_historical_char <- getFromSQL(con, vessel_historical_char_sql)
-  return(vessel_historical_char)
-}
-
-#accessVesselOwnersFromDB
-accessVesselOwnersFromDB <- function(con, registrationNumber = NULL){
-  DEBUG("Query vessel owners for '%s'", registrationNumber)
-  vessel_owners_sql <- readSQL("data/core/sql/vessels_owners.sql",
-                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'")
-  )
-  vessel_owners <- getFromSQL(con, vessel_owners_sql)
-  return(vessel_owners)
-}  
-
-#accessVesselCatchesFromDB
-accessVesselCatchesFromDB <- function(con, registrationNumber){
-  DEBUG("Query vessel catches for '%s'", registrationNumber)
-  landing_forms_sql <- readSQL("data/core/sql/fishing_activities.sql", 
-                                     key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"),
-                                     language = appConfig$language)
-  landing_forms <- getFromSQL(con, landing_forms_sql)
-  return(landing_forms)
-}
-
-#accessVesselsCountByTypeFromDB
-accessVesselsCountByTypeFromDB <- function(con){
-  DEBUG("Count vessel by type")
-  vesseltypes_count_sql <- readSQL("data/core/sql/vessels_types_count.sql",
-                                         language = appConfig$language)
-  getFromSQL(con, vesseltypes_count_sql)
-}
 
 #accessIndividualCountByGenderFromDB
 accessIndividualCountByGenderFromDB <- function(con){
@@ -428,14 +466,6 @@ accessIndividualOverviewFromDB <- function(con){
   return(ind_overview_sql)
 } 
 
-#accessVesselsCountByStatTypeFromDB
-accessVesselsCountByStatTypeFromDB <- function(con){
-  DEBUG("Count vessel by stat type")
-  vesselstattypes_count_sql <- readSQL("data/core/sql/vessels_stat_types_count.sql",
-                                             language = appConfig$language)
-  getFromSQL(con, vesselstattypes_count_sql)
-}
-
 #accessVesselsLandingSiteFromDB
 accessVesselsLandingSiteFromDB <- function(con){
   DEBUG("Query vessel landing sites")
@@ -443,29 +473,6 @@ accessVesselsLandingSiteFromDB <- function(con){
                                          language = appConfig$language)
   sites <- getFromSQL(con,  vesselsites_sql)
   return(sites)
-}
-
-
-
-
-
-#countVesselOwnersPerVesselFromDB
-countVesselOwnersPerVesselFromDB <- function(con, registrationNumber){
-  DEBUG("Count vessel owners for vessel '%s'", registrationNumber)
-  vessel_Owners_Per_vessel_sql <- readSQL("data/core/sql/count_vessel_owner_per_vessel.sql", 
-                                                key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  vessel_Owners_Per_vessel <- getFromSQL(con, vessel_Owners_Per_vessel_sql)
-  return(vessel_Owners_Per_vessel)
-} 
-
-
-#countVesselDaysAtSeaFromDB
-countVesselDaysAtSeaFromDB <- function(con, registrationNumber){
-  DEBUG("Count vessel days at sea for vessel '%s'", registrationNumber)
-  vessel_days_at_sea_sql <- readSQL("data/core/sql/count_vessel_daysatsea.sql", 
-                                          key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  vessel_days_at_sea <- getFromSQL(con, vessel_days_at_sea_sql)
-  return(vessel_days_at_sea)
 }
 
 
@@ -492,37 +499,7 @@ accessVesselsOwnersWithLogBooksFromDB <- function(con){
 #DATA
 
 
-#countFishingTripsPerVesselFromDB
-countFishingTripsPerVesselFromDB <- function(con, registrationNumber){
-  fishingTripsPerVessel_sql <- readSQL("data/core/sql/count_fishing_trip_per_vessel.sql", 
-                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  
-  if(!is.null(registrationNumber)){
-    fishingTripsPerVessel_sql <- paste0(fishingTripsPerVessel_sql, " GROUP BY year(ft.DATE_TO);")
-  }
-  
-  fishingTripsPerVessel_sql <- getFromSQL(con, fishingTripsPerVessel_sql)
-  return(fishingTripsPerVessel_sql)
-}
-
-
-
-#countVesselFishingGearsFromDB
-countVesselFishingGearsFromDB <- function(con, registrationNumber){
-  vessel_fishing_gears_sql <- readSQL("data/core/sql/count_vessel_fishing_gears.sql", 
-                                            key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  vessel_fishing_gears <- getFromSQL(con, vessel_fishing_gears_sql)
-  return(vessel_fishing_gears)
-} 
-
-
-#countVesselLicensePermitFromDB
-countVesselLicensePermitFromDB <- function(con, registrationNumber){
-  vessel_license_permit_sql <- readSQL("data/core/sql/count_vessel_license_permits.sql", 
-                                             key = "v.REGISTRATION_NUMBER", value = paste0("'", registrationNumber, "'"))
-  vessel_license_permit <- getFromSQL(con, vessel_license_permit_sql)
-  return(vessel_license_permit)
-} 
+ 
 
 
 
@@ -823,11 +800,24 @@ countLandingSites <- function(con){ countLandingSitesFromDB(con) }
 
 #<COMMON:VESSELS>
 accessVessels <- function(con){ accessVesselsFromDB(con) }
-accessVesselLicensePermit <- function(con, registrationNumber){ accessVesselLicensePermitFromDB(con, registrationNumber) }
+accessVesselLicensePermits <- function(con, id){ accessVesselLicensePermitsFromDB(con, id) }
 
 #<MODULE:VESSEL_LIST>
 #accessVessels - see <COMMON:VESSELS>
-#accessVesselLicensePermit - see <COMMON:VESSELS>
+#accessVesselLicensePermits - see <COMMON:VESSELS>
+
+#<MODULE:VESSEL_INFO>
+accessVessel <- function(con, id){ accessVesselFromDB(con, id) }
+accessVesselHistoricalCharacteristics <- function(con, id){ accessVesselHistoricalCharacteristicsFromDB(con, id) }
+accessVesselOwners <- function(con, id){ accessVesselOwnersFromDB(con, id) }
+accessVesselCatches <- function(con, id){ accessVesselCatchesFromDB(con, id) }
+accessVesselCatchesByYearSpecies <- function(con, id) { accessVesselCatchesByYearSpeciesFromDB(con, id) }
+countVesselOwnersPerVessel <- function(con, id) { countVesselOwnersPerVesselFromDB(con, id)}
+countVesselDaysAtSea <- function(con, id) { countVesselDaysAtSeaFromDB(con, id) }
+countFishingTripsPerVessel <- function(con, id){ countFishingTripsPerVesselFromDB(con, id) }
+countVesselFishingGears <- function(con, id) { countVesselFishingGearsFromDB(con, id) }
+countVesselLicensePermit <- function(con, id) { countVesselLicensePermitFromDB(con, id) }
+
 
 #<MODULE:VESSEL_OVERVIEW>
 accessVesselInfo <- function(con){ accessVesselInfoFromDB(con) }
@@ -869,6 +859,9 @@ accessLogBooksMultiyear <- function(con){ accessLogBooksMultiyearFromDB(con) }
 
 
 
+####################### TO REVIEW #######################################
+
+
 #accessRefSpecies
 accessRefSpecies <- function(con,year=NULL){
   accessRefSpeciesFromDB(con)
@@ -879,54 +872,10 @@ accessRefFishingUnits <- function(con){
   accessRefFishingUnitsFromDB(con)
 }
 
-#accessSpeciesCatchesYear
-accessSpeciesCatchesYear <- function(con, registrationNumber) {
-  accessSpeciesCatchesYearFromDB(con, registrationNumber)
-}
-
-
 #accessLandingSiteNames
 accessLandingSiteNames <- function(con){
   accessLandingSiteNamesFromDB(con)
 }
-
-
-
-
-#accessVessel
-accessVessel <- function(con, registrationNumber){
-  accessVesselFromDB(con, registrationNumber)
-}
-
-
-
-
-
-#accessVesselHistoricalCharacteristics
-accessVesselHistoricalCharacteristics <- function(con, registrationNumber){
-  accessVesselHistoricalCharacteristicsFromDB(con, registrationNumber)
-}
-
-#accessVesselOwners
-accessVesselOwners <- function(con, registrationNumber = NULL){
-  accessVesselOwnersFromDB(con, registrationNumber)
-}
-
-#accessVesselCatches
-accessVesselCatches <- function(con, registrationNumber = NULL){
-  accessVesselCatchesFromDB(con, registrationNumber)
-}
-
-#accessVesselsCountByType
-accessVesselsCountByType <- function(con){
-  accessVesselsCountByTypeFromDB(con)
-}
-
-#accessVesselsCountByStatType
-accessVesselsCountByStatType <- function(con){
-  accessVesselsCountByStatTypeFromDB(con)
-}
-
 
 #accessIndividualCountByGender
 accessIndividualCountByGender <- function(con){
@@ -951,19 +900,6 @@ accessVesselsLandingSite <- function(con){
   accessVesselsLandingSiteFromDB(con)
 }
 
-
-
-
-#countVesselOwnersPerVessel
-countVesselOwnersPerVessel <- function(con, registrationNumber) {
-  countVesselOwnersPerVesselFromDB(con, registrationNumber)
-}
-
-#countVesselDaysAtSea
-countVesselDaysAtSea <- function(con, registrationNumber) {
-  countVesselDaysAtSeaFromDB(con, registrationNumber)
-}
-
 #accessVesselsWithLogBooks
 accessVesselsWithLogBooks <- function(con){
   accessVesselsWithLogBooksFromDB(con)
@@ -975,25 +911,6 @@ accessVesselsOwnersWithLogBooks <- function(con){
 }
 
 #DATA
-
-#countFishingTripPerVessel
-countFishingTripsPerVessel <- function(con, registrationNumber){
-  countFishingTripsPerVesselFromDB(con, registrationNumber)
-}
-
-
-#countVesselFishingGears
-countVesselFishingGears <- function(con, registrationNumber) {
-  countVesselFishingGearsFromDB(con, registrationNumber)
-}
-
-
-#countVesselLicensePermit
-countVesselLicensePermit <- function(con, registrationNumber) {
-  countVesselLicensePermitFromDB(con, registrationNumber)
-}
-
-
 
 
 #accessLandingForms

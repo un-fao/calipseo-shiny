@@ -1,5 +1,5 @@
 #artfish_overview_server
-artfish_overview_server <- function(id, pool, reloader){
+artfish_overview_server <- function(id, parent.session, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
     

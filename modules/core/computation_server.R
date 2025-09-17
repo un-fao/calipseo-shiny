@@ -1,5 +1,5 @@
 #computation_server
-computation_server <- function(id, pool, reloader) {
+computation_server <- function(id, parent.session, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
   

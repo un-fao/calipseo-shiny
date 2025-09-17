@@ -98,7 +98,7 @@ listLinkedModules <- function(id, config){
 }
 
 #loadModuleServer
-loadModuleServer <- function(id, config, pool, module_state){
+loadModuleServer <- function(id, session, config, pool, module_state){
   id_out = id
   load_module <- !id %in% module_state$initialized
   if(load_module){
@@ -106,11 +106,12 @@ loadModuleServer <- function(id, config, pool, module_state){
     attr(id_out, "status") = "initialize"
   }else{
     INFO("Module server '%s' already initialized. Check if it needs to be reloaded", id)
-    load_module <- id %in% module_state$toreload | '*' %in% module_state$toreload
+    load_module <- id %in% module_state$toreload | '*' %in% module_state$toreload | regexpr("_info", id) > 0
     if(load_module){
       INFO("Module '%s' is listed in modules to be reloaded.", id)
       attr(id_out, "status") = "reload"
     }else{
+      INFO("Module '%s' is not reloaded", id)
       attr(id_out, "status") = "display"
     }
   }
@@ -119,7 +120,7 @@ loadModuleServer <- function(id, config, pool, module_state){
     server_fun <- try(eval(expr = parse(text = server_fun_name)), silent = TRUE)
     if(!is.null(server_fun)){
       if(!is(server_fun, "try-error")){
-        called <- try(server_fun(id, pool, reloader))
+        called <- try(server_fun(id, session, pool, reloader))
         if(is(called, "try-error")){
           ERROR("Error while calling shiny module '%s'", id)
         }

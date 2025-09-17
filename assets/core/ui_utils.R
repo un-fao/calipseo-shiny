@@ -44,10 +44,14 @@ userTooltip <- function(text, style = ""){
   return(tt)
 }
 
-#updatePageUrl
-updatePageUrl <- function(page, session){
+#updateModuleUrl
+updateModuleUrl <- function(session, module, record = NULL){
   updateQueryString(
-    queryString = sprintf("?page=%s", page), 
+    queryString = if(is.null(record)){
+      sprintf("?module=%s", module)
+    }else{
+      sprintf("?module=%s&record=%s", module, record)
+    }, 
     mode = "push", session
   )
 }

@@ -1,5 +1,5 @@
 #home_ui
-home_server <- function(id, pool, reloader){
+home_server <- function(id, parent.session, pool, reloader){
   
  moduleServer(id, function(input, output, session) {
   

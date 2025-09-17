@@ -1,5 +1,5 @@
 #vessel_list_server
-vessel_list_server <- function(id, pool, reloader) {
+vessel_list_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {  
     
@@ -7,6 +7,8 @@ vessel_list_server <- function(id, pool, reloader) {
     MODULE_START_TIME = Sys.time()
     
     ns <- session$ns
+    
+    vessel_selection <- reactiveVal(NULL)
     
     output$vessel_list_info <- renderText({
       text <- paste0("<h2>", i18n("VESSEL_LIST_TITLE")," <small>", i18n("VESSEL_LIST_SUBTITLE"),"</small></h2><hr>")
@@ -30,11 +32,13 @@ vessel_list_server <- function(id, pool, reloader) {
     }
     INFO("vessel-list: Fetching vessel list data after enriching with ISVESSELACTIVE - %s rows", nrow(outp))
     
-    #TODO add buttons
-    #!!!! problematic when no registration number/ empty registration number
-    outp$Details <- sapply(outp$REGISTRATION_NUMBER, function(x){ 
-      outhtml <- sprintf("<a href=\"./?page=vessel-info&registrationNumber=%s\" style=\"font-weight:bold;\">Details</a>", x)
-      return(outhtml)
+    outp$Details <- sprintf(
+      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});">Click me</a>',
+      ns("access_vessel_info"), outp$ID
+    )
+    observeEvent(input$access_vessel_info, {
+      DEBUG("Click to access details for vessel '%s'", input$access_vessel_info)
+      vessel_selection(input$access_vessel_info)
     })
     
     df = NULL
@@ -52,7 +56,7 @@ vessel_list_server <- function(id, pool, reloader) {
                     "HOME_PORT","REG_PORT","Details")]
     
     #Adding license information
-    ls_permits <- accessVesselLicensePermit(pool,registrationNumber = NULL)
+    ls_permits <- accessVesselLicensePermits(pool,id = NULL)
     INFO("vessel-list: Fetching license permits data with rows '%s'", nrow(ls_permits))
     
     #vessels with no licenses
@@ -126,6 +130,7 @@ vessel_list_server <- function(id, pool, reloader) {
     INFO("vessel-list: Rendering the vessel list data to the table")
     output$vessel_list <- DT::renderDT(
       df,
+      selection = 'none',
       container = initDTContainer(df),
       escape = FALSE,
       rownames = FALSE,
@@ -155,6 +160,20 @@ vessel_list_server <- function(id, pool, reloader) {
       )
       
     )
+    
+    #Control the selection of the UI (vessel-list or vessel-info with the use of
+    #the parent.session$userData$record_selection)
+    observeEvent(vessel_selection(),{
+      if(is.null(vessel_selection())){
+        DEBUG("Selection is NULL, we display the vessel table")
+        parent.session$userData$record_selection = NULL
+        isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
+      }else{
+        DEBUG("Selection is not NULL, we display the vessel record")
+        parent.session$userData$record_selection = vessel_selection()
+        isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_info") })
+      }
+    })
     
     MODULE_END_TIME <- Sys.time()
     MODULE_TIME <- MODULE_END_TIME - MODULE_START_TIME

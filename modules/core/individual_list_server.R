@@ -1,5 +1,5 @@
 #individual_list_server
-individual_list_server <- function(id, pool, reloader) {
+individual_list_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {
     

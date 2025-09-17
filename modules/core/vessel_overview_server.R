@@ -1,5 +1,5 @@
 #vessel_overview_server
-vessel_overview_server <- function(id, pool, reloader) {
+vessel_overview_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session) {  
     

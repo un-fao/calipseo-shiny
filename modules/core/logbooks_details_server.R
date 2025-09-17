@@ -1,5 +1,5 @@
 #logbooks_details_server
-logbooks_details_server <- function(id, pool, reloader){
+logbooks_details_server <- function(id, parent.session, pool, reloader){
  
  moduleServer(id, function(input, output, session) {  
   
