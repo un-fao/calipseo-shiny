@@ -1,3 +1,5 @@
+#SQL UTILS
+#-----------------------------------------------------------------------------------------------------
 #readSQL
 readSQL <- function(sqlfile, 
                           key = NULL, value = NULL,
@@ -33,7 +35,7 @@ readSQL <- function(sqlfile,
   return(sql)
 }
 
-#executeSQL
+#getFromSQL
 getFromSQL <- function(con, sql){
   start <- Sys.time()
   sql_data <- suppressWarnings(dbGetQuery(con, sql))
@@ -41,6 +43,146 @@ getFromSQL <- function(con, sql){
   time = end-start
   DEBUG("\u23F3 Query processing time: %s %s", as(time, "numeric"), attr(time, "units"))
   return(sql_data)
+}
+
+
+#Country profile
+#-----------------------------------------------------------------------------------------------------
+loadCountryProfile <- function(appConfig, con){
+  if(is.null(appConfig$country_profile$iso3)){
+    stop("Missing country ISO3 code in configuration file!")
+  }
+  country_data <- DBI::dbGetQuery(con, sprintf("select * from cl_ref_countries where ISO_3_CODE = '%s'", appConfig$country_profile$iso3))
+  appConfig$country_profile$data <- country_data[1L,]
+  return(appConfig)
+}
+
+
+#Local data accessors
+#-----------------------------------------------------------------------------------------------------
+
+#loadLocalDataset
+loadLocalDataset <- function(filename){
+  filesplits <- unlist(strsplit(filename, "/"))
+  objectname <- unlist(strsplit(filesplits[length(filesplits)], "\\."))[1]
+  data <- switch(mime::guess_type(filename),
+                 "application/json" = jsonlite::read_json(filename),
+                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
+  )
+  assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
+}
+
+#loadLocalCountryDatasets
+loadLocalCountryDatasets <- function(config){
+  local_dir <- if(config$local) "../calipseo-data" else "data"
+  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
+  if(dir.exists(country_dir)){
+    files <- list.files(path = country_dir, full.names = TRUE)
+    for(file in files){
+      message(sprintf("Loading local dataset '%s'", file))
+      loadLocalDataset(file)
+    }
+  }
+}
+
+#getLocalCountryDataset
+getLocalCountryDataset <- function(config,filename){
+  local_dir <- if(config$local) "../calipseo-data" else "data"
+  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
+  filename <- file.path(country_dir, filename)
+  data <- switch(mime::guess_type(filename),
+                 "application/json" = jsonlite::read_json(filename),
+                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
+  )
+  return(data)
+}
+
+#Remote data accessors
+#-----------------------------------------------------------------------------------------------------
+
+#loadRemoteReferenceDataset
+loadRemoteReferenceDataset <- function(objectname,filename){
+  data <- as.data.frame(readr::read_csv(filename))
+  assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
+}
+
+#getRemoteReferenceDataset
+getRemoteReferenceDataset <- function(name){
+  get(name, envir = CALIPSEO_SHINY_ENV)
+}
+
+#Process I/O accessors
+#-----------------------------------------------------------------------------------------------------
+
+#getProcessOutput
+getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, target = "release"){
+  if(target == "release+staging"){
+    out <- rbind(
+      getProcessOutputs(config, id, year, quarter, month, target = "release"),
+      getProcessOutputs(config, id, year, quarter, month, target = "staging")
+    )
+  }else{
+    filepath <- file.path(config$store, target, id, year)
+    if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
+    if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
+    files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
+    print(files)
+    out <- do.call("rbind", lapply(files, readr::read_csv))
+  }
+  
+  return(out)
+  
+}
+
+#getStatPeriods
+getStatPeriods <- function(config, id,target = "release"){
+  
+  out <- data.frame(
+    year = integer(0),
+    quarter = integer(0),
+    month = integer(0),
+    file = integer(0)
+  )
+  
+  if(target == "release+staging"){
+    out <- rbind(
+      getStatPeriods(config, id, target = "release"),
+      getStatPeriods(config, id, target = "staging")
+    )
+  }else{
+    
+    target_folder<-sprintf("%s/%s/%s",config$store,target, id)
+    
+    full_path<-list.files(target_folder,recursive = T,full.names = T)
+    files<-list.files(target_folder,recursive = T,full.names = F)
+    
+    if(length(files)>0){
+      x<-strsplit(files,"/")
+      years<-unlist(lapply(x, function(l) l[[1]]))
+      
+      by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
+      
+      if(by_year){
+        out <- data.frame(year = years,file=full_path)
+      }else{
+        
+        month_quarter<-unlist(lapply(x, function(l) l[[2]]))
+        
+        by_quarter = any(sapply(month_quarter, startsWith, "Q"))
+        by_month = any(sapply(month_quarter, startsWith, "M"))
+        
+        if(by_quarter){
+          out <- data.frame(year = years, quarter = month_quarter, file=full_path)
+        }
+        if(by_month){
+          out <- data.frame(year = years, month = month_quarter, file=full_path)
+        }
+        
+      }
+    }
+  }
+  
+  return(out)
 }
 
 #-----------------------------------------------------------------------------------------------------
@@ -1031,162 +1173,4 @@ accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
 }
-
-#Country profile
-#-----------------------------------------------------------------------------------------------------
-loadCountryProfile <- function(appConfig, con){
-  if(is.null(appConfig$country_profile$iso3)){
-    stop("Missing country ISO3 code in configuration file!")
-  }
-  country_data <- DBI::dbGetQuery(con, sprintf("select * from cl_ref_countries where ISO_3_CODE = '%s'", appConfig$country_profile$iso3))
-  appConfig$country_profile$data <- country_data[1L,]
-  return(appConfig)
-}
-
-
-#Local data accessors
-#-----------------------------------------------------------------------------------------------------
-
-#loadLocalDataset
-#@deprecated
-loadLocalDataset <- function(filename){
-  filesplits <- unlist(strsplit(filename, "/"))
-  objectname <- unlist(strsplit(filesplits[length(filesplits)], "\\."))[1]
-  data <- switch(mime::guess_type(filename),
-                 "application/json" = jsonlite::read_json(filename),
-                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
-  )
-  assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
-}
-
-#loadLocalCountryDatasets
-#@deprecated
-loadLocalCountryDatasets <- function(config){
-  local_dir <- if(config$local) "../calipseo-data" else "data"
-  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
-  if(dir.exists(country_dir)){
-    files <- list.files(path = country_dir, full.names = TRUE)
-    for(file in files){
-      message(sprintf("Loading local dataset '%s'", file))
-      loadLocalDataset(file)
-    }
-  }
-}
-
-#getLocalCountryDataset
-getLocalCountryDataset <- function(config,filename){
-  local_dir <- if(config$local) "../calipseo-data" else "data"
-  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
-  filename <- file.path(country_dir, filename)
-  data <- switch(mime::guess_type(filename),
-   "application/json" = jsonlite::read_json(filename),
-   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
-  )
-  return(data)
-}
-
-#getLocalCountryDatasets
-#@deprecated
-getLocalCountryDatasets <- function(config){
-  out <- list()
-  local_dir <- if(config$local) "../calipseo-data" else "data"
-  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
-  if(dir.exists(country_dir)){
-    files <- list.files(path = country_dir, full.names = TRUE)
-    out <- lapply(files, function(file){
-      basefilename = unlist(strsplit(basename(file), "\\."))[1]
-      return(get(basefilename, envir = CALIPSEO_SHINY_ENV))
-    })
-    names(out) <- lapply(files, function(file){
-      basefilename = unlist(strsplit(basename(file), "\\."))[1]
-      return(basefilename)
-    })
-  }
-  return(out)
-}
-
-#loadRemoteReferenceDataset
-loadRemoteReferenceDataset <- function(objectname,filename){
-  data <- as.data.frame(readr::read_csv(filename))
-  assign(objectname, data, envir = CALIPSEO_SHINY_ENV)
-}
-
-#getRemoteReferenceDataset
-getRemoteReferenceDataset <- function(name){
-  get(name, envir = CALIPSEO_SHINY_ENV)
-}
-
-#getProcessOutput
-getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, target = "release"){
-  if(target == "release+staging"){
-    out <- rbind(
-      getProcessOutputs(config, id, year, quarter, month, target = "release"),
-      getProcessOutputs(config, id, year, quarter, month, target = "staging")
-    )
-  }else{
-    filepath <- file.path(config$store, target, id, year)
-    if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
-    if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
-    files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
-    print(files)
-    out <- do.call("rbind", lapply(files, readr::read_csv))
-  }
-  
-  return(out)
-  
-}
-
-#getStatPeriods
-getStatPeriods <- function(config, id,target = "release"){
-  
-  out <- data.frame(
-    year = integer(0),
-    quarter = integer(0),
-    month = integer(0),
-    file = integer(0)
-  )
-  
-  if(target == "release+staging"){
-    out <- rbind(
-      getStatPeriods(config, id, target = "release"),
-      getStatPeriods(config, id, target = "staging")
-    )
-  }else{
-    
-    target_folder<-sprintf("%s/%s/%s",config$store,target, id)
-    
-    full_path<-list.files(target_folder,recursive = T,full.names = T)
-    files<-list.files(target_folder,recursive = T,full.names = F)
-    
-    if(length(files)>0){
-      x<-strsplit(files,"/")
-      years<-unlist(lapply(x, function(l) l[[1]]))
-      
-      by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
-      
-      if(by_year){
-        out <- data.frame(year = years,file=full_path)
-      }else{
-        
-        month_quarter<-unlist(lapply(x, function(l) l[[2]]))
-        
-        by_quarter = any(sapply(month_quarter, startsWith, "Q"))
-        by_month = any(sapply(month_quarter, startsWith, "M"))
-        
-        if(by_quarter){
-          out <- data.frame(year = years, quarter = month_quarter, file=full_path)
-        }
-        if(by_month){
-          out <- data.frame(year = years, month = month_quarter, file=full_path)
-        }
-        
-      }
-    }
-  }
-  
-
-  
-  return(out)
-}
-
 
