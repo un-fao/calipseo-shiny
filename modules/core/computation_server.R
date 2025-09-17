@@ -73,12 +73,10 @@ computation_server <- function(id, parent.session, pool, reloader) {
     }))
     
     df <- data.frame(
-      Id = character(0),
       Period = character(0),
       File = character(0),
       Status = character(0),
       Date = character(0),
-      Actions = character(0),
       stringsAsFactors = FALSE
     )
     if(length(periods)>0){
@@ -90,43 +88,13 @@ computation_server <- function(id, parent.session, pool, reloader) {
        }
       })
       
-      uuids <- NULL
-      for(i in 1:length(periods)){
-        one_uuid = uuid::UUIDgenerate() 
-        uuids <- c(uuids, one_uuid)
-      }
       df <- do.call("rbind", lapply(1:length(periods), function(i){
         filepath <- file.path(appConfig$store, status[i], indicator$id, paste0( values[i], ".csv"))
         tibble::tibble(
-          uuid = uuids[i],
-          Id = indicator$id,
           Period = periods[i],
           File = filepath,
           Status = status[i],
-          Date = file.info(filepath)$mtime,
-          Actions = as(
-            tagList(
-              #download result button
-              downloadButtonCustom(
-                  ns(paste0("button_download_result_", uuids[i])), 
-                  title = i18n("BUTTON_DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
-                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
-              ), 
-              #download report button
-              if(!is.null(indicator$report_with)){
-                downloadButtonCustom(
-                  ns(paste0("button_download_report_", uuids[i])), 
-                  title = i18n("BUTTON_DOWNLOAD_REPORT_TITLE"), label = "", icon = icon("file-contract"),
-                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
-                )
-              }else{
-                ""
-              },
-              #release button
-              actionButton(inputId = ns(paste0('button_release_', uuids[i])), class="btn btn-info", style = "margin-right: 2px;",
-                           title = i18n("BUTTON_RELEASE_TITLE"), label = "", icon = icon("upload"))
-            )
-          ,"character")
+          Date = file.info(filepath)$mtime
         )
       }))
       df <- df[order(df$Period),]
@@ -923,16 +891,11 @@ computation_server <- function(id, parent.session, pool, reloader) {
       }
       return (nodes)
     }
-    
-    
-    print("pipo")
+
     target <- Traverse(tree, filterFun = function(x){ x$level == 1 & x$type=="process" })
-    print("pipo2")
     process <- Traverse(tree, filterFun = function(x){ x$level > 1 & x$type=="process"})
     data <- Traverse(tree, filterFun = function(x) x$type =="data")
     local <- Traverse(tree, filterFun = function(x) x$type =="local")
-    
-   
     
     Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
     Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
@@ -1038,7 +1001,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
-      left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
+      left_join(out$results, by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
     
@@ -1357,7 +1320,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
-      left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
+      left_join(out$results, by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
     
