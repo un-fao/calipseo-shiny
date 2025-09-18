@@ -1,5 +1,5 @@
 #artisanal_validation_server
-artisanal_validation_server <- function(id, parent.session, pool, reloader) {
+artisanal_validation_server <- function(id, pool, reloader) {
   
   # server_load_count <<- server_load_count + 1
   # print(sprintf("Server loaded %s time(s)", server_load_count))
