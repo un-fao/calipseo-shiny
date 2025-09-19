@@ -1,8 +1,11 @@
 #artfish_fishing_unit_server
-artfish_fishing_unit_server <- function(id, pool, reloader){
+artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
   
   moduleServer(id, function(input, output, session){   
   
+    INFO("artfish-fishing-unit: START")
+    MODULE_START_TIME <- Sys.time()
+    
   ns<-session$ns
   
   bg_summary<-reactiveVal(NULL)
@@ -706,6 +709,11 @@ artfish_fishing_unit_server <- function(id, pool, reloader){
       )
     }
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("artfish-fishing-unit: END")
+  DEBUG_MODULE_PROCESSING_TIME("Artfish-fishing-unit", MODULE_START_TIME, MODULE_END_TIME)
+  
   })  
   
 }

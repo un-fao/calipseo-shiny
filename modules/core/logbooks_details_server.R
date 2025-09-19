@@ -1,8 +1,10 @@
 #logbooks_details_server
-logbooks_details_server <- function(id, pool, reloader){
+logbooks_details_server <- function(id, parent.session, pool, reloader){
  
  moduleServer(id, function(input, output, session) {  
   
+  INFO("logbooks-details: START")
+  MODULE_START_TIME <- Sys.time() 
   
   emptyDataFrame <- function(){
     data.frame(year = integer(0), quantity = integer(0), stringsAsFactors = FALSE)
@@ -295,8 +297,6 @@ logbooks_details_server <- function(id, pool, reloader){
       df <- as.data.frame(ctrl$data_for_map_total)
       df$geometry <- NULL
       df[!is.na(df$quantity),]
-      
-     
     },
     colnames = c(i18n("TABLE_COLNAME_NAME"),sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT$CODE)),
     server = FALSE,
@@ -324,9 +324,6 @@ logbooks_details_server <- function(id, pool, reloader){
   output$map_species <- renderLeaflet({
     mapSpeciesTotal(ctrl$data_for_map_species, topspecies)
   })
-  
-  
- 
   
   output$data_species <- renderDataTable(
     {
@@ -356,6 +353,10 @@ logbooks_details_server <- function(id, pool, reloader){
       language = list(url = i18n("TABLE_LANGUAGE"))
     )
   )
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("logbooks-details: END")
+  DEBUG_MODULE_PROCESSING_TIME("Logbooks-details", MODULE_START_TIME, MODULE_END_TIME)
   
  }) 
 }

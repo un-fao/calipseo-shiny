@@ -4,8 +4,8 @@ artfish_estimates_by_fleet_segment<-function(con,year=NULL,month=NULL,data_effor
   if(is.null(data_effort))data_effort=accessEffortDataByFleetSegment(con,year,month)
   if(is.null(data_landing))data_landing=accessLandingDataByFleetSegment(con,year,month)
   
-  fishing_units<-accessFishingUnits(con)
-  fishing_units<-subset(fishing_units,select=c(code,label))
+  fishing_units<-accessRefFishingUnits(con)
+  fishing_units<-subset(fishing_units,select=c(CODE,NAME))
   names(fishing_units)<-c("EST_BGC","EST_BGC_NAME")
   
   ref_species<-accessRefSpecies(con)

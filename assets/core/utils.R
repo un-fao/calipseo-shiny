@@ -1,11 +1,17 @@
 #General helpers
-logger <- function(type, txt, ...){
+logger <- function(type, symbol, txt, ...){
   log_txt <- sprintf(txt, ...)
-  cat(sprintf("[shiny-calipseo][%s] %s \n", type, log_txt), file = stderr())
+  cat(sprintf("[calipseo-shiny][%s] %s %s \n", type, symbol, log_txt), file = stderr())
 }
-INFO <- function(txt, ...){logger("INFO", txt, ...)}
-WARN <- function(txt, ...){logger("WARN", txt, ...)}
-ERROR <- function(txt, ...){logger("ERROR", txt, ...)}
+INFO <- function(txt, ...){logger("INFO", "\u2139", txt, ...)}
+WARN <- function(txt, ...){logger("WARN", "\u26A0", txt, ...)}
+ERROR <- function(txt, ...){logger("ERROR", "\u274C", txt, ...)}
+DEBUG <- function(txt, ...){if(appConfig$debug) logger("DEBUG", "\u203C", txt, ...)}
+
+DEBUG_MODULE_PROCESSING_TIME <- function(module, start, end){
+  module_time = end - start
+  DEBUG("\u23F3 %s module loaded in %s %s", module, as(module_time, "numeric"), attr(module_time, "units"))
+}
 
 #round2
 round2 <- function(x, n=0) {scale<-10^n; trunc(x*scale+sign(x)*0.5)/scale}

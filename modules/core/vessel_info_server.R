@@ -1,33 +1,40 @@
 #vessel_info_server
-vessel_info_server <- function(id, pool, reloader) {
+vessel_info_server <- function(id, parent.session, pool, reloader) {
   
  moduleServer(id, function(input, output, session) {
   
-  output$vessel_header <- renderText({
-    text <- paste0("<a href=\"./?page=vessel-list\" style=\"float:right;font-weight:bold;margin-right:10px;\">",i18n("BACK_TO_LIST_OF_VESSELS"),"</a>")
-    text
-  })
+  INFO("vessel-info: START")
+  MODULE_START_TIME = Sys.time()
+  ns <- session$ns
   
+  output$vessel_header <- renderText({
+    sprintf(
+      '<a href="#" onclick="Shiny.setInputValue(\'%s\', %d, {priority: \'event\'});" style="margin-left:15px;font-weight:bold;">%s</a>',
+      ns("back_to_vessels"), 1, i18n("BACK_TO_LIST_OF_VESSELS")
+    )
+  })
+   
+  #Controls the logic to unselect a record from the parent.session$userData
+  #and re-display the vessel_list_module
+  observeEvent(input$back_to_vessels, {
+    DEBUG("Click to return to the list of vessels")
+    parent.session$userData$record_selection = NULL
+    isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
+  }, ignoreInit = T)
+    
+
   observe({
     
-    vesselId <- NULL
-    #inherit vessel Id
-    query <- parseQueryString(session$clientData$url_search)
-    if(length(query)>0){
-      if(!is.null(query[["registrationNumber"]])) {
-        cat(sprintf("Selecting vessel '%s'\n", query[["registrationNumber"]]))
-        vesselId <- query[["registrationNumber"]]
-        INFO("vessel-info server: Displaying info on vessel registration number '%s'", vesselId)
-      }
-    }
+    vesselId <- parent.session$userData$record_selection
+    DEBUG("Access vessel with ID = %s", vesselId)
     
     if(!is.null(vesselId)){
       
       #vessel owners information
       vessel <- accessVessel(pool, vesselId)
-      INFO("vessel-info server: Fetching vessel info data with rows '%s'", nrow(vessel))
+      INFO("vessel-info server: Fetching vessel info data with %s rows", nrow(vessel))
       vesselOwners <- accessVesselOwners(pool, vesselId)
-      INFO("vessel-info server: Fetching vessel owners data with rows '%s'", nrow(vesselOwners))
+      INFO("vessel-info server: Fetching vessel owners data with %s rows", nrow(vesselOwners))
       vesselOwnerColumnNames <- c("ENTITY_TYPE","FULL_NAME", "ENTITY_DOCUMENT_NUMBER", "ADDRESS", "ADDRESS_CITY", "ADDRESS_ZIP_CODE", "PHONE_NUMBER", "MOBILE_NUMBER")
       vesselOwners[is.na(vesselOwners)] = ""
       if(nrow(vesselOwners)>0){
@@ -203,7 +210,7 @@ vessel_info_server <- function(id, pool, reloader) {
               list(extend = 'csv', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
               list(extend = 'excel', filename =  sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), title = NULL, header = TRUE),
               list(extend = "pdf", filename = sprintf(i18n("HISTORY_DATA_EXPORT_FILENAME"), vesselId), 
-                   title = sprintf("HISTORY_PDF_TITLE", vesselId, vessel$NAME), header = TRUE)
+                   title = sprintf(i18n("HISTORY_PDF_TITLE"), vesselId, vessel$NAME), header = TRUE)
             ),
             exportOptions = list(
               modifiers = list(page = "all", selected = TRUE)
@@ -254,7 +261,7 @@ vessel_info_server <- function(id, pool, reloader) {
       
       license_df <- reactive({
         
-        vessellicensepermits <- accessVesselLicensePermit(pool,vesselId)
+        vessellicensepermits <- accessVesselLicensePermits(pool,vesselId)
         INFO("vessel-info server: Fetching license permits data with rows '%s'", nrow(vessellicensepermits))
         if(nrow(vessellicensepermits>0)){
           
@@ -265,7 +272,7 @@ vessel_info_server <- function(id, pool, reloader) {
           vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
           
           INFO("vessel-info server: Computing valid and expired license permits")
-          vessellicensepermits <- LicenseValidity(vessellicensepermits, validity_names = c('ok', 'remove'))
+          vessellicensepermits <- get_vessel_license_status(vessellicensepermits, validity_names = c('ok', 'remove'))
           
           INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
@@ -792,13 +799,13 @@ vessel_info_server <- function(id, pool, reloader) {
       })
       
       
-      SpeciesCatchesYear <- accessSpeciesCatchesYear(pool,vesselId)
-      INFO("vessel-info server: Fetching species catches year data with rows '%s'", nrow(SpeciesCatchesYear))
+      SpeciesCatchesYear <- accessVesselCatchesByYearSpecies(pool, vesselId)
+      INFO("vessel-info server: Fetching vessel catches year data - %s rows", nrow(SpeciesCatchesYear))
 
+      #reference data
       cl_asfis_species<-getRemoteReferenceDataset("cl_asfis_species")
       cl_asfis_species<-subset(cl_asfis_species,select=c('code','isscaap_group_code'))
       names(cl_asfis_species)<-c('species_asfis','isscaap_group_code')
-      
       cl_isscaap_group<-getRemoteReferenceDataset("cl_isscaap_group")
       cl_isscaap_group<-subset(cl_isscaap_group,select=c('code','name_en'))
       names(cl_isscaap_group)<-c('isscaap_group_code','ISSCAAP_Group_En')
@@ -822,9 +829,6 @@ vessel_info_server <- function(id, pool, reloader) {
                         colDate = "date", colTarget="ISSCAAP_Group_En",
                         ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT$CODE),valueUnit=tolower(PREF_UNIT_WEIGHT$CODE),
                         colValue="quantity", rank=FALSE)
-      
-      
-      
       
       ftpv <- countFishingTripsPerVessel(pool,vesselId)
       INFO("vessel-info server: Fetching fishingtrips per vessel data with rows '%s'", nrow(ftpv))
@@ -877,9 +881,9 @@ vessel_info_server <- function(id, pool, reloader) {
         number_of_species_fished = NULL )
       
       vessel_indicators_infos$vessel_operational_status <- as.character(vessel$VESSEL_OPERATIONAL_STATUS)
-      vessel_indicators_infos$number_of_owners <- as.character(countVesselOwnersPerVessel(pool,vesselId))
-      vessel_indicators_infos$number_of_licenses <- as.character(countVesselLicensePermit(pool,vesselId))
-      vessel_indicators_infos$number_of_fishing_gears <- as.character(countVesselFishingGears(pool,vesselId))
+      vessel_indicators_infos$number_of_owners <- as.character(countVesselOwnersPerVessel(pool, vesselId))
+      vessel_indicators_infos$number_of_licenses <- as.character(countVesselLicensePermit(pool, vesselId))
+      vessel_indicators_infos$number_of_fishing_gears <- as.character(countVesselFishingGears(pool, vesselId))
       vessel_indicators_infos$number_of_landing_sites <- as.character(length(levels(vesselCatches$bch_name))) 
       vessel_indicators_infos$number_of_species_fished <- as.character(length(levels(vesselCatches$species_desc)))
       vessel_indicators_infos$mean_number_of_days_at_sea <- as.character(Mean_no_daysAtSea)
@@ -981,6 +985,11 @@ vessel_info_server <- function(id, pool, reloader) {
       })
       
     }
+    
+    MODULE_END_TIME <- Sys.time()
+    MODULE_TIME <- MODULE_END_TIME - MODULE_START_TIME
+    INFO("vessel-info: END")
+    DEBUG_MODULE_PROCESSING_TIME("Vessel-info", MODULE_START_TIME, MODULE_END_TIME)
     
   })
   

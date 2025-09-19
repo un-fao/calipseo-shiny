@@ -1,3 +1,26 @@
+# **calipseo-shiny [v1.7.0.9999](https://github.com/un-fao/calipseo-shiny) - PENDING**
+
+# Corrections
+
+- [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
+- [#250](https://github.com/un-fao/calipseo-shiny/issues/250) Incorrect cascading reaction chain for indicator
+- [#255](https://github.com/un-fao/calipseo-shiny/issues/255) Computation module UI button events are not destroyed after UI update
+- [#268](https://github.com/un-fao/calipseo-shiny/issues/268) SQL errors with Artfish active_vessels and landings data acessors
+
+# Enhancements
+
+- [#251](https://github.com/un-fao/calipseo-shiny/issues/251) Cleanout `shinyauthr` related codes (not used anymore in context of ShinyProxy deployments)
+- [#257](https://github.com/un-fao/calipseo-shiny/issues/257) Computation module - further code cleaning & improvement of logs
+- [#262](https://github.com/un-fao/calipseo-shiny/issues/262) Improve overall application logs and 1st benchmarking iteration
+- [#263](https://github.com/un-fao/calipseo-shiny/issues/263) Optimize the module loading strategy
+- [#264](https://github.com/un-fao/calipseo-shiny/issues/264) Individual-list - Performance issue with individuals processing for UI
+- [#265](https://github.com/un-fao/calipseo-shiny/issues/265) Optimize the URL resolver
+
+# New features
+
+_TBD_
+
+
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
 
 # New features

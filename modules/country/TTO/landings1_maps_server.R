@@ -1,7 +1,10 @@
 #landings1_maps_server
-landings1_maps_server <- function(id, pool, reloader){
+landings1_maps_server <- function(id, parent.session, pool, reloader){
   
  moduleServer(id, function(input, output, session){  
+   
+   INFO("TTO_landings1-maps: START")
+   MODULE_START_TIME = Sys.time() 
    
    ns<-session$ns
    
@@ -109,6 +112,10 @@ landings1_maps_server <- function(id, pool, reloader){
   output$map_PK <- renderLeaflet({
     mapDescriptorTotal(tsr$data, input$year_map_total, "P/K", "#e6550d")
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("TTO_landings1-maps: END")
+  DEBUG_MODULE_PROCESSING_TIME("TTO_landings1-maps", MODULE_START_TIME, MODULE_END_TIME)
   
  })
   

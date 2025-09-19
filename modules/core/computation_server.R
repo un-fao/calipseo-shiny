@@ -1,10 +1,13 @@
 #computation_server
-computation_server <- function(id, pool, reloader) {
+computation_server <- function(id, parent.session, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
   
   session$userData$computation_new <- reactiveVal(NULL)
-   
+
+  INFO("computation: START")
+  MODULE_START_TIME <- Sys.time()    
+  
   ns <- session$ns
 
   #--------------------------------
@@ -70,12 +73,10 @@ computation_server <- function(id, pool, reloader) {
     }))
     
     df <- data.frame(
-      Id = character(0),
       Period = character(0),
       File = character(0),
       Status = character(0),
       Date = character(0),
-      Actions = character(0),
       stringsAsFactors = FALSE
     )
     if(length(periods)>0){
@@ -87,43 +88,13 @@ computation_server <- function(id, pool, reloader) {
        }
       })
       
-      uuids <- NULL
-      for(i in 1:length(periods)){
-        one_uuid = uuid::UUIDgenerate() 
-        uuids <- c(uuids, one_uuid)
-      }
       df <- do.call("rbind", lapply(1:length(periods), function(i){
         filepath <- file.path(appConfig$store, status[i], indicator$id, paste0( values[i], ".csv"))
         tibble::tibble(
-          uuid = uuids[i],
-          Id = indicator$id,
           Period = periods[i],
           File = filepath,
           Status = status[i],
-          Date = file.info(filepath)$mtime,
-          Actions = as(
-            tagList(
-              #download result button
-              downloadButtonCustom(
-                  ns(paste0("button_download_result_", uuids[i])), 
-                  title = i18n("BUTTON_DOWNLOAD_RESULT_TITLE"), label = "", icon = icon("file-alt"),
-                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
-              ), 
-              #download report button
-              if(!is.null(indicator$report_with)){
-                downloadButtonCustom(
-                  ns(paste0("button_download_report_", uuids[i])), 
-                  title = i18n("BUTTON_DOWNLOAD_REPORT_TITLE"), label = "", icon = icon("file-contract"),
-                  onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))               
-                )
-              }else{
-                ""
-              },
-              #release button
-              actionButton(inputId = ns(paste0('button_release_', uuids[i])), class="btn btn-info", style = "margin-right: 2px;",
-                           title = i18n("BUTTON_RELEASE_TITLE"), label = "", icon = icon("upload"))
-            )
-          ,"character")
+          Date = file.info(filepath)$mtime
         )
       }))
       df <- df[order(df$Period),]
@@ -136,6 +107,9 @@ computation_server <- function(id, pool, reloader) {
     
     if(compute_dependent_indicators){
       indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
+      
+      target_period <-indicator$compute_by$period
+      
       indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
         parts <- unlist(strsplit(fun_arg_value, ":"))
@@ -148,36 +122,48 @@ computation_server <- function(id, pool, reloader) {
         if(key=="process")return(value)}))
       
       for(indicator in indicators){
+        
         process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
         
-        release_periods <- getStatPeriods(config = appConfig, id = indicator, target = "release")
-        #release_periods df(year, month)
-        year_already_computed <- release_periods[release_periods$year == computation_year, ]
+        process_period<-process_def$compute_by$period
         
-        if(nrow(year_already_computed)>0){
-          periods_already_computed <- year_already_computed[,process_def$compute_by$period]
-          periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = setdiff(rep(1:12), periods_already_computed),
-                                       "quarter" = setdiff(rep(1:4), periods_already_computed)
-          )
-        }else{
-          periods_to_compute <- switch(process_def$compute_by$period,
-                                       "month" = rep(1:12),
-                                       "quarter" = rep(1:4)
-          )
-        }
+        if(target_period=="year"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="year"&process_period=="quarter")period_to_compute<-data.frame(year=rep(computation_year,4),month=NA,quarter=c(1:4))
+        if(target_period=="year"&process_period=="month")period_to_compute<-data.frame(year=rep(computation_year,12),month=c(1:12),quarter=NA)
+        if(target_period=="quarter"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="quarter"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=computation_quarter)
+        if(target_period=="quarter"&process_period=="month")period_to_compute<-data.frame(year=rep(computation_year,3),month=switch(as.character(computation_quarter),
+                                                                                                                   "1"=c(1:3),
+                                                                                                                   "2"=c(4:6),
+                                                                                                                   "3"=c(7,9),
+                                                                                                                   "4"=c(10,12)),quarter=NA)
+        if(target_period=="month"&process_period=="year")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=NA)
+        if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
+        if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        if(length(periods_to_compute)>0){
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= indicator))
+        
+        release_periods<-getStatPeriods(config = appConfig, id = indicator, target = "release")
+        
+        if(process_period == "month") release_periods$month=as.numeric(gsub("M","",release_periods$month))
+        if(process_period == "quarter") release_periods$quarter=as.numeric(gsub("Q","",release_periods$quarter))
+        
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%anti_join(release_periods%>%mutate(year=as.numeric(year)))
+
+        if(nrow(period_to_compute)>0){
           
-          for(period in periods_to_compute){
+          for(i in 1:nrow(period_to_compute)){
+            
+            period<-period_to_compute[i,]
+            
             computeIndicator(
               out = out,
               session = session,
               computation_indicator = indicator,
               computation_target = computation_target,
               computation_year = computation_year,
-              computation_quarter = if(process_def$compute_by$period == "quarter") period else NULL ,
-              computation_month = if(process_def$compute_by$period == "month") period else NULL,
+              computation_quarter = if(process_period == "quarter") period$quarter else NULL ,
+              computation_month = if(process_period == "month") period$month else NULL,
               compute_dependent_indicators = TRUE
             )
           }
@@ -579,49 +565,49 @@ computation_server <- function(id, pool, reloader) {
       period_key <- available_periods_parts[1]
       period_value <- available_periods_parts[2]
       
+      releasable<-TRUE
       if(period_key=="data"){
-        releasable<-TRUE
+        #TODO?
+        #for now there check over input data coverage
+        #to discuss if we need to be more permissive on isReleasable and leave this to user
+        #with a warning in case data coverage is not full for the indicator to be released
+        #instead of disabling the 'release' button
         return(releasable)
       }else{
-        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-        
-        target<-unlist(strsplit(target_period, "-"))
-          
-        releasable<-if(length(target)==1){
+        #check over dependent indicator available periods
+        available_periods_new <- getAvailablePeriods(id = period_value, config = config, indicators = indicators)
+        target <- unlist(strsplit(target_period, "-"))
+        releasable <- if(length(target) == 1){
           if("month"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new,year==target[1]))/12
+            nrow(subset(available_periods_new, year == as.integer(target[1])))/12
           }else if("quarter"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new,year==target[1]))/4
+            nrow(subset(available_periods_new, year == as.integer(target[1])))/4
           }else{
-            nrow(subset(available_periods_new,year==target[1]))
+            nrow(subset(available_periods_new, year == as.integer(target[1])))
           }
         }else{
-          if(grepl("M",target[1])){
-            target[2]<-gsub("M","",target[2])
-              
-            nrow(subset(available_periods_new,year==target[1],month=target[2]))/1
-          }
-          if(grepl("Q",target[1])){
+          if(grepl("M",target[2])){
+            target[2] <- gsub("M","",target[2])
+            nrow(subset(available_periods_new, year == as.integer(target[1]) & month == as.integer(target[2])))/1
+          }else if(grepl("Q",target[2])){
             if("month"%in% names(available_periods_new)){
               months<-switch(target[2],
                               "Q1"=c(1:3),
                               "Q2"=c(4:6),
                               "Q3"=c(7:9),
                               "Q4"=c(10:12))
-              nrow(subset(available_periods_new,year==target[1],month%in%months))/3
+              nrow(subset(available_periods_new, year == as.integer(target[1]) & month %in% months))/3
             }else{
-              nrow(subset(available_periods_new,year==target[1],quarter=target[2]))/1
+              nrow(subset(available_periods_new,year == as.integer(target[1]) & quarter == target[2]))/1
             }
           }
         }
-        
-        releasable<-releasable==1
-          
+        releasable <- releasable == 1
         if(!releasable){
           return(releasable)
         }else{
-          sub_releasable<-isReleasable(id=period_value,target,config=config,indicators=indicators)
-          releasable<-all(releasable,sub_releasable) 
+          sub_releasable <- isReleasable(id = period_value, target, config = config, indicators = indicators)
+          releasable <- all(releasable, sub_releasable)
         }
       }
         
@@ -905,16 +891,11 @@ computation_server <- function(id, pool, reloader) {
       }
       return (nodes)
     }
-    
-    
-    print("pipo")
+
     target <- Traverse(tree, filterFun = function(x){ x$level == 1 & x$type=="process" })
-    print("pipo2")
     process <- Traverse(tree, filterFun = function(x){ x$level > 1 & x$type=="process"})
     data <- Traverse(tree, filterFun = function(x) x$type =="data")
     local <- Traverse(tree, filterFun = function(x) x$type =="local")
-    
-   
     
     Do(target,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#90dbf4", fontname = "helvetica",penwidth="4px")
     Do(process,SetNodeStyle,style = "filled,rounded", shape = "box", fontcolor="black",fillcolor = "#8eecf5", fontname = "helvetica",penwidth="2px")
@@ -1020,7 +1001,7 @@ computation_server <- function(id, pool, reloader) {
     
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
-      left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
+      left_join(out$results, by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
     
@@ -1042,19 +1023,26 @@ computation_server <- function(id, pool, reloader) {
     
     indicator_status<-indicator_status(indicator_status_new)
     
-    #Generate for each period the UIelements
-    lapply(1:nrow(indicator_status()), function(x){
-      item<-subset(indicator_status())[x,]
-      period<-item$Period
+    #Generate for each period a unique element base ID, based on a random UUID
+    #Required to ensure uniqueness of DOM element Ids, and avoid any trigger of
+    #phantom JS events (events that are not destroyed together with the removal/update
+    #of a DOM element).
+    target_ids <- sapply(1:nrow(indicator_status()), function(i){
+      item <- subset(indicator_status())[i,]
+      period <- item$Period
+      paste(period, uuid::UUIDgenerate(), sep = "_")
+    })
+    
+    #Generate for each period the UI elements
+    lapply(1:nrow(indicator_status()), function(i){
+      item <- subset(indicator_status())[i,]
+      period <- item$Period
+      target_id = target_ids[i]
       
       #Status icon of year level summary
-      
-      output[[paste0("icon_summary_",period)]] <-renderUI({
-        
+      output[[paste0("icon_summary_",period)]] <- renderUI({
         req("Period" %in% names(indicator_status()))
-        
-        target<-subset(indicator_status(),Period==period)
-        
+        target <- subset(indicator_status(),Period==period)
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -1079,9 +1067,8 @@ computation_server <- function(id, pool, reloader) {
       })
       
       #Status icon UI
-      
-      output[[paste0("icon_status_",period)]] <-renderUI({
-        target<-subset(indicator_status(),Period==period)
+      output[[paste0("icon_status_",period)]] <- renderUI({
+        target <- subset(indicator_status(),Period==period)
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -1100,10 +1087,8 @@ computation_server <- function(id, pool, reloader) {
       })
       
       #Status label UI
-      
-      output[[paste0("status_label_",period)]] <-renderUI({
-        target<-subset(indicator_status(),Period==period)
-        
+      output[[paste0("status_label_", period)]] <- renderUI({
+        target <- subset(indicator_status(),Period==period)
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -1122,16 +1107,15 @@ computation_server <- function(id, pool, reloader) {
       })
       
       #Action button UI
-      output[[paste0("actions_",period)]] <-renderUI({
-        target<-subset(indicator_status(),Period==period)
-        
+      output[[paste0("actions_",period)]] <- renderUI({
+        target <- subset(indicator_status(),Period==period)
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
                   
                   return(tags$span(
-                    actionButton(inputId = ns(paste0('button_view_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
-                    downloadButtonCustom(ns(paste0("button_download_result_", target$Period)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns("select_button"))),
+                    actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
+                    downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns("select_button"))),
                     style = "position: absolute; right: 98px;margin-top: -10px;"
                   ))
                 },
@@ -1140,20 +1124,20 @@ computation_server <- function(id, pool, reloader) {
                   releasable<-isReleasable(id=indicator(),target_period=period)
                   
                   return(tags$span(
-                    actionButton(inputId = ns(paste0('button_compute_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
-                    actionButton(inputId = ns(paste0('button_view_', target$Period)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
-                    downloadButtonCustom(ns(paste0("button_download_result_", target$Period)),style = "border-color:transparent;padding-right:10px",title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
+                    actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
+                    actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
+                    downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px",title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
                     if(releasable){
-                    actionButton(inputId = ns(paste0('button_release_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
+                    actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
                       }else{
-                    disabled(actionButton(inputId = ns(paste0('button_release_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas")))
+                    disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas")))
                       },
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "available" = {
                   
                   return(tags$span(
-                    actionButton(inputId = ns(paste0('button_compute_', target$Period)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_STAGING"), label = "", icon = icon("file-pen")),
+                    actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_STAGING"), label = "", icon = icon("file-pen")),
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "not available" = {
@@ -1219,28 +1203,28 @@ computation_server <- function(id, pool, reloader) {
       )
     })
     
-
-    #Method 3
-    #Create event assocate to each action button
+    #Create events associated to each action button
     lapply(1:nrow(indicator_status()), function(i){
-      idx = indicator_status()[i,"Period"]
+      item <- subset(indicator_status())[i,]
+      period <- item$Period
+      target_id = target_ids[i]
       
-      output[[paste0("button_download_result_",idx)]] <<- downloadHandler(
+      output[[paste0("button_download_result_",target_id)]] <<- downloadHandler(
         filename = function() {
           paste0("result", "_", out$indicator$id, "_", indicator_status()[i,"Period"],"_", toupper(indicator_status()[i,"Status"]), ".csv")
         },
         content = function(con) {
           
-          INFO("Click on %s result download button",idx)
+          INFO("Click on %s result download button",target_id)
           
           data <- as.data.frame(readr::read_csv(indicator_status()[i,"File"]))
           readr::write_csv(data, con)
         }
       )
       
-      observeEvent(input[[paste0("button_release_",idx)]],{
+      observeEvent(input[[paste0("button_release_",target_id)]],{
         
-        INFO("Click on %s release button",idx)
+        INFO("Click on %s release button",target_id)
         
         filename <- paste0(out$indicator$id, "_", indicator_status()[i,"Period"], ".csv")
         filepath_staging <- file.path(appConfig$store, "staging", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
@@ -1250,15 +1234,15 @@ computation_server <- function(id, pool, reloader) {
         showModal(releaseModal(session, warning = alreadyReleased))
       },ignoreInit = T)
       
-      observeEvent(input[[paste0("button_view_",idx)]],{
+      observeEvent(input[[paste0("button_view_",target_id)]],{
         
-        INFO("Click on %s view button",idx)
+        INFO("Click on %s view button",target_id)
         
         #Result table logic
-        output[[paste0("table_",idx,"_wrapper")]]<-renderUI({
-          if (input[[paste0("button_view_",idx)]] %% 2 != 0) {
+        output[[paste0("table_",period,"_wrapper")]]<-renderUI({
+          if (input[[paste0("button_view_",target_id)]] %% 2 != 0) {
             
-            output[[paste0("table_",idx)]]<-DT::renderDT(server = FALSE, {
+            output[[paste0("table_",period)]]<-DT::renderDT(server = FALSE, {
               DT::datatable(
                 readr::read_csv(indicator_status()[i,"File"]),
                 escape = FALSE,
@@ -1272,7 +1256,7 @@ computation_server <- function(id, pool, reloader) {
               )
             })
             
-            DTOutput(ns(paste0("table_",idx)))%>%withSpinner(type = 4)
+            DTOutput(ns(paste0("table_",period)))%>%withSpinner(type = 4)
           }else{
             NULL
           }
@@ -1280,33 +1264,33 @@ computation_server <- function(id, pool, reloader) {
         
         
         #Update the icon of view icon eye (next action show table) or slashed eye(next action hide table) (not work)
-        if (input[[paste0("button_view_",idx)]] %% 2 != 0) {
-          updateActionButton(session, ns(paste0("button_view_",idx)), "", icon = icon("eye-slash", class = "fas" ))
+        if (input[[paste0("button_view_",target_id)]] %% 2 != 0) {
+          updateActionButton(session, ns(paste0("button_view_",target_id)), "", icon = icon("eye-slash", class = "fas" ))
         } else {
-          updateActionButton(session, ns(paste0("button_view_",idx)), "", icon = icon("eye", class = "fas" ))
+          updateActionButton(session, ns(paste0("button_view_",target_id)), "", icon = icon("eye", class = "fas" ))
         }
         
         
       },ignoreInit = T)
       
-      observeEvent(input[[paste0("button_compute_",idx)]],{
+      observeEvent(input[[paste0("button_compute_",target_id)]],{
         
-        INFO("Click on %s compute or update button",idx)
+        INFO("Click on %s compute or update button",target_id)
         
-        period<-strsplit(idx,"-")[[1]]
-        computation_year<-period[1]
+        period_parts<-strsplit(period,"-")[[1]]
+        computation_year<-period_parts[1]
         computation_month<-NULL
         computation_quarter<-NULL
         
-        if(length(period)>1){
-          if(startsWith(period[2],"M")){
-            computation_month<-gsub("M","",period[2])
+        if(length(period_parts)>1){
+          if(startsWith(period_parts[2],"M")){
+            computation_month<-gsub("M","",period_parts[2])
           }
         }
         
-        if(length(period)>1){
-          if(startsWith(period[2],"Q")){
-            computation_quarter<-gsub("Q","",period[2])
+        if(length(period_parts)>1){
+          if(startsWith(period_parts[2],"Q")){
+            computation_quarter<-gsub("Q","",period_parts[2])
           }
         }
         
@@ -1336,7 +1320,7 @@ computation_server <- function(id, pool, reloader) {
     
     indicator_status_new<-available_periods()%>%
       mutate(period=as.character(period))%>%
-      left_join(out$results%>%select(Period,File,Status,Date),by=c("period"="Period"))%>%
+      left_join(out$results, by=c("period"="Period"))%>%
       mutate(Status=ifelse(is.na(Status),"available",Status))%>%
       rename(Period=period)
     
@@ -1369,6 +1353,10 @@ computation_server <- function(id, pool, reloader) {
     torelease(NULL)
     removeModal()
   })
+  
+  MODULE_END_TIME <- Sys.time()
+  INFO("computation: END")
+  DEBUG_MODULE_PROCESSING_TIME("computation", MODULE_START_TIME, MODULE_END_TIME)
   
  })
 }
