@@ -615,7 +615,7 @@ accessEffortSurveyPeriodsFromDB <- function(con){
 accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels.sql")
   if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
   fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
@@ -657,7 +657,7 @@ accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
     fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year,month))
   }
   if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_TO_PORT_SITE_ID = %s",fishing_unit ))
+    fa_sql <- paste0(fa_sql, sprintf(" AND fishing_unit = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
