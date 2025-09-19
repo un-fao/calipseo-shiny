@@ -5,6 +5,7 @@
 - [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
 - [#250](https://github.com/un-fao/calipseo-shiny/issues/250) Incorrect cascading reaction chain for indicator
 - [#255](https://github.com/un-fao/calipseo-shiny/issues/255) Computation module UI button events are not destroyed after UI update
+- [#268](https://github.com/un-fao/calipseo-shiny/issues/268) SQL errors with Artfish active_vessels and landings data acessors
 
 # Enhancements
 
