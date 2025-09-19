@@ -60,48 +60,6 @@ computation_server <- function(id, parent.session, pool, reloader) {
   #FUNCTIONS
   #--------------------------------
   
-  #getComputationResults
-  getComputationResults <- function(indicator){
-    
-    staging <- list.files(path = sprintf("%s/staging/%s", appConfig$store, indicator$id), recursive = TRUE)
-    released <- list.files(path = sprintf("%s/release/%s", appConfig$store, indicator$id), recursive = TRUE)
-    values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
-    periods <- as.vector(sapply(values, function(x){ 
-      x.splits <- unlist(strsplit(x,"_"))
-      period <- x.splits[length(x.splits)]
-      return(period)
-    }))
-    
-    df <- data.frame(
-      Period = character(0),
-      File = character(0),
-      Status = character(0),
-      Date = character(0),
-      stringsAsFactors = FALSE
-    )
-    if(length(periods)>0){
-      status <- sapply(periods, function(x){
-       if(any(regexpr(x, released) > 0)){
-         return("release")
-       }else{
-         return("staging")
-       }
-      })
-      
-      df <- do.call("rbind", lapply(1:length(periods), function(i){
-        filepath <- file.path(appConfig$store, status[i], indicator$id, paste0( values[i], ".csv"))
-        tibble::tibble(
-          Period = periods[i],
-          File = filepath,
-          Status = status[i],
-          Date = file.info(filepath)$mtime
-        )
-      }))
-      df <- df[order(df$Period),]
-    }
-    return(df)
-  }
-  
   #computeIndicator
   computeIndicator<-function(out,session,computation_indicator,computation_target,computation_year,computation_quarter=NULL,computation_month=NULL,compute_dependent_indicators=FALSE){
     
@@ -141,7 +99,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
         if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= indicator))
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
         
         release_periods<-getStatPeriods(config = appConfig, id = indicator, target = "release")
         
@@ -250,11 +208,11 @@ computation_server <- function(id, parent.session, pool, reloader) {
       if(!dir.exists(dirname(out$filepath))) dir.create(dirname(out$filepath), recursive = TRUE)
       if(!dir.exists(dirname(out$filepath_release))) dir.create(dirname(out$filepath_release), recursive = TRUE)
       
-      readr::write_csv(indicator_output, out$filepath, )
+      readr::write_csv(indicator_output, out$filepath)
       
       progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
       session$userData$computation_new(Sys.time())
-      out$results <- getComputationResults(indicator)
+      out$results <- getComputationResults(indicator, config = appConfig)
       
     }else{
       cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$id))
@@ -339,7 +297,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     
     session$userData$computation_new(Sys.time())
     if(file.exists(gsub("staging", "release", target))){
-      out$results <- getComputationResults(out$indicator)
+      out$results <- getComputationResults(out$indicator, config = appConfig)
       torelease(NULL) #reinitialize reactive
     }
     
@@ -505,120 +463,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     return(hierarchyTree)
   }
   
-  #getAvailablePeriods
-  getAvailablePeriods<-function(id,config=appConfig,indicators=AVAILABLE_INDICATORS){
-    print(id)
-    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
-    
-    available_periods<-unlist(indicator$compute_by$available_periods)
-    print(indicator)
-    period<-indicator$compute_by$period
-    print(period)
-    period <- switch(period,
-                     "year" = c("year"),
-                     "quarter" = c("year","quarter"),
-                     "month" = c("year", "month")
-    )
-    
-    
-    common_periods<-lapply(available_periods, function (x) {
-      available_periods_parts <- unlist(strsplit(x, ":"))
-      period_key <- available_periods_parts[1]
-      period_value <- available_periods_parts[2]
-      
-      if(period_key=="data"){
-        available_periods_new<-eval(parse(text=paste0(period_value, "(con = pool)")))
-      }else{
-        available_periods_new<-getAvailablePeriods(id=period_value,config=config,indicators=indicators)
-      }
-      
-      if(all(period%in%names(available_periods_new))){
-        available_periods_new<-unique(available_periods_new[period])
-      }else{
-        available_periods_new<-available_periods_new%>%
-          mutate("quarter"= case_when(month%in%c(1:3)~"Q1",
-                                      month%in%c(4:6)~"Q2",
-                                      month%in%c(7:9)~"Q3",
-                                      month%in%c(10:12)~"Q4"))
-        available_periods_new<-unique(available_periods_new[period])
-      }
-    })
-    
-    if(length(common_periods)>1){
-      common_periods<-do.call("intersection",common_periods)
-    }else{
-      common_periods<-as.data.frame(common_periods)
-    }
-    
-    return(common_periods)
-  }
   
-  #IsReleasable
-  isReleasable<-function(id,target_period,config=appConfig,indicators=AVAILABLE_INDICATORS){
-
-    indicator <- indicators[sapply(indicators, function(x){x$id == id})][[1]]
-    
-    available_periods<-unlist(indicator$compute_by$available_periods)
-    
-    result<-sapply(available_periods, function (x) {
-      available_periods_parts <- unlist(strsplit(x, ":"))
-      period_key <- available_periods_parts[1]
-      period_value <- available_periods_parts[2]
-      
-      releasable<-TRUE
-      if(period_key=="data"){
-        #TODO?
-        #for now there check over input data coverage
-        #to discuss if we need to be more permissive on isReleasable and leave this to user
-        #with a warning in case data coverage is not full for the indicator to be released
-        #instead of disabling the 'release' button
-        return(releasable)
-      }else{
-        #check over dependent indicator available periods
-        available_periods_new <- getAvailablePeriods(id = period_value, config = config, indicators = indicators)
-        target <- unlist(strsplit(target_period, "-"))
-        releasable <- if(length(target) == 1){
-          if("month"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new, year == as.integer(target[1])))/12
-          }else if("quarter"%in% names(available_periods_new)){
-            nrow(subset(available_periods_new, year == as.integer(target[1])))/4
-          }else{
-            nrow(subset(available_periods_new, year == as.integer(target[1])))
-          }
-        }else{
-          if(grepl("M",target[2])){
-            target[2] <- gsub("M","",target[2])
-            nrow(subset(available_periods_new, year == as.integer(target[1]) & month == as.integer(target[2])))/1
-          }else if(grepl("Q",target[2])){
-            if("month"%in% names(available_periods_new)){
-              months<-switch(target[2],
-                              "Q1"=c(1:3),
-                              "Q2"=c(4:6),
-                              "Q3"=c(7:9),
-                              "Q4"=c(10:12))
-              nrow(subset(available_periods_new, year == as.integer(target[1]) & month %in% months))/3
-            }else{
-              nrow(subset(available_periods_new,year == as.integer(target[1]) & quarter == target[2]))/1
-            }
-          }
-        }
-        releasable <- releasable == 1
-        if(!releasable){
-          return(releasable)
-        }else{
-          sub_releasable <- isReleasable(id = period_value, target, config = config, indicators = indicators)
-          releasable <- all(releasable, sub_releasable)
-        }
-      }
-        
-      return(releasable)
-    })
-  
-  releasable<-all(result)
-  INFO("[ISReleasable] '%s' indicator is %s for the period '%s'",id,ifelse(releasable,"releasable","not releasable"),target_period)
-  return(releasable)
-    
-  }
   
   #UI RENDERERS
   #----------------------------------------------------------------------------------------------------
@@ -921,107 +766,78 @@ computation_server <- function(id, parent.session, pool, reloader) {
   #This event is the major part of process
   observeEvent(indicator(),{
     
-    req(!is.null(indicator())&indicator()!="")
+    req(!is.null(indicator()) & indicator()!="")
     req(!is.null(indicator_first_compute()))
-    req(indicator_first_compute()==TRUE)
+    req(indicator_first_compute() == TRUE)
     
-    INFO("Indicator '%s' is run for the  first time",indicator())
+    INFO("Selecting indicator '%s'", indicator())
     
-    available_periods<-available_periods(NULL)
-    full_periods<-full_periods(NULL)
-    indicator_status<-indicator_status(NULL)
+    available_periods <- available_periods(NULL)
+    full_periods <- full_periods(NULL)
+    indicator_status <- indicator_status(NULL)
     
     selected_indicator$indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator()})][[1]]
     
-    out$results <- getComputationResults(selected_indicator$indicator)
+    out$results <- getComputationResults(selected_indicator$indicator, config = appConfig)
     out$computation <- NULL
     out$indicator <- selected_indicator$indicator
     
-    available_periods_new<-getAvailablePeriods(id=selected_indicator$indicator$id,config=appConfig,indicators=AVAILABLE_INDICATORS)
+    #get available periods for the selected indicator
+    available_periods_new <- getAvailablePeriods(
+      id = selected_indicator$indicator$id,
+      config = appConfig,
+      indicators = AVAILABLE_INDICATORS
+    )
     
-    available_periods_new<-subset(available_periods_new,!is.na(year))
-    if("month"%in%selected_indicator$indicator$compute_by$period){
-      available_periods_new<-subset(available_periods_new,!is.na(month))
-      available_periods_new$period<-paste0(available_periods_new$year,"-","M",available_periods_new$month)
-      available_periods_new<- available_periods_new%>%arrange(desc(year),month)
-      
-    }
-    
-    if("quarter"%in%selected_indicator$indicator$compute_by$period){
-      available_periods_new<-subset(available_periods_new,!is.na(quarter))
-      available_periods_new$period<-paste0(available_periods_new$year,"-","Q",available_periods_new$quarter)
-      available_periods_new<- available_periods_new%>%arrange(desc(year),quarter)%>%as.data.frame()
-    }
-    
-    if("year"%in%selected_indicator$indicator$compute_by$period){
-      available_periods_new$period<-available_periods_new$year
-      available_periods_new<- available_periods_new%>%arrange(desc(year))%>%as.data.frame()
-    }
-    
-    
-    
-    available_periods<-available_periods(available_periods_new)
+    #format available periods
+    available_periods_new <- formatAvailablePeriods(available_periods_new, selected_indicator$indicator)
+    #store it as reactive
+    available_periods <- available_periods(available_periods_new)
     
     req(!is.null(available_periods))
     req(!is.null(available_periods()$period))
     
+    #full periods
     #Create full period matrix based on typo of compute_by period
-    if("month"%in%selected_indicator$indicator$compute_by$period){
-      years<-seq(min(available_periods()$year),max(available_periods()$year))
-      full_periods_new<-data.frame(
-        year=rep(years,each=12),
-        month=rep(1:12,length(years))
-      )
-      full_periods_new$Period<-paste0(full_periods_new$year,"-","M",full_periods_new$month)
-    }
-    
-    if("quarter"%in%selected_indicator$indicator$compute_by$period){
-      years<-seq(min(available_periods()$year),max(available_periods()$year))
-      full_periods_new<-data.frame(
-        year=rep(years,each=4),
-        quarter=rep(1:4,length(years))
-      )
-      full_periods_new$Period<-paste0(full_periods_new$year,"-","Q",full_periods_new$quarter)
-    }
-    
-    if("year"%in%selected_indicator$indicator$compute_by$period){
-      years<-seq(min(available_periods()$year),max(available_periods()$year))
-      full_periods_new<-data.frame(
-        year=years,
-        Period=years
-      )
-    }
-    
-    full_periods<-full_periods(full_periods_new%>%arrange(desc(year)))
+    full_periods_new <- getFullPeriods(available_periods_new, selected_indicator$indicator)
+    #store it as reactive
+    full_periods <- full_periods(full_periods_new %>% arrange(desc(year)))
 
     #Merge info of results, available period and full period matrix
+    DEBUG("Available periods:")
+    if(appConfig$debug) print(head(available_periods()))
+    DEBUG("Computation results:")
+    if(appConfig$debug) print(head(out$results))
     
-    print(head(available_periods()))
-    print(head(out$results))
+    #over available periods, list those for which computation has been run
+    #either at staging/release status
+    indicator_status_new <- available_periods() %>%
+      mutate(period = as.character(period)) %>%
+      left_join(out$results, by = c("period" = "Period")) %>%
+      mutate(Status = ifelse(is.na(Status),"available",Status)) %>%
+      rename(Period = period)
     
-    indicator_status_new<-available_periods()%>%
-      mutate(period=as.character(period))%>%
-      left_join(out$results, by=c("period"="Period"))%>%
-      mutate(Status=ifelse(is.na(Status),"available",Status))%>%
-      rename(Period=period)
     
-    
-    if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
+    #if full period is longer that available periods
+    #list all periods including those available (with computation or not) - see above
+    #extended with those with no available data.
+    if(length(setdiff(full_periods()$Period, indicator_status_new$Period))>0){
+      DEBUG("Full periods:")
+      if(appConfig$debug) print(head(full_periods()))
+      DEBUG("Computation")
+      if(appConfig$debug) print(head(indicator_status_new))
       
-      print(head(full_periods()))
-      print(head(indicator_status_new))
-      
-      indicator_status_new<-full_periods()%>%
-        mutate(year=as.character(year))%>%
-        mutate(Period=as.character(Period))%>%
-        left_join(indicator_status_new%>%
-                    mutate(year=as.character(year))%>%
-                    mutate(Period=as.character(Period)))%>%
-        mutate(Status=ifelse(is.na(Status),"not available",Status))
+      indicator_status_new <- full_periods() %>%
+        mutate(year = as.character(year)) %>%
+        mutate(Period = as.character(Period)) %>%
+        left_join(indicator_status_new %>%
+                    mutate(year = as.character(year)) %>%
+                    mutate(Period = as.character(Period))) %>%
+        mutate(Status=ifelse(is.na(Status), "not available", Status))
     }
-    
-    
-    indicator_status<-indicator_status(indicator_status_new)
+  
+    #store in reactive
+    indicator_status <- indicator_status(indicator_status_new)
     
     #Generate for each period a unique element base ID, based on a random UUID
     #Required to ensure uniqueness of DOM element Ids, and avoid any trigger of
@@ -1121,7 +937,12 @@ computation_server <- function(id, parent.session, pool, reloader) {
                 },
                 "staging" = {
                   
-                  releasable<-isReleasable(id=indicator(),target_period=period)
+                  releasable <- isReleasable(
+                    id = indicator(), 
+                    target_period = period, 
+                    config = appConfig, 
+                    indicators = AVAILABLE_INDICATORS
+                  )
                   
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
