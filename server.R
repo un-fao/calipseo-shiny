@@ -64,7 +64,7 @@ server <- function(input, output, session) {
     
     module <- input[["calipseo-tabs"]]
     INFO("UI - Accessing module '%s' from sidebar menu", module)
-    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, appConfig, pool, module_state)
+    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, appConfig, pool, module_state, reloader)
     switch(attr(id_out, "status"),
       "initialize" = {
         module_state$initialized = c(module_state$initialized, id_out)

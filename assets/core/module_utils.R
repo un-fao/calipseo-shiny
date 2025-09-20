@@ -98,7 +98,7 @@ listLinkedModules <- function(id, config){
 }
 
 #loadModuleServer
-loadModuleServer <- function(id, session, config, pool, module_state){
+loadModuleServer <- function(id, session, config, pool, module_state, reloader){
   id_out = id
   load_module <- !id %in% module_state$initialized
   if(load_module){

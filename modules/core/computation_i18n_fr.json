@@ -39,6 +39,12 @@
   "COMPUTATION_RESULTS_TABLE_COLNAME_DATE" : "Date",
   "COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS" : "Actions",
   
+  /*recompute information*/
+  "CONFIRMATION_TO_RECOMPUTE": "Etes vous sûr de vouloir re-éxecuter l'indicateur? Si oui, merci d'expliquer et cliquez OK pour confirmer, sinon Annuler.",
+  "RECOMPUTE_REASON": "Explication",
+  "TO_CANCEL_RECOMPUTE_LABEL": "Annuler",
+  "TO_CREATE_RECOMPUTE_LABEL": "OK",
+  
   /*release information*/
   "CREATE_RELEASE_LABEL" : "Créer un release",
   "RELEASE_NO_DATA_LABEL" : "Pas encore de données en release",
