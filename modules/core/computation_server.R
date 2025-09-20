@@ -48,7 +48,8 @@ computation_server <- function(id, parent.session, pool, reloader) {
   indicator_first_compute<-reactiveVal(TRUE)  
   
   torelease <- reactiveVal(NULL)
-  tostaging <- reactiveVal(NULL)
+  toarchive <- reactiveVal(NULL)
+  torecompute <- reactiveVal(NULL)
   
   #--------------------------------
   #DATA
@@ -61,14 +62,22 @@ computation_server <- function(id, parent.session, pool, reloader) {
   #--------------------------------
   
   #computeIndicator
-  computeIndicator<-function(out,session,computation_indicator,computation_target,computation_year,computation_quarter=NULL,computation_month=NULL,compute_dependent_indicators=FALSE){
+  computeIndicator <- function(con,
+    out, session, computation_indicator, computation_target,
+    computation_year, computation_quarter = NULL, computation_month = NULL,
+    compute_dependent_indicators = FALSE,
+    archive_previous_release = NULL, archive_reason = ""){
     
+    INFO(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), computation_indicator)
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
+    print(indicator)
+    
+    #compute dependent indicators?
     if(compute_dependent_indicators){
-      indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
-      
       target_period <-indicator$compute_by$period
       
-      indicators<-unlist(sapply(names(indicator$compute_with$fun_args), function(x){
+      #list dependent indicators
+      dep_indicators <- unlist(sapply(names(indicator$compute_with$fun_args), function(x){
         fun_arg_value <- indicator$compute_with$fun_args[[x]]$source
         parts <- unlist(strsplit(fun_arg_value, ":"))
         key <- ""
@@ -79,9 +88,9 @@ computation_server <- function(id, parent.session, pool, reloader) {
         }
         if(key=="process")return(value)}))
       
-      for(indicator in indicators){
+      if(length(dep_indicators)>0) for(dep_indicator in dep_indicators){
         
-        process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
+        process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == dep_indicator})][[1]]
         
         process_period<-process_def$compute_by$period
         
@@ -99,9 +108,9 @@ computation_server <- function(id, parent.session, pool, reloader) {
         if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
         if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
+        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= dep_indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
         
-        release_periods<-getStatPeriods(config = appConfig, id = indicator, target = "release")
+        release_periods<-getStatPeriods(config = appConfig, id = dep_indicator, target = "release")
         
         if(process_period == "month") release_periods$month=as.numeric(gsub("M","",release_periods$month))
         if(process_period == "quarter") release_periods$quarter=as.numeric(gsub("Q","",release_periods$quarter))
@@ -115,14 +124,17 @@ computation_server <- function(id, parent.session, pool, reloader) {
             period<-period_to_compute[i,]
             
             computeIndicator(
+              con = con,
               out = out,
               session = session,
-              computation_indicator = indicator,
+              computation_indicator = dep_indicator,
               computation_target = computation_target,
               computation_year = computation_year,
               computation_quarter = if(process_period == "quarter") period$quarter else NULL ,
               computation_month = if(process_period == "month") period$month else NULL,
-              compute_dependent_indicators = TRUE
+              compute_dependent_indicators = TRUE,
+              archive_previous_release = archive_previous_release,
+              archive_reason = archive_reason
             )
           }
         }
@@ -134,20 +146,49 @@ computation_server <- function(id, parent.session, pool, reloader) {
     progress <- shiny::Progress$new(session, min = 0, max = 100)
     on.exit(progress$close())
     
+    #in case the indicator was previously released
+    if(!is.null(archive_previous_release)){
+      INFO("Indicator '%s' is going to be recomputed, with release archival", indicator$id)
+      INFO("File '%s' is going to be archived", archive_previous_release)
+      archive_dir = file.path(dirname(archive_previous_release), "archive")
+      if(!dir.exists(archive_dir)){
+        INFO("Archive subfolder is going to be created at '%s'", archive_dir)
+        dir.create(archive_dir)
+      }
+      #copy release
+      time = Sys.time()
+      timestr = format(time, "%Y%m%dT%H%M%S")
+      archived_file = file.path(archive_dir, paste0(unlist(strsplit(basename(test),"\\.csv")), "_", timestr, ".csv"))
+      file.copy(
+        from = archive_previous_release,
+        to = archived_file
+      )
+      file.remove(archive_previous_release)
+      INFO("File '%s' successfuly archived as '%s'", archive_previous_release, archived_file)
+      INFO("Writing archive history file")
+      readr::write_csv(
+        data.frame(
+          date = time,
+          archive = archived_file,
+          reason = archive_reason
+        ), 
+        file.path(archive_dir, "archive.csv"), 
+        append = file.exists(file.path(archive_dir, "archive.csv"))
+      )
+      INFO("Successfuly file archiving!")
+    }
+    
+    #computation
     out$computing <- TRUE
     raw_output <- NULL
     out$computation <- NULL
-    cat(sprintf(paste0(i18n("RETRIEVE_INDICATOR_FOR_LABEL")," '%s'\n"), computation_indicator))
-    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == computation_indicator})][[1]]
     indicator_msg <- sprintf(paste0(i18n("COMPUTATION_ACTIONBUTTON_LABEL")," %s - %s"), 
                              indicator$label, paste0(computation_year,if(!is.null(computation_quarter)|!is.null(computation_month)){"-"}else{""},paste0(c(computation_quarter,computation_month),collapse="")))
-    
+    INFO(indicator_msg)
     progress$set(message = indicator_msg, detail = i18n("COMPUTATION_PROGRESS_SUB_LABEL"), value = 0)
-    
-    cat(sprintf(paste0(i18n("LOAD_R_COMPUTE_SCRIPT_LABEL"),"'%s'\n"), indicator$compute_with$script))
+    INFO(paste0(i18n("LOAD_R_COMPUTE_SCRIPT_LABEL"),"'%s'\n"), indicator$compute_with$script)
     progress$set(message = indicator_msg, detail = i18n("LOAD_R_COMPUTE_SCRIPT_PROGRESS_LABEL"), value = 20)
     source(indicator$compute_with$script) #TODO to check if still needed
-    
     #possible inputs
     indicator_args <- switch(indicator$compute_by$period,
                              "year" = c("year"),
@@ -242,6 +283,20 @@ computation_server <- function(id, parent.session, pool, reloader) {
     )
   }
   
+  #recomputeModal
+  recomputeModal <- function(session){
+    modalDialog(
+      tagList(
+        div(tags$b(i18n("CONFIRMATION_TO_RECOMPUTE"))),
+        textInput(ns("recomputeReason"), label=i18n("RECOMPUTE_REASON"), placeholder = i18n("RECOMPUTE_REASON_PLACEHOLDER"), width = NULL)
+      ),
+      footer = tagList(
+        actionButton(session$ns("cancelRecompute"),i18n("TO_CANCEL_RECOMPUTE_LABEL")),
+        actionButton(session$ns("goRecompute"), i18n("TO_CREATE_RECOMPUTE_LABEL"))
+      )
+    )
+  }
+  
   #releaseIndicator
   releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
     
@@ -268,7 +323,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         process_def = AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == indicator})][[1]]
         
         staging_indicators <- getStatPeriods(config = appConfig, id = indicator, target = "staging")
-        #r
+
         indicators_to_release <- staging_indicators[staging_indicators$year == computation_year, ]$file
         
         if(length(indicators_to_release)>0){
@@ -824,7 +879,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     if(length(setdiff(full_periods()$Period, indicator_status_new$Period))>0){
       DEBUG("Full periods:")
       if(appConfig$debug) print(head(full_periods()))
-      DEBUG("Computation")
+      DEBUG("Computation matrix:")
       if(appConfig$debug) print(head(indicator_status_new))
       
       indicator_status_new <- full_periods() %>%
@@ -928,15 +983,22 @@ computation_server <- function(id, parent.session, pool, reloader) {
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
-                  
+                  #indicator has been computed at least once and released
+                  #we can recompute the results, this will stale the released data
+                  #(this action requires a reason to provide to stale the released data)
+                  #we can view and download the results
                   return(tags$span(
+                    actionButton(inputId = ns(paste0('button_recompute_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
                     actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns("select_button"))),
                     style = "position: absolute; right: 98px;margin-top: -10px;"
                   ))
                 },
                 "staging" = {
-                  
+                  #indicator has been computed at least once
+                  #we can recompute the indicator as many times as we want
+                  #we can view and download the results
+                  #if indicator is releasable (depending on data availability), we can release
                   releasable <- isReleasable(
                     id = indicator(), 
                     target_period = period, 
@@ -956,12 +1018,13 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "available" = {
-                  
+                  #indicator is available for computation
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_STAGING"), label = "", icon = icon("file-pen")),
                     style = "position: absolute; right: 50px;margin-top: -10px;"))
                 },
                 "not available" = {
+                  #indicator is not available for computation
                   return(NULL)
                 }
         )
@@ -1030,6 +1093,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       period <- item$Period
       target_id = target_ids[i]
       
+      #event on results download
       output[[paste0("button_download_result_",target_id)]] <<- downloadHandler(
         filename = function() {
           paste0("result", "_", out$indicator$id, "_", indicator_status()[i,"Period"],"_", toupper(indicator_status()[i,"Status"]), ".csv")
@@ -1043,6 +1107,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         }
       )
       
+      #event on indicator release
       observeEvent(input[[paste0("button_release_",target_id)]],{
         
         INFO("Click on %s release button",target_id)
@@ -1055,6 +1120,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         showModal(releaseModal(session, warning = alreadyReleased))
       },ignoreInit = T)
       
+      #event on indicator output view
       observeEvent(input[[paste0("button_view_",target_id)]],{
         
         INFO("Click on %s view button",target_id)
@@ -1094,6 +1160,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         
       },ignoreInit = T)
       
+      #event on computation (either 1st computation or any computation redone in staging)
       observeEvent(input[[paste0("button_compute_",target_id)]],{
         
         INFO("Click on %s compute or update button",target_id)
@@ -1116,6 +1183,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
         }
         
         computeIndicator(
+          con = pool,
           out = out,
           session = session,
           computation_indicator = indicator(),
@@ -1128,7 +1196,15 @@ computation_server <- function(id, parent.session, pool, reloader) {
         
         },ignoreInit = T)
       
-        
+      #event on recomputation (ie computation after output has been released)
+      observeEvent(input[[paste0("button_recompute_",target_id)]],{
+        filename <- paste0(out$indicator$id, "_", indicator_status()[i,"Period"], ".csv")
+        filepath <- file.path(appConfig$store, "release", out$indicator$id, gsub("-","/",indicator_status()[i,"Period"]), filename)
+        toarchive(filepath)
+        torecompute(indicator_status()[i,"Period"])
+        showModal(recomputeModal(session))
+      }, ignoreInit = T)
+       
     })
     
     #allow to just update the content of the box and not alter box structure
@@ -1172,6 +1248,53 @@ computation_server <- function(id, parent.session, pool, reloader) {
   #This event cancel the release request and remove the modal
   observeEvent(input$cancelRelease,{
     torelease(NULL)
+    removeModal()
+  })
+  
+  #Manage recomputation of the indicator
+  #--------------------------------------------------------
+  #This event recomputes the indicator and update the result
+  observeEvent(input$goRecompute, {
+    req(!is.null(torecompute()))
+    INFO("Recompute indicator '%s' for period '%s'", indicator(), torecompute())
+    period_parts<-strsplit(torecompute(),"-")[[1]]
+    computation_year<-period_parts[1]
+    computation_month<-NULL
+    computation_quarter<-NULL
+    
+    if(length(period_parts)>1){
+      if(startsWith(period_parts[2],"M")){
+        computation_month<-gsub("M","",period_parts[2])
+      }
+    }
+    
+    if(length(period_parts)>1){
+      if(startsWith(period_parts[2],"Q")){
+        computation_quarter<-gsub("Q","",period_parts[2])
+      }
+    }
+    
+    computeIndicator(
+      con = pool,
+      out = out,
+      session = session,
+      computation_indicator = indicator(),
+      computation_target = "release+staging",
+      computation_year = computation_year,
+      computation_quarter = computation_quarter,
+      computation_month = computation_month,
+      compute_dependent_indicators = TRUE,
+      archive_previous_release = toarchive(),
+      archive_reason = input$recomputeReason
+    )
+    
+    torecompute(NULL)
+    removeModal()
+  }, ignoreInit = T)
+  
+  #This event cancel the recompute request and remove the modal
+  observeEvent(input$cancelRecompute,{
+    torecompute(NULL)
     removeModal()
   })
   

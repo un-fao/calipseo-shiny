@@ -236,6 +236,7 @@ getComputationResults <- function(indicator, config){
   
   staging <- list.files(path = sprintf("%s/staging/%s", config$store, indicator$id), recursive = TRUE)
   released <- list.files(path = sprintf("%s/release/%s", config$store, indicator$id), recursive = TRUE)
+  released = released[regexpr("archive", released) < 0]
   values <- unique(c(unlist(strsplit(staging, ".csv")), unlist(strsplit(released, ".csv"))))
   periods <- as.vector(sapply(values, function(x){ 
     x.splits <- unlist(strsplit(x,"_"))

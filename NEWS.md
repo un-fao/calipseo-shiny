@@ -1,4 +1,4 @@
-# **calipseo-shiny [v1.7.0.9999](https://github.com/un-fao/calipseo-shiny) - PENDING**
+# **calipseo-shiny [v1.7.9999](https://github.com/un-fao/calipseo-shiny) - PENDING**
 
 # Corrections
 
@@ -18,7 +18,7 @@
 
 # New features
 
-_TBD_
+- [#244](https://github.com/un-fao/calipseo-shiny/issues/244) Versioning management for computation module and linked modules
 
 
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
