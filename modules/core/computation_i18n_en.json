@@ -39,6 +39,12 @@
   "COMPUTATION_RESULTS_TABLE_COLNAME_DATE" : "Date",
   "COMPUTATION_RESULTS_TABLE_COLNAME_ACTIONS" : "Actions",
   
+  /*recompute information*/
+  "CONFIRMATION_TO_RECOMPUTE": "Are you sure to want to recompute your indicator? If yes, please explain and click OK to confirm, or cancel.",
+  "RECOMPUTE_REASON": "Explanation",
+  "TO_CANCEL_RECOMPUTE_LABEL": "Cancel",
+  "TO_CREATE_RECOMPUTE_LABEL": "OK",
+  
   /*release information*/
   "CREATE_RELEASE_LABEL" : "Create a release",
   "RELEASE_NO_DATA_LABEL" : "No data released yet!",
@@ -47,8 +53,8 @@
   "LAST_RELEASE_LABEL" : "Last release",
   "GENERATE_DOWNLOAD_REPORT_LABEL" : "Generate & download report",
   "DATASET_RELEASED_LABEL" : "Dataset already released. Click OK to overwrite release, or cancel.",
-  "CONFIRMATION_TO_CREATE_RELEASE" : "Are your sure to want to create a release? If yes click OK to confirm, or cancel.",
-  "CONFIRMATION_TO_UNRELEASE" : "Are your sure to want to unvalidate your indicator? If yes click OK to confirm, or cancel.",
+  "CONFIRMATION_TO_CREATE_RELEASE" : "Are you sure to want to create a release? If yes click OK to confirm, or cancel.",
+  "CONFIRMATION_TO_UNRELEASE" : "Are you sure to want to unvalidate your indicator? If yes click OK to confirm, or cancel.",
   "TO_CANCEL_RELEASE_LABEL" : "Cancel",
   "TO_CREATE_RELEASE_LABEL" : "OK",
   "BUTTON_DOWNLOAD_RESULT_TITLE" : "Download result",

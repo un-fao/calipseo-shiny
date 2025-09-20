@@ -288,7 +288,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     modalDialog(
       tagList(
         div(tags$b(i18n("CONFIRMATION_TO_RECOMPUTE"))),
-        textInput(ns("recomputeReason"), label=i18n("RECOMPUTE_REASON"), placeholder = i18n("RECOMPUTE_REASON_PLACEHOLDER"), width = NULL)
+        textInput(ns("recomputeReason"), label=NULL, placeholder = i18n("RECOMPUTE_REASON"), width = NULL)
       ),
       footer = tagList(
         actionButton(session$ns("cancelRecompute"),i18n("TO_CANCEL_RECOMPUTE_LABEL")),
