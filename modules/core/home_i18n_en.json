@@ -1,6 +1,6 @@
 {
   /*Home title and subtitle*/
-  "HOME_CALIPSEO_TITLE" : "Calipseo R Shiny Dashboard",
+  "HOME_CALIPSEO_TITLE" : "Calipseo Shiny",
   "HOME_CALIPSEO_SUBTITLE" : "Access and compute statistics over the Calipseo OpenFismis platform",
   
   /*Infoboxes*/

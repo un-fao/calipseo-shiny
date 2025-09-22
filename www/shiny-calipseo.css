@@ -67,3 +67,11 @@ ul.vessel li {
   min-width: 275px !important;  /* Set your desired width */
   width: 275px !important;
 }
+
+#computation-computation_summary .card-body {
+  padding: 0px !important;
+  min-height: 0px;
+}
+#computation-computation_summary .row .card-body .row .card {
+  margin-bottom: 0px;
+}
