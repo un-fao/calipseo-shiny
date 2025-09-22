@@ -1,4 +1,4 @@
-# **calipseo-shiny [v1.7.9999](https://github.com/un-fao/calipseo-shiny) - PENDING**
+# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - PENDING**
 
 # Corrections
 
@@ -15,6 +15,7 @@
 - [#263](https://github.com/un-fao/calipseo-shiny/issues/263) Optimize the module loading strategy
 - [#264](https://github.com/un-fao/calipseo-shiny/issues/264) Individual-list - Performance issue with individuals processing for UI
 - [#265](https://github.com/un-fao/calipseo-shiny/issues/265) Optimize the URL resolver
+- [#221](https://github.com/un-fao/calipseo-shiny/issues/221) Upgrade from `shinydashboard` / `shinydashboardPlus` to `bs4Dash`
 
 # New features
 
