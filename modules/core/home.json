@@ -1,5 +1,6 @@
 {
   "parent": "",
   "type": "item",
-  "title": "Home"
+  "title": "Home",
+  "icon": "home"
 }

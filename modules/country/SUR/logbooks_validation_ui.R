@@ -3,7 +3,7 @@ logbooks_validation_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(
+  bs4Dash:: tabItem(
     tabName = "logbooks_validation",
      tags$head(
        tags$style(

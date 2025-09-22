@@ -31,24 +31,33 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             fluidPage(
               fluidRow(column(8,offset=4,p(i18n("DISPLAY_TRIP_MSG")))),
               fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
-            )
+            ),
+            collapsible = FALSE,
+            maximizable = TRUE
         )
       }else{
           box(id='trip-box', width = 12,
               fluidPage(
                 fluidRow(column(8,offset=4,p(i18n("NO_TRIP_MSG"))))
-              )
+              ),
+              collapsible = FALSE,
+              maximizable = TRUE
           )
         }
     
       }else{
         tagList(
-          fluidRow(uiOutput(ns("indicators"))),
+          fluidRow(
+            column(
+              width = 12,
+              uiOutput(ns("indicators"))
+            )
+          ),
           box(
             id='trip-box',
             title="",
             width = 12,
-            sidebar = shinydashboardPlus::boxSidebar(
+            sidebar = bs4Dash::boxSidebar(
               id=ns("box"),
               width = 25,
               startOpen = T,
@@ -59,7 +68,9 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               column(3,offset=1,uiOutput(ns("page_selector"))),
               column(8,uiOutput(ns("message")))
             ),
-            plotlyOutput(ns("gantt"))%>%withSpinner(type = 4)
+            plotlyOutput(ns("gantt"))%>%withSpinner(type = 4),
+            collapsible = FALSE,
+            maximizable = TRUE
           )
         )
       }
@@ -161,8 +172,8 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       
       output$indicators<-renderUI({
         fluidRow(
-          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_VESSELS"),max(formated$y), icon = icon("ship"), fill = TRUE, width = 3),
-          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_TRIPS"),length(unique(formated$trip_id)), icon = icon("calendar",lib="glyphicon"), fill = TRUE, width = 3)
+          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_VESSELS"),max(formated$y), icon = icon("ship"), color = "navy", fill = TRUE, width = 6),
+          infoBox(i18n("INFOBOX_TITLE_NUMBER_OF_TRIPS"),length(unique(formated$trip_id)), icon = icon("calendar",lib="glyphicon"), color = "primary", fill = TRUE, width = 6)
         )
       })
       
@@ -389,12 +400,27 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               ),
               uiOutput(ns('map')),
               fluidRow(
-                valueBox(value=tags$p(i18n("LABEL_QUANTITY_CAUGHT"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity),2), trip$quantity_unit[1]), icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"), width = 4),
-                valueBox(value=tags$p(i18n("LABEL_CONTENT"),style="font-size: 40%"),subtitle=paste(length(unique(trip$species_asfis)),i18n("LABEL_CONTENT_SUBTITLE")), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 4),
-                valueBox(value=tags$p(i18n("LABEL_GLOBAL_CPUE"),style="font-size: 40%"), subtitle=paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0),ifelse(trip$quantity_unit[1]=="pound",
-                                                                                                                                                                                                                    i18n("LABEL_GLOBAL_CPUE_SUBTITLE_LB"),
-                                                                                                                                                                                                                    ifelse(trip$quantity_unit[1]=="kilogram",
-                                                                                                                                                                                                                           i18n("LABEL_GLOBAL_CPUE_SUBTITLE_KG"),paste0(trip$quantity_unit[1],i18n("LABEL_GLOBAL_CPUE_SUBTITLE_OTHER"))))), icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"),  width = 4)
+                valueBox(
+                  value = paste(round(sum(trip$quantity),2), trip$quantity_unit[1]),
+                  subtitle = i18n("LABEL_QUANTITY_CAUGHT"), 
+                  icon = tags$i(class = "fas fa-balance-scale", style="font-size: 30px"),
+                  width = 4, color = "primary"
+                ),
+                valueBox(
+                  value = paste(length(unique(trip$species_asfis)),i18n("LABEL_CONTENT_SUBTITLE")),
+                  subtitle = i18n("LABEL_CONTENT"), 
+                  icon = tags$i(class = "fas fa-fish", style="font-size: 30px"),
+                  width = 4, color = "lightblue"
+                ),
+                valueBox(
+                  value = paste(round(sum(trip$quantity)/as.numeric(difftime(trip$date_to[1], trip$date_from[1], units = "days")),0),ifelse(trip$quantity_unit[1]=="pound",
+                                                                                                                                            i18n("LABEL_GLOBAL_CPUE_SUBTITLE_LB"),
+                                                                                                                                            ifelse(trip$quantity_unit[1]=="kilogram",
+                                                                                                                                                   i18n("LABEL_GLOBAL_CPUE_SUBTITLE_KG"),paste0(trip$quantity_unit[1],i18n("LABEL_GLOBAL_CPUE_SUBTITLE_OTHER"))))),
+                  subtitle = i18n("LABEL_GLOBAL_CPUE"), 
+                  icon = tags$i(class = "fas fa-chart-line", style="font-size: 30px"), 
+                  width = 4, color = "indigo"
+                )
               ),
               fluidRow(column(10, align="center",offset=1,DTOutput(ns("table"))%>%withSpinner(type = 4)))
             )

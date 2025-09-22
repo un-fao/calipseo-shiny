@@ -9,7 +9,7 @@ individual_overview_server <- function(id, parent.session, pool, reloader) {
     ns <- session$ns
     
     output$individual_overview_info <- renderText({
-      paste0("<h2>", i18n("INDIVIDUAL_OVERVIEW_TITLE")," <small>", i18n("INDIVIDUAL_OVERVIEW_SUBTITLE"))
+      paste0("<h3>", i18n("INDIVIDUAL_OVERVIEW_TITLE")," <small>", i18n("INDIVIDUAL_OVERVIEW_SUBTITLE"), "</h3><hr>")
       
     })
     
@@ -51,19 +51,16 @@ individual_overview_server <- function(id, parent.session, pool, reloader) {
     
     #UI for individual indicators
     output$indicators<-renderUI({
-                div(
-                  column(12,
-                         infoBox(i18n("INFOBOX_TITLE_TOTAL"),total_nb , icon = icon("user"), fill = TRUE,color="blue",width = 3),
-                         infoBox(i18n("INFOBOX_TITLE_NON_FISHER"),non_fisher_nb, icon = icon("user"), fill = TRUE,color="yellow",width = 3),
-                         infoBox(i18n("INFOBOX_TITLE_FISHER"), fisher_nb, icon = icon("fish"), fill = TRUE,color="aqua",width = 3),
-                         infoBox(i18n("INFOBOX_TITLE_FISHER_ACTIVE"),fisher_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 3)
-                         
-                  )
-                  # column(12,
-                  #        infoBox(i18n("INFOBOX_TITLE_LICENSE"),license_nb, icon = icon("id-card"), fill = TRUE,color="purple",width = 6),
-                  #        infoBox(i18n("INFOBOX_TITLE_LICENSE_ACTIVE"),license_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
-                  # )
-                )
+      fluidRow(
+        infoBox(i18n("INFOBOX_TITLE_TOTAL"),total_nb , icon = icon("user"), fill = TRUE,color="navy",width = 3),
+        infoBox(i18n("INFOBOX_TITLE_NON_FISHER"),non_fisher_nb, icon = icon("user"), fill = TRUE,color="fuchsia",width = 3),
+        infoBox(i18n("INFOBOX_TITLE_FISHER"), fisher_nb, icon = icon("fish"), fill = TRUE,color="lightblue",width = 3),
+        infoBox(i18n("INFOBOX_TITLE_FISHER_ACTIVE"),fisher_active_nb, icon = icon("circle-check"), fill = TRUE,color="primary",width = 3)
+      )
+      # fluidRow
+      #   infoBox(i18n("INFOBOX_TITLE_LICENSE"),license_nb, icon = icon("id-card"), fill = TRUE,color="purple",width = 6),
+      #   infoBox(i18n("INFOBOX_TITLE_LICENSE_ACTIVE"),license_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
+      # )
     })
     
     colVariables<-c()

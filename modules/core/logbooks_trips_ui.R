@@ -3,9 +3,13 @@ logbooks_trips_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "logbooks_trips",
-          tags$h2(i18n("LOGBOOKS_TRIPS_TITLE")),
-          trip_gantt_ui(ns("trips"),sliderWidth =25)
+  bs4Dash::tabItem(
+    tabName = "logbooks_trips",
+    tags$h3(i18n("LOGBOOKS_TRIPS_TITLE")),
+    trip_gantt_ui(
+      id = ns("trips"),
+      sliderWidth =25
+    )
   )
 
 }

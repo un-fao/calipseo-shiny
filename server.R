@@ -2,6 +2,7 @@
 #==========================================================================================
 server <- function(input, output, session) {
   
+  bs4Dash::useAutoColor()
   
   session$userData$module_selection <- NULL
   session$userData$record_selection <- NULL
@@ -32,7 +33,7 @@ server <- function(input, output, session) {
       }
     }
     if (!is.na(selected_module)) {
-      isolate({updateTabItems(session, "calipseo-tabs", gsub("-", "_", selected_module))})
+      isolate({bs4Dash::updateTabItems(session, "calipseo-tabs", gsub("-", "_", selected_module))})
     }
   })
   

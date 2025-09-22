@@ -3,9 +3,9 @@ artfish_overview_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "artfish_overview",
+  bs4Dash::tabItem(tabName = "artfish_overview",
           fluidRow(
-            tags$h2(i18n("OVERVIEW_TITLE")),
+            tags$h3(i18n("ARTFISH_OVERVIEW_TITLE")),
           ),
           uiOutput(ns("no_release")),
           uiOutput(ns("fishing_unit_selector")),

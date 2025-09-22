@@ -3,15 +3,15 @@ vessel_list_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "vessel_list",
+  bs4Dash::tabItem(tabName = "vessel_list",
           fluidRow(
-            div(
-              width = 12, style = "margin:12px;",
-              htmlOutput(ns("vessel_list_info"))
+            bs4Dash::box(
+              title = htmlOutput(ns("vessel_list_info")),
+              width = 12, 
+              withSpinner(DT::dataTableOutput(ns("vessel_list"))),
+              maximizable = TRUE,
+              collapsible = FALSE
             )
-          ),
-          fluidRow(
-            box(width = 12, withSpinner(DT::dataTableOutput(ns("vessel_list"))))
           )
   )
   

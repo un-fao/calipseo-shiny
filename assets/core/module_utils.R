@@ -267,15 +267,15 @@ sidebarMenuFromModules <- function(config){
 
   #default structure
   default_structure_menu_items <- list(
-    home = list(title = "Home"),
-    vessels = list(title = "Vessels")
+    home = list(title = "Home", icon = "home"),
+    vessels = list(title = "Vessels", icon = "ship")
   )
   structure_menu_items <- default_structure_menu_items
   #overwrite with custom structure
   if(!is.null(config$structure)) structure_menu_items <- config$structure
   
   #sidebar UI
-  do.call("sidebarMenu", c(id="calipseo-tabs", lapply(names(structure_menu_items), function(menu_item_name){
+  do.call(bs4Dash::sidebarMenu, c(id="calipseo-tabs", lapply(names(structure_menu_items), function(menu_item_name){
     #menu item
     menu_item <- structure_menu_items[[menu_item_name]]
     menu_item_enabled <- TRUE
@@ -286,13 +286,14 @@ sidebarMenuFromModules <- function(config){
     menu_item_profiles <- module_profiles[sapply(module_profiles, function(x){x$parent == menu_item_name})]
     menu_item_profiles <- menu_item_profiles[order(sapply(menu_item_profiles, function(x){x$rank}))]
     #ui for menu item
-    do.call("menuItem", c(
-      text = menu_item$title, tabName = menu_item_name,
+    do.call(bs4Dash::menuItem, c(
+      text = menu_item$title, tabName = menu_item_name, 
+      icon = if(!is.null(menu_item$icon)) shiny::icon(menu_item$icon) else NULL,
       lapply(menu_item_profiles, function(profile){
         if(!profile$enabled) return(NULL)
         icon = shiny::icon("angle-double-right")
         if(!is.null(profile$icon)) icon = shiny::icon(profile$icon)
-        menuSubItem(profile$title, tabName = profile$module, icon = icon)
+        bs4Dash::menuSubItem(profile$title, tabName = profile$module, icon = icon)
       })
     ))
   })))

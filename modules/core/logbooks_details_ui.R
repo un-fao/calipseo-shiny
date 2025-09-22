@@ -3,11 +3,11 @@ logbooks_details_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "logbooks_details",
+  bs4Dash::tabItem(tabName = "logbooks_details",
     fluidRow(
-      div(
-        width = 12, style = "margin:12px;",
-        tabsetPanel(
+      column(
+        width = 12,
+        bs4Dash::tabsetPanel(
           id = "logbooks_details_tabs",
           type = "tabs",
           #BY VESSEL
@@ -28,14 +28,16 @@ logbooks_details_ui <- function(id){
                    fluidRow(
                      div(
                        class = "col-md-6",
-                       h3(i18n("TOTAL_QUANTITIES_GRAPH_TITLE")), hr(),
-                       box(
+                       bs4Dash::box(
+                         title = h3(i18n("TOTAL_QUANTITIES_GRAPH_TITLE")),
                          width = 12,
                          tabsetPanel(
                            id = "logbooks_yearly_totals_by_vessel_tabs", type = "pills",
                            tabPanel(title = i18n("GRAPH_TABPANEL_TITLE"), plotlyOutput(ns("plot_vessel"))),
                            tabPanel(title = i18n("DATA_TABPANEL_TITLE"), tags$div(DTOutput(ns("data_vessel"))), style = "margin:6px;")
-                         )
+                         ),
+                         collapsible = FALSE,
+                         maximizable = TRUE
                        )
                      )
                    )              
@@ -58,14 +60,16 @@ logbooks_details_ui <- function(id){
                    fluidRow(
                      div(
                        class = "col-md-6",
-                       h3(i18n("TOTAL_QUANTITIES_GRAPH_TITLE")), hr(),
-                       box(
+                       bs4Dash::box(
+                         title = h3(i18n("TOTAL_QUANTITIES_GRAPH_TITLE")),
                          width = 12,
                          tabsetPanel(
                            id = "logbooks_yearly_totals_by_vessel_owner_tabs", type = "pills",
                            tabPanel(title = i18n("GRAPH_TABPANEL_TITLE"), plotlyOutput(ns("plot_vessel_owner"))),
                            tabPanel(title = i18n("DATA_TABPANEL_TITLE"), tags$div(DTOutput(ns("data_vessel_owner"))), style = "margin:6px;")
-                         )
+                         ),
+                         collapsible = FALSE,
+                         maximizable = TRUE
                        )
                      )
                    )                    
@@ -88,20 +92,22 @@ logbooks_details_ui <- function(id){
                    fluidRow(
                      div(
                        class = "col-md-6",
-                       h3(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_TITLE")), hr(),
-                       box(
+                       bs4Dash::box(
+                         title = h3(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_YEAR_TITLE")),
                          width = 12,
                          tabsetPanel(
                           id = "logbooks_yearly_totals_tabs", type = "pills",
                           tabPanel(title = i18n("MAP_TABPANEL_TITLE"), leafletOutput(ns("map_total"))),
                           tabPanel(title = i18n("DATA_TABPANEL_TITLE"), tags$div(DTOutput(ns("data_total"))), style = "margin:6px;")
-                         )
+                         ),
+                         collapsible = FALSE,
+                         maximizable = TRUE
                        )
                      ),
                      div(
                        class = "col-md-6",
-                       h3(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_TITLE")), hr(),
-                       box(
+                       bs4Dash::box(
+                         title = h3(i18n("BREAKDOWN_OF_TOTAL_QUANTITIES_LANDINGSITE_SPICIES_YEAR_TITLE")),
                          width = 12,
                          tabsetPanel(
                            id = "logbooks_yearly_speciestotals_tabs", type = "pills",

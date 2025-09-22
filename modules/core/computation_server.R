@@ -2,8 +2,6 @@
 computation_server <- function(id, parent.session, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
-  
-  session$userData$computation_new <- reactiveVal(NULL)
 
   INFO("computation: START")
   MODULE_START_TIME <- Sys.time()    
@@ -252,7 +250,6 @@ computation_server <- function(id, parent.session, pool, reloader) {
       readr::write_csv(indicator_output, out$filepath)
       
       progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
-      session$userData$computation_new(Sys.time())
       out$results <- getComputationResults(indicator, config = appConfig)
       
     }else{
@@ -349,8 +346,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       overwrite = TRUE
     )
     file.remove(target)
-    
-    session$userData$computation_new(Sys.time())
+
     if(file.exists(gsub("staging", "release", target))){
       out$results <- getComputationResults(out$indicator, config = appConfig)
       torelease(NULL) #reinitialize reactive
@@ -730,7 +726,6 @@ computation_server <- function(id, parent.session, pool, reloader) {
       if(length(traversal) > 1L) {
         traversal <- traversal[1L]
       }
-      print(traversal)
       if(is.function(traversal) | traversal == "pre-order" | traversal == "post-order") {
         
         if (length(pruneFun) == 0 || pruneFun(node)) {
@@ -744,9 +739,6 @@ computation_server <- function(id, parent.session, pool, reloader) {
           for(child in children) {
             nodes <- c(nodes, Traverse(child, traversal = traversal, pruneFun = pruneFun, filterFun = filterFun))
           }
-          test = filterFun(node)
-          print(test)
-          print(length(test))
           if(length(filterFun) == 0 || any(filterFun(node))) {
             if(is.function(traversal) || traversal == "pre-order") nodes <- c(node, nodes)
             else nodes <- c(nodes, node)
@@ -979,6 +971,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Action button UI
       output[[paste0("actions_",period)]] <- renderUI({
+        print(indicator_status())
         target <- subset(indicator_status(),Period==period)
         req(nrow(target)>0)
         switch (target$Status,
@@ -1036,11 +1029,11 @@ computation_server <- function(id, parent.session, pool, reloader) {
       div(
         box(width=12,
             title = tags$b(selected_indicator$indicator$label),
-            collapsible = T,
-            collapsed = F,
+            collapsible = FALSE,
+            maximizable = TRUE,
             lapply(unique(indicator_status_new$year), function(i){
               fluidRow(
-                box(width=12,
+                bs4Dash::box(width=12,
                     collapsible = T,
                     collapsed = T,
                     title = p(
@@ -1067,7 +1060,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
                       name<-tags$span(tags$b(item$Period))
                       
                       return(fluidRow(
-                        box(width=12,
+                        bs4Dash::box(width=12,
                             collapsible = F,
                             collapsed = F,
                             title = p(

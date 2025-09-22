@@ -8,7 +8,7 @@ individual_qa_server <- function(id, parent.session, pool, reloader) {
     ns <- session$ns
     
     output$individual_qa_info <- renderText({
-      text <- paste0("<h2>", i18n("INDIVIDUAL_QA_TITLE")," <small>", i18n("INDIVIDUAL_QA_SUBTITLE"),"</small></h2><hr>")
+      text <- paste0("<h3>", i18n("INDIVIDUAL_QA_TITLE")," – <small>", i18n("INDIVIDUAL_QA_SUBTITLE"),"</small></h3><hr>")
       text
     })
 

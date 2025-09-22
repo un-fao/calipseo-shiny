@@ -19,7 +19,7 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
   observeEvent(input$back_to_vessels, {
     DEBUG("Click to return to the list of vessels")
     parent.session$userData$record_selection = NULL
-    isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
+    isolate({ bs4Dash::updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
   }, ignoreInit = T)
     
 
@@ -790,12 +790,6 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
                      ))
           
         }
-        
-        
-        
-        
-        
-        
       })
       
       
@@ -895,26 +889,18 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
       colRList <- reactive({
         if(length(vessel_indicators_infos$vessel_operational_status)>0){
           if(vessel_indicators_infos$vessel_operational_status=='IN SERVICE / COMMISSION' || vessel_indicators_infos$vessel_operational_status== 'Active'){
-            
-            colorlist <- c('green','black','check-circle')
+            colorlist <- c('success','check-circle')
           }else if(vessel_indicators_infos$vessel_operational_status=='UNKNOWN' || vessel_indicators_infos$vessel_operational_status== 'Unknown'){
-            
-            colorlist <- c('lightgray', 'black','') 
+            colorlist <- c('gray', 'question') 
           }else if(vessel_indicators_infos$vessel_operational_status=='TOTAL LOSS' || vessel_indicators_infos$vessel_operational_status== 'Destroyed'){
-            
-            colorlist <- c('black','white','calendar-times')
+            colorlist <- c('gray-dark','calendar-times')
           }else if(vessel_indicators_infos$vessel_operational_status=='BROKEN UP' || vessel_indicators_infos$vessel_operational_status== 'Repair'){
-            
-            colorlist <- c('darkred', 'wheat','crutch')
+            colorlist <- c('maroon', 'crutch')
           }else if(vessel_indicators_infos$vessel_operational_status=='LAID UP' || vessel_indicators_infos$vessel_operational_status== 'Inactive'){
-            
-            colorlist <- c('orange', 'black','anchor')
-            
+            colorlist <- c('orange', 'anchor')
           }else{
-            colorlist <- c('purple', 'black','ban')
+            colorlist <- c('purple', 'ban')
           }
-          
-          
         }else{
           colorlist <- c('white', 'black','ban')
         }
@@ -937,49 +923,82 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
       
       colRList_license_status <- reactive({
         req(license_status())
-        
         if(license_status()==i18n("LICENSE_STATUS_VALID")){
-          
-          colorlist <- c('green','black','check-circle')
-          
+          colorlist <- c('primary','check-circle')
         }else if(license_status()==i18n("LICENSE_STATUS_EXPIRED")){
-          
-          colorlist <- c('red','black','times-circle')
-          
+          colorlist <- c('danger','times-circle')
         }else if(license_status()==i18n("LICENSE_STATUS_NO_LICENSE")){
-          
-          colorlist <- c('#8b0000','black','times-circle')
-          
+          colorlist <- c('maroon', 'times-circle')
         }
-        
-        
       })
       
-      output$box_status <- renderUI({
-        
-        CalipseoInfoBox(span(i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),style='font-size:11px;'),icon = icon(colRList()[3]),span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), width = 6, color=colRList()[1], text_color=colRList()[2])
+      output$main_indicators <- renderUI({
+        shiny::tagList(
+          fluidRow(
+            bs4Dash::infoBox(
+              title = i18n("INFOBOX_VESSEL_OPERATIONAL_STATUS"),
+              icon = icon(colRList()[2]),
+              value = span(vessel_indicators_infos$vessel_operational_status,style='font-size:15px;'), 
+              width = 6, color = colRList()[1]
+            ),
+            bs4Dash::infoBox(
+              title = i18n("INFOBOX_LICENSE_STATUS"),
+              icon = icon(colRList_license_status()[2]),
+              value = span(toupper(license_status()),style='font-size:15px;'),
+              width = 6, color = colRList_license_status()[1]
+            )
+          ),
+          fluidRow(
+            bs4Dash::infoBox(
+              title = i18n("INFOBOX_NUMBER_OF_OWNERS"),
+              icon = icon('user'),
+              value = vessel_indicators_infos$number_of_owners, 
+              width = 6,
+              color = "primary"
+            ),
+            bs4Dash::infoBox(
+              title = i18n("INFOBOX_NUMBER_OF_LICENSES"),
+              icon = icon('ship'),
+              value = vessel_indicators_infos$number_of_licenses,
+              width = 6,
+              color = "info"
+            )
+          )
+        )
       })
-      
-      output$box_license_status <- renderUI({
-        CalipseoInfoBox(span(i18n("INFOBOX_LICENSE_STATUS"),style='font-size:11px;'),icon = icon(colRList_license_status()[3]),span(toupper(license_status()),style='font-size:15px;'), width = 6, color=colRList_license_status()[1], text_color=colRList_license_status()[2])
-      })
-      
-      output$box_owner <- renderUI({
-        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_OWNERS"),icon = icon('user'),vessel_indicators_infos$number_of_owners, width = 6)
-      })
-      
-      output$box_license <- renderUI({
-        CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LICENSES"),icon = icon('ship'),vessel_indicators_infos$number_of_licenses, width = 6)
-      })
-      
+    
       output$more_indicators <- renderUI({
         fluidRow(
           tags$div(class = "col-sm-1"),
-          CalipseoInfoBox(i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_fishing_trips,width = 2, content_margin_left = '60px',icon_width = '60px'),
-          CalipseoInfoBox(i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"),style_title ='font-size:10px;',icon = icon('line-chart'),vessel_indicators_infos$mean_number_of_days_at_sea,width = 2, content_margin_left = '60px',icon_width = '60px'),
-          CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_LANDING_SITES"),style_title ='font-size:10px;',icon = icon('ship'),vessel_indicators_infos$number_of_landing_sites,width = 2, content_margin_left = '60px',icon_width = '60px'),
-          CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"),style_title ='font-size:10px;',icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, width = 2, content_margin_left = '60px',icon_width = '60px'),
-          CalipseoInfoBox(i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"),style_title = 'font-size:10px;',icon = icon('fish'),vessel_indicators_infos$number_of_species_fished,width = 2, content_margin_left = '60px',icon_width = '60px'),
+          bs4Dash::infoBox(
+            title = i18n("INFOBOX_MEAN_FISHING_TRIPS_YEAR"), 
+            icon = icon('line-chart'),
+            value = vessel_indicators_infos$mean_number_of_fishing_trips,
+            width = 2
+          ),
+          bs4Dash::infoBox(
+            title = i18n("INFOBOX_MEAN_DAYS_AT_SEA_FISHING_TRIPS"), 
+            icon = icon('line-chart'),
+            value = vessel_indicators_infos$mean_number_of_days_at_sea,
+            width = 2
+          ),
+          bs4Dash::infoBox(
+            title = i18n("INFOBOX_NUMBER_OF_LANDING_SITES"), 
+            icon = icon('ship'),
+            value = vessel_indicators_infos$number_of_landing_sites,
+            width = 2
+          ),
+          bs4Dash::infoBox(
+            title = i18n("INFOBOX_NUMBER_OF_FISHING_GEARS"), 
+            icon = icon('gear'),vessel_indicators_infos$number_of_fishing_gears, 
+            width = 2
+          ),
+          bs4Dash::infoBox(
+            title = i18n("INFOBOX_NUMBER_OF_SPECIES_CAUGHT"), 
+            icon = icon('fish'),
+            value = vessel_indicators_infos$number_of_species_fished,
+            width = 2
+          ),
           tags$div(class = "col-sm-1")
         )
       })

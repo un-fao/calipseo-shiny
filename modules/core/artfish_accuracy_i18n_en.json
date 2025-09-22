@@ -1,58 +1,33 @@
 {
   /*artfish accuracy title*/
   "ARTFISH_ACCURACY_TITLE" : "Estimate accuracy and uniformity of sampling strategy",
-  
   /*accuracy tab*/
   "TABPANEL_ACCURACY" : "Accuracy",
-  
   /*global box*/
   "GLOBAL_BOX_TITLE" : "Global",
-  
   "NUMERIC_INPUT_NUMBER_OF_BOATS_TITLE" : "Number of boats",
-  
   "NUMERIC_INPUT_NUMBER_OF_FISHING_DAYS_TITLE" : "Number of fishing days",
-  
    /*effort box*/
   "EFFORT_BOX_TITLE" : "Effort",
-  
   "NUMERIC_INPUT_NUMBER_OF_EFFORT_SAMPLES_TITLE" : "Number of effort samples",
-  
   "NUMERIC_INPUT_NUMBER_OF_DAYS_SAMPLED_EFFORTS_TITLE" : "Number of days sampled (effort)",
-  
   /*landing box*/
    "LANDING_BOX_TITLE" : "Landing",
-   
   "NUMERIC_INPUT_NUMBER_OF_LANDING_SAMPLES_TITLE" : "Number of landing samples",
-  
   "NUMERIC_INPUT_NUMBER_OF_DAYS_SAMPLED_LANDING_TITLE" : "Number of days sampled (landing)",
-  
   /*uniformity tab*/
   "TABPANEL_UNIFORMITY" : "Uniformity",
-  
   "UNIFORMITY_HINT" : "Click on 'New Column' to add a day and double click on cell to edit",
-  
   "ACTIONBUTTON_ACTIVATE_NEWCOLUMN_LABEL" : "New Column",
-  
   "ACTIONBUTTON_COMPUTE_LABEL" : "Compute",
-  
   /*valueboxes*/
-  
   "VALUEBOX_TITLE_SPATIAL_ACCURACY_EFFORT" : "Spatial Accuracy (effort)",
-  
   "VALUEBOX_TITLE_TEMPORAL_ACCURACY_EFFORT" : "Temporal Accuracy (effort)",
-  
   "VALUEBOX_TITLE_SPATIAL_ACCURACY_CATCH" : "Spatial Accuracy (catch)",
-  
   "VALUEBOX_TITLE_TEMPORAL_ACCURACY_CATCH" : "Temporal Accuracy (catch)",
-  
   "VALUEBOX_TITLE_OVERALL_ACCURACY" : "Overall Accuracy",
-  
   "VALUEBOX_TITLE_UNIFORMITY_INDEX" : "Uniformity index",
-  
   "DAY_LABEL" : "Day",
-  
   "SAMPLES_LABEL" : "samples",
-  
-   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
-  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }

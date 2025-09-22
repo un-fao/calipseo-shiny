@@ -255,6 +255,27 @@
       ],
       "Hash": "40415719b5a479b87949f3aa0aee737c"
     },
+    "bs4Dash": {
+      "Package": "bs4Dash",
+      "Version": "2.3.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "bslib",
+        "cli",
+        "fresh",
+        "htmltools",
+        "httpuv",
+        "httr",
+        "jsonlite",
+        "lifecycle",
+        "rlang",
+        "shiny",
+        "waiter"
+      ],
+      "Hash": "a344c55e84b6411a831083ce823abb4b"
+    },
     "bslib": {
       "Package": "bslib",
       "Version": "0.7.0",
@@ -1613,35 +1634,6 @@
         "shiny"
       ],
       "Hash": "2b45a467a30d6a88a1892a738c0900cf"
-    },
-    "shinydashboard": {
-      "Package": "shinydashboard",
-      "Version": "0.7.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "htmltools",
-        "promises",
-        "shiny",
-        "utils"
-      ],
-      "Hash": "e418b532e9bb4eb22a714b9a9f1acee7"
-    },
-    "shinydashboardPlus": {
-      "Package": "shinydashboardPlus",
-      "Version": "2.0.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "fresh",
-        "htmltools",
-        "lifecycle",
-        "shiny",
-        "shinydashboard",
-        "waiter"
-      ],
-      "Hash": "a0542621306173a03076b28cf0a65c4d"
     },
     "shinyjs": {
       "Package": "shinyjs",

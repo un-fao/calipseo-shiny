@@ -11,7 +11,7 @@ vessel_list_server <- function(id, parent.session, pool, reloader) {
     vessel_selection <- reactiveVal(NULL)
     
     output$vessel_list_info <- renderText({
-      text <- paste0("<h2>", i18n("VESSEL_LIST_TITLE")," <small>", i18n("VESSEL_LIST_SUBTITLE"),"</small></h2><hr>")
+      text <- paste0("<h3>", i18n("VESSEL_LIST_TITLE")," – <small>", i18n("VESSEL_LIST_SUBTITLE"),"</small></h3>")
       text
     })
     
@@ -167,11 +167,11 @@ vessel_list_server <- function(id, parent.session, pool, reloader) {
       if(is.null(vessel_selection())){
         DEBUG("Selection is NULL, we display the vessel table")
         parent.session$userData$record_selection = NULL
-        isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
+        isolate({ bs4Dash::updateTabItems(parent.session, "calipseo-tabs", "vessel_list") })
       }else{
         DEBUG("Selection is not NULL, we display the vessel record")
         parent.session$userData$record_selection = vessel_selection()
-        isolate({ updateTabItems(parent.session, "calipseo-tabs", "vessel_info") })
+        isolate({ bs4Dash::updateTabItems(parent.session, "calipseo-tabs", "vessel_info") })
       }
     })
     
