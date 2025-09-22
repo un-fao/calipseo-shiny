@@ -20,6 +20,7 @@
 # New features
 
 - [#244](https://github.com/un-fao/calipseo-shiny/issues/244) Versioning management for computation module and linked modules
+- [#246](https://github.com/un-fao/calipseo-shiny/issues/246) Create a new indicator to regionalize artfish result
 
 
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
