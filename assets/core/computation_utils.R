@@ -41,11 +41,12 @@ getStatPeriods <- function(config, id,target = c("release", "staging", "release+
   }else{
     
     target_folder <- sprintf("%s/%s/%s",config$store,target, id)
-    files <- list.files(target_folder,recursive = T, full.names = F)
+    files <- list.files(target_folder,recursive = T, full.names = T)
     files <- files[regexpr("archive", files) < 0]
     
     if(length(files)>0){
-      x<-strsplit(files,"/")
+      x <- strsplit(files,paste0(target_folder, "/"))[[1]][2]
+      x <- strsplit(x, "/")
       years<-unlist(lapply(x, function(l) l[[1]]))
       
       by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
