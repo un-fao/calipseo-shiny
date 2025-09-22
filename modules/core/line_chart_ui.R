@@ -16,10 +16,10 @@ line_chart_ui <- function(id,sliderWidth = 25) {
   stat_choices <- c(i18n("TOTAL"),i18n("AVERAGE"),i18n("MEDIAN"))
   
   tagList(
-    shinydashboardPlus::box(
+    bs4Dash::box(
       title="",
       width = 12,
-      sidebar = shinydashboardPlus::boxSidebar(
+      sidebar = bs4Dash::boxSidebar(
         id=ns("box"),
         width = sliderWidth,
         style = 'font-size:14px;',
@@ -28,9 +28,11 @@ line_chart_ui <- function(id,sliderWidth = 25) {
         selectInput(ns("stat"),label = paste0(i18n("STATISTIC")," :"),choices=stat_choices),
         uiOutput(ns("additional"))
       ),
-      uiOutput(ns("result"))
+      uiOutput(ns("result")),
+      collapsible = FALSE,
+      maximizable = TRUE   
     )
-    )
+  )
   
   
 }

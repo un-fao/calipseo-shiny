@@ -3,7 +3,7 @@ artfish_fishing_unit_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "artfish_fishing_unit",
+  bs4Dash::tabItem(tabName = "artfish_fishing_unit",
           fluidRow(
             tags$h2(i18n("ARTFISH_FISHING_UNIT_TITLE"))
           ),

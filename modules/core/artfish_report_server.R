@@ -7,34 +7,26 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
   MODULE_START_TIME <- Sys.time() 
    
   ns<-session$ns
+  
+  #reactives
   estimates<-reactiveVal(NULL)
   target_data<-reactiveVal(NULL)
   
-  fishing_units<-accessRefFishingUnits(pool)
-  
-  ref_species<-accessRefSpecies(pool)
-  ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
-  ref_species<-subset(ref_species,select=c(ID,Species))
+  #data
+  fishing_units <- accessRefFishingUnits(pool)
+  ref_species <- accessRefSpecies(pool)
+  ref_species$Species <- setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
+  ref_species<-subset(ref_species, select=c(ID,Species))
   
   output$mode_selector<-renderUI({
-    
     selectizeInput(ns("mode"),paste0(i18n("SELECT_INPUT_TITLE_MODE")," :"),choices=c("release","staging"),multiple = F,selected="release")
-  
   })
   
-  observeEvent(c(input$mode,session$userData$computation_new()),{
+  observeEvent(input$mode,{
     req(!is.null(input$mode)&input$mode!="")
   
     output$year_selector<-renderUI({
-      
-      #dates<-unique(survey$date)
-      #dates<- dates[!startsWith(dates, "2013") & !startsWith(dates, "2014")] #we exclude 2013 from Flouca historical data
-      #TODO to check what happens with 2014 reports
-      
       choices <- unique(getStatPeriods(config=appConfig, "artfish_estimates",target = input$mode)$year)
-      
-      print(choices)
-      
       selectizeInput(ns("year"),paste0(i18n("SELECT_INPUT_TITLE_YEAR")," :"),choices=choices[order(as.numeric(choices))],multiple = F,selected=NULL,
                      options = list(
                        placeholder = i18n("SELECT_INPUT_PLACEHOLDER_YEAR"),

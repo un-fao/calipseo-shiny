@@ -11,21 +11,12 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
   data_sp<-reactiveVal(NULL)
   data_sp_bg<-reactiveVal(NULL)
   
-  ref_species<-accessRefSpecies(pool)
-  ref_species$ID<-as.character(ref_species$ID)
-  ref_fishing_units<-accessRefFishingUnits(pool)
-  ref_fishing_units$ID<-as.character(ref_fishing_units$ID)
+  ref_species <- accessRefSpecies(pool)
+  ref_species$ID <- as.character(ref_species$ID)
+  ref_fishing_units <- accessRefFishingUnits(pool)
+  ref_fishing_units$ID <- as.character(ref_fishing_units$ID)
   
-  # estimate<-artfish_estimates(con=pool,
-  #                             effort_source="fisher_interview",
-  #                             active_vessels=accessArtfishA(pool),
-  #                             effort = accessArtfishB1(pool),
-  #                             active_vessels_strategy="latest",
-  #                             active_days=accessArtfishC(pool),
-  #                             landings=accessArtfishD(pool),
-  #                             minor_strata=NULL)
-  
-  files<-getStatPeriods(config=appConfig, "artfish_estimates",target = "release")
+  files<-getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
   
   output$no_release<-renderUI({
     div(
@@ -39,19 +30,13 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
   
   req(nrow(files)>0)
   
-  estimate<-do.call(rbind,lapply(files$file, readr::read_csv))
+  estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
   
-  ref_species<-subset(ref_species,ID%in%unique(na.omit(estimate$species)))
+  ref_species <- subset(ref_species,ID %in% unique(na.omit(estimate$species)))
   
-  print("DEBUG-1")
-  print(unique(estimate$species))
-  print(unique(ref_species$ID))
-  
-  output$species_selector<-renderUI({
-    
-    species<-setNames(ref_species$ID, sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME))
-    
-    selectizeInput(ns("species"),paste0(i18n("SELECT_INPUT_TITLE_SPECIES")," :"),choices=species,multiple = F,selected=NULL,
+  output$species_selector <- renderUI({
+    species <- setNames(ref_species$ID, sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME))
+    selectizeInput(ns("species"),paste0(i18n("SELECT_INPUT_TITLE_SPECIES")," :"),choices = species,multiple = F,selected = NULL,
                    options = list(
                      placeholder = i18n("SELECT_INPUT_SPECIES_PLACEHOLDER"),
                      onInitialize = I('function() { this.setValue(""); }')
@@ -61,29 +46,21 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
 
   #Subset data with species
   observeEvent(input$species,{
-    
-    print(input$species)
     if(input$species!=""){
-      
-      selection<-subset(estimate,species==input$species)
+      selection <- subset(estimate, species == input$species)
       data_sp(selection)
     }
   })
     
   observeEvent(data_sp(),{
-    
     if(!is.null(data_sp())){ 
-  
-      output$fishing_unit_selector<-renderUI({
-        
-        selection<-data_sp()
-        bg_sp<-unique(selection$fishing_unit)
-        
-        ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
-          
-        bg<-setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
-        
-        selectizeInput(ns("bg"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=bg,multiple = F,selected=bg[1])
+      
+      output$fishing_unit_selector <- renderUI({
+        selection <- data_sp()
+        bg_sp <- unique(selection$fishing_unit)
+        ref_bg_sp <- subset(ref_fishing_units,ID %in% bg_sp)
+        bg <- setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
+        selectizeInput(ns("bg"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices = bg,multiple = F,selected = bg[1])
       })
     }
   })
@@ -96,8 +73,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
     selection<-data_sp()
     
     if(as.integer(input$bg)>0){
-      
-      selection<-subset(selection,fishing_unit==input$bg,
+      selection<-subset(selection,fishing_unit == input$bg,
                    select=c(year,month,fishing_unit,catch_nominal_landed,trade_price,trade_value,effort_nominal,catch_cpue))
     }else{
       selection<-subset(selection,
@@ -108,11 +84,9 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
   })
   
   #Indicators and timeline
-  
   observeEvent(data_sp_bg(),{
     
     req(!is.null(data_sp_bg()))
-     
     data<-data_sp_bg()
       
     #Multi plot timeline
@@ -173,12 +147,37 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
           
           tagList(
             fluidRow(
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_VALUE"),style="font-size: 40%"), subtitle=round(sum(data$trade_value,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color = "blue" ),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_CATCH"),style="font-size: 40%"), subtitle=round(sum(data$catch_nominal_landed,na.rm=T),2), icon = tags$i(class = "fas fa-fish", style="font-size: 30px"), width = 2,color="orange"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_PRICE"),style="font-size: 40%"), subtitle=round(mean(data$trade_price,na.rm=T),2), icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), width = 2,color="green"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_AVERAGE_CPUE"),style="font-size: 40%"), subtitle=round(mean(data$catch_cpue,na.rm=T),5), icon = tags$i(class = "fas fa-ship", style="font-size: 30px"), width = 2,color="red"),
-              valueBox(value=tags$p(i18n("VALUEBOX_TITLE_TOTAL_EFFORT"),style="font-size: 40%"), subtitle=round(sum(data$effort_nominal,na.rm=T),0), icon = tags$i(class = "fas fa-clock", style="font-size: 30px"), width = 2,color="purple")
+              valueBox(
+                value = round(sum(data$trade_value,na.rm=T),2), 
+                subtitle = i18n("VALUEBOX_TITLE_TOTAL_VALUE"), 
+                icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"), 
+                width = 2,color = "navy"
+              ),
+              valueBox(
+                value = round(sum(data$catch_nominal_landed,na.rm=T),2),
+                subtitle = i18n("VALUEBOX_TITLE_TOTAL_CATCH"), 
+                icon = tags$i(class = "fas fa-fish", style="font-size: 30px"),
+                width = 2,color="orange"
+              ),
+              valueBox(
+                value = round(mean(data$trade_price,na.rm=T),2),
+                subtitle = i18n("VALUEBOX_TITLE_AVERAGE_PRICE"),
+                icon = tags$i(class = "fas fa-dollar-sign", style="font-size: 30px"),
+                width = 2,color = "success"
+              ),
+              valueBox(
+                value = round(mean(data$catch_cpue,na.rm=T),5),
+                subtitle = i18n("VALUEBOX_TITLE_AVERAGE_CPUE"),
+                icon = tags$i(class = "fas fa-ship", style="font-size: 30px"),
+                width = 2,color = "danger"
+              ),
+              valueBox(
+                value = round(sum(data$effort_nominal,na.rm=T),0),
+                subtitle = i18n("VALUEBOX_TITLE_TOTAL_EFFORT"),
+                icon = tags$i(class = "fas fa-clock", style="font-size: 30px"),
+                width = 2,color = "fuchsia"
               )
+            )
           )
           
         })
@@ -240,7 +239,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
             ungroup()
           
           rank%>%
-            plot_ly(y = ~rank, x = ~catch_nominal_landed, type = "bar",  orientation = "h",color=~factor(color),colors = c("grey","orange"),hoverinfo='none',text = ~NAME,
+            plot_ly(y = ~rank, x = ~catch_nominal_landed, type = "bar",  orientation = "h",color=~factor(color),colors = c("gray","orange"),hoverinfo='none',text = ~NAME,
                     textposition = "auto",textfont = list(color = "black")) %>%
               layout(showlegend = FALSE,
                      uniformtext=list(minsize=8, mode='show'),

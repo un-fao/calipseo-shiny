@@ -2,6 +2,6 @@
   "type": "subitem",
   "parent": "vessels",
   "rank": 3,
-  "title": "Vessels quality assessment",
+  "title": "Vessels checks",
   "icon": "triangle-exclamation"
 }

@@ -56,7 +56,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     
     bg<-setNames(c(0,ref_bg_sp$ID),c(i18n("ALL_FISHING_UNITS_LABEL"),ref_bg_sp$NAME))
     
-    selectizeInput(ns("bg"),paste0("SELECT_INPUT_TITLE_FISHING_UNIT"," :"),choices=bg,multiple = F,selected=bg[1])
+    selectizeInput(ns("bg"),paste0(i18n("SELECT_INPUT_TITLE_FISHING_UNIT")," :"),choices=bg,multiple = F,selected=bg[1])
   })
   
   output$unit_selector<-renderUI({
@@ -195,7 +195,12 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
                  target="other")%>%
           pull(Total)
       }
-      valueBox(value=tags$p(sprintf("%s (%s)",indicator_label(),indicator_unit()),style="font-size: 40%"), subtitle=round(value,2), icon = tags$i(class = indicator_icon(), style="font-size: 30px"), width = 12,color = indicator_color() )
+      valueBox(
+        value = round(value,2),
+        subtitle = sprintf("%s (%s)",indicator_label(),indicator_unit()),
+        icon = tags$i(class = indicator_icon(), style="font-size: 30px"), 
+        width = 12,color = indicator_color() 
+      )
     }
   })
   
@@ -639,7 +644,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
                                  box(
                                    title='',
                                    width = 12,
-                                   sidebar = shinydashboardPlus::boxSidebar(
+                                   sidebar = bs4Dash::boxSidebar(
                                      id=ns("bg_sum_box"),
                                      width = 25,
                                      style = 'font-size:14px;',
@@ -681,7 +686,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
                                    box(
                                      title='',
                                      width = 12,
-                                     sidebar = shinydashboardPlus::boxSidebar(
+                                     sidebar = bs4Dash::boxSidebar(
                                        id=ns("sp_sum_box"),
                                        width = 25,
                                        style = 'font-size:14px;',

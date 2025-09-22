@@ -3,7 +3,7 @@ individual_info_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "individual_info",
+  bs4Dash::tabItem(tabName = "individual_info",
           
           #1st row including individual identity and indicators
           div(class='row',

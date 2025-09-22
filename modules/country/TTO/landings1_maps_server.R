@@ -14,7 +14,7 @@ landings1_maps_server <- function(id, parent.session, pool, reloader){
      
    })
    
-   observeEvent(c(input$mode,session$userData$computation_new()),{
+   observeEvent(input$mode,{
      req(!is.null(input$mode)&input$mode!="")
    
       output$year_map_total_selector<-renderUI({

@@ -15,7 +15,7 @@ artfish_accuracy_server <- function(id, parent.session, pool, reloader){
   })
   
   iconChoice<-function(x){ifelse(x<0.9,"exclamation-triangle","check-circle")}
-  colorChoice<-function(x){ifelse(x<0.9,"orange","green")}
+  colorChoice<-function(x){ifelse(x<0.9,"warning","success")}
   
   observeEvent(input$run,{
     pop<-input$boats*input$days
@@ -83,7 +83,7 @@ artfish_accuracy_server <- function(id, parent.session, pool, reloader){
 
      output$index<-renderUI({
        tagList(
-          valueBox(index,i18n("VALUEBOX_TITLE_UNIFORMITY_INDEX"),icon=icon(ifelse(index<0.6,"exclamation-triangle","check-circle")),color=ifelse(icon<0.6,"orange","green"),width = 3)
+          valueBox(index,i18n("VALUEBOX_TITLE_UNIFORMITY_INDEX"),icon=icon(ifelse(index<0.6,"exclamation-triangle","check-circle")),color=ifelse(index<0.6,"warning","success"),width = 3)
        )
      })
   })

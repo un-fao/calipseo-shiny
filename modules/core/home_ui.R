@@ -3,7 +3,7 @@ home_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "home",
+  bs4Dash::tabItem(tabName = "home",
           
           fluidRow(
             div(

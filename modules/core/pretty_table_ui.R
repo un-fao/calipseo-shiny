@@ -27,21 +27,22 @@ pretty_table_ui <- function(id,title,sliderWidth = 25,backgroundColor="#333a40",
     }
   ")
     ),
-    shinydashboardPlus::box(
+    bs4Dash::box(
       title=title,
       width = 12,
       style= "min-height:600px",
-      sidebar = shinydashboardPlus::boxSidebar(
+      sidebar = bs4Dash::boxSidebar(
         id=ns("box"),
         width = sliderWidth,
         background = backgroundColor,
         startOpen = sliderOpen,
         style = 'font-size:14px;',
         uiOutput(ns("select_variable")),
-        uiOutput(ns("grandTotal_wrapper")),
-        
+        uiOutput(ns("grandTotal_wrapper"))
       ),
-      uiOutput(ns("result"))
+      uiOutput(ns("result")),
+      collapsible = FALSE,
+      maximizable = TRUE
     )
   )
   

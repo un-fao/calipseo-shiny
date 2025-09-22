@@ -13,7 +13,7 @@ logbooks_trips_server <- function(id, parent.session, pool, reloader){
     pool = pool,
     vessel_stat_type = 2,
     vesselId = NULL,
-    mode="full"
+    mode = "full"
   )
   
   MODULE_END_TIME <- Sys.time()

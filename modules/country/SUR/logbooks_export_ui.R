@@ -3,7 +3,7 @@ logbooks_export_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "logbooks_export",
+  bs4Dash::tabItem(tabName = "logbooks_export",
           tags$h2(i18n("LOGBOOKS_EXPORT_TITLE")),
           fluidRow(
             div(

@@ -3,11 +3,11 @@ computation_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(
+  bs4Dash::tabItem(
     tabName = "computation",
     fluidRow(
-      div(
-        width = 6, style = "margin:12px;",
+      column(
+        width = 6,
         htmlOutput(ns("computation_info"))
       )
     ),

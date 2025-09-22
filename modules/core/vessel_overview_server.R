@@ -7,7 +7,7 @@ vessel_overview_server <- function(id, parent.session, pool, reloader) {
     MODULE_START_TIME = Sys.time()
     
     output$vessel_overview_info <- renderText({
-      text <- paste0("<h2>", i18n("VESSEL_OVERVIEW_TITLE")," <small>", i18n("VESSEL_OVERVIEW_SUBTITLE"),"</small></h2><hr>")
+      text <- paste0("<h3>", i18n("VESSEL_OVERVIEW_TITLE")," <small>", i18n("VESSEL_OVERVIEW_SUBTITLE"),"</small></h3><hr>")
       text
     })
     
@@ -31,11 +31,9 @@ vessel_overview_server <- function(id, parent.session, pool, reloader) {
     
     #UI indicators
     output$indicators<-renderUI({
-      div(
-        column(12,
-               infoBox(i18n("INFOBOX_TITLE_VESSEL_TOTAL"),total_nb , icon = icon("ship"), fill = TRUE,color="blue",width = 6),
-               infoBox(i18n("INFOBOX_TITLE_VESSEL_ACTIVE"),vessel_active_nb, icon = icon("circle-check"), fill = TRUE,color="green",width = 6)
-        )
+      fluidRow(
+       bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_TOTAL"),total_nb , icon = icon("ship"), fill = TRUE,color = "primary",width = 6),
+       bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_ACTIVE"),vessel_active_nb, icon = icon("circle-check"), fill = TRUE, color = "success",width = 6)
       )
     })
     

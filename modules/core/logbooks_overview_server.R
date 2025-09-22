@@ -44,37 +44,51 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
     #info
     output$logbooks_overview_info <- renderText({
       #session$userData$page("logbooks_overview")
-      text <- paste0("<h2>", i18n("LOGBOOKS_OVERVIEW_TITLE")," <small>", i18n("LOGBOOKS_OVERVIEW_SUBTITLE"),"</small></h2>")
+      text <- paste0("<h3>", i18n("LOGBOOKS_OVERVIEW_TITLE")," – <small>", i18n("LOGBOOKS_OVERVIEW_SUBTITLE"),"</small></h3><hr>")
       text
     })
     
     #UI indicators
     output$nb_infos <- renderUI({
-      print(infos$total_lastyear)
-      print(infos$total_currentyear)
-      tagList(
-        tags$head(tags$style(HTML('.info-box {min-height: 55px;} .info-box-icon {height: 55px; line-height: 55px;} .info-box-content {padding-top: 2px; padding-bottom: 2px;}'))),
-        fluidRow(
-          div(
-            class = "col-md-6",
+      fluidRow(
+          div(class = "col-md-6",
             box(
               title = HTML(sprintf("<b>%s</b>",as.integer(format(Sys.Date(), "%Y"))-1)),
-              width = 12,
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;",paste(round(measurements::conv_unit(infos$total_lastyear, PREF_UNIT_WEIGHT$CODE, "metric_ton"),2), i18n("TOTAL_QUANTITY_UNITS_TONS")), icon = icon("fish"), width = 6),
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size: 58%;",style_value = "font-size:90%;", infos$nb_active_vessel_lastyear, icon = icon("ship"), width = 6)
+              width = 12, collapsible = FALSE,
+              fluidRow(
+                bs4Dash::infoBox(
+                  title = i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), 
+                  value = paste(round(measurements::conv_unit(infos$total_lastyear, PREF_UNIT_WEIGHT$CODE, "metric_ton"),2), i18n("TOTAL_QUANTITY_UNITS_TONS")),
+                  icon = icon("fish"), color = "primary", 
+                  width = 6),
+                bs4Dash::infoBox(
+                  title = i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), 
+                  value = infos$nb_active_vessel_lastyear, 
+                  icon = icon("ship"), color = "navy",
+                  width = 6)
+              )
             )
           ),
-          div(
-            class = "col-md-6",
+          div(class = "col-md-6",
             box(
               title=HTML(sprintf("<b>%s</b>",format(Sys.Date(), "%Y"))),
-              width = 12,
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), style_title = "font-size:60%;",style_value = "font-size:90%;", paste(round(measurements::conv_unit(infos$total_currentyear, PREF_UNIT_WEIGHT$CODE, "metric_ton"),2), i18n("TOTAL_QUANTITY_UNITS_TONS")), icon = icon("fish"), width = 6),
-              CalipseoInfoBox(i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), style_title = "font-size:58%;",style_value = "font-size:90%;", infos$nb_active_vessel_currentyear, icon = icon("ship"), width = 6)
+              width = 12, collapsible = FALSE,
+              fluidRow(
+                bs4Dash::infoBox(
+                  title = i18n("INFOBOX_OVERVIEW_TOTAL_QUANTITY"), 
+                  value = paste(round(measurements::conv_unit(infos$total_currentyear, PREF_UNIT_WEIGHT$CODE, "metric_ton"),2), i18n("TOTAL_QUANTITY_UNITS_TONS")), 
+                  icon = icon("fish"), color = "primary",
+                  width = 6),
+                bs4Dash::infoBox(
+                  title = i18n("INFOBOX_OVERVIEW_TOTAL_PARTICIPATING_VESSELS"), 
+                  value = infos$nb_active_vessel_currentyear, 
+                  icon = icon("ship"), color = "navy", 
+                  width = 6)
+              )
             )
           )
         )
-      )
+      
     })
     
   })

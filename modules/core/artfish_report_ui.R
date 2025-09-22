@@ -3,7 +3,7 @@ artfish_report_ui <- function(id){
   
   ns <- NS(id)
   
-  tabItem(tabName = "artfish_report",
+  bs4Dash::tabItem(tabName = "artfish_report",
           fluidRow(
             div(
               width = 12, style = "margin:12px;",

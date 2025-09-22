@@ -22,7 +22,9 @@ getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, ta
 }
 
 #getStatPeriods
-getStatPeriods <- function(config, id,target = "release"){
+getStatPeriods <- function(config, id,target = c("release", "staging", "release+staging")){
+  
+  target = match.arg(target)
   
   out <- data.frame(
     year = integer(0),
@@ -38,19 +40,19 @@ getStatPeriods <- function(config, id,target = "release"){
     )
   }else{
     
-    target_folder<-sprintf("%s/%s/%s",config$store,target, id)
-    
-    full_path<-list.files(target_folder,recursive = T,full.names = T)
-    files<-list.files(target_folder,recursive = T,full.names = F)
+    target_folder <- sprintf("%s/%s/%s",config$store,target, id)
+    files <- list.files(target_folder,recursive = T, full.names = T)
+    files <- files[regexpr("archive", files) < 0]
     
     if(length(files)>0){
-      x<-strsplit(files,"/")
+      x <- strsplit(files,paste0(target_folder, "/"))[[1]][2]
+      x <- strsplit(x, "/")
       years<-unlist(lapply(x, function(l) l[[1]]))
       
       by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
       
       if(by_year){
-        out <- data.frame(year = years,file=full_path)
+        out <- data.frame(year = years,file = files)
       }else{
         
         month_quarter<-unlist(lapply(x, function(l) l[[2]]))
@@ -59,10 +61,10 @@ getStatPeriods <- function(config, id,target = "release"){
         by_month = any(sapply(month_quarter, startsWith, "M"))
         
         if(by_quarter){
-          out <- data.frame(year = years, quarter = month_quarter, file=full_path)
+          out <- data.frame(year = years, quarter = month_quarter, file = files)
         }
         if(by_month){
-          out <- data.frame(year = years, month = month_quarter, file=full_path)
+          out <- data.frame(year = years, month = month_quarter, file = files)
         }
         
       }

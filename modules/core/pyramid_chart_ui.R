@@ -16,10 +16,10 @@
 pyramid_chart_ui <- function(id,title="",sliderWidth = 25,backgroundColor="#333a40",sliderOpen=FALSE) {
   ns<-NS(id)
   
-    shinydashboardPlus::box(
-      title=title,
+  bs4Dash::box(
+      title = title,
       width = 12,
-      sidebar = shinydashboardPlus::boxSidebar(
+      sidebar = bs4Dash::boxSidebar(
         id=ns("box"),
         width = sliderWidth,
         background = backgroundColor,
@@ -33,7 +33,9 @@ pyramid_chart_ui <- function(id,title="",sliderWidth = 25,backgroundColor="#333a
         uiOutput(ns("filter_item_selector")),
         
       ),
-      uiOutput(ns("result"))
+      uiOutput(ns("result")),
+      collapsible = FALSE,
+      maximizable = TRUE
     )
   
   

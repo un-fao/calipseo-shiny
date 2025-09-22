@@ -32,14 +32,14 @@ home_server <- function(id, parent.session, pool, reloader){
       fluidRow(
         if(isTRUE(HAS_REGMANGT)){
           shiny::tagList(
-            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship")),
-            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user")),
-            CalipseoInfoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"))
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship"), color = "primary"),
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user"), color = "primary"),
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"), color = "primary")
           )
         },
-        CalipseoInfoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), infos$count_fishing_trips, icon = icon("ship")),
-        CalipseoInfoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), infos$count_landing_sites, icon = icon("map-marker")),
-        CalipseoInfoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), infos$count_years, icon = icon("history"))
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), infos$count_fishing_trips, icon = icon("ship"), color = "primary"),
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), infos$count_landing_sites, icon = icon("map-marker"), color = "primary"),
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), infos$count_years, icon = icon("history"), color = "primary")
       )
     })
     

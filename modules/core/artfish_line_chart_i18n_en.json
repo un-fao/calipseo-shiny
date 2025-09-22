@@ -1,31 +1,17 @@
 {
   /*levels*/
-  "LEVEL_LABEL_GLOBAL" : "Global",
-  
-  "LEVEL_LABEL_DETAIL" : "Detail",
-  
+  "ARTFISH_LINECHART_LEVEL_LABEL_GLOBAL" : "Global",
+  "ARTFISH_LINECHART_LEVEL_LABEL_DETAIL" : "Detail",
   /*labels*/
-  
-  "LABEL_PLOT" : "Plot",
-  
-  "LABEL_STATISTICS" : "Statistics",
-  
-  "LABEL_LEVELS" : "Level",
-  
+  "ARTFISH_LINECHART_LABEL_PLOT" : "Plot",
+  "ARTFISH_LINECHART_LABEL_STATISTICS" : "Statistics",
+  "ARTFISH_LINECHART_LABEL_LEVELS" : "Level",
   /*rank*/
-  
-  "SELECT_INPUT_TITLE_RANK_METHOD" : "Rank method",
-  
-  "RANK_LABEL_TOTAL_CATCH_OVER_THE_PERIOD" : "Total catch over the period",
-  
-  "RANK_LABEL_LAST_YEAR_TOTAL_CATCH" : "Last year total catch",
-  
-  "RANK_LABEL_ANNUAL_CATCH_AVERAGE" : "Annual catch average",
-  
-  "RANK_LABEL" : "Display x most caught",
-  
-  "X_LABEL_TITLE" : "Time",
-  
-   "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
-  
+  "ARTFISH_LINECHART_SELECT_INPUT_TITLE_RANK_METHOD" : "Rank method",
+  "ARTFISH_LINECHART_RANK_LABEL_TOTAL_CATCH_OVER_THE_PERIOD" : "Total catch over the period",
+  "ARTFISH_LINECHART_RANK_LABEL_LAST_YEAR_TOTAL_CATCH" : "Last year total catch",
+  "ARTFISH_LINECHART_RANK_LABEL_ANNUAL_CATCH_AVERAGE" : "Annual catch average",
+  "ARTFISH_LINECHART_RANK_LABEL" : "Display x most caught",
+  "ARTFISH_LINECHART_X_LABEL_TITLE" : "Time",
+  "ARTFISH_LINECHART_TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
 }
