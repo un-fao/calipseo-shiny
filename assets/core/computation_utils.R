@@ -38,10 +38,10 @@ getStatPeriods <- function(config, id,target = "release"){
     )
   }else{
     
-    target_folder<-sprintf("%s/%s/%s",config$store,target, id)
-    
-    full_path<-list.files(target_folder,recursive = T,full.names = T)
-    files<-list.files(target_folder,recursive = T,full.names = F)
+    target_folder <- sprintf("%s/%s/%s",config$store,target, id)
+    full_path <- list.files(target_folder,recursive = T,full.names = T)
+    files <- list.files(target_folder,recursive = T,full.names = F)
+    files <- files[regexpr("archive", files) < 0]
     
     if(length(files)>0){
       x<-strsplit(files,"/")
