@@ -754,6 +754,7 @@ accessAvailableYears <- function(con){ accessAvailableYearsFromDB(con) }
 accessLandingSites <- function(con, sf = TRUE){ accessLandingSitesFromDB(con, sf = sf) }
 accessLandingSiteNames <- function(con){accessLandingSiteNamesFromDB(con) }
 accessRefSpecies <- function(con, year=NULL){ accessRefSpeciesFromDB(con) }
+accessRefFishingUnits = function(con){ accessRefFishingUnitsFromDB(con) }
 
 #<COUNTRY PARAMETERS>
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
