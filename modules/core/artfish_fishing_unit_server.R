@@ -636,12 +636,12 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       fluidRow(
         div(
           class = "col-md-6",
-          box(
+          bs4Dash::box(
             title=i18n("BOX_TITLE_MONTHLY_REPARTITION_BY_FISHING_UNITS"),
             width = 12,
             tabsetPanel(type="pills",
                         tabPanel(i18n("PLOT_LABEL"),
-                                 box(
+                                 bs4Dash::box(
                                    title='',
                                    width = 12,
                                    sidebar = bs4Dash::boxSidebar(
@@ -658,7 +658,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         ),
         div(
           class = "col-md-6",
-          box(
+          bs4Dash::box(
             title=i18n("BOX_TITLE_TOP_RANKING_FISHING_UNITS"),
             width = 12,
             tabsetPanel(type="pills",
@@ -678,12 +678,12 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         fluidRow(
           div(
             class = "col-md-6",
-            box(
+            bs4Dash::box(
               title=i18n("BOX_TITLE_MONTHLY_REPARTITION_BY_SPECIES"),
               width = 12,
               tabsetPanel(type="pills",
                           tabPanel(i18n("PLOT_LABEL"),
-                                   box(
+                                   bs4Dash::box(
                                      title='',
                                      width = 12,
                                      sidebar = bs4Dash::boxSidebar(
@@ -701,7 +701,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
           ),
           div(
             class = "col-md-6",
-            box(
+            bs4Dash::box(
               title=i18n("BOX_TITLE_TOP_RANKING_SPECIES"),
               width = 12,
               tabsetPanel(type="pills",

@@ -11,7 +11,7 @@ individual_info_ui <- function(id){
               div(class='row',
                   div(
                     class = "col-md-6",
-                    box(id='individual-card', status = "primary", width = 12, title = uiOutput(ns("individual_name")),
+                    bs4Dash::box(id='individual-card', status = "primary", width = 12, title = uiOutput(ns("individual_name")),
                         div(id='img-grid', class = "col-md-5",
                             uiOutput(ns('individual_picture'), style='text-align:center;')
                            
@@ -30,7 +30,8 @@ individual_info_ui <- function(id){
               ),
               div(class='row',style = "margin:0px;", id='vertical-panels-individual-description',
                   shinyWidgets::verticalTabsetPanel(
-                    shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_INDIVIDUAL_ROLES"),box_height='70px',box(width = 12, height = 480, title = i18n("INDIVIDUAL_ROLES_TITLE"),DT::dataTableOutput(ns("individual_roles"))),
+                    shinyWidgets::verticalTabPanel(i18n("VERTICALTABPANEL_INDIVIDUAL_ROLES"),box_height='70px',
+                                                   bs4Dash::box(width = 12, height = 480, title = i18n("INDIVIDUAL_ROLES_TITLE"),DT::dataTableOutput(ns("individual_roles"))),
                                                    sliderWidth =25)
                     ))
               

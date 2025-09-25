@@ -27,7 +27,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
     
     if(mode=="light"){
       if(nrow(trips)>0){
-        box(id='trip-box', width = 12,
+        bs4Dash::box(id='trip-box', width = 12,
             fluidPage(
               fluidRow(column(8,offset=4,p(i18n("DISPLAY_TRIP_MSG")))),
               fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
@@ -36,7 +36,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             maximizable = TRUE
         )
       }else{
-          box(id='trip-box', width = 12,
+        bs4Dash::box(id='trip-box', width = 12,
               fluidPage(
                 fluidRow(column(8,offset=4,p(i18n("NO_TRIP_MSG"))))
               ),
@@ -53,7 +53,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               uiOutput(ns("indicators"))
             )
           ),
-          box(
+          bs4Dash::box(
             id='trip-box',
             title="",
             width = 12,
