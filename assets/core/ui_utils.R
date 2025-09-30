@@ -66,7 +66,11 @@ createBase64Image <- function(src, width = "auto", height = "auto", alt = "image
     input = tempfile(fileext = ".jpeg")
     download.file(url = src, destfile = input, mode = "wb", quiet = TRUE)
   }else{
-    input <- normalizePath(src, mustWork = TRUE)
+    input <- try(normalizePath(src, mustWork = TRUE), silent = T)
+    if(is(input, "try-error")){
+      src <- "./assets/img/placeholders/calipseo.png"
+      input <- normalizePath(src, mustWork = TRUE)
+    }
   }
   
   buf <- readBin(input, raw(), file.info(input)$size)

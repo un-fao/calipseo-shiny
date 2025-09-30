@@ -8,8 +8,7 @@ ui <- shiny::tagList(
           href=appConfig$country_profile$website,
           HTML(createBase64Image(src = appConfig$country_profile$logo, width = '60px', alt = 'Logo')),
           style = "margin: 8px !important;"
-        ),
-        tags$span("Calipseo", style = "font-weight:bold;")
+        )
       )
     ),
     bs4Dash::dashboardSidebar(

@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.3.0
+FROM rocker/r-ver:4.5.1
 
 LABEL org.opencontainers.image.title="calipseo-shiny"
 LABEL org.opencontainers.image.url="https://github.com/un-fao/calipseo-shiny"
