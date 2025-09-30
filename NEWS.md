@@ -17,6 +17,7 @@
 - [#265](https://github.com/un-fao/calipseo-shiny/issues/265) Optimize the URL resolver
 - [#221](https://github.com/un-fao/calipseo-shiny/issues/221) Upgrade from `shinydashboard` / `shinydashboardPlus` to `bs4Dash`
 - [#276](https://github.com/un-fao/calipseo-shiny/issues/276) Logo handling breaks if logo image is not available
+- [#277](https://github.com/un-fao/calipseo-shiny/issues/277) Upgrade from R `4.3.0` to R `4.5.1`
 
 # New features
 
