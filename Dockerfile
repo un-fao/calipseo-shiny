@@ -11,7 +11,6 @@ LABEL org.opencontainers.image.authors="Emmanuel Blondel <emmanuel.blondel@fao.o
 RUN apt-get update && apt-get install -y \
     sudo \
     pandoc \
-    pandoc-citeproc \
     texlive-xetex \
     texlive-latex-base \
     texlive-latex-recommended \
