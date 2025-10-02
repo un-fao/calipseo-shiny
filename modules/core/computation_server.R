@@ -156,7 +156,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       #copy release
       time = Sys.time()
       timestr = format(time, "%Y%m%dT%H%M%S")
-      archived_file = file.path(archive_dir, paste0(unlist(strsplit(basename(test),"\\.csv")), "_", timestr, ".csv"))
+      archived_file = file.path(archive_dir, paste0(unlist(strsplit(basename(archive_previous_release),"\\.csv")), "_", timestr, ".csv"))
       file.copy(
         from = archive_previous_release,
         to = archived_file
