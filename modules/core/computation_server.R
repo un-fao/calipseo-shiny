@@ -931,7 +931,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Status icon UI
       output[[paste0("icon_status_",period)]] <- renderUI({
-        target <- subset(indicator_status(),Period==period)
+        target <- indicator_status()[indicator_status()$Period == period,]
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -951,7 +951,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Status label UI
       output[[paste0("status_label_", period)]] <- renderUI({
-        target <- subset(indicator_status(),Period==period)
+        target <- indicator_status()[indicator_status()$Period == period,]
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -972,7 +972,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       #Action button UI
       output[[paste0("actions_",period)]] <- renderUI({
         print(indicator_status())
-        target <- subset(indicator_status(),Period==period)
+        target <- indicator_status()[indicator_status()$Period == period,]
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -1082,7 +1082,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     
     #Create events associated to each action button
     lapply(1:nrow(indicator_status()), function(i){
-      item <- subset(indicator_status())[i,]
+      item <- indicator_status()[i,]
       period <- item$Period
       target_id = target_ids[i]
       
