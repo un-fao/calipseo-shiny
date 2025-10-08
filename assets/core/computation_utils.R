@@ -13,7 +13,7 @@ getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, ta
     if(!is.null(quarter)) filepath <- file.path(filepath, paste0("Q",quarter))
     if(!is.null(month)) filepath <- file.path(filepath, paste0("M",month))
     files <- list.files(filepath,recursive = T,full.names = T, pattern = ".csv")
-    print(files)
+    files <- files[regexpr("archive", files) < 0]
     out <- do.call("rbind", lapply(files, readr::read_csv))
   }
   
