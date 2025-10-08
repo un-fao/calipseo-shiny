@@ -11,16 +11,16 @@ socio<-socio%>%
   rename(FLEET_SEGMENT=FISHING_SEGMENT_GFCM)
   
 data<-data%>%
-  group_by(year,EST_FS)%>%
+  group_by(year,fleet_segment)%>%
   #summarise(EST_EFF_NBOATS=sum(EST_EFF_NBOATS,na.rm=T),
   #          catch_nominal_landed= sum(catch_nominal_landed,na.rm=T))%>%
-  summarise(catch_nominal_landed= sum(catch_nominal_landed,na.rm=T)/1000)%>%
+  summarise(catch_fleet_segment = sum(catch_fleet_segment,na.rm=T)/1000)%>%
   mutate(COMMENT="",
          GSA="27",
-         catch_nominal_landed=round(catch_nominal_landed,0))%>%
-  rename(FLEET_SEGMENT=EST_FS,
+         catch_fleet_segment = round(catch_fleet_segment,2))%>%
+  rename(FLEET_SEGMENT=fleet_segment,
          #NB_VESSELS=EST_EFF_NBOATS,
-         TOTAL_LANDINGS=catch_nominal_landed)%>%
+         TOTAL_LANDINGS=catch_fleet_segment)%>%
   left_join(socio)%>%
   select(GSA,FLEET_SEGMENT,NB_VESSELS,TOTAL_LANDINGS,COMMENT)%>%
   ungroup()
