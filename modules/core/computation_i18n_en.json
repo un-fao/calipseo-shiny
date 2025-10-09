@@ -79,6 +79,8 @@
   "ACTION_DOWNLOAD_RESULT" : "Download result",
   "ACTION_UNRELEASE" : "Unvalidate indicator",
   "ACTION_RELEASE" : "Validate indicator",
+  "ACTION_RELEASE_DISABLED_YETRELEASED": "The indicator is already released",
+  "ACTION_RELEASE_DISABLED_NORELEASABLE": "The indicator cannot be released due to gaps in data",
   "ACTION_STAGING" : "Compute indicator",
   "ACTION_UPDATE" : "Update indicator",
   "EMPTY_PLOT_LABEL" : "(Select an indicator to access to completion status)",

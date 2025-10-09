@@ -983,8 +983,16 @@ computation_server <- function(id, parent.session, pool, reloader) {
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_recompute_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
                     actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
-                    downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns("select_button"))),
-                    style = "position: absolute; right: 98px;margin-top: -10px;"
+                    downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_download_result_", target_id)))),
+                    disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE_DISABLED_YETRELEASED"), label = "", icon = icon("thumbs-up", class = "fas"))),
+                    if(!is.null(out$indicator$report_with)){
+                      downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                    },
+                    style = if(!is.null(out$indicator$report_with)){
+                      "position:absolute; right:50px; margin-top: -10px;"
+                    }else{
+                      "position:absolute; right:98px; margin-top: -10px;"
+                    }
                   ))
                 },
                 "staging" = {
@@ -1004,17 +1012,25 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px",title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
                     if(releasable){
-                    actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
-                      }else{
-                    disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas")))
-                      },
-                    style = "position: absolute; right: 50px;margin-top: -10px;"))
+                      actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
+                    }else{
+                      disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE_DISABLED_NOTRELEASABLE"), label = "", icon = icon("thumbs-up", class = "fas")))
+                    },
+                    if(!is.null(out$indicator$report_with)){
+                      downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                    },
+                    style = if(!is.null(out$indicator$report_with)){
+                      "position:absolute; right:50px; margin-top:-10px;"
+                    }else{
+                      "position:absolute; right:98px; margin-top:-10px;"
+                    }
+                  ))
                 },
                 "available" = {
                   #indicator is available for computation
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_STAGING"), label = "", icon = icon("file-pen")),
-                    style = "position: absolute; right: 50px;margin-top: -10px;"))
+                    style = "position:absolute; right:50px; margin-top:-10px;"))
                 },
                 "not available" = {
                   #indicator is not available for computation
@@ -1098,6 +1114,30 @@ computation_server <- function(id, parent.session, pool, reloader) {
           data <- as.data.frame(readr::read_csv(indicator_status()[i,"File"]))
           readr::write_csv(data, con)
         }
+      )
+      
+      #event on results reporting generation/download
+      output[[paste0("button_generate_and_download_report_", target_id)]] <<- downloadHandler(
+       filename = function() {
+         #assumes reports are in general Microsoft Excel spreadsheets.
+         paste0("report", "_", out$indicator$id, "_", indicator_status()[i,"Period"], "_", toupper(indicator_status()[i,"Status"]), ".xlsx")
+       },
+       content = function(file) {
+         
+         INFO("Click on %s report generation/download button", target_id)
+         #source the reporting script
+         source(out$indicator$report_with$script)
+         #read input file
+         indicator_computation_data <- as.data.frame(readr::read_csv(indicator_status()[i,"File"]))
+         indicator_computation_metadata <- NULL #in our TODO list next, how to provide standard statistical metadata for indicators
+         #generate/download report
+         eval(parse(text = paste0(out$indicator$report_with$fun, "(
+                                  con = pool,
+                                  data = indicator_computation_data, 
+                                  metadata = indicator_computation_metadata,
+                                  file = file
+                            )")))
+       }
       )
       
       #event on indicator release
