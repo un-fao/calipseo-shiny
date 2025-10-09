@@ -83,6 +83,8 @@
   "ACTION_RELEASE_DISABLED_NORELEASABLE": "L'indicateur ne peut pas être validé du fait de données manquantes",
   "ACTION_STAGING" : "Calculer l'indicateur",
   "ACTION_UPDATE" : "Mettre à jour l'indicateur",
+  "ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR": "Sélectionner un rapport",
+  "ACTION_GENERATE_AND_DOWNLOAD_REPORT": "Générer et télécharger le rapport",
   "EMPTY_PLOT_LABEL" : "(Sélectionner un indicateur pour accéder à son statut d'achèvement)",
   "LABEL_SELECT_INDICATOR" : "Sélectionner cet indicateur",
   "LABEL_SHOW_NOTICE" : "Montrer la notice",

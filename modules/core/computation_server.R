@@ -30,7 +30,8 @@ computation_server <- function(id, parent.session, pool, reloader) {
     ),
     filename = NULL,
     filepath = NULL,
-    filepath_release = NULL
+    filepath_release = NULL,
+    report = NULL
   )
   
   available_periods<-reactiveVal(NULL)
@@ -828,6 +829,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     out$results <- getComputationResults(selected_indicator$indicator, config = appConfig)
     out$computation <- NULL
     out$indicator <- selected_indicator$indicator
+    out$report <- NULL
     
     #get available periods for the selected indicator
     available_periods_new <- getAvailablePeriods(
@@ -985,13 +987,36 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_download_result_", target_id)))),
                     disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE_DISABLED_YETRELEASED"), label = "", icon = icon("thumbs-up", class = "fas"))),
-                    if(!is.null(out$indicator$report_with)){
-                      downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                    if(length(out$indicator$reports)>0){
+                      tagList(
+                        tags$div(
+                          selectizeInput(
+                            ns(paste0('select_report_', target_id)),
+                            label = NULL,
+                            choices = setNames(sapply(out$indicator$reports, function(x){x$id}),sapply(out$indicator$reports, function(x){x$label})), selected = "",
+                            options = list(
+                              placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
+                              render = I('{
+                                option: function(item, escape) {
+                                  return "<div><strong>" + escape(item.label) + "</strong>"
+                                }
+                              }')
+                            ),
+                            width = "150px"
+                          ),
+                          style = "display:inline-block;margin-left:20px;"
+                        ),
+                        if(!is.null(out$report)){
+                          downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px;float:right;", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                        }else{
+                          disabled(downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px;float:right;", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id)))))
+                        }
+                      )
                     },
-                    style = if(!is.null(out$indicator$report_with)){
-                      "position:absolute; right:50px; margin-top: -10px;"
+                    style = if(length(out$indicator$reports)>0){
+                      "position:absolute; right:25px; margin-top: -10px;"
                     }else{
-                      "position:absolute; right:98px; margin-top: -10px;"
+                      "position:absolute; right:241px; margin-top: -10px;"
                     }
                   ))
                 },
@@ -1016,13 +1041,36 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     }else{
                       disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE_DISABLED_NOTRELEASABLE"), label = "", icon = icon("thumbs-up", class = "fas")))
                     },
-                    if(!is.null(out$indicator$report_with)){
-                      downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                    if(length(out$indicator$reports)>0){
+                      tagList(
+                        tags$div(
+                          selectizeInput(
+                            ns(paste0('select_report_', target_id)),
+                            label = NULL,
+                            choices = setNames(sapply(out$indicator$reports, function(x){x$id}),sapply(out$indicator$reports, function(x){x$label})), selected = "",
+                            options = list(
+                              placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
+                              render = I('{
+                                  option: function(item, escape) {
+                                    return "<div><strong>" + escape(item.label) + "</strong>"
+                                  }
+                                }')
+                            ),
+                            width = "150px"
+                          ),
+                          style = "display:inline-block;margin-left:20px;"
+                        ),
+                        if(!is.null(out$report)){
+                          downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px;float:right;", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id))))
+                        }else{
+                          disabled(downloadButtonCustom(ns(paste0("button_generate_and_download_report_", target_id)),style = "border-color:transparent;padding-right:10px;float:right;", title = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT"), label = "", icon = icon("file-export", class = "fas"),onclick = sprintf("Shiny.setInputValue('%s', this.id)", ns(paste0("button_generate_and_download_report_", target_id)))))
+                        }
+                      )
                     },
-                    style = if(!is.null(out$indicator$report_with)){
-                      "position:absolute; right:50px; margin-top:-10px;"
+                    style = if(length(out$indicator$reports)>0){
+                      "position:absolute; right:25px; margin-top: -10px;"
                     }else{
-                      "position:absolute; right:98px; margin-top:-10px;"
+                      "position:absolute; right:241px; margin-top: -10px;"
                     }
                   ))
                 },
@@ -1116,22 +1164,30 @@ computation_server <- function(id, parent.session, pool, reloader) {
         }
       )
       
+      #event on report selection
+      observeEvent(input[[paste0("select_report_", target_id)]],{
+        out$report = input[[paste0("select_report_", target_id)]]
+      },ignoreInit = T)
+      
       #event on results reporting generation/download
       output[[paste0("button_generate_and_download_report_", target_id)]] <<- downloadHandler(
        filename = function() {
          #assumes reports are in general Microsoft Excel spreadsheets.
-         paste0("report", "_", out$indicator$id, "_", indicator_status()[i,"Period"], "_", toupper(indicator_status()[i,"Status"]), ".xlsx")
+         paste0("report", "_", out$report, "_", indicator_status()[i,"Period"], "_", toupper(indicator_status()[i,"Status"]), ".xlsx")
        },
        content = function(file) {
          
          INFO("Click on %s report generation/download button", target_id)
+         report_def = out$indicator$reports[sapply(out$indicator$reports, function(x){x$id == out$report})][[1]]
          #source the reporting script
-         source(out$indicator$report_with$script)
+         source(report_def$script)
          #read input file
          indicator_computation_data <- as.data.frame(readr::read_csv(indicator_status()[i,"File"]))
          indicator_computation_metadata <- NULL #in our TODO list next, how to provide standard statistical metadata for indicators
          #generate/download report
-         eval(parse(text = paste0(out$indicator$report_with$fun, "(
+         INFO("Generate and download report")
+         print(pool)
+         eval(parse(text = paste0(report_def$fun, "(
                                   con = pool,
                                   data = indicator_computation_data, 
                                   metadata = indicator_computation_metadata,
