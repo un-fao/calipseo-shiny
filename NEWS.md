@@ -5,6 +5,7 @@
 - [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
 - [#250](https://github.com/un-fao/calipseo-shiny/issues/250) Incorrect cascading reaction chain for indicator
 - [#255](https://github.com/un-fao/calipseo-shiny/issues/255) Computation module UI button events are not destroyed after UI update
+- [#284](https://github.com/un-fao/calipseo-shiny/issues/284) Computation module - Selection of an indicator already selected breaks the UI
 - [#268](https://github.com/un-fao/calipseo-shiny/issues/268) SQL errors with Artfish active_vessels and landings data acessors
 
 # Enhancements
@@ -23,7 +24,7 @@
 
 - [#244](https://github.com/un-fao/calipseo-shiny/issues/244) Versioning management for computation module and linked modules
 - [#246](https://github.com/un-fao/calipseo-shiny/issues/246) Create a new indicator to regionalize artfish result
-
+- [#283](https://github.com/un-fao/calipseo-shiny/issues/283) Computation module - Recover features to generate a report with computation results
 
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
 
