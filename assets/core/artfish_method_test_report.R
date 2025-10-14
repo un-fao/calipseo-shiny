@@ -2,7 +2,7 @@ artfish_estimates_test_report <- function(con, data, metadata, file){
   
   requireNamespace("magrittr")
   requireNamespace("dplyr")
-  requireNamespace("writexl")
+  requireNamespace("openxlsx")
   requireNamespace("stringr")
   
   rep = data
@@ -23,12 +23,30 @@ artfish_estimates_test_report <- function(con, data, metadata, file){
     dplyr::mutate(species = NAME) %>% #fill the species with the species names
     dplyr::select(rep_names) #keep only native column names, and get rid of other other species joined columns
    
-  #example of formatting to feed an excel 
-  colnames(rep) = stringr::str_to_title(gsub("_", " ", colnames(rep)))
+  #fdi terms?
+  fdi_terms = artfishr::get_fdi_terms()
+  fdi_terms = fdi_terms[match(colnames(rep), fdi_terms$code),]
+  
+  #prepare output
   outdata = list(
     Data = rep,
+    Structure = fdi_terms,
     Metadata = if(!is.null(metadata)) metadata else data.frame(Warning = "No metadata information for this report")
   )
   #Excel export
-  writexl::write_xlsx(x = outdata, path = file)
+  wb <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(wb, "Data")
+  openxlsx::addWorksheet(wb, "Structure")
+  openxlsx::addWorksheet(wb, "Metadata")
+  
+  openxlsx::writeData(wb, "Data", outdata$Data)
+  bs = createStyle(fontSize = 12, fontColour = "blue", textDecoration = c("BOLD"))
+  for(i in 1:length(fdi_terms$code)){
+    com = openxlsx::createComment(comment = as.character(fdi_terms[i,"label"]), style = bs)
+    openxlsx::writeComment(wb, "Data", col = i, row = 1, comment = com)
+  }
+  openxlsx::writeData(wb, "Structure", outdata$Structure)
+  openxlsx::writeData(wb, "Metadata", outdata$Metadata)
+
+  openxlsx::saveWorkbook(wb, file = file, overwrite = TRUE)
 }
