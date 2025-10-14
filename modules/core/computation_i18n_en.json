@@ -79,14 +79,17 @@
   "ACTION_DOWNLOAD_RESULT" : "Download result",
   "ACTION_UNRELEASE" : "Unvalidate indicator",
   "ACTION_RELEASE" : "Validate indicator",
+  "ACTION_RELEASE_DISABLED_YETRELEASED": "The indicator is already released",
+  "ACTION_RELEASE_DISABLED_NORELEASABLE": "The indicator cannot be released due to gaps in data",
   "ACTION_STAGING" : "Compute indicator",
   "ACTION_UPDATE" : "Update indicator",
+  "ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR": "Select report",
+  "ACTION_GENERATE_AND_DOWNLOAD_REPORT": "Generate and download report",
   "EMPTY_PLOT_LABEL" : "(Select an indicator to access to completion status)",
   "LABEL_SELECT_INDICATOR" : "Select this indicator",
   "LABEL_SHOW_NOTICE" : "Show notice",
   "LABEL_SHOW_HIERARCHY" : "Show hierarchy",
   "LABEL_BOX_INDICATOR" : "Select an indicator",
   "LABEL_BOX_PLOT" : "Indicator's status"
-  
   
 }
