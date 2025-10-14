@@ -676,11 +676,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
   #--------------------------
   
   observeEvent(input$select_indicator,{
-    
-    INFO("Selection of indicator : %s",input$computation_indicator)
-    indicator_status<-indicator_status(NULL)
-    available_periods<-available_periods(NULL)
-    full_periods<-full_periods(NULL)
+    INFO("Selecting indicator : %s",input$computation_indicator)
     indicator<-indicator(input$computation_indicator)
     indicator_first_compute<-indicator_first_compute(TRUE)
     
@@ -818,7 +814,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     req(!is.null(indicator_first_compute()))
     req(indicator_first_compute() == TRUE)
     
-    INFO("Selecting indicator '%s'", indicator())
+    INFO("Generate computation UI for indicator '%s'", indicator())
     
     available_periods <- available_periods(NULL)
     full_periods <- full_periods(NULL)
