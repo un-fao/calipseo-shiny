@@ -7,6 +7,7 @@
 - [#255](https://github.com/un-fao/calipseo-shiny/issues/255) Computation module UI button events are not destroyed after UI update
 - [#284](https://github.com/un-fao/calipseo-shiny/issues/284) Computation module - Selection of an indicator already selected breaks the UI
 - [#268](https://github.com/un-fao/calipseo-shiny/issues/268) SQL errors with Artfish active_vessels and landings data acessors
+- [#287](https://github.com/un-fao/calipseo-shiny/issues/287) Vessel details - Main indicators (info boxes) are not displayed in some cases
 
 # Enhancements
 

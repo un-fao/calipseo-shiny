@@ -272,47 +272,40 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
           vessellicensepermits$Gears <- paste0(unique_gears, collapse = ',')
           
           INFO("vessel-info server: Computing valid and expired license permits")
-          vessellicensepermits <- get_vessel_license_status(vessellicensepermits, validity_names = c('ok', 'remove'))
+          vessellicensepermits <- get_vessel_license_status(vessellicensepermits)
           
           INFO("vessel-info server: Applying the I18n_terms to the vessel license permits data columns")
           vessellicensepermits <- vessellicensepermits[order(rank(vessellicensepermits$Valid_to_date),decreasing=TRUE),]
           vessellicensepermits <- vessellicensepermits[, -which(names(vessellicensepermits) %in% c("REGISTRATION_NUMBER"))]
-          names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+          names(vessellicensepermits)<- c("ID",
+                                          i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
                                           i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
                                           i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
                                           i18n("LICENCES_TABLE_COLNAME_7"))
-          vessellicensepermits <- vessellicensepermits[,c("Permit Number", "Application Date", "Permit Date", 
-                                                          "Valid From (Date)", "Valid To (Date)", "Validity", 
-                                                          "Gears")]
-          
-          vessellicensepermits$Validity_status <- vessellicensepermits$Validity
-          
-          vessellicensepermits$Validity[vessellicensepermits$Validity=='ok'] <- paste(tags$span(title=i18n("LICENSE_STATUS_VALID_TOOLTIP"),style = 'color:green;font-size:18px;',icon("ok",lib = "glyphicon")))
-          
-          vessellicensepermits$Validity[vessellicensepermits$Validity=='remove'] <- paste(tags$span(title=i18n("LICENSE_STATUS_EXPIRED_TOOLTIP"),style = 'color:red;font-size:18px;',icon("remove",lib = "glyphicon")))
-          
+          vessellicensepermits$Validity[vessellicensepermits$Validity=='valid'] <- paste(tags$span(title=i18n("LICENSE_STATUS_VALID_TOOLTIP"),style = 'color:green;font-size:18px;',icon("ok",lib = "glyphicon")))
+          vessellicensepermits$Validity[vessellicensepermits$Validity=='expired'] <- paste(tags$span(title=i18n("LICENSE_STATUS_EXPIRED_TOOLTIP"),style = 'color:red;font-size:18px;',icon("remove",lib = "glyphicon")))
           
         }else{
           
           vessellicensepermits <- data.frame(
+            "ID" = character(0),
             `Permit Number` = character(0),
             'Application Date' = character(0),
             'Permit Date' = character(0),
             'Valid From (Date)' = character(0),
             'Valid To (Date)' = character(0),
-            'Validity' = character(0),
-            'Gears' = character(0)
-            
+            'Gears' = character(0),
+            'Validity' = character(0)
           )
           
-          names(vessellicensepermits)<- c(i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
+          names(vessellicensepermits)<- c("ID",
+                                          i18n("LICENCES_TABLE_COLNAME_1"),i18n("LICENCES_TABLE_COLNAME_2"),
                                           i18n("LICENCES_TABLE_COLNAME_3"),i18n("LICENCES_TABLE_COLNAME_4"),
                                           i18n("LICENCES_TABLE_COLNAME_5"),i18n("LICENCES_TABLE_COLNAME_6"),
                                           i18n("LICENCES_TABLE_COLNAME_7"))
           
           
         }
-        
         return(unique(vessellicensepermits))
       })
       
@@ -321,7 +314,7 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
         
         if(nrow(license_df()>0)){
           
-          DT::datatable(license_df()[,1:7],
+          DT::datatable(license_df(),
                         rownames = FALSE, extensions = c("Select","Buttons"),
                         selection = "none",
                         filter = list(position = 'top', clear = FALSE),
@@ -910,9 +903,9 @@ vessel_info_server <- function(id, parent.session, pool, reloader) {
       license_status <- reactive({
         req(license_df())
         if(nrow(license_df()>1)){
-          if(license_df()[1,8]=='ok'){
+          if(regexpr("ok",license_df()[1,]$Validity)>0){
             i18n("LICENSE_STATUS_VALID")
-          }else if(license_df()[1,8]=='remove'){
+          }else if(regexpr("expired",license_df()[1,]$Validity)>0){
             i18n("LICENSE_STATUS_EXPIRED")
           }
         }else{
