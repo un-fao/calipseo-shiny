@@ -24,9 +24,9 @@ vessel_info_ui <- function(id){
                   id = 'info-panel', class = 'col-md-7',
                   div(id = 'info-tabs',
                       bs4Dash::tabsetPanel(
-                        tabPanel(i18n("TABPANEL_INFO"), uiOutput(ns("vessel_description"))),
-                        tabPanel(i18n("TABPANEL_REGISTRATION"), uiOutput(ns("vessel_registration"))),
-                        tabPanel(i18n("TABPANEL_CHARACTERISTICS"), uiOutput(ns("vessel_characteristics")))
+                        tabPanel(i18n("TABPANEL_INFO"), withSpinner(uiOutput(ns("vessel_description")))),
+                        tabPanel(i18n("TABPANEL_REGISTRATION"), withSpinner(uiOutput(ns("vessel_registration")))),
+                        tabPanel(i18n("TABPANEL_CHARACTERISTICS"), withSpinner(uiOutput(ns("vessel_characteristics"))))
                       )
                   )
                 )
@@ -35,7 +35,7 @@ vessel_info_ui <- function(id){
             ),
             #vessel indicators
             column(width = 6,
-              uiOutput(ns('main_indicators'))
+              withSpinner(uiOutput(ns('main_indicators')))
               #div(class='row', style = "padding: 15px;",
               #fluidRow(
               #     uiOutput(ns('box_status')),
@@ -49,7 +49,7 @@ vessel_info_ui <- function(id){
             )
           ),
           #3rd row - More indicators on this vesels
-          uiOutput(ns('more_indicators')),
+          withSpinner(uiOutput(ns('more_indicators'))),
           #4th row - Vertical tabset panel
           bs4Dash::box(
             width = 12,
