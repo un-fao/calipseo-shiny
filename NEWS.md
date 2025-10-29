@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - PENDING**
+# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - 2025-10-28**
 
 # Corrections
 
