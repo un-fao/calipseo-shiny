@@ -10,13 +10,6 @@ LABEL org.opencontainers.image.authors="Emmanuel Blondel <emmanuel.blondel@fao.o
 # system libraries for LaTeX reporting & keyring
 RUN apt-get update && apt-get install -y \
     sudo \
-    pandoc \
-    texlive-xetex \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-fonts-recommended \
-    texlive-fonts-extra \
-    texlive-formats-extra \
     libssl-dev \
     libxml2-dev \
     libv8-dev \
