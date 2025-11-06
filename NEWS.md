@@ -1,5 +1,6 @@
 # **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - 2025-11-06**
 
+
 # Corrections
 
 - [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
