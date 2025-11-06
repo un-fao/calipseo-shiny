@@ -1,0 +1,8 @@
+{
+  "type": "subitem",
+  "parent": "observor",
+  "rank": 2,
+  "title": "Reports",
+  "icon": "database",
+  "linked_modules": "*"
+}

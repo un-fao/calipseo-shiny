@@ -1,0 +1,53 @@
+language: en
+country_profile:
+    iso3: CMR
+    website: null
+    logo: ./assets/img/CMRlogo.png
+    timezone: America/Guyana 
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: cmrcalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home page
+    vessels:
+        title: Vessels dashboard
+    individuals: 
+        title: Individual dashboard
+    logbooks:
+        title: Logbooks dashboard
+    statistics:
+        title: Statistics
+    observor:
+        title: Observer program
+    
+modules:
+    vessel_list:
+        title: Vessels register
+        icon: table
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+    individual_list: 
+        title: Individual list
+    artfish_overview:
+      enabled: FALSE
+    artfish_report:
+      enabled: FALSE
+    artfish_species:
+      enabled: FALSE
+    artfish_fishing_unit:
+      enabled: FALSE
+      
+
+    

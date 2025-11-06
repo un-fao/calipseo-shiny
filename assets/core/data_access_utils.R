@@ -711,6 +711,27 @@ accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
   return(fa)
 }
 
+#accessObserverReportsSummaryFromDB
+accessObserverReportsSummaryFromDB <- function(con){
+  query_sql <- readSQLScript("data/core/sql/observer_reports_summary.sql")
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
+#accessObserverVesselInfoFromDB
+accessObserverVesselInfoFromDB <- function(con){
+  query_sql <- readSQLScript("data/core/sql/dt_observer_report_vessel_information.sql")
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
+#accessObserverVesselEquipmentFromDB
+accessObserverVesselEquipmentFromDB <- function(con){
+  query_sql <- readSQLScript("data/core/sql/dt_observer_report_vessel_navigation_equipment.sql")
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
 
 #-----------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------
@@ -1071,6 +1092,21 @@ accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
 #accessArtfishD
 accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
   accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+}
+
+#accessObserverReportsSummary
+accessObserverReportsSummary <- function(con){
+  accessObserverReportsSummaryFromDB(con)
+}
+
+#accessObserverVesselInfo
+accessObserverVesselInfo <- function(con){
+  accessObserverVesselInfoFromDB(con)
+}
+
+#accessObserverVesselEquipment
+accessObserverVesselEquipment <- function(con){
+  accessObserverVesselEquipmentFromDB(con)
 }
 
 #Country profile

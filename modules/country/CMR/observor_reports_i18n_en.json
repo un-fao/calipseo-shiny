@@ -1,0 +1,31 @@
+{
+  /*title*/
+  "TITLE" : "Observer Program - Report Details",
+  "SELECT_TITLE_REPORT" : "Reports",
+  "SELECT_REPORT_PLACEHOLDER" : "select a report",
+  "BOX_TITLE_OBSERVER" : "Observer",
+  "BOX_TITLE_VESSEL" : "Vessel",
+  "BOX_TITLE_OWNER" : "Owner",
+  "OBSERVER_NAME" : "Observer name",
+  "VESSEL_NAME" : "Vessel name",
+  "OWNER_NAME" : "Owner name",
+  "REGISTRATION8NUMBER" : "Registration Number",
+  "LOA" : "LOA",
+  "DRA" : "DRA",
+  "WIDTH" : "Width",
+  "GT" : "Gross Tonnage",
+  "NET_TONNAGE" : "Net Tonnage",
+  "SPEED" : "Speed",
+  "ENGINE_POWER" : "Engine Power",
+  "BOX_TITLE_EQUIPMENT" : "Navigation Equipments",
+  "BOX_TITLE_QUALITY" : "Life Quality",
+  "BOX_TITLE_ENVIRONMENT" : "Environmental Conditions",
+  "BOX_TITLE_SPECIES" : "Catch detail",
+  "BOX_TITLE_METRICS" : "Biological",
+  "BOX_TITLE_ACTIVITY" : "Activities details",
+  "BOX_TITLE_SPECIES_DENSITY" : "Test map heatmap",
+  "INFOBOX_TITLE_TOTLANDING" : "Total Landings",  
+  "INFOBOX_TITLE_TOTDISCARD" : "Total Discards",
+  "INFOBOX_TITLE_NBSPECIES" : "Total Species"
+
+}

@@ -1,0 +1,8 @@
+{
+  "type": "subitem",
+  "parent": "observor",
+  "rank": 3,
+  "title": "Biological Measurements",
+  "icon": "database",
+  "linked_modules": "*"
+}

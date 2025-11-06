@@ -1,0 +1,8 @@
+{
+  "type": "subitem",
+  "parent": "observor",
+  "rank": 5,
+  "title": "Discard Data",
+  "icon": "database",
+  "linked_modules": "*"
+}

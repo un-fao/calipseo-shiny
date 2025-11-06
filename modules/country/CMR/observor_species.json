@@ -1,0 +1,8 @@
+{
+  "type": "subitem",
+  "parent": "observor",
+  "rank": 4,
+  "title": "Catch Data",
+  "icon": "database",
+  "linked_modules": "*"
+}

@@ -1,0 +1,1 @@
+SELECT * FROM dt_observer_report_vessel_information 

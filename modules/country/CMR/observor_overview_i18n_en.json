@@ -1,0 +1,13 @@
+{
+  /**/
+  "OBSERVER_OVERVIEW_TITLE" : "Observer Program - Reports Overview",
+  "INFOBOX_TITLE_REPORTS" : "Number of reports",
+  "INFOBOX_TITLE_VESSELS" : "Number of vessels",
+  "INFOBOX_TITLE_OBSERVERS" : "Number of observers",
+  "INFOBOX_TITLE_YEARS" : "Period coverage",
+  "INFOBOX_TITLE_LANDINGS" : "Number of sites",
+  "INFOBOX_TITLE_NODATE" : "Report with no date",
+  "PLOT_NODATE_DISCLAMER" : "No date associated to a report to produce a graphical view",
+  "SUMMARY" : "Reports",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+}

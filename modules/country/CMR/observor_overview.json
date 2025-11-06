@@ -1,0 +1,8 @@
+{
+  "type": "subitem",
+  "parent": "observor",
+  "rank": 1,
+  "title": "Overview",
+  "icon": "database",
+  "linked_modules": "*"
+}
