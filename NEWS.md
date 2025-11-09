@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.0.0.9000](https://github.com/un-fao/calipseo-shiny) - 2025-11-09**
+
+# Corrections
+
+- [#294](https://github.com/un-fao/calipseo-shiny/issues/294) Fix errors for Artfishr - CPUE counting 
+
 # **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - 2025-11-06**
 
 
