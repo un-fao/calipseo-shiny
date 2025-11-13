@@ -1,3 +1,14 @@
+# **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny) - 2025-11-13**
+
+# Corrections
+
+- [#297](https://github.com/un-fao/calipseo-shiny/issues/297) Vessel list doesn't show up with data special/latin characters
+- [#298](https://github.com/un-fao/calipseo-shiny/issues/298) Vessel profile doesn't show up with data special/latin characters
+
+# Enhancements
+
+- [#300](https://github.com/un-fao/calipseo-shiny/issues/300) Enforce R client UTF-8 character set
+
 # **calipseo-shiny [v2.0.1](https://github.com/un-fao/calipseo-shiny) - 2025-11-10**
 
 # Corrections
