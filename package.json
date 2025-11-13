@@ -1,7 +1,7 @@
 {
   "id": "calipseo-shiny",
-  "version": "2.0.1",
-  "date": "2025-11-10",
+  "version": "2.0.1.9000",
+  "date": "2025-11-13",
   "dependencies": [
     {"package": "dotenv", "version": "1.0.3", "repos": "https://cran.r-project.org"},
     {"package": "htmltools", "version": "0.5.2", "repos": "https://cloud.r-project.org"},

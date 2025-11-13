@@ -99,6 +99,7 @@ pool <- pool::dbPool(
   password = appConfig$openfismis$dbi$password,
   bigint = "numeric" #required otherwise RMariaDB coerces integers as integer64
 )
+DBI::dbExecute(pool, "SET NAMES 'utf8mb4'")
 
 #global variables / environment
 #---------------------------------------------------------------------------------------
