@@ -1,6 +1,6 @@
 # **calipseo-shiny [v2.0.2.9000](https://github.com/un-fao/calipseo-shiny) - 2025-11-17**
 
-#Enhancements
+# Enhancements
 
 - [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
 
