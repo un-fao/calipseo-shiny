@@ -1,4 +1,8 @@
-# **calipseo-shiny [v2.0.2.9000](https://github.com/un-fao/calipseo-shiny) - 2025-11-17**
+# **calipseo-shiny [v2.0.2.9001](https://github.com/un-fao/calipseo-shiny) - 2025-11-18**
+
+# Corrections
+
+- [#303](https://github.com/un-fao/calipseo-shiny/issues/303) Deactivated modules break the sidebar menu UI with `bs4Dash`
 
 # Enhancements
 

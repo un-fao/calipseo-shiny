@@ -275,7 +275,7 @@ sidebarMenuFromModules <- function(config){
   if(!is.null(config$structure)) structure_menu_items <- config$structure
   
   #sidebar UI
-  do.call(bs4Dash::sidebarMenu, c(id="calipseo-tabs", lapply(names(structure_menu_items), function(menu_item_name){
+  do.call(bs4Dash::sidebarMenu, c(id="calipseo-tabs", Filter(Negate(is.null), lapply(names(structure_menu_items), function(menu_item_name){
     #menu item
     menu_item <- structure_menu_items[[menu_item_name]]
     menu_item_enabled <- TRUE
@@ -289,13 +289,13 @@ sidebarMenuFromModules <- function(config){
     do.call(bs4Dash::menuItem, c(
       text = menu_item$title, tabName = menu_item_name, 
       icon = if(!is.null(menu_item$icon)) shiny::icon(menu_item$icon) else NULL,
-      lapply(menu_item_profiles, function(profile){
+      Filter(Negate(is.null), lapply(menu_item_profiles, function(profile){
         if(!profile$enabled) return(NULL)
         icon = shiny::icon("angle-double-right")
         if(!is.null(profile$icon)) icon = shiny::icon(profile$icon)
         bs4Dash::menuSubItem(profile$title, tabName = profile$module, icon = icon)
-      })
+      }))
     ))
-  })))
+  }))))
 }
 
