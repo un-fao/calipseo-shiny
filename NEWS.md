@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.0.2.9000](https://github.com/un-fao/calipseo-shiny) - 2025-11-17**
+
+#Enhancements
+
+- [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
+
 # **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny) - 2025-11-13**
 
 # Corrections
@@ -8,7 +14,6 @@
 # Enhancements
 
 - [#300](https://github.com/un-fao/calipseo-shiny/issues/300) Enforce R client UTF-8 character set
-- [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
 
 # **calipseo-shiny [v2.0.1](https://github.com/un-fao/calipseo-shiny) - 2025-11-10**
 
