@@ -415,9 +415,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20251031",
+      "Version": "0.1.20251118",
       "Source": "GitHub",
-      "Date": "2025-10-31",
+      "Date": "2025-11-18",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -434,12 +434,13 @@
         "ggplot2",
         "shiny"
       ],
+      "Remotes": "fdiwg/vrule",
       "Suggests": [
         "testthat"
       ],
       "Description": "Set of functions in support of ArtFish implementation.",
       "License": "MIT",
-      "URL": "https://github.com/fdiwg/artfishr",
+      "URL": "https://github.com/fdiwg/artfishr, https://fdiwg.github.io/artfishr/",
       "BugReports": "https://github.com/fdiwg/artfishr/issues",
       "RoxygenNote": "7.3.3",
       "VignetteBuilder": "knitr",
@@ -447,8 +448,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "0.1.20251031",
-      "RemoteSha": "aa40f34c7331df4dd77fdf71a0a7eb7e3b6678fc",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "e9d864fbdfa9a7024f39b443935cc616a77debba",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
@@ -5105,9 +5106,9 @@
     },
     "vrule": {
       "Package": "vrule",
-      "Version": "0.1",
+      "Version": "0.1.20251113",
       "Source": "GitHub",
-      "Date": "2025-05-12",
+      "Date": "2025-11-13",
       "Title": "Tools to validate data based on business validation rules",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel@fao.org\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), email = \"alexandre.bennici@fao.org\", comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -5120,6 +5121,7 @@
         "jsonlite",
         "readr",
         "stringi",
+        "stringr",
         "rhandsontable",
         "data.table",
         "parallel"
@@ -5129,7 +5131,7 @@
       ],
       "Description": "Provides tools to validate data based on business validation rules",
       "License": "MIT + file LICENSE",
-      "URL": "https://github.com/fdiwg/vrule",
+      "URL": "https://github.com/fdiwg/vrule, https://fdiwg.github.io/vrule/",
       "BugReports": "https://github.com/fdiwg/vrule/issues",
       "RoxygenNote": "7.3.1",
       "RemoteType": "github",
@@ -5137,7 +5139,7 @@
       "RemoteRepo": "vrule",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "4683584e0deeba091912fb77d5bed936211a7dd0",
+      "RemoteSha": "ea94afdc865c76c36dc2115df61175c9c19cb2a3",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
