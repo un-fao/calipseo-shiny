@@ -415,9 +415,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20251118",
+      "Version": "0.1.20251119",
       "Source": "GitHub",
-      "Date": "2025-11-18",
+      "Date": "2025-11-19",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -449,7 +449,7 @@
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "e9d864fbdfa9a7024f39b443935cc616a77debba",
+      "RemoteSha": "597844fcfe0a7698c8e98f5b0f54fc2c5dbf5c11",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
