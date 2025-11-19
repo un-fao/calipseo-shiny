@@ -7,6 +7,7 @@
 # Enhancements
 
 - [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
+- [#311](https://github.com/un-fao/calipseo-shiny/issues/311) Upgrade to latest [artfishr](https://github.com/fdiwg/artfishr) R package
 
 # **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny) - 2025-11-13**
 
