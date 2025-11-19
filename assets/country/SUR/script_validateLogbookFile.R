@@ -29,7 +29,7 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
   last_fas = dbGetQuery(pool, "SELECT * FROM dt_fishing_activities_species")
   if(nrow(last_fas)>0) fas_idx = max(last_fas$ID)
   
-  data <- readxl::read_excel(if(is.character(filename)){filename}else{filename$datapath},col_types = "text")
+  data <- readxl::read_excel(if(is.character(filename)){filename}else{filename$datapath},sheet="upload table",col_types = "text")
   names(data)<-tolower(names(data))
   
   errors<-data.frame(
