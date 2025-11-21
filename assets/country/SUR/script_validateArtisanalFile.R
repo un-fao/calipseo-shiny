@@ -219,9 +219,9 @@ validate_vessel_registration<-function(data,monitor){
       validation = case_when(
         is.na(vessel_registration_nr) ~ 
           list(list(
-            type="ERROR",
-            category="Missing mandatory value",
-            message="Required value"
+            type="WARNING",
+            category="Missing value",
+            message="Vessel missing"
           )),
         !is.na(vessel_registration_nr) & (!is.character(vessel_registration_nr)) ~ 
           list(list(
@@ -1707,7 +1707,7 @@ referentials <- bind_rows(
   validate_referential(data, "fish_product_code", calipseo_cl_ref_fishery_products, "CODE", "ID", "cl_ref_fishery_products",monitor = monitor),
   validate_referential(data, "departure_site_name", calipseo_cl_fish_landing_sites, "NAME", "ID", "cl_fish_landing_sites",TRUE,monitor = monitor),
   validate_referential(data, "landing_site_name", calipseo_cl_fish_landing_sites, "NAME", "ID", "cl_fish_landing_sites",TRUE,monitor = monitor),
-  validate_referential(data, "fishing_unit_name", calipseo_cl_fish_fishing_units, "CODE", "ID", "cl_fish_fishing_units",monitor = monitor),
+  validate_referential(data, "fishing_unit_name", calipseo_cl_fish_fishing_units, "NAME", "ID", "cl_fish_fishing_units",monitor = monitor),
   validate_referential(data, "fishing_zone_name", calipseo_cl_fish_fishing_zones, "NAME", "ID", "cl_fish_fishing_zones",monitor = monitor),
   validate_referential(data, "recorder_name", calipseo_custom_reg_entity_individuals, "FULL_NAME", "REG_INDIVIDUAL_ID", "reg_entity_individuals",TRUE,monitor = monitor),
   validate_referential(data, "unit_time_spent_fishing", calipseo_cl_app_quantity_units, "NAME", "ID", "cl_app_quantity_units",TRUE,monitor = monitor),
@@ -1750,20 +1750,22 @@ if(nrow(subset(referentials,type=="ERROR"))>0|nrow(subset(errors,type=="ERROR"))
 if(valid){
 #Generate SQL
 
-for(trip in unique(data$identifer)){
+for(trip in unique(data$identifier)){
 
+print(trip)
 data_target<-data%>%
   filter(identifier==trip)
 
+print("data_trip")
 data_trip<-data_target%>%
-  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,notes)%>%
+  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
   distinct()%>%
   rowwise()%>%
   mutate(recorder_name=mapping_table(recorder_name,"custom_reg_entity_individuals","FULL_NAME","REG_ENTITY_ID",exact=F),
-         unit_time_spent_fishing=mapping_table(unit_time_spent_fishing,"calipseo_cl_app_quantity_units","NAME"),
+         unit_time_spent_fishing=mapping_table(unit_time_spent_fishing,"cl_app_quantity_units","NAME"),
          survey_type=mapping_table(survey_type,"cl_stat_effort_survey_types","CODE"),
          vessel_registration_nr=mapping_table(vessel_registration_nr,"reg_vessels","REGISTRATION_NUMBER"),
-         fishing_unit_name=mapping_table(fishing_unit_name,"cl_fish_fishing_units","CODE"),
+         fishing_unit_name=mapping_table(fishing_unit_name,"cl_fish_fishing_units","NAME"),
          landing_site_name=mapping_table(landing_site_name,"cl_fish_landing_sites","NAME",exact = F),
          departure_site_name=mapping_table(departure_site_name,"cl_fish_landing_sites","NAME",exact = F),
          fishing_zone_name=mapping_table(fishing_zone_name,"cl_fish_fishing_zones","NAME",exact = F),
@@ -1773,6 +1775,7 @@ data_trip<-data_target%>%
          )%>%
   ungroup()
 
+print("data_trip")
 data_species<-data_target%>%
   select(species_code,landed_weight_kg,catch_price,fish_product_code,currency_catch_price)%>%
   rowwise()%>%
@@ -1783,7 +1786,7 @@ data_species<-data_target%>%
          )%>%
   ungroup()
 
-
+print("new_dt_fishing_trip")
 new_dt_fishing_trip$ADD_ENTRY(
     REG_VESSEL_ID=data_trip$vessel_registration_nr ,                           
     CL_FISH_FISHING_UNIT_ID=data_trip$fishing_unit_name,                 
@@ -1791,10 +1794,10 @@ new_dt_fishing_trip$ADD_ENTRY(
     CL_FISH_FISHING_TRIP_TYPE_ID=mapping_table("LANDFORM","cl_fish_fishing_trip_types","CODE"),            
     DATE_FROM=data_trip$departure_date,                                
     DATE_TO=data_trip$arrival_date,                                  
-    CL_FROM_PORT_LOCATION_ID=data_trip$departure_site,                
-    CL_TO_PORT_LOCATION_ID=data_trip$landing_site,                   
-    CL_FROM_PORT_SITE_ID=data_trip$departure_site,                    
-    CL_TO_PORT_SITE_ID=data_trip$landing_site,                      
+    CL_FROM_PORT_LOCATION_ID=data_trip$departure_site_name,                
+    CL_TO_PORT_LOCATION_ID=data_trip$landing_site_name,                   
+    CL_FROM_PORT_SITE_ID=data_trip$departure_site_name,                    
+    CL_TO_PORT_SITE_ID=data_trip$landing_site_name,                      
     CL_FISH_FISHING_ZONE_ID=data_trip$fishing_zone_name,                  
     TIME_SPENT_FISHING_ZONE=data_trip$time_spent_fishing,                  
     CL_TIME_SPENT_FISHING_UNIT_ID=data_trip$unit_time_spent_fishing,           
@@ -1818,8 +1821,9 @@ new_dt_fishing_trip$ADD_ENTRY(
     COMMENT=comment
 )
 
+print("new_dt_fishing_activities")
 new_dt_fishing_activities$ADD_ENTRY(
-DT_FISHING_TRIP_ID =new_dt_fishing_trip$MAX_INDEX()[1,],
+DT_FISHING_TRIP_ID =new_dt_fishing_trip$MAX_INDEX(),
 CL_FISH_FISHING_ACTIVITY_TYPE_ID=mapping_table("LANDING","cl_fish_fishing_activities_types","CODE"),
 DATE_FROM=data_trip$departure_date,        
 DATE_TO=data_trip$arrival_date,               
@@ -1838,10 +1842,11 @@ UPDATED_AT=now
 # UPDATED_AT=now  
 # )
 
+print("new_dt_effort_survey")
 new_dt_effort_survey$ADD_ENTRY(
   YEAR=year(data_trip$arrival_date),                          
   DAYS=day(data_trip$arrival_date),                         
-  CL_STAT_EFFORT_SURVEY_TYPE_ID=survey_type, 
+  CL_STAT_EFFORT_SURVEY_TYPE_ID=data_trip$survey_type, 
   CL_FISH_LANDING_SITE_ID=data_trip$landing_site_name,
   CL_FISH_FISHING_UNIT_ID=data_trip$fishing_unit_name,       
   NB_DAYS_SAMPLED=data_trip$boat_activity_days,               
@@ -1849,23 +1854,25 @@ new_dt_effort_survey$ADD_ENTRY(
   UPDATER_ID=updater,                   
   COMMENT=comment,                       
   CREATED_AT=now,                    
-  UPDATED_AT=now,                    
+  UPDATED_AT=now                   
 )
 
 for (i in 1:nrow(data_species)){
-  
+
+print(i)  
   target_row<-data_species[i,]
 
+print("new_dt_fishing_activities_species")
 new_dt_fishing_activities_species$ADD_ENTRY(
-  DT_FISHING_ACTIVITY_ID =new_dt_fishing_activities$MAX_INDEX()[1,],                           
-  CL_REF_SPECIES_ID=data_species$species_code,                    
+  DT_FISHING_ACTIVITY_ID =new_dt_fishing_activities$MAX_INDEX(),                           
+  CL_REF_SPECIES_ID=target_row$species_code,                    
   #DT_FISHING_ACTIVITY_GEAR_ID=new_dt_fishing_activities_gear$MAX_INDEX()[1,],                     
-  QUANTITY=data_species$landed_weight_kg,                  
+  QUANTITY=target_row$landed_weight_kg,                  
   CL_APP_QUANTITY_UNIT_ID=mapping_table("Kilogram","cl_app_quantity_units"),                         
-  PRICE_PER_UNIT_CATCH=data_species$catch_price,                            
-  CL_REF_FISHERY_PRODUCT_ID=data_species$fish_product_code,                       
-  CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT=data_species$quantity_live_weight,           
-  TOTAL_VALUE_CURRENCY=data_species$currency_catch_price,                          
+  PRICE_PER_UNIT_CATCH=target_row$catch_price,                            
+  CL_REF_FISHERY_PRODUCT_ID=target_row$fish_product_code,                       
+  CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT=target_row$quantity_live_weight,           
+  TOTAL_VALUE_CURRENCY=target_row$currency_catch_price,                          
   UPDATER_ID=updater,
   COMMENT=comment,                                         
   CREATED_AT=now,
@@ -1876,17 +1883,19 @@ new_dt_fishing_activities_species$ADD_ENTRY(
 
 }
 
+  print("fini")
 execute_statement=FALSE
   
-data_sql<-new_dt_fishing_trip$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
+data_sql<-new_dt_fishing_trip$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
-data_sql<-new_dt_fishing_activities$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
+data_sql<-new_dt_fishing_activities$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
 #data_sql<-new_dt_fishing_activities_gear$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
 
-data_sql<-new_dt_fishing_activities_species$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
+data_sql<-new_dt_fishing_activities_species$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
-data_sql<-new_dt_effort_survey$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
+data_sql<-new_dt_effort_survey$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
+
 }
 
 return(list(

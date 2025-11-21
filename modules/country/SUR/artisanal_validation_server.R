@@ -1,18 +1,7 @@
 #artisanal_validation_server
-artisanal_validation_server <- function(id, pool, reloader) {
-  
-  # server_load_count <<- server_load_count + 1
-  # print(sprintf("Server loaded %s time(s)", server_load_count))
+artisanal_validation_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
-    
-    # if (!exists(".artisanal_validation_loaded", envir = .GlobalEnv)) {
-    #   assign(".artisanal_validation_loaded", TRUE, envir = .GlobalEnv)
-    #   print("Module artisanal_validation_server loaded (first time)")
-    # } else {
-    #   print("Module artisanal_validation_server already loaded ... skipping")
-    #   return(NULL)
-    # }
     
     ns <- session$ns
     
@@ -98,7 +87,7 @@ artisanal_validation_server <- function(id, pool, reloader) {
           req(!is.null(out$errors)&!is.null(out$referentials))
           print("We are here3")
           fluidRow(
-            box(width=6,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
+            bs4Dash::box(width=6,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
                 if(nrow(out$referentials)>0){
                   tagList(
                     p(sprintf(paste0(i18n("NUMBER_REFERENTIAL_INSPECT")," : %s"),nrow(subset(out$referentials,type=="duplicate"))),style = "color:orange"),
@@ -109,7 +98,7 @@ artisanal_validation_server <- function(id, pool, reloader) {
                   p(i18n("NUMBER_REFERENTIAL_UPTODATE"),style = "color:green")
                 }
             ),
-            box(width=6,title=paste0(i18n("ERROR_IN_DATA_TITLE")," :"),
+            bs4Dash::box(width=6,title=paste0(i18n("ERROR_IN_DATA_TITLE")," :"),
                 if(nrow(out$errors)>0){
                   tagList(
                     p(sprintf(paste0(i18n("NUMBER_NON_BLOCKING_ISSUES")," : %s"),nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
