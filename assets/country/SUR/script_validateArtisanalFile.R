@@ -2,11 +2,6 @@ validateArtisanalFile <- function(filename, pool,monitor=NULL){
   
 data <- readxl::read_excel(if(is.character(filename)){filename}else{filename$datapath},sheet="catch data",col_types = "text")
 
-#data<-readxl::read_excel("C:/Users/alexa/Downloads/ART_LAND_2024_2025_check2.xlsx",sheet="catch data",col_types = "text")
-
-#source("D:/Calipseo/importCalipseoModel.R")
-#importCalipseoModel(pool,db_name="surcalipseo")
-
 if(!is.null(monitor))monitor(0.1,"Loading of calipseo model")
 calipseo<-calipseoManagerR::CalipseoModelManager$new(pool)
 
@@ -1662,36 +1657,11 @@ errors <- purrr::imap_dfr(validation_functions, function(f, name) {
 })
 
 
-# #Create summary table
-# type_levels <- c("VALID", "WARNING", "ERROR")
-# 
-# summary_table <- errors %>%
-#   filter(!is.na(column)) %>%
-#   mutate(type = factor(type, levels = type_levels, ordered = TRUE)) %>%
-#   group_by(column, row) %>%
-#   summarise(
-#     status = type[which.max(as.integer(type))], 
-#     .groups = "drop"
-#   ) %>%
-#   count(column, status) %>%
-#   pivot_wider(
-#     names_from = status,
-#     values_from = n,
-#     values_fill = 0
-#   ) %>%
-#   mutate(
-#     VALID = if (!"VALID" %in% names(.)) 0 else VALID,
-#     WARNING = if (!"WARNING" %in% names(.)) 0 else WARNING,
-#     ERROR = if (!"ERROR" %in% names(.)) 0 else ERROR,
-#     TOTAL = VALID + WARNING + ERROR
-#   ) %>%
-#   select(column, VALID, WARNING, ERROR,TOTAL) %>%
-#   arrange(column) %>%
-#   as.data.frame()
-
 validate_referential <- function(data, data_col, ref_table, ref_code_col, ref_id_col, table_name, normalize = FALSE,monitor) {
   
-  if(!is.null(monitor))monitor(0.01,sprintf("checking referential %s for column :%s",data_col,table_name))
+  print(sprintf("Checking referential %s for column :%s",data_col,table_name)) 
+  
+  if(!is.null(monitor))monitor(0.01,sprintf("Checking referential %s for column :%s",data_col,table_name))
   
   get_norm <- function(x) normalize_name(x)
   
@@ -1773,25 +1743,6 @@ referentials <- bind_rows(
   validate_referential(data, "gear_name", calipseo_cl_ref_gears, "NAME", "ID", "cl_ref_gears",monitor = monitor)
 )%>%
   distinct()
-
-
-# summary_ref_table <- referentials %>%
-#   filter(!is.na(table)) %>%
-#   group_by(table, type) %>%
-#   summarise(n = n(), .groups = "drop") %>%
-#   pivot_wider(
-#     names_from = type,
-#     values_from = n,
-#     values_fill = list(n = 0)
-#   ) %>%
-#   mutate(
-#     MISSING = if (!"missing" %in% names(.)) 0 else missing,
-#     DUPLICATE = if (!"duplicate" %in% names(.)) 0 else duplicate,
-#   ) %>%
-#   select(table, MISSING,DUPLICATE) %>%
-#   arrange(table) %>%
-#   as.data.frame()
-  
 
 data_sql<-c()
 message=NULL
