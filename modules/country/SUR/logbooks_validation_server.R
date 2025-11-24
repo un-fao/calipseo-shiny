@@ -15,6 +15,13 @@ logbooks_validation_server <- function(id, parent.session, pool, reloader) {
       valid=NULL
     )
     
+    required_cols <- c(
+      "trip_#", "vessel_registration", "vessel_name", "departure_date",
+      "arrival_date", "time_spent_fishing", "species_asfis", "processing",
+      "landed_weight_kg", "landing_site_code", "landing_site_name",
+      "fishing_zone_code", "fishing_zone_name", "fishing_gear_code",
+      "fishing_gear_name"
+    )
     
     #Validity to file in input
     output$validity_btn<-renderUI({
@@ -35,6 +42,54 @@ logbooks_validation_server <- function(id, parent.session, pool, reloader) {
     observeEvent(input$check_validity,{
       file<-input$file_to_validate
       print(file$name)
+      
+      ext <- tools::file_ext(file$name)
+      
+      if (!tolower(ext) %in% c("xlsx", "xls")) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_EXCEL"),
+          i18n("MODAL_NO_EXCEL_MESSAGE"),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
+      
+      sheets <- excel_sheets(file$datapath)
+      
+      if (!"upload table" %in% sheets) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_SHEET"),
+          paste0(
+            i18n("MODAL_NO_SHEET_MESSAGE"),
+            paste(sheets, collapse = ", ")
+          ),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
+      
+
+      df_header <- read_excel(file$datapath, sheet = "upload table",n_max=0)
+      
+      missing_cols <- setdiff(required_cols, names(df_header))
+      
+      if (length(missing_cols) > 0) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_COLUMN"),
+          tagList(
+            i18n("MODAL_NO_COLUMN_MESSAGE"),
+            tags$ul(lapply(missing_cols, tags$li))
+          ),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
       
       outt<-shiny::withProgress(
         value = 0,
