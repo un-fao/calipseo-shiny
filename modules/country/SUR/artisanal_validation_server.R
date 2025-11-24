@@ -2,59 +2,47 @@
 artisanal_validation_server <- function(id, parent.session, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
-    
+
     ns <- session$ns
     
+    #Initialize object
     out<-reactiveValues(
       data=NULL,
       result=NULL,
       errors=NULL,
       referentials=NULL,
-      valid=NULL
+      valid=NULL,
+      message=NULL
     )
-    
-    #file_not_yet_validated<-reactiveVal(TRUE)
     
     go_visualisation<-reactiveVal(FALSE)
     
+    #File input
     output$file_input_wrapper<-renderUI({
       fileInput(inputId = ns("file_to_validate"), label = paste0(i18n("LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))
     })
     
-    #Validity to file in input
+    #Run validity test
     output$validity_btn<-renderUI({
       req(input$file_to_validate)
       req(!is.null(input$file_to_validate))
         actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY"),style = "color:green; background-color:#b8efa0")
-      #}else{
-      #  disabled(actionButton(ns("check_validity"),i18n("ACTIONBUTTON_LABEL_TEST_VALIDITY")))
-      #}
     })
     
+    #Display validity test status
      shinyMonitor = function(value,message){
        shiny::incProgress(amount = value, 
                           message = i18n("VALIDATION_PROGRESS_MESSAGE"),
                           detail = message)
      }
     
-    
-    
-    #Validity to content
+    #Update object with validity test results
     observeEvent(input$check_validity,{
       req(input$file_to_validate)
       shinyjs::disable(ns("check_validity"))
-      #req(isTRUE(file_not_yet_validated()))
       file<-input$file_to_validate
       print(file$name)
-      print("Test1")
 
-      #outt<-validateArtisanalFile(file,pool)
-      #outt <- list(result=NULL, errors=NULL, referentials=NULL, valid=TRUE)
-      #file_not_yet_validated(FALSE)
-    
-      #print(outt)
-      
-      print("Test2")
        outt<-shiny::withProgress(
          value = 0,
          min=0,
@@ -65,27 +53,24 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
        )
       
       if(!is.null(outt$valid)){
-        print("Test3")
         out$data<-outt$data
         out$result<-outt$result
         out$errors<-outt$errors
         out$referentials<-outt$referentials
         out$valid<-outt$valid
+        out$message<-outt$message
       }
       go_visualisation(TRUE)
       shinyjs::enable(ns("check_validity"))
     })
       
+    Dispay validity test results
     observeEvent(go_visualisation(),{
-      print("We are here")
       req(isTRUE(go_visualisation()))
-      #req(isFALSE(file_not_yet_validated()))
       req(!is.null(out$valid))
         #Display errors, warning and referential to add
         output$validity_result<-renderUI({
-          print("We are here2")
           req(!is.null(out$errors)&!is.null(out$referentials))
-          print("We are here3")
           fluidRow(
             bs4Dash::box(width=6,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
                 if(nrow(out$referentials)>0){
@@ -197,6 +182,18 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
           content = function(file){
             reportArtisanalFile(out$data,out$errors,out$referentials,file)
           }
+        )
+        
+        #Dispay SQL content summary
+        showModal(
+          modalDialog(
+            title = i18n("DATA_STATUS"),
+            easyClose = TRUE,
+            footer = modalButton("OK"),
+            tagList(
+              shiny::HTML(markdown::markdownToHTML(text = out$message, fragment.only = TRUE))
+            )
+          )
         )
 
     })

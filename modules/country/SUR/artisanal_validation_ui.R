@@ -24,19 +24,13 @@ artisanal_validation_ui <- function(id){
      ),
     tags$h2(i18n("LOGBOOKS_VALIDATION_TITLE")),
     fluidRow(
-      column(3,uiOutput(ns("file_input_wrapper"))),     
-      column(2,style = "margin-top: 25px;",
-             uiOutput(ns("validity_btn")))
-             #actionButton(ns("check_validity"), "Run validation"))
+      column(3,uiOutput(ns("file_input_wrapper"))),    
+      column(1,style = "margin-top: 25px;", uiOutput(ns("validity_btn"))),
+      column(1,style = "margin-top: 25px;", uiOutput(ns("generate_SQL_btn"))),
+      column(1,style = "margin-top: 25px;", uiOutput(ns("generate_report_btn")))
     ),
     fluidRow(
       uiOutput(ns("validity_result"))
-    ),
-    fluidRow(
-      uiOutput(ns("generate_SQL_btn"))
-    ),
-    fluidRow(
-      uiOutput(ns("generate_report_btn"))
     )
   )
 }

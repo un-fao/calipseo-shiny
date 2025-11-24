@@ -34,6 +34,7 @@ referentials<-data.frame(
 #CL
 new_cl_app_quantity_units<-calipseo$load_table(table_name ="cl_app_quantity_units")
 new_cl_ref_species<-calipseo$load_table(table_name ="cl_ref_species")
+new_cl_ref_gears<-calipseo$load_table(table_name ="cl_ref_gears")
 new_cl_ref_currencies<-calipseo$load_table(table_name ="cl_ref_currencies")
 new_cl_ref_fishery_products<-calipseo$load_table(table_name ="cl_ref_fishery_products")
 new_cl_stat_effort_survey_types<-calipseo$load_table(table_name ="cl_stat_effort_survey_types")
@@ -79,6 +80,7 @@ calipseo_cl_stat_effort_survey_types<-new_cl_stat_effort_survey_types$VIEW_DB_TA
 calipseo_cl_fish_fishing_trip_types<-new_cl_fish_fishing_trip_types$VIEW_DB_TABLE()
 calipseo_cl_fish_fishing_activities_types<-new_cl_fish_fishing_activities_types$VIEW_DB_TABLE()
 calipseo_cl_fish_fishing_zones<-new_cl_fish_fishing_zones$VIEW_DB_TABLE()
+calipseo_cl_ref_gears<-new_cl_ref_gears$VIEW_DB_TABLE()
 
 #GENERIC FUNCTION
 normalize_name <- function(x) {
@@ -231,7 +233,7 @@ validate_vessel_registration<-function(data,monitor){
           )),
         !is.na(vessel_registration_nr) & (!is.character(vessel_registration_nr)) & grepl("^(BV|SK)",vessel_registration_nr) ~ 
           list(list(
-            type="ERROR",
+            type="WARNING",
             category="Invalid format",
             message=sprintf("Value '%s' should start by 'BV' or 'SK'",vessel_registration_nr)
           )),
@@ -420,6 +422,58 @@ validate_fishing_unit_name<-function(data,monitor){
     ungroup() %>%
     unnest_wider(validation)%>%
     mutate(column="fishing_unit_name")%>%
+    select(row_id,column,type,category,message)%>%
+    rename(row=row_id)
+}
+
+## "gear_name" 
+validate_gear_name<-function(data,monitor){
+  print(sprintf("Validating column : 'gear_name'"))
+  if(!is.null(monitor))monitor(0.01,"Validating column : 'gear_name'")
+  data%>%
+    select(row_id,gear_name)%>%
+    left_join(calipseo_cl_ref_gears%>%select(ID,NAME)%>%group_by(NAME)%>%
+                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
+                ungroup()%>%
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("gear_name"="NAME"))%>%
+    rowwise()%>%
+    mutate(
+      validation = case_when(
+        is.na(gear_name) ~ 
+          list(list(
+            type="ERROR",
+            category="Missing mandatory value",
+            message="Required value"
+          )),
+        !is.na(gear_name) & (!is.character(gear_name)) ~ 
+          list(list(
+            type="ERROR",
+            category="Invalid format",
+            message=sprintf("Value '%s' is not a valid format",gear_name)
+          )),
+        !is.na(gear_name) & is.na(ID) ~ 
+          list(list(
+            type="ERROR",
+            category="No match with reference table",
+            message=sprintf("Value '%s' not found in reference table '%s'",gear_name,"cl_ref_gears")
+          )),
+        !is.na(gear_name) & !is.na(ID) & DUPLICATE ~ 
+          list(list(
+            type="ERROR",
+            category="Multiple match with reference table",
+            message=sprintf("Value'%s' return multiple ID (%s) in '%s'",gear_name,ID,"cl_ref_gears")
+          )),
+        TRUE ~ 
+          list(list(
+            type="VALID",
+            category=NA_character_,
+            message=NA_character_
+          ))
+      )
+    )%>%
+    ungroup() %>%
+    unnest_wider(validation)%>%
+    mutate(column="gear_name")%>%
     select(row_id,column,type,category,message)%>%
     rename(row=row_id)
 }
@@ -1417,9 +1471,9 @@ validate_survey_type<-function(data,monitor){
       validation = case_when(
         is.na(survey_type) ~ 
           list(list(
-            type="ERROR",
-            category="Missing mandatory value",
-            message="Required value"
+            type="WARNING",
+            category="Missing value",
+            message="Survey type not deducted due to invalid registration_nr format"
           )),
         !is.na(survey_type) & (!is.character(survey_type)) ~ 
           list(list(
@@ -1564,6 +1618,7 @@ validation_functions <- list(
   vessel_registration_nr = validate_vessel_registration,
   survey_type = validate_survey_type,
   fishing_unit_name = validate_fishing_unit_name,
+  gear_name = validate_gear_name,
   fishing_zone_name = validate_fishing_zone_name,
   departure_date = validate_departure_date,
   arrival_date = validate_arrival_date,
@@ -1714,7 +1769,8 @@ referentials <- bind_rows(
   validate_referential(data, "currency_catch_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
   validate_referential(data, "currency_food_cost", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
   validate_referential(data, "currency_fuel_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
-  validate_referential(data, "currency_ice_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor)
+  validate_referential(data, "currency_ice_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
+  validate_referential(data, "gear_name", calipseo_cl_ref_gears, "NAME", "ID", "cl_ref_gears",monitor = monitor)
 )%>%
   distinct()
 
@@ -1738,18 +1794,57 @@ referentials <- bind_rows(
   
 
 data_sql<-c()
-
+message=NULL
 if(nrow(subset(referentials,type=="ERROR"))>0|nrow(subset(errors,type=="ERROR"))>0){
   print("Not Valid")
   valid<-FALSE
+  message<-"Your data file is not valid."
 }else{
   print("Valid")
   valid<-TRUE
+  message<-"Your data file is valid.\n\nThe SQL script will insert the following entries:\n\n"
 }
 
 if(valid){
 #Generate SQL
 
+  data_effort<-data%>%
+    select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
+    distinct()%>%
+    select(arrival_date,survey_type,boat_activity_days,landing_site_name,fishing_unit_name)%>%
+    filter(!is.na(survey_type))%>%
+    rowwise()%>%
+    mutate(year=year(arrival_date),
+           month=month(arrival_date),
+           day=day(arrival_date),
+           survey_type=mapping_table(survey_type,"cl_stat_effort_survey_types","CODE"),
+           landing_site_name=mapping_table(landing_site_name,"cl_fish_landing_sites","NAME",exact = F),
+           fishing_unit_name=mapping_table(fishing_unit_name,"cl_fish_fishing_units","NAME"),
+           boat_activity_days=as.numeric(boat_activity_days)
+    )%>%
+    group_by(year,month,day,survey_type,landing_site_name,fishing_unit_name)%>%
+    summarise(boat_activity_days=sum(boat_activity_days,na.rm=T))%>%
+    ungroup()
+  
+for(i in 1:nrow(data_effort)){
+  
+  target_row<-data_effort[i,]
+  
+  new_dt_effort_survey$ADD_ENTRY(
+    YEAR=target_row$year,  
+    CL_APP_MONTH_ID=target_row$month,
+    DAYS=target_row$day,                         
+    CL_STAT_EFFORT_SURVEY_TYPE_ID=target_row$survey_type, 
+    CL_FISH_LANDING_SITE_ID=target_row$landing_site_name,
+    CL_FISH_FISHING_UNIT_ID=target_row$fishing_unit_name,       
+    NB_DAYS_SAMPLED=target_row$boat_activity_days,               
+    UPDATER_ID=updater,                   
+    COMMENT=comment,                       
+    CREATED_AT=now,                    
+    UPDATED_AT=now                   
+  )
+}
+  
 for(trip in unique(data$identifier)){
 
 print(trip)
@@ -1758,7 +1853,7 @@ data_target<-data%>%
 
 print("data_trip")
 data_trip<-data_target%>%
-  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
+  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,gear_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
   distinct()%>%
   rowwise()%>%
   mutate(recorder_name=mapping_table(recorder_name,"custom_reg_entity_individuals","FULL_NAME","REG_ENTITY_ID",exact=F),
@@ -1766,6 +1861,7 @@ data_trip<-data_target%>%
          survey_type=mapping_table(survey_type,"cl_stat_effort_survey_types","CODE"),
          vessel_registration_nr=mapping_table(vessel_registration_nr,"reg_vessels","REGISTRATION_NUMBER"),
          fishing_unit_name=mapping_table(fishing_unit_name,"cl_fish_fishing_units","NAME"),
+         gear_name=mapping_table(gear_name,"cl_ref_gears","NAME"),
          landing_site_name=mapping_table(landing_site_name,"cl_fish_landing_sites","NAME",exact = F),
          departure_site_name=mapping_table(departure_site_name,"cl_fish_landing_sites","NAME",exact = F),
          fishing_zone_name=mapping_table(fishing_zone_name,"cl_fish_fishing_zones","NAME",exact = F),
@@ -1775,7 +1871,6 @@ data_trip<-data_target%>%
          )%>%
   ungroup()
 
-print("data_trip")
 data_species<-data_target%>%
   select(species_code,landed_weight_kg,catch_price,fish_product_code,currency_catch_price)%>%
   rowwise()%>%
@@ -1786,7 +1881,6 @@ data_species<-data_target%>%
          )%>%
   ungroup()
 
-print("new_dt_fishing_trip")
 new_dt_fishing_trip$ADD_ENTRY(
     REG_VESSEL_ID=data_trip$vessel_registration_nr ,                           
     CL_FISH_FISHING_UNIT_ID=data_trip$fishing_unit_name,                 
@@ -1821,7 +1915,6 @@ new_dt_fishing_trip$ADD_ENTRY(
     COMMENT=comment
 )
 
-print("new_dt_fishing_activities")
 new_dt_fishing_activities$ADD_ENTRY(
 DT_FISHING_TRIP_ID =new_dt_fishing_trip$MAX_INDEX(),
 CL_FISH_FISHING_ACTIVITY_TYPE_ID=mapping_table("LANDING","cl_fish_fishing_activities_types","CODE"),
@@ -1833,40 +1926,23 @@ CREATED_AT=now,
 UPDATED_AT=now 
 )
 
-# new_dt_fishing_activities_gear$ADD_ENTRY(
-# DT_FISHING_ACTIVITY_ID=new_dt_fishing_activities$MAX_INDEX()[1,],  
-# CL_REF_GEAR_ID   ="null",      
-# CL_APP_GEAR_ROLE_ID ="1" ,  
-# UPDATER_ID=updater,  
-# CREATED_AT=now,  
-# UPDATED_AT=now  
-# )
-
-print("new_dt_effort_survey")
-new_dt_effort_survey$ADD_ENTRY(
-  YEAR=year(data_trip$arrival_date),                          
-  DAYS=day(data_trip$arrival_date),                         
-  CL_STAT_EFFORT_SURVEY_TYPE_ID=data_trip$survey_type, 
-  CL_FISH_LANDING_SITE_ID=data_trip$landing_site_name,
-  CL_FISH_FISHING_UNIT_ID=data_trip$fishing_unit_name,       
-  NB_DAYS_SAMPLED=data_trip$boat_activity_days,               
-  CL_APP_MONTH_ID=month(data_trip$arrival_date),             
-  UPDATER_ID=updater,                   
-  COMMENT=comment,                       
-  CREATED_AT=now,                    
-  UPDATED_AT=now                   
+new_dt_fishing_activities_gear$ADD_ENTRY(
+DT_FISHING_ACTIVITY_ID=new_dt_fishing_activities$MAX_INDEX(),
+CL_REF_GEAR_ID   =data_trip$gear_name,
+CL_APP_GEAR_ROLE_ID ="1" ,
+UPDATER_ID=updater,
+CREATED_AT=now,
+UPDATED_AT=now
 )
 
 for (i in 1:nrow(data_species)){
 
-print(i)  
   target_row<-data_species[i,]
 
-print("new_dt_fishing_activities_species")
 new_dt_fishing_activities_species$ADD_ENTRY(
   DT_FISHING_ACTIVITY_ID =new_dt_fishing_activities$MAX_INDEX(),                           
   CL_REF_SPECIES_ID=target_row$species_code,                    
-  #DT_FISHING_ACTIVITY_GEAR_ID=new_dt_fishing_activities_gear$MAX_INDEX()[1,],                     
+  DT_FISHING_ACTIVITY_GEAR_ID=new_dt_fishing_activities_gear$MAX_INDEX(),                     
   QUANTITY=target_row$landed_weight_kg,                  
   CL_APP_QUANTITY_UNIT_ID=mapping_table("Kilogram","cl_app_quantity_units"),                         
   PRICE_PER_UNIT_CATCH=target_row$catch_price,                            
@@ -1883,18 +1959,24 @@ new_dt_fishing_activities_species$ADD_ENTRY(
 
 }
 
-  print("fini")
 execute_statement=FALSE
   
 data_sql<-new_dt_fishing_trip$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
 data_sql<-new_dt_fishing_activities$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
-#data_sql<-new_dt_fishing_activities_gear$INSERT_STATEMENT(file=insert_sql, execute=execute_statement)
+data_sql<-new_dt_fishing_activities_gear$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
 data_sql<-new_dt_fishing_activities_species$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
 
 data_sql<-new_dt_effort_survey$INSERT_STATEMENT(file=data_sql, execute=execute_statement)
+
+message<-paste0(message, sprintf("- **\" %s\"** entries into table \"%s\"\n", nrow(new_dt_fishing_trip$VIEW_ENTRIES()),"dt_fishing_trip"))
+message<-paste0(message, sprintf("- **\" %s\"** entries into table \"%s\"\n", nrow(new_dt_fishing_activities$VIEW_ENTRIES()),"dt_fishing_actvities"))
+message<-paste0(message, sprintf("- **\" %s\"** entries into table \"%s\"\n", nrow(new_dt_fishing_activities_gear$VIEW_ENTRIES()),"dt_fishing_activities_gear"))
+message<-paste0(message, sprintf("- **\" %s\"** entries into table \"%s\"\n", nrow(new_dt_fishing_activities_species$VIEW_ENTRIES()),"dt_fishing_activities_species"))
+message<-paste0(message, sprintf("- **\" %s\"** entries into table \"%s\"\n", nrow(new_dt_effort_survey$VIEW_ENTRIES()),"dt_effort_survey"))
+
 
 }
 
@@ -1903,6 +1985,7 @@ return(list(
   result = data_sql,
   referentials = referentials,
   errors = errors,
-  valid = valid
+  valid = valid,
+  message = message
 ))
 }
