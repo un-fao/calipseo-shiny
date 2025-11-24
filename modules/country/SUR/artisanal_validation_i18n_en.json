@@ -33,6 +33,13 @@
   
   "LOGBOOK_VALIDATION_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
   
+  "MODAL_NO_EXCEL" : "Invalid file",
+  "MODAL_NO_EXCEL_MESSAGE" :"The uploaded file is not an Excel (.xlsx or .xls).",
+  "MODAL_NO_SHEET" : "Missing sheet",
+  "MODAL_NO_SHEET_MESSAGE" : "The Excel file does not contain the sheet 'catch data'.\n Sheets found: ",
+  "MODAL_NO_COLUMN" : "Missing columns",
+  "MODAL_NO_COLUMN_MESSAGE" : "The following required columns are missing:",
+  
   /*sql file*/
   
   "GENERATE_SQL_FILE" : "Generate SQL file",

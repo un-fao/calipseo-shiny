@@ -15,6 +15,26 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
       message=NULL
     )
     
+    required_cols <- c(
+      "identifier", "_validation_status", "recorder_name",
+      "recording_date", "landing_site_name", "arrival_district",
+      "vessel_registration_nr", "vessel_name", "fishing_unit_name",
+      "gear_name", "fyke_type", "trip_nr",
+      "departure_date", "arrival_date", "trip_type",
+      "trip_duration_days", "time_spent_fishing", "unit_time_spent_fishing",
+      "time_spent_fishing_days", "boat_activity_days", "species_code",
+      "species_name_local", "species_name_english", "species_name_scientific",
+      "processing_name", "fish_product_code", "landed_weight",
+      "unit_landed_weight", "landed_weight_kg", "catch_price",
+      "currency_catch_price", "nr_fishers", "food_cost",
+      "currency_food_cost", "fuel_consumed", "unit_volume_fuel_consumed",
+      "fuel_consumed_liter", "fuel_type", "fuel_price",
+      "currency_fuel_price", "unit_volume_fuel_price", "ice_bought",
+      "unit_volume_ice_bought", "ice_bought_m3", "ice_price",
+      "currency_ice_price", "unit_volume_ice_price", "departure_site_name",
+      "departure_district", "fishing_zone_name", "notes"
+    )
+    
     go_visualisation<-reactiveVal(FALSE)
     
     #File input
@@ -42,6 +62,54 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
       shinyjs::disable(ns("check_validity"))
       file<-input$file_to_validate
       print(file$name)
+      
+      ext <- tools::file_ext(file$name)
+      
+      if (!tolower(ext) %in% c("xlsx", "xls")) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_EXCEL"),
+          i18n("MODAL_NO_EXCEL_MESSAGE"),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
+      
+      sheets <- excel_sheets(file$datapath)
+      
+      if (!"catch data" %in% sheets) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_SHEET"),
+          paste0(
+            i18n("MODAL_NO_SHEET_MESSAGE"),
+            paste(sheets, collapse = ", ")
+          ),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
+      
+      
+      df_header <- read_excel(file$datapath, sheet = "catch data",n_max=0)
+      
+      missing_cols <- setdiff(required_cols, names(df_header))
+      
+      if (length(missing_cols) > 0) {
+        
+        showModal(modalDialog(
+          title = i18n("MODAL_NO_COLUMN"),
+          tagList(
+            i18n("MODAL_NO_COLUMN_MESSAGE"),
+            tags$ul(lapply(missing_cols, tags$li))
+          ),
+          easyClose = TRUE
+        ))
+        
+        return(NULL)
+      }
 
        outt<-shiny::withProgress(
          value = 0,
