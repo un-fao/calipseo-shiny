@@ -64,7 +64,7 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
       shinyjs::enable(ns("check_validity"))
     })
       
-    Dispay validity test results
+    #Display validity test results
     observeEvent(go_visualisation(),{
       req(isTRUE(go_visualisation()))
       req(!is.null(out$valid))
