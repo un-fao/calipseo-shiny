@@ -22,53 +22,51 @@ getProcessOutputs <- function(config, id, year, quarter = NULL, month = NULL, ta
 }
 
 #getStatPeriods
-getStatPeriods <- function(config, id,target = c("release", "staging", "release+staging")){
+getStatPeriods <- function(config, id, target = c("release", "staging", "release+staging")) {
   
-  target = match.arg(target)
-  
-  out <- data.frame(
-    year = integer(0),
-    quarter = integer(0),
-    month = integer(0),
-    file = integer(0)
-  )
+  target <- match.arg(target)
   
   if(target == "release+staging"){
-    out <- rbind(
+    return(rbind(
       getStatPeriods(config, id, target = "release"),
       getStatPeriods(config, id, target = "staging")
+    ))
+  }
+  
+  target_folder <- sprintf("%s/%s/%s", config$store, target, id)
+  files <- list.files(target_folder, recursive = TRUE, full.names = TRUE)
+  files <- files[regexpr("archive", files) < 0]
+  
+  if (length(files) == 0)
+    return(data.frame())
+  
+  rel_paths <- sub(paste0("^", target_folder, "/"), "", files)
+  parts <- strsplit(rel_paths, "/")
+  
+  years <- sapply(parts, function(p) p[1])
+  
+  second <- sapply(parts, function(p) if (length(p) >= 2) p[2] else NA)
+  
+  by_quarter <- any(!is.na(second) & startsWith(second, "Q"))
+  by_month   <- any(!is.na(second) & startsWith(second, "M"))
+  
+  if (by_quarter) {
+    out <- data.frame(
+      year = years,
+      quarter = ifelse(startsWith(second, "Q"), second, NA),
+      file = files
     )
-  }else{
-    
-    target_folder <- sprintf("%s/%s/%s",config$store,target, id)
-    files <- list.files(target_folder,recursive = T, full.names = T)
-    files <- files[regexpr("archive", files) < 0]
-    
-    if(length(files)>0){
-      x <- strsplit(files,paste0(target_folder, "/"))[[1]][2]
-      x <- strsplit(x, "/")
-      years<-unlist(lapply(x, function(l) l[[1]]))
-      
-      by_year<-2%in%unique(unlist(lapply(x, function(l) length(l))))
-      
-      if(by_year){
-        out <- data.frame(year = years,file = files)
-      }else{
-        
-        month_quarter<-unlist(lapply(x, function(l) l[[2]]))
-        
-        by_quarter = any(sapply(month_quarter, startsWith, "Q"))
-        by_month = any(sapply(month_quarter, startsWith, "M"))
-        
-        if(by_quarter){
-          out <- data.frame(year = years, quarter = month_quarter, file = files)
-        }
-        if(by_month){
-          out <- data.frame(year = years, month = month_quarter, file = files)
-        }
-        
-      }
-    }
+  } else if (by_month) {
+    out <- data.frame(
+      year = years,
+      month = ifelse(startsWith(second, "M"), second, NA),
+      file = files
+    )
+  } else {
+    out <- data.frame(
+      year = years,
+      file = files
+    )
   }
   
   return(out)
