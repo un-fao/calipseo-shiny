@@ -248,7 +248,12 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
           filename = function(){
             paste0(strsplit(input$file_to_validate$name,".xlsx")[[1]],"_report.xlsx")  },
           content = function(file){
+            waiter::waiter_show(
+              html = waiter::spin_fading_circles(),
+              color = "rgba(0, 0, 0, 0.4)"
+            )
             reportArtisanalFile(out$data,out$errors,out$referentials,file)
+            waiter::waiter_hide()
           }
         )
         

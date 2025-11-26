@@ -21,7 +21,7 @@ summary_table <- errors %>%
   filter(!is.na(column)) %>%
   mutate(type = factor(type, levels = type_levels, ordered = TRUE)) %>%
   group_by(row, column) %>%
-  slice_min(order_by = type, n = 1) %>%  # prendre type le plus sévère
+  slice_min(order_by = type, n = 1) %>%  
   ungroup() %>%
   group_by(column, type) %>%
   summarise(n = n_distinct(row), .groups = "drop") %>%
@@ -44,13 +44,13 @@ if (!is.null(referentials) && nrow(referentials) > 0) {
 wb <- createWorkbook()
 addWorksheet(wb, "Data")
 
-style_error <- createStyle(bgFill = "#F08080")     # rouge clair
-style_warning <- createStyle(bgFill = "#FFD700")   # jaune
-style_valid <- createStyle(bgFill = "#90EE90")     # vert clair
+style_error <- createStyle(bgFill = "#F08080")     
+style_warning <- createStyle(bgFill = "#FFD700")  
+style_valid <- createStyle(bgFill = "#90EE90")     
 
 writeData(wb, "Data", data)
 
-# # Appliquer les couleurs et commentaires
+# 
 # for (i in seq_len(nrow(validation_agg))) {
 #   print(i)
 #   row_num <- validation_agg$row[i] + 1
