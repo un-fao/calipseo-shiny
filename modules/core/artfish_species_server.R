@@ -252,6 +252,18 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
         
   })
   
+  observeEvent(data_sp(), {
+    req(data_sp())
+    
+    sel <- data_sp()
+    
+    if(is.null(input$bg) || as.integer(input$bg) == 0){
+      data_sp_bg(sel)
+    } else {
+      data_sp_bg(subset(sel, fishing_unit == input$bg))
+    }
+  })
+  
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-species: END")
   DEBUG_MODULE_PROCESSING_TIME("Artfish-species", MODULE_START_TIME, MODULE_END_TIME)
