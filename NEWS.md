@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.0.2.9001](https://github.com/un-fao/calipseo-shiny) - 2025-11-18**
+# **calipseo-shiny [v2.0.2.9001](https://github.com/un-fao/calipseo-shiny) - 2025-11-28**
 
 # Corrections
 
@@ -8,6 +8,10 @@
 
 - [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
 - [#311](https://github.com/un-fao/calipseo-shiny/issues/311) Upgrade to latest [artfishr](https://github.com/fdiwg/artfishr) R package
+
+# New features
+**Module new features**
+- [#243](https://github.com/un-fao/calipseo-shiny/issues/243) Add artisanal data validation module specific to SUR
 
 # **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny) - 2025-11-13**
 

@@ -1,14 +1,12 @@
 #artisanal_validation_ui
 artisanal_validation_ui <- function(id){
   
-  # ui_load_count <<- ui_load_count + 1
-  # print(sprintf("UI loaded %s time(s)", ui_load_count))
-  
   ns <- NS(id)
   
   tabItem(
     tabName = "artisanal_validation",
     useShinyjs(),
+    waiter::use_waiter(), 
      tags$head(
        tags$style(
          HTML(".shiny-notification {
