@@ -140,7 +140,8 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
         output$validity_result<-renderUI({
           req(!is.null(out$errors)&!is.null(out$referentials))
           fluidRow(
-            bs4Dash::box(width=6,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
+            column(6,
+            bs4Dash::box(width=12,title=paste0(i18n("REFERENTIAL_UPDATE_LABEL")," :"),
                 if(nrow(out$referentials)>0){
                   tagList(
                     p(sprintf(paste0(i18n("NUMBER_REFERENTIAL_INSPECT")," : %s"),nrow(subset(out$referentials,type=="duplicate"))),style = "color:orange"),
@@ -150,8 +151,10 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
                 }else{
                   p(i18n("NUMBER_REFERENTIAL_UPTODATE"),style = "color:green")
                 }
+            )
             ),
-            bs4Dash::box(width=6,title=paste0(i18n("ERROR_IN_DATA_TITLE")," :"),
+            column(6,
+            bs4Dash::box(width=12,title=paste0(i18n("ERROR_IN_DATA_TITLE")," :"),
                 if(nrow(out$errors)>0){
                   tagList(
                     p(sprintf(paste0(i18n("NUMBER_NON_BLOCKING_ISSUES")," : %s"),nrow(subset(out$errors,type=="WARNING"))),style = "color:orange"),
@@ -161,6 +164,7 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
                 }else{
                   p(i18n("NO_ISSUES_DETECTED"),style = "color:green")
                 }
+            )
             )
           )
 
@@ -237,27 +241,50 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
           }
         )
         
-        #Generate error report
-        output$generate_report_btn<-renderUI({
+        #Download Report
+        output$generate_report_btn <- renderUI({
           req(isTRUE(go_visualisation()))
-            downloadButton(ns("generate_report"),i18n("GENERATE_REPORT_FILE"))
+          actionButton(ns("generate_report_btn_click"), i18n("GENERATE_REPORT_FILE"))
         })
         
-        #Download error report
-        output$generate_report <- downloadHandler(
-          filename = function(){
-            paste0(strsplit(input$file_to_validate$name,".xlsx")[[1]],"_report.xlsx")  },
-          content = function(file){
+        observeEvent(input$generate_report_btn_click, {
+          showModal(modalDialog(
+            title = i18n("MODAL_OPTION_TITLE"),
+            checkboxInput(ns("opt_add_comments"),
+                          i18n("MODAL_OPTION_CHECK"), 
+                          value = FALSE),
+            tags$small(i18n("MODAL_OPTION_TEXT")),
+            footer = tagList(
+              modalButton("Cancel"),
+              downloadButton(ns("download_report"), i18n("MODAL_OPTION_GENERATE"))
+            )
+          ))
+        })
+        
+        output$download_report <- downloadHandler(
+          filename = function() {
+            paste0(strsplit(input$file_to_validate$name, ".xlsx")[[1]], "_report.xlsx")
+          },
+          content = function(file) {
             waiter::waiter_show(
               html = waiter::spin_fading_circles(),
               color = "rgba(0, 0, 0, 0.4)"
             )
-            reportArtisanalFile(out$data,out$errors,out$referentials,file)
+            
+            reportArtisanalFile(
+              data = out$data,
+              errors = out$errors,
+              referentials = out$referentials,
+              path = file,
+              add_cell_comments = input$opt_add_comments
+            )
+            
             waiter::waiter_hide()
+            removeModal() 
           }
         )
         
-        #Dispay SQL content summary
+        #Dislpay SQL content summary
         showModal(
           modalDialog(
             title = i18n("DATA_STATUS"),

@@ -26,52 +26,57 @@ if (!is.null(referentials) && nrow(referentials) > 0) {
     arrange(table)
 }
 
-
 wb <- createWorkbook()
 addWorksheet(wb, "Data")
 
-style_error <- createStyle(bgFill = "#F08080")     
-style_warning <- createStyle(bgFill = "#FFD700")  
-style_valid <- createStyle(bgFill = "#90EE90")     
+style_error   <- createStyle(fgFill = "#F08080")
+style_warning <- createStyle(fgFill = "#FFD700")
+style_valid   <- createStyle(fgFill = "#90EE90")   
 
-writeData(wb, "Data", data)
-
-if(add_cell_comments){
-  addWorksheet(wb, "Error report")
+if (add_cell_comments) {
+  writeData(wb, "Data", data)
   
-validation_agg <- errors %>%
-  filter(!is.na(column)) %>%
-  group_by(row, column) %>%
-  summarise(
-    type = factor(type, levels = type_levels, ordered = TRUE) %>% min() %>% as.character(),
-    message = paste0(sprintf("[%s] %s: %s", type, category, message), collapse = "\n"),
-    .groups = "drop"
-  )
-
-  validation_agg <- validation_agg %>% filter(type != "VALID")
-
-for (i in seq_len(nrow(validation_agg))) {
-  print(i)
-  row_num <- validation_agg$row[i] + 1
-  col_num <- which(names(data) == validation_agg$column[i])
-  style <- switch(validation_agg$type[i],
-                  "ERROR" = style_error,
-                  "WARNING" = style_warning,
-                  "VALID" = style_valid)
-
-  addStyle(wb, "Error report", style, rows = row_num, cols = col_num, stack = TRUE)
-
-  if (validation_agg$type[i] != "VALID") {
-    com <- createComment(validation_agg$message[i], author = "Validation")
-    writeComment(wb, "Error report", col = col_num, row = row_num, comment = com)
+  validation_agg <- errors %>%
+    filter(!is.na(column)) %>%
+    group_by(row, column) %>%
+    summarise(
+      type = factor(type, levels = type_levels, ordered = TRUE) %>% min() %>% as.character(),
+      message = paste0(sprintf("[%s] %s: %s", type, category, message), collapse = "\n"),
+      .groups = "drop"
+    ) %>%
+    filter(type != "VALID")
+  
+  if (nrow(validation_agg) > 0) {
+    
+    validation_agg <- validation_agg %>%
+      mutate(col_num = sapply(column, function(col) {
+        idx <- which(names(data) == col)
+        if (length(idx) == 1) idx else NA_integer_
+      })) %>%
+      filter(!is.na(col_num))
+    
+    for (t in c("ERROR", "WARNING")) {
+      rows <- validation_agg$row[validation_agg$type == t] + 1
+      cols <- validation_agg$col_num[validation_agg$type == t]
+      if (length(rows) > 0) {
+        addStyle(wb, "Data",
+                 style = if (t == "ERROR") style_error else style_warning,
+                 rows = rows, cols = cols, gridExpand = FALSE, stack = TRUE)
+      }
+    }
+    
+    for (i in seq_len(nrow(validation_agg))) {
+      com <- createComment(validation_agg$message[i], author = "Validation")
+      writeComment(wb, "Data", col = validation_agg$col_num[i], row = validation_agg$row[i] + 1, comment = com)
+    }
   }
+} else {
+  writeData(wb, "Data", data)
 }
-}else{
-# Errors only
+
 addWorksheet(wb, "Error report")
 error_report <- errors %>% filter(type != "VALID")
 writeData(wb, "Error report", error_report)
-}
 
 # Summary
 addWorksheet(wb, "Summary")
