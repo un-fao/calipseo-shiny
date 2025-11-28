@@ -80,7 +80,8 @@ writeData(wb, "Error report", error_report)
 
 style_error   <- createStyle(bgFill = "#F08080")
 style_warning <- createStyle(bgFill = "#FFD700")
-style_valid   <- createStyle(bgFill = "#90EE90")  
+style_valid   <- createStyle(bgFill = "#90EE90") 
+
 # Summary
 addWorksheet(wb, "Summary")
 writeData(wb, "Summary", summary_table)
