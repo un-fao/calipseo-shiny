@@ -4,6 +4,7 @@
 
 - [#303](https://github.com/un-fao/calipseo-shiny/issues/303) Deactivated modules break the sidebar menu UI with `bs4Dash`
 - [#316](https://github.com/un-fao/calipseo-shiny/issues/316) Fix getStatPeriods blocking Artfish Montly Reports module
+- [#317](https://github.com/un-fao/calipseo-shiny/issues/317) Fix reactivity of plots in Artfish By Species Module
 
 # Enhancements
 
