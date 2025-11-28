@@ -4,12 +4,13 @@ data <- readxl::read_excel(if(is.character(filename)){filename}else{filename$dat
 
 if(!is.null(monitor))monitor(0.1,"Loading of calipseo model")
 calipseo<-calipseoManagerR::CalipseoModelManager$new(pool)
+calipseo$setLocalTimezone("America/Paramaribo")
 
 #Global setting
 updater="11"
 comment=""
-now<-as.character(format(Sys.time(), format = "%Y-%m-%d %H:%M:%S"))
-
+now<-as.POSIXct(Sys.time())
+attr(now, "tzone") <- "America/Paramaribo"
 
 errors<-data.frame(
   row=integer(),
