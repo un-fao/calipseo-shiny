@@ -27,8 +27,6 @@ artisanal_validation_ui <- function(id){
       column(1,style = "margin-top: 25px;", uiOutput(ns("generate_SQL_btn"))),
       column(1,style = "margin-top: 25px;", uiOutput(ns("generate_report_btn")))
     ),
-    fluidRow(
       uiOutput(ns("validity_result"))
-    )
   )
 }

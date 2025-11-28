@@ -39,6 +39,10 @@
   "MODAL_NO_SHEET_MESSAGE" : "The Excel file does not contain the sheet 'catch data'.\n Sheets found: ",
   "MODAL_NO_COLUMN" : "Missing columns",
   "MODAL_NO_COLUMN_MESSAGE" : "The following required columns are missing:",
+  "MODAL_OPTION_TITLE" : "Report options",
+  "MODAL_OPTION_CHECK" : "Add cell-level highlights & comments (slower)",
+  "MODAL_OPTION_TEXT" : "This may significantly increase processing time for large files.",
+  "MODAL_OPTION_GENERATE" : "Generate report",
   
   /*sql file*/
   
