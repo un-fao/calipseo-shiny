@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny) - 2025-01-12**
+# **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny) - 2025-12-01**
 
 # Corrections
 
