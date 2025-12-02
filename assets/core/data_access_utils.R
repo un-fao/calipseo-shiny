@@ -623,6 +623,14 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
   return(fa)
 }
 
+#<MODULE:OBSERVER_OVERVIEW>
+#accessObserverReportSummaryFromDB
+accessObserverReportsSummaryFromDB <- function(con){
+  query_sql <- readSQLScript("data/core/sql/observer_reports_summary.sql")
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
 #accessFishingTripsFromDB
@@ -852,6 +860,9 @@ accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessAr
 accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 
+#<MODULE:OBSERVER_OVERVIEW>
+accessObserverReportSummary <- function(con){ accessObserverReportsSummaryFromDB(con)}
+
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
 accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL) { accessFishingTripsFromDB(con,vessel_stat_type,vesselId) }
@@ -874,4 +885,5 @@ accessEffortSurvey <- function(con){ accessEffortSurveyFromDB(con) }
 
 #-> GFCM/Task III 
 accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){ accessTripDetailByFleetSegmentFromDB(con,year=year,month=month) }
+
 
