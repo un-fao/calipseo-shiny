@@ -5503,7 +5503,7 @@
       "RemoteUsername": "abennici",
       "RemoteRepo": "calipseoManagerR",
       "RemoteRef": "main",
-      "RemoteSha": "df634374445fb23b4af5c9d0ca1e055dacbabc86",
+      "RemoteSha": "7a986581adf842d30930b784c37c3f9aa71ad22d",
       "Requirements": [
         "DBI",
         "R6",
@@ -5512,7 +5512,7 @@
         "pool",
         "readr"
       ],
-      "Hash": "a6c2b0f18e89c6ebaab41d7e43d246fe"
+      "Hash": "258a185e4d501fba6a49a0290d65c35f"
     }
   }
 }
