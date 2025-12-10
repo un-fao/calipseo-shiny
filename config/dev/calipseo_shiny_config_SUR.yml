@@ -23,6 +23,8 @@ structure:
         title: Individual dashboard
     logbooks:
         title: Logbooks dashboard
+    artisanal:
+        title: Artisanal dashboard
     
 modules:
     vessel_list:
