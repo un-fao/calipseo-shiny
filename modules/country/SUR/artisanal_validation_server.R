@@ -39,7 +39,7 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
     
     #File input
     output$file_input_wrapper<-renderUI({
-      fileInput(inputId = ns("file_to_validate"), label = paste0(i18n("LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))
+      fileInput(inputId = ns("file_to_validate"), label = paste0(i18n("ARTISANAL_VALIDATION_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))
     })
     
     #Run validity test
