@@ -626,10 +626,21 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
 #<MODULE:OBSERVER_OVERVIEW>
 #accessObserverReportSummaryFromDB
 accessObserverReportsSummaryFromDB <- function(con){
-  query_sql <- readSQLScript("data/core/sql/observer_reports_summary.sql")
+  query_sql <- readSQL("data/core/sql/observer_reports_summary.sql")
   query <- suppressWarnings(dbGetQuery(con, query_sql))
   return(query)
 } 
+
+#accessFishingTripsCatchFromDB
+accessFishingTripsCatchFromDB <- function(con,trip_type = NULL){
+  fa_sql <- readSQL("data/core/sql/fishing_trips_catch.sql",language = appConfig$language)
+  if(!is.null(trip_type)){
+    fa_sql <- paste0(fa_sql, " WHERE ft.CL_FISH_FISHING_TRIP_TYPE_ID = ", trip_type)
+  }
+  fa_sql <- paste0(fa_sql, " GROUP BY ft.ID, ft.CL_FISH_FISHING_TRIP_TYPE_ID, ft.DATE_FROM, ft.DATE_TO ORDER BY ft.DATE_FROM;")
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
 
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
@@ -861,8 +872,8 @@ accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ ac
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 
 #<MODULE:OBSERVER_OVERVIEW>
-accessObserverReportSummary <- function(con){ accessObserverReportsSummaryFromDB(con)}
-
+accessObserverReportsSummary <- function(con){ accessObserverReportsSummaryFromDB(con)}
+accessFishingTripsCatch <- function(con,trip_type = NULL){accessFishingTripsCatchFromDB(con,trip_type=trip_type)}
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
 accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL) { accessFishingTripsFromDB(con,vessel_stat_type,vesselId) }
