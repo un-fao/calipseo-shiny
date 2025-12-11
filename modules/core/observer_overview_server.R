@@ -217,7 +217,7 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
         ),
         bs4InfoBox(
           title = "Observed Days",
-          value = merged_tbl$all[merged_tbl$variable == "total_obs_days"],
+          value = round(as.numeric(merged_tbl$all[merged_tbl$variable == "total_obs_days"]),0),
           subtitle = merged_tbl$display_text[merged_tbl$variable == "total_obs_days"],
           icon = icon("clock"),
           color = "warning",
@@ -238,7 +238,7 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
       fluidRow(
         bs4InfoBox(
           title = "Total Catch Observed",
-          value = merged_tbl$all[merged_tbl$variable == "total_catch"],
+          value = round(as.numeric(merged_tbl$all[merged_tbl$variable == "total_catch"]),0),
           subtitle = merged_tbl$display_text[merged_tbl$variable == "total_catch"],
           icon = icon("clipboard-list"),
           color = "info",
@@ -254,7 +254,7 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
         ),
         bs4InfoBox(
           title = "Average Catch Observed",
-          value = merged_tbl$all[merged_tbl$variable == "average_catch"],
+          value = round(as.numeric(merged_tbl$all[merged_tbl$variable == "average_catch"]),0),
           subtitle = merged_tbl$display_text[merged_tbl$variable == "average_catch"],
           icon = icon("clipboard-list"),
           color = "info",
@@ -273,51 +273,48 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
     
       req(reports_info)
       summary_report<-reports_info
-    
-    output$reports_summary <- renderDT(
-      summary_report,
-      container = initDTContainer(summary_report),
-      server = FALSE,
-      escape = FALSE,
-      rownames = FALSE,
-      extensions = c("Buttons"),
-      filter = list(position = 'top', clear = FALSE),
-      
-      options = list(
-        autoWidth = FALSE,
-        dom = 'Bfrtip',
-        deferRender = TRUE,
-        scroll = FALSE,
-        buttons = list(
-          list(extend = 'copy'),
-          list(extend = 'csv', filename = i18n("SUMMARY") , title = NULL, header = TRUE),
-          list(extend = 'excel', filename =  i18n("SUMMARY"), title = NULL, header = TRUE),
-          list(extend = "pdf", title = i18n("SUMMARY"), header = TRUE, orientation = "landscape")
-        ),
-        exportOptions = list(
-          modifiers = list(page = "all", selected = TRUE)
-        ),
-        language = list(url = i18n("TABLE_LANGUAGE")),
-        pageLength = 10,
-        initComplete = js
-      )
-    )
+
     
     output$timeplot <- renderUI({
       req(reports_info)
-      time_table<-subset(reports_info,!is.na(OBSERVATION_PERIOD_START)&!is.na(OBSERVATION_PERIOD_END))
       
-      if(nrow(time_table)>0){
-        time_table<-time_table%>%
-          mutate(year=year(OBSERVATION_PERIOD_END))%>%
-          group_by(year)%>%
-          summarise(n=length(ID))%>%
-          ungroup()
-        
-        #TEST barplot when data available
-      }else{
-      div(paste0("(",i18n("PLOT_NODATE_DISCLAMER"),")"))
+      time_table <- subset(reports_info, !is.na(observation_start) & !is.na(observation_end))
+      
+      if (nrow(time_table) > 0) {
+        plotlyOutput(ns("timeplot_plot"), width = "100%", height = "350px")
+      } else {
+        div(paste0("(", i18n("PLOT_NODATE_DISCLAMER"), ")"))
       }
-    })    
+    })
+    
+    output$timeplot_plot <- renderPlotly({
+      req(reports_info)
+      
+      time_table <- reports_info %>%
+        filter(!is.na(observation_start), !is.na(observation_end)) %>%
+        mutate(year = as.character(year(observation_end))) %>%
+        group_by(year) %>%
+        summarise(n = n(), .groups = "drop")
+      
+      plot_ly(
+        data = time_table,
+        x = ~year,
+        y = ~n,
+        type = "bar"
+      ) %>%
+        layout(
+          autosize=TRUE,
+          xaxis = list(title = "YEAR",
+                       dtick = 1,           
+                       tickformat = ",d"),
+          yaxis = list(title = "NUNBER OF REPORTS",
+                       dtick = 1,           
+                       tickformat = ",d",      
+                       rangemode = "tozero"),
+          margin = list(l = 40, r = 20, t = 20, b = 40)
+        )
+    })
+    
+    
   })
 }

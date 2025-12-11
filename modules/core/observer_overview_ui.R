@@ -8,12 +8,7 @@ observer_overview_ui <- function(id){
             uiOutput(ns("first_line_indicators")),
             uiOutput(ns("second_line_indicators")),
             uiOutput(ns("third_line_indicators")),
-          fluidRow(
-            DT::dataTableOutput(ns("reports_summary"))
-          ),
-          fluidRow(
-         #   uiOutput(ns("timeplot"))
-          )
+            uiOutput(ns("timeplot"))
   )
   
 }
