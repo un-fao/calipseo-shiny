@@ -1417,7 +1417,7 @@
       "Source": "Repository",
       "Type": "Package",
       "Title": "Parsing and Evaluation Tools that Provide More Details than the Default",
-      "Authors@R": "c( person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = c(\"aut\", \"cre\")), person(\"Yihui\", \"Xie\", role = \"aut\", comment = c(ORCID = \"0000-0003-0645-5666\")), person(\"Michael\", \"Lawrence\", role = \"ctb\"), person(\"Thomas\", \"Kluyver\", role = \"ctb\"), person(\"Jeroen\", \"Ooms\", role = \"ctb\"), person(\"Barret\", \"Schloerke\", role = \"ctb\"), person(\"Adam\", \"Ryczkowski\", role = \"ctb\"), person(\"Hiroaki\", \"Yutani\", role = \"ctb\"), person(\"Michel\", \"Lang\", role = \"ctb\"), person(\"Karolis\", \"Koncevicius\", role = \"ctb\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Authors@R": "c( person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = c(\"aut\", \"cre\")), person(\"Yihui\", \"Xie\", role = \"aut\", comment = c(ORCID = \"0000-0003-0645-5666\")), person(\"Michael\", \"Lawrence\", role = \"ctb\"), person(\"Thomas\", \"Kluyver\", role = \"ctb\"), person(\"Jeroen\", \"Ooms\", role = \"ctb\"), person(\"Barret\", \"Schloerke\", role = \"ctb\"), person(\"Adam\", \"Ryczkowski\", role = \"ctb\"), person(\"Hiroaki\", \"Yutani\", role = \"ctb\"), person(\"Michel\", \"Lang\", role = \"ctb\"), person(\"Karolis\", \"Koncevičius\", role = \"ctb\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
       "Description": "Parsing and evaluation tools that make it easy to recreate the command line behaviour of R.",
       "License": "MIT + file LICENSE",
       "URL": "https://evaluate.r-lib.org/, https://github.com/r-lib/evaluate",
@@ -1443,7 +1443,7 @@
       "Encoding": "UTF-8",
       "RoxygenNote": "7.3.2",
       "NeedsCompilation": "no",
-      "Author": "Hadley Wickham [aut, cre], Yihui Xie [aut] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Michael Lawrence [ctb], Thomas Kluyver [ctb], Jeroen Ooms [ctb], Barret Schloerke [ctb], Adam Ryczkowski [ctb], Hiroaki Yutani [ctb], Michel Lang [ctb], Karolis Koncevicius [ctb], Posit Software, PBC [cph, fnd]",
+      "Author": "Hadley Wickham [aut, cre], Yihui Xie [aut] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Michael Lawrence [ctb], Thomas Kluyver [ctb], Jeroen Ooms [ctb], Barret Schloerke [ctb], Adam Ryczkowski [ctb], Hiroaki Yutani [ctb], Michel Lang [ctb], Karolis Koncevičius [ctb], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
     },
@@ -1489,6 +1489,44 @@
       "Author": "Winston Chang [aut, cre], Posit Software, PBC [cph, fnd], Tessil [cph] (hopscotch_map library)",
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "CRAN"
+    },
+    "fdi4R": {
+      "Package": "fdi4R",
+      "Version": "0.1",
+      "Source": "GitHub",
+      "Date": "2025-12-02",
+      "Title": "Set of functions used in support of fisheries data interoperability case studies",
+      "Authors@R": "c(person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.0)",
+        "tidyr",
+        "sf",
+        "lwgeom",
+        "terra"
+      ],
+      "Imports": [
+        "methods",
+        "sf"
+      ],
+      "Suggests": [
+        "testthat",
+        "usethis"
+      ],
+      "Description": "Set of functions in support of fisheries data interoperability case studies",
+      "License": "MIT",
+      "URL": "https://github.com/fdiwg/fdi4R",
+      "BugReports": "https://github.com/fdiwg/fdi4R/issues",
+      "RoxygenNote": "7.3.3",
+      "LazyData": "true",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fdi4R",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "7caef47d6e43cbfe5d9026ab4c18036b4cc799ca",
+      "NeedsCompilation": "no",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },
     "fontawesome": {
       "Package": "fontawesome",
@@ -2646,6 +2684,44 @@
       "Author": "Vitalie Spinu [aut, cre], Garrett Grolemund [aut], Hadley Wickham [aut], Davis Vaughan [ctb], Ian Lyttle [ctb], Imanuel Costigan [ctb], Jason Law [ctb], Doug Mitarotonda [ctb], Joseph Larmarange [ctb], Jonathan Boiser [ctb], Chel Hee Lee [ctb]",
       "Repository": "CRAN"
     },
+    "lwgeom": {
+      "Package": "lwgeom",
+      "Version": "0.2-14",
+      "Source": "Repository",
+      "Title": "Bindings to Selected 'liblwgeom' Functions for Simple Features",
+      "Description": "Access to selected functions found in 'liblwgeom' <https://github.com/postgis/postgis/tree/master/liblwgeom>, the light-weight geometry library used by 'PostGIS' <http://postgis.net/>.",
+      "Authors@R": "c(person(\"Edzer\", \"Pebesma\", role = c(\"aut\", \"cre\"), email = \"edzer.pebesma@uni-muenster.de\", comment = c(ORCID = \"0000-0001-8049-7069\")), person(\"Colin\", \"Rundel\", role = \"ctb\"), person(\"Andy\", \"Teucher\", role = \"ctb\"), person(\"liblwgeom developers\", role = \"cph\"))",
+      "Depends": [
+        "R (>= 3.3.0)"
+      ],
+      "Imports": [
+        "Rcpp",
+        "units",
+        "sf (>= 1.0-15)"
+      ],
+      "Suggests": [
+        "covr",
+        "sp",
+        "geosphere",
+        "testthat"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "sf (>= 0.6-0)"
+      ],
+      "SystemRequirements": "GEOS (>= 3.5.0), PROJ (>= 4.8.0), sqlite3",
+      "License": "GPL-2",
+      "Copyright": "file COPYRIGHTS",
+      "Encoding": "UTF-8",
+      "URL": "https://r-spatial.github.io/lwgeom/, https://github.com/r-spatial/lwgeom",
+      "BugReports": "https://github.com/r-spatial/lwgeom/issues",
+      "Collate": "init.R RcppExports.R geohash.R split.R subdivide.R valid.R transform.R bounding_circle.R bearing.R snap_to_grid.R startpoint.R twkb.R perimeter.R clockwise.R geod.R wkt.R wrap_x.R",
+      "RoxygenNote": "7.3.1",
+      "NeedsCompilation": "yes",
+      "Author": "Edzer Pebesma [aut, cre] (<https://orcid.org/0000-0001-8049-7069>), Colin Rundel [ctb], Andy Teucher [ctb], liblwgeom developers [cph]",
+      "Maintainer": "Edzer Pebesma <edzer.pebesma@uni-muenster.de>",
+      "Repository": "RSPM"
+    },
     "magrittr": {
       "Package": "magrittr",
       "Version": "2.0.4",
@@ -3617,6 +3693,52 @@
       "Author": "Kevin Ushey [aut, cre] (ORCID: <https://orcid.org/0000-0003-2880-7407>), Hadley Wickham [aut] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Kevin Ushey <kevin@rstudio.com>",
       "Repository": "CRAN"
+    },
+    "repfishr": {
+      "Package": "repfishr",
+      "Version": "0.1.20251222",
+      "Source": "GitHub",
+      "Date": "2025-1222",
+      "Title": "Fisheries data reporting flows",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.0)"
+      ],
+      "Imports": [
+        "R6",
+        "methods",
+        "tibble",
+        "magrittr",
+        "jsonlite",
+        "yaml",
+        "readr",
+        "mime",
+        "vrule",
+        "fdi4R",
+        "writexl",
+        "openxlsx"
+      ],
+      "Remotes": "fdiwg/vrule, fdiwg/fdi4R",
+      "Suggests": [
+        "parallel",
+        "testthat"
+      ],
+      "Description": "R framework to facilitate fisheries data reporting flows, with first intention to help countries to validate,  format and send data to relevant organizations including regional fisheries management organizations or bodies handling data collection reference frameworks, and FAO.",
+      "URL": "https://github.com/fdiwg/repfishr",
+      "BugReports": "https://github.com/fdiwg/repfishr/issues",
+      "LazyLoad": "yes",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(r6 = TRUE)",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "repfishr",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "13591fa7079485848e3331d297f5f638e1c56717",
+      "NeedsCompilation": "no",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },
     "reshape2": {
       "Package": "reshape2",
@@ -5106,9 +5228,9 @@
     },
     "vrule": {
       "Package": "vrule",
-      "Version": "0.1.20251113",
+      "Version": "0.1.20251222",
       "Source": "GitHub",
-      "Date": "2025-11-13",
+      "Date": "2025-12-22",
       "Title": "Tools to validate data based on business validation rules",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel@fao.org\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), email = \"alexandre.bennici@fao.org\", comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -5139,7 +5261,7 @@
       "RemoteRepo": "vrule",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "ea94afdc865c76c36dc2115df61175c9c19cb2a3",
+      "RemoteSha": "3f4b550018365c4d3e6e035bd0a856decea4b9eb",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
@@ -5493,26 +5615,6 @@
       "Author": "Gábor Csárdi [aut, cre], Kuba Podgórski [ctb], Rich Geldreich [ctb], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
       "Repository": "RSPM"
-    },
-    "calipseoManagerR": {
-      "Package": "calipseoManagerR",
-      "Version": "0.1.0",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "abennici",
-      "RemoteRepo": "calipseoManagerR",
-      "RemoteRef": "main",
-      "RemoteSha": "df634374445fb23b4af5c9d0ca1e055dacbabc86",
-      "Requirements": [
-        "DBI",
-        "R6",
-        "data.table",
-        "dplyr",
-        "pool",
-        "readr"
-      ],
-      "Hash": "a6c2b0f18e89c6ebaab41d7e43d246fe"
     }
   }
 }
