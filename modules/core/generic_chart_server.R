@@ -335,8 +335,7 @@ generic_chart_server <- function(
               rangeslider = list(visible = FALSE)
             ),
             yaxis = list(title = y_lab),
-            hovermode = "x unified",
-            connectgaps = FALSE
+            hovermode = "x unified"
           )
         } else {
           p<-p %>% layout(
@@ -359,8 +358,7 @@ generic_chart_server <- function(
               rangeslider = list(visible = FALSE)
             ),
             yaxis = list(title = y_lab),
-            hovermode = "x unified",
-            connectgaps = FALSE
+            hovermode = "x unified"
           )
         }
       }
