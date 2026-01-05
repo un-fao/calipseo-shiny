@@ -81,6 +81,7 @@ generic_chart_server <- function(
     granu_choices <- c("Month" = "month", "Year" = "year")
     
     output$error_wrapper <- renderUI({
+      req(input$plot_style)
       div(
         style = if(!input$plot_style %in% c("line_sum", "line_mean", "bar_mean"))  "display:none;" else NULL,
       selectInput(ns("error_type"),
