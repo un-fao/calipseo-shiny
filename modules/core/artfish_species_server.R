@@ -449,17 +449,18 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
         
   })
   
-  observeEvent(data_sp(), {
-    req(data_sp())
-    
-    sel <- data_sp()
-    
-    if(is.null(input$fishing_unit) || as.integer(input$fishing_unit) == 0){
-      data_sp_bg(sel)
-    } else {
-      data_sp_bg(subset(sel, fishing_unit == input$fishing_unit))
-    }
-  })
+  #Causes the module to break when changing species
+  # observeEvent(data_sp(), {
+  #   req(data_sp())
+  #   
+  #   sel <- data_sp()
+  #   
+  #   if(is.null(input$fishing_unit) || as.integer(input$fishing_unit) == 0){
+  #     data_sp_bg(sel)
+  #   } else {
+  #     data_sp_bg(subset(sel, fishing_unit == input$fishing_unit))
+  #   }
+  # })
   
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-species: END")
