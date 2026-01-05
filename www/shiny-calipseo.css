@@ -75,3 +75,15 @@ ul.vessel li {
 #computation-computation_summary .row .card-body .row .card {
   margin-bottom: 0px;
 }
+
+.info-row {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.info-row .info-box {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
