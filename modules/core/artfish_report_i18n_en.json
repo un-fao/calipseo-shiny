@@ -1,8 +1,8 @@
 {
   /*artfish accuracy title*/
-  "ARTFISH_TITLE" : "Monthly Reports",
+  "ARTFISH_REPORT_TITLE" : "Detail results of Artfish computation",
   
-  "ARTFISH_SUBTITLE" : "Details on estimations and statistical diagnostics",
+  "ARTFISH_REPORT_SUBTITLE" : "By stratum",
   
   "SELECT_INPUT_TITLE_MODE" : "Data status",
   
@@ -114,17 +114,17 @@
   
   "SPECIES_TABLE_COLNAME_1" : "Species",
   
-  "SPECIES_TABLE_COLNAME_2" : "Quantity",
+  "SPECIES_TABLE_COLNAME_2" : "Estimated weight ",
   
   "SPECIES_TABLE_COLNAME_3" : "Effort",
   
   "SPECIES_TABLE_COLNAME_4" : "CPUE",
   
-  "SPECIES_TABLE_COLNAME_5" : "Price",
+  "SPECIES_TABLE_COLNAME_5" : "Average price",
   
-  "SPECIES_TABLE_COLNAME_6" : "Value",
+  "SPECIES_TABLE_COLNAME_6" : "Estimated value",
   
-  "SPECIES_TABLE_COLNAME_7" : "Aver.weight",
+  "SPECIES_TABLE_COLNAME_7" : "Average weight",
   
   "LABEL_EFFORT" : "Effort",
   
@@ -132,8 +132,14 @@
   
   "LABEL_ESTIMATED_BY_SPECIES" : "Estimated catch by species",
   
-  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
-  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "ARTFISH_REPORT_INFOBOX_STATUS_TITLE" : "Status",
+"ARTFISH_REPORT_RELEASE_LABEL" : "Validated",
+"ARTFISH_REPORT_STAGING_LABEL" : "Completed",
+"ARTFISH_REPORT_INFOBOX_EFFORT_SOURCE_TITLE" : "Effort source",
+"ARTFISH_REPORT_BOAT_COUNTING_LABEL" : "Boat counting",
+"ARTFISH_REPORT_FISHER_INTERVIEW_LABEL" : "Fisher interview",
+"ARTFISH_RESULT_GAUGE_TITLE": "Accuracy"
  
   
 }
