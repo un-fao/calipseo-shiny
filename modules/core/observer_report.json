@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "observer",
+  "rank": 3,
+  "title": "Reports details",
+  "icon": "clipboard-user"
+}
