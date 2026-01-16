@@ -1,5 +1,6 @@
 # **calipseo-shiny [v2.0.9001](https://github.com/un-fao/calipseo-shiny) - 2025-12-08**
 
+
 # Enhancements
 
 - [#324](https://github.com/un-fao/calipseo-shiny/issues/324) Enable RMariaDB timezone_out to ensure country timezone
