@@ -5,10 +5,15 @@ artfish_overview_ui <- function(id){
   
   bs4Dash::tabItem(tabName = "artfish_overview",
           fluidRow(
-            tags$h3(i18n("ARTFISH_OVERVIEW_TITLE")),
+            div(
+              width = 12, style = "margin:12px;",
+              
+              tags$h2(i18n("ARTFISH_OVERVIEW_TITLE")),tags$h3(class = "text-muted", i18n("ARTFISH_OVERVIEW_SUBTITLE"))
+            )
           ),
           uiOutput(ns("no_release")),
-          uiOutput(ns("fishing_unit_selector")),
+          uiOutput(ns("filter_selectors")),
+          uiOutput(ns("indicators")),
           uiOutput(ns("results"))
   )
 }

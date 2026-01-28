@@ -1,7 +1,7 @@
 {
   "type": "subitem",
-  "parent": "logbooks",
-  "rank": 6,
+  "parent": "artisanal",
+  "rank": 1,
   "title": "Artisanal validation",
   "icon": "check"
 }

@@ -1,55 +1,52 @@
 {
-  /* artfish species title*/
-  "ARTFISH_SPECIES_TITLE" : "Detail by Species",
-  
-  "NO_RELEASE" : "No released indicators available for artfish estimates",
-  
-  /*Species*/
-  
-  "SELECT_INPUT_TITLE_SPECIES" : "Species",
-  
-  "SELECT_INPUT_SPECIES_PLACEHOLDER" : "select a species",
-  
-  /*fishing unit*/
-  
-  "ALL_FISHING_UNITS_LABEL" : "All fishing units",
-  
-  "SELECT_INPUT_TITLE_FISHING_UNIT" : "Fishing Unit",
-  
-  /*labels*/
-  "LABEL_VALUE" : "Value",
-  
-  "VALUE_LABEL_VALUE" : "Value ($)",
-  
-  "LABEL_CATCH" : "Catch",
-  
-  "VALUE_LABEL_CATCH" : "Catch (kg)",
-  
-  "LABEL_PRICE" : "Price",
-  
-  "VALUE_LABEL_PRICE" : "Price ($/kg)",
-  
-  "LABEL_CPUE" : "CPUE",
-  
-  "VALUE_LABEL_CPUE" : "CPUE (kg/day)",
-  
-  "LABEL_EFFORT" : "Effort",
-  
-  "VALUE_LABEL_EFFORT" : "Effort(days)",
-  
-  /*valuebox*/
-  
-  "VALUEBOX_TITLE_TOTAL_VALUE" : "Total value ($)",
-  
-  "VALUEBOX_TITLE_TOTAL_CATCH" : "Total catch (kg)",
-  
-  "VALUEBOX_TITLE_AVERAGE_PRICE" : "Average price ($/kg)",
-  
-  "VALUEBOX_TITLE_AVERAGE_CPUE" : "Averge CPUE (kg/day)",
-  
-  "VALUEBOX_TITLE_TOTAL_EFFORT" : "Total effort (days)",
+  /*artfish species title*/
+  "ARTFISH_SPECIES_TITLE"                               : "Catch and effort",
+  "ARTFISH_SPECIES_SUBTITLE"                            : "Detailed by species",
+  /*no data disclaimer*/
+  "ARTFISH_SPECIES_NO_RELEASE"                          : "No released indicators available for Artfish estimates",
+  /*time slider*/
+  "ARTFISH_SPECIES_SPECIES_SELECTOR_LABEL"              : "Species",
+  "ARTFISH_SPECIES_SPECIES_SELECTOR_PLACEHOLDER"        : "Select a species",
+  /*time slider*/
+  "ARTFISH_SPECIES_TIME_SLIDER_LABEL" 					        : "Period",
+  /*fishing unit selector*/
+  "ARTFISH_SPECIES_FISHING_UNIT_SELECTOR_LABEL" 			  : "Fishing unit",
+  "ARTFISH_SPECIES_FISHING_UNIT_SELECTOR_SELECT_ALL"		: "select all",
+  "ARTFISH_SPECIES_FISHING_UNIT_SELECTOR_DESELECT_ALL"	: "deselect all",
+  "ARTFISH_SPECIES_FISHING_UNIT_SELECTOR_SELECTED"		  : "fishing units selected",
+  "ARTFISH_SPECIES_FISHING_UNIT_SELECTOR_NO_SELECTION"  : "No fishing unit selected",
+  /*infobox*/
+  "ARTFISH_SPECIES_INFOBOX_CATCH_TITLE"					        : "Total catch",
+  "ARTFISH_SPECIES_INFOBOX_CATCH_UNIT"					        : "kg" ,
+  "ARTFISH_SPECIES_INFOBOX_VALUE_TITLE"					        : "Total value",
+  "ARTFISH_SPECIES_INFOBOX_VALUE_UNIT"					        : "$" ,
+  "ARTFISH_SPECIES_INFOBOX_EFFORT_TITLE"				    	  :"Total effort",
+  "ARTFISH_SPECIES_INFOBOX_EFFORT_UNIT"					        : "days",
+  "ARTFISH_SPECIES_INFOBOX_PRICE_TITLE"				    	    :"Average price",
+  "ARTFISH_SPECIES_INFOBOX_PRICE_UNIT"					        : "$",
+  "ARTFISH_SPECIES_INFOBOX_SP_RATE_TITLE"				    	  :"Average species ratio",
   
   /*plotlabel*/
-  
-  "YLAB_TITLE_RANK" : "Rank (by total quantity caugth)"
+  "ARTFISH_SPECIES_RANK_GROUP_LABEL"                    : "Rank (by total quantity caugth)",
+  /*plots*/
+  /*plot-price*/
+  "ARTFISH_SPECIES_PLOT_PRICE_TITLE" 						        :"Average Price",
+  "ARTFISH_SPECIES_PLOT_PRICE_GROUP_LABEL" 				      :"Fishing unit",
+  "ARTFISH_SPECIES_PLOT_PRICE_VALUE_LABEL" 				      :"Price ($)",
+  /*plot-effort*/
+  "ARTFISH_SPECIES_PLOT_EFFORT_TITLE" 						      :"Total Effort nominal",
+  "ARTFISH_SPECIES_PLOT_EFFORT_GROUP_LABEL" 				    :"Fishing unit",
+  "ARTFISH_SPECIES_PLOT_EFFORT_VALUE_LABEL" 				    :"Total Effort nominal (days)",
+  /*plot-catch*/
+  "ARTFISH_SPECIES_PLOT_CATCH_TITLE" 					      	  :"Total catch estimation",
+  "ARTFISH_SPECIES_PLOT_CATCH_GROUP_LABEL" 				      :"Fishing unit",
+  "ARTFISH_SPECIES_PLOT_CATCH_VALUE_LABEL" 				      :"Total catch (kg)",
+  /*plot-value*/
+  "ARTFISH_SPECIES_PLOT_VALUE_TITLE"						        :"Total value estimation",
+  "ARTFISH_SPECIES_PLOT_VALUE_GROUP_LABEL" 				      :"Fishing unit",
+  "ARTFISH_SPECIES_PLOT_VALUE_VALUE_LABEL" 				      :"Total value ($)",
+  /*plot-cpue*/
+  "ARTFISH_SPECIES_PLOT_CPUE_TITLE"				              :"Catch Per Unit Effort (CPUE)",
+  "ARTFISH_SPECIES_PLOT_CPUE_GROUP_LABEL" 					    :"Fishing unit",
+  "ARTFISH_SPECIES_PLOT_CPUE_VALUE_LABEL" 					    :"CPUE (kg/day)"
 }

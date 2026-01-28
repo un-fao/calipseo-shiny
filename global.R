@@ -52,8 +52,11 @@ require(lubridate)
 require(sortable)
 require(data.tree)
 require(DiagrammeR)
+
+#R FDI packages
 require(vrule)
 require(artfishr)
+require(repfishr)
 
 #config
 #---------------------------------------------------------------------------------------
