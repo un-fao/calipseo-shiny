@@ -1,8 +1,12 @@
 ###Artfish estimates
-artfish_estimates<-function(con,year=NULL,month=NULL,effort=NULL,effort_source=NULL,active_vessels=NULL,active_vessels_strategy=NULL,active_days=NULL,landings=NULL,minor_strata=NULL){
+artfish_estimates<-function(con,year=NULL,month=NULL,effort=NULL,effort_source=c("fisher_interview","boat_counting"),active_vessels=NULL,active_vessels_strategy=NULL,active_days=NULL,landings=NULL,minor_strata=NULL){
   
+  effort_source = match.arg(effort_source)
   if(is.null(active_vessels))active_vessels=accessArtfishA(con,year,month)
-  if(is.null(effort))effort=accessArtfishB1(con,year,month)
+  if(is.null(effort)) effort = switch(effort_source,
+    "fisher_interview" = accessArtfishB1(con,year,month),
+    "boat_counting" = accessArtfishB2(con,year,month)
+  )
   if(is.null(active_days))active_days=accessArtfishC(con,year,month)
   if(is.null(landings))landings=accessArtfishD(con,year,month)
   
