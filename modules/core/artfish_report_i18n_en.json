@@ -110,6 +110,8 @@
   
   "LABEL_ACCURACY" : "Overall Accuracy = Minimum of TAE, SAE, TAC, SAC",
   
+  "ARTFISH_REPORT_GAUGE_TITLE" : "Overall Accuracy",
+  
   /*species*/
   
   "SPECIES_TABLE_COLNAME_1" : "Species",

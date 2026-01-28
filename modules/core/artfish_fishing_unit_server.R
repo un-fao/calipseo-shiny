@@ -15,6 +15,11 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     
     files <- getStatPeriods(config = appConfig, "artfish_estimates",target = "release")
     
+    AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
+    indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == "artfish_estimates"})]
+    effort_source<-indicator[[1]]$compute_with$fun_args$effort_source$source
+    if(!is.null(effort_source))effort_source<-gsub("text:","",effort_source)
+    
     output$no_release<-renderUI({
       div(
         if(nrow(files)>0){
@@ -120,7 +125,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         )
       }
       
-      selection <- selection[, c(
+      selection_cols = c(
         "year",
         "month",
         "date",
@@ -135,7 +140,13 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         "catch_nominal_landed_sampled",
         "trade_value",
         "catch_cpue"
-      )]
+      )
+      if(effort_source == "boat_counting"){
+        #no effort_total_fishing_duration
+        selection_cols = selection_cols[selection_cols != "effort_total_fishing_duration"]
+      }
+      
+      selection <- selection[, selection_cols]
       
       data_bg(selection)
     })
@@ -146,8 +157,9 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       data <- data_bg()%>%
         ungroup()
       
+      data_effort_cols = c("date","fishing_unit","fishing_unit_label","effort_nominal","fleet_engagement_number","effort_activity_coefficient","effort_total_fishing_duration")
       data_effort<-data%>%
-        select(date,fishing_unit,fishing_unit_label,effort_nominal,fleet_engagement_number,effort_activity_coefficient,effort_total_fishing_duration) %>%
+        select(any_of(data_effort_cols)) %>%
         distinct() %>%
         ungroup()
       

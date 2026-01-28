@@ -3,7 +3,7 @@
   "ARTFISH_OVERVIEW_TITLE"                              : "Total catch and effort",
   "ARTFISH_OVERVIEW_SUBTITLE"                           : "Statistics at country level",
   /*no data disclaimer*/
-  "ARTFISH_OVERVIEW__NO_RELEASE"                                  : "No released indicators available for Artfish estimates",
+  "ARTFISH_OVERVIEW_NO_RELEASE"                         : "No released indicators available for Artfish estimates",
   /*time slider*/
   "ARTFISH_OVERVIEW_TIME_SLIDER_LABEL" 					        : "Period",
   /*fishing unit selector*/

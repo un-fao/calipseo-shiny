@@ -80,9 +80,7 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
     status_tempo(selection$file_status)
     data<-readr::read_csv(selection$file)
     target_data<-target_data(data)
-    
-    print(head(data))
-    
+
     fishing_units_selection<-subset(fishing_units,ID%in%unique(data$fishing_unit))
     
     choices<-setNames(fishing_units_selection$ID,fishing_units_selection$NAME)
@@ -120,16 +118,15 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
     req(!is.null(input$fishing_unit)&input$fishing_unit!="")
     subdata<-target_data()
     
-    print("test0")
-    print(head(subdata))
+
     subdata<-subset(subdata,fishing_unit==input$fishing_unit)
-    print("test1")
+
     if(!is.null(minor_strata)){
       if(minor_strata=="landing_site"){
         subdata<-subset(subdata,landing_site==input$minor_strata)
       }
     }
-    print("test2")
+
     estimates<-estimates(subdata)
     
     output$button<-renderUI({
@@ -244,18 +241,37 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
                 i18n("EFFORT_LABEL_10")
       )
       
-      values<-c(formatC(estimate$effort_nominal[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$fleet_engagement_number[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$effort_fishable_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$effort_activity_coefficient[1],digits = 3, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$effort_total_fishing_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$effort_fishing_reference_period[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                paste0(format(round(estimate$effort_coefficient_variation[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$effort_activity_coefficient_spatial_accuracy[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$effort_activity_coefficient_temporal_accuracy[1]*100,1), nsmall = 1)," %"),
-                format(round(estimate$effort_sui[1],1), nsmall = 1))
+      values <- switch(effort_source,
+        "fisher_interview" = c(
+          ifelse(!is.na(estimate$effort_nominal[1]), formatC(estimate$effort_nominal[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$fleet_engagement_number[1]), formatC(estimate$fleet_engagement_number[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_fishable_duration[1]), formatC(estimate$effort_fishable_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient[1]), formatC(estimate$effort_activity_coefficient[1],digits = 3, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_total_fishing_duration[1]), formatC(estimate$effort_total_fishing_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"), #only for fisher_interview
+          ifelse(!is.na(estimate$effort_fishing_reference_period[1]), formatC(estimate$effort_fishing_reference_period[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_coefficient_variation[1]), paste0(format(round(estimate$effort_coefficient_variation[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient_spatial_accuracy[1]), paste0(format(round(estimate$effort_activity_coefficient_spatial_accuracy[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient_temporal_accuracy[1]), paste0(format(round(estimate$effort_activity_coefficient_temporal_accuracy[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_sui[1]), format(round(estimate$effort_sui[1],1), nsmall = 1), "–")
+        ),
+        "boat_counting" = c(
+          ifelse(!is.na(estimate$effort_nominal[1]), formatC(estimate$effort_nominal[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$fleet_engagement_number[1]), formatC(estimate$fleet_engagement_number[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_fishable_duration[1]), formatC(estimate$effort_fishable_duration[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient[1]), formatC(estimate$effort_activity_coefficient[1],digits = 3, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_fishing_reference_period[1]), formatC(estimate$effort_fishing_reference_period[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F), "–"),
+          ifelse(!is.na(estimate$effort_coefficient_variation[1]), paste0(format(round(estimate$effort_coefficient_variation[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient_spatial_accuracy[1]), paste0(format(round(estimate$effort_activity_coefficient_spatial_accuracy[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_activity_coefficient_temporal_accuracy[1]), paste0(format(round(estimate$effort_activity_coefficient_temporal_accuracy[1]*100,1), nsmall = 1)," %"), "–"),
+          ifelse(!is.na(estimate$effort_sui[1]), format(round(estimate$effort_sui[1],1), nsmall = 1), "–")
+        )
+      )
       
-      print(values)
+      if(effort_source == "boat_counting"){
+        #no effort_total_fishing_duration, 1 column less
+        codes = codes[-5]
+        labels = labels[-5]
+      }
       
       effort<-data.frame(code=codes,
                          label=labels,
@@ -287,16 +303,18 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
                 i18n("LANDINGSITE_LABEL_7"),i18n("LANDINGSITE_LABEL_8"),i18n("LANDINGSITE_LABEL_9"),
                 i18n("LANDINGSITE_LABEL_10"))
       
-      values<-c(formatC(sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$catch_cpue,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$catch_nominal_landed_sampled[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(estimate$catch_sample_size[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$trade_value,na.rm=T)/sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                formatC(sum(estimate$trade_value,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
-                paste0(format(round(estimate$catch_coefficient_variation[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$catch_cpue_spatial_accuracy[1]*100,1), nsmall = 1)," %"),
-                paste0(format(round(estimate$catch_cpue_temporal_accuracy[1]*100,1), nsmall = 1)," %"),
-                format(round(estimate$catch_sui[1],1), nsmall = 1))
+      values<-c(
+        formatC(sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+        formatC(sum(estimate$catch_cpue,na.rm=T),digits = 3, format = "f", big.mark = ",", drop0trailing = F),
+        formatC(estimate$catch_nominal_landed_sampled[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+        formatC(estimate$catch_sample_size[1],digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+        formatC(sum(estimate$trade_value,na.rm=T)/sum(estimate$catch_nominal_landed,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+        formatC(sum(estimate$trade_value,na.rm=T),digits = 0, format = "f", big.mark = ",", drop0trailing = F),
+        ifelse(!is.na(estimate$catch_coefficient_variation[1]),paste0(format(round(estimate$catch_coefficient_variation[1]*100,1), nsmall = 1)," %"),"–"),
+        ifelse(!is.na(estimate$catch_cpue_spatial_accuracy[1]),paste0(format(round(estimate$catch_cpue_spatial_accuracy[1]*100,1), nsmall = 1)," %"),"–"),
+        ifelse(!is.na(estimate$catch_cpue_temporal_accuracy[1]),paste0(format(round(estimate$catch_cpue_temporal_accuracy[1]*100,1), nsmall = 1)," %"),"–"),
+        ifelse(!is.na(estimate$catch_sui[1]),format(round(estimate$catch_sui[1],1), nsmall = 1),"–")
+      )
       
       landing<-data.frame(code=codes,
                           label=labels,
@@ -344,8 +362,6 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
                         i18n("SPECIES_TABLE_COLNAME_7"))
      
       NAME <- paste0(species,"$",i18n("SPECIES_TABLE_COLNAME_1"))
-      # print(species$NAME)
-      # print(ref_species$ID)
       species<- species%>%
         left_join(ref_species,by=c('NAME'="ID"))%>%
         select(Species,i18n("SPECIES_TABLE_COLNAME_2"),
