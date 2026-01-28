@@ -4,6 +4,10 @@
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
 
+# New features
+
+- [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
+
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
 
 # Corrections
