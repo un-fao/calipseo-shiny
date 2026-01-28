@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.0.9000](https://github.com/un-fao/calipseo-shiny) - 2026-01-28**
+# **calipseo-shiny [v2.0.9001](https://github.com/un-fao/calipseo-shiny) - 2026-01-28**
 
 # Enhancements
 
@@ -7,6 +7,7 @@
 # New features
 
 - [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
+- [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
 
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
 
