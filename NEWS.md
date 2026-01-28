@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.0.9000](https://github.com/un-fao/calipseo-shiny) - 2026-01-28**
+
+# Enhancements
+
+- [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
+
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
 
 # Corrections
