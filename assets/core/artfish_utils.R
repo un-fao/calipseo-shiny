@@ -38,3 +38,32 @@ unif_index<-function(days){
   index=mean(table$ratio)
   return(index)
 }
+
+#get_artfish_results_for_ui
+#@param files list of computation output files
+#@ref_fishing_units reference fishing units accessed through \code{accessRefFishingUnits}
+#@ref_species reference species accessed through \code{accessRefSpecies}
+get_artfish_results_for_ui = function(files, ref_fishing_units, ref_species){
+  
+  estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
+  
+  estimate <- estimate %>%
+    merge(ref_fishing_units %>%
+            select(ID,NAME) %>%
+            rename(fishing_unit = ID,
+                   fishing_unit_label = NAME)
+    ) %>%
+    ungroup()
+  
+  estimate <- estimate %>%
+    merge(ref_species %>%
+            select(ID,NAME) %>%
+            rename(species = ID,
+                   species_label = NAME)
+    )%>%
+    ungroup()
+  
+  estimate <- estimate %>%
+    mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
+  return(estimate)
+}
