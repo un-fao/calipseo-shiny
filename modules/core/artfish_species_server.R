@@ -8,16 +8,22 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
    
   ns<-session$ns
   
+  #reactives
   data_sp<-reactiveVal(NULL)
   data_sp_bg<-reactiveVal(NULL)
   
+  #reference data
   ref_species <- accessRefSpecies(pool)
   ref_species$ID <- as.character(ref_species$ID)
   ref_fishing_units <- accessRefFishingUnits(pool)
   ref_fishing_units$ID <- as.character(ref_fishing_units$ID)
   
-  files<-getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
+  #get Artfish computation output files
+  INFO("Get Artfish computation output files")
+  files <- getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
+  INFO("Retrieved %s computation files", nrow(files))
   
+  #UI to indicate if there is no release
   output$no_release<-renderUI({
     div(
       if(nrow(files)>0){
@@ -30,29 +36,11 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
   
   req(nrow(files)>0)
   
-  estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
+  INFO("Get Artfish computation outputs for UI")
+  estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)
   
-  estimate <- estimate %>%
-    merge(ref_fishing_units %>%
-            select(ID,NAME) %>%
-            rename(fishing_unit = ID,
-                   fishing_unit_label = NAME)
-    ) %>%
-    ungroup()
-  
-  estimate <- estimate %>%
-    merge(ref_species %>%
-            select(ID,NAME) %>%
-            rename(species = ID,
-                   species_label = NAME)
-    )%>%
-    ungroup()
-  
-  estimate <-estimate%>%
-    mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
-  
+  #limit species to data selection & build species selector
   ref_species <- subset(ref_species,ID %in% unique(na.omit(estimate$species)))
-  
   output$species_selector <- renderUI({
     species <- setNames(ref_species$ID, sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME))
     species <- species[order(names(species))]
@@ -63,18 +51,20 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
                    )
     )
   })
-
   #Subset data with species
   observeEvent(input$species,{
     if(input$species!=""){
+      INFO("Select species '%s'", input$species)
       selection <- subset(estimate, species == input$species)
       data_sp(selection)
     }
   })
-    
+  
+  #display main selectors UI (time, fishing_unit) on species reactive set
   observeEvent(data_sp(),{
     if(!is.null(data_sp())){ 
       
+      #time selector (slider)
       output$time_selector <- renderUI({
         selection <- data_sp()
         sliderInput(
@@ -88,9 +78,9 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
           ),
           timeFormat = "%b %Y"
         )
-        
       })
       
+      #fishing unit selector (multiple item selection)
       output$fishing_unit_selector <- renderUI({
         selection <- data_sp()
         bg_ids <- unique(selection$fishing_unit)
@@ -118,7 +108,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
     }
   })
   
-  
+  #Process data and based on fishing_unit/time selection
   observeEvent(c(input$fishing_unit,input$time), {
     
     req(!is.null(input$fishing_unit))
@@ -206,7 +196,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       )
     })
     
-
+    #Catches plot
     generic_chart_server(
       id = "catch",
       df = data,
@@ -216,10 +206,11 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       stat = "sum",
       time_label = "",
       value_label = i18n("ARTFISH_SPECIES_PLOT_CATCH_VALUE_LABEL"),
-      group_label = i18n("ARTFISH_SPECIES_PLOT_CATCH_GROUP_LABEL"),
+      group_label = i18n("ARTFISH_SPECIES_PLOT_CATCH_GROUP_LABEL")
       #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
     )
     
+    #CPUE plot
     generic_chart_server(
       id = "cpue",
       df = data,
@@ -234,6 +225,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
     )
     
+    #Effort plot
     generic_chart_server(
       id = "effort",
       df = data_effort,
@@ -248,6 +240,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       #time_choices = c("month")
     )
     
+    #Value plot
     generic_chart_server(
       id = "value",
       df = data,
@@ -261,6 +254,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
     )
     
+    #Prices plot
     generic_chart_server(
       id = "price",
       df = data,
@@ -329,8 +323,8 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
         
        #Indicators
     
+    #UI for generic charts
     output$results<-renderUI({
-      
       tagList(
         fluidRow(generic_chart_ui(ns("catch"),title=i18n("ARTFISH_SPECIES_PLOT_CATCH_TITLE"),sliderWidth =25)),
         fluidRow(generic_chart_ui(ns("cpue"),title=i18n("ARTFISH_SPECIES_PLOT_CPUE_TITLE"),sliderWidth =25)),
@@ -385,67 +379,66 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
     
     req(!is.null(data_sp()))
     
-        output$donut<-renderPlotly({
-          
-          selection<-data_sp()
-          
-          bg_sp<-unique(selection$fishing_unit)
-          
-          ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
-          
-          selection%>%
-            group_by(fishing_unit)%>%
-            summarise(
-              catch_nominal_landed=sum(catch_nominal_landed,na.rm=T),
-              trade_price=mean(trade_price,na.rm=T),
-              trade_value=sum(trade_value,na.rm=T),
-              effort_nominal=sum(effort_nominal,na.rm=T),
-              catch_cpue=mean(catch_cpue,na.rm=T)
-            )%>%
-            merge(ref_bg_sp%>%select(ID,NAME)%>%rename(fishing_unit=ID))%>%
-            ungroup()%>%
-            mutate(PERCENT=catch_nominal_landed/sum(catch_nominal_landed,na.rm=T))%>%
-          plot_ly(labels = ~NAME, values = ~PERCENT)%>% 
-            add_pie(hole = 0.6)%>% 
-            layout(showlegend = T,
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                plot_bgcolor  = "rgba(0, 0, 0, 0)",
-                paper_bgcolor = "rgba(0, 0, 0, 0)")
+    output$donut<-renderPlotly({
+      
+      selection<-data_sp()
+      
+      bg_sp<-unique(selection$fishing_unit)
+      
+      ref_bg_sp<-subset(ref_fishing_units,ID %in% bg_sp)
+      
+      selection%>%
+        group_by(fishing_unit)%>%
+        summarise(
+          catch_nominal_landed=sum(catch_nominal_landed,na.rm=T),
+          trade_price=mean(trade_price,na.rm=T),
+          trade_value=sum(trade_value,na.rm=T),
+          effort_nominal=sum(effort_nominal,na.rm=T),
+          catch_cpue=mean(catch_cpue,na.rm=T)
+        )%>%
+        merge(ref_bg_sp%>%select(ID,NAME)%>%rename(fishing_unit=ID))%>%
+        ungroup()%>%
+        mutate(PERCENT=catch_nominal_landed/sum(catch_nominal_landed,na.rm=T))%>%
+      plot_ly(labels = ~NAME, values = ~PERCENT)%>% 
+        add_pie(hole = 0.6)%>% 
+        layout(showlegend = T,
+            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+            plot_bgcolor  = "rgba(0, 0, 0, 0)",
+            paper_bgcolor = "rgba(0, 0, 0, 0)")
 
-        })
-        
-        #Rank
-        
-        output$rank<-renderPlotly({
-          rank<-estimate%>%
-            group_by(species)%>%
-            summarise(
-              catch_nominal_landed=sum(catch_nominal_landed,na.rm=T)
-            )%>%
-            mutate(rank = rank(-catch_nominal_landed)) %>%
-            arrange(rank)%>%
-            mutate(color=ifelse(species==input$species,"target","others"))%>%
-            ungroup()
-          
-          target_rank<-subset(rank,color=="target")$rank
-          
-          rank<-rank%>%
-            filter(rank%in%c(seq(target_rank-5,target_rank+5,1)))%>%
-            merge(ref_species%>%select(ID,NAME)%>%rename(species=ID))%>%
-            ungroup()
-          
-          rank%>%
-            plot_ly(y = ~rank, x = ~catch_nominal_landed, type = "bar",  orientation = "h",color=~factor(color),colors = c("gray","orange"),hoverinfo='none',text = ~NAME,
-                    textposition = "auto",textfont = list(color = "black")) %>%
-              layout(showlegend = FALSE,
-                     uniformtext=list(minsize=8, mode='show'),
-                     yaxis = list(title=i18n("ARTFISH_SPECIES_RANK_GROUP_LABEL"),autorange = "reversed",tickmode = "array", tickvals = unique(rank$rank), ticktext = unique(rank$rank)),
-                     xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE,title = FALSE),
-                     plot_bgcolor  = "rgba(0, 0, 0, 0)",
-                     paper_bgcolor = "rgba(0, 0, 0, 0)")
-          
-        })
+    })
+    
+    #Rank
+    output$rank<-renderPlotly({
+      rank<-estimate%>%
+        group_by(species)%>%
+        summarise(
+          catch_nominal_landed=sum(catch_nominal_landed,na.rm=T)
+        )%>%
+        mutate(rank = rank(-catch_nominal_landed)) %>%
+        arrange(rank)%>%
+        mutate(color=ifelse(species==input$species,"target","others"))%>%
+        ungroup()
+      
+      target_rank<-subset(rank,color=="target")$rank
+      
+      rank<-rank%>%
+        filter(rank%in%c(seq(target_rank-5,target_rank+5,1)))%>%
+        merge(ref_species%>%select(ID,NAME)%>%rename(species=ID))%>%
+        ungroup()
+      
+      rank%>%
+        plot_ly(y = ~rank, x = ~catch_nominal_landed, type = "bar",  orientation = "h",color=~factor(color),colors = c("gray","orange"),hoverinfo='none',text = ~NAME,
+                textposition = "auto",textfont = list(color = "black")) %>%
+          layout(showlegend = FALSE,
+                 uniformtext=list(minsize=8, mode='show'),
+                 yaxis = list(title=i18n("ARTFISH_SPECIES_RANK_GROUP_LABEL"),autorange = "reversed",tickmode = "array", tickvals = unique(rank$rank), ticktext = unique(rank$rank)),
+                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE,title = FALSE),
+                 plot_bgcolor  = "rgba(0, 0, 0, 0)",
+                 paper_bgcolor = "rgba(0, 0, 0, 0)")
+      
+    })
         
   })
   

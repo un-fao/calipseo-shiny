@@ -8,18 +8,25 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     
     ns<-session$ns
     
+    #reactives
     data_bg<-reactiveVal(NULL)
     
+    #reference data
     ref_species <- accessRefSpecies(pool)
     ref_fishing_units <- accessRefFishingUnits(pool)
     
-    files <- getStatPeriods(config = appConfig, "artfish_estimates",target = "release")
+    #get Artfish computation output files
+    INFO("Get Artfish computation output files")
+    files <- getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
+    INFO("Retrieved %s computation files", nrow(files))
     
+    #retrieve indicator definition to retrieve 'effort_source' parameter
     AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
     indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == "artfish_estimates"})]
     effort_source<-indicator[[1]]$compute_with$fun_args$effort_source$source
     if(!is.null(effort_source))effort_source<-gsub("text:","",effort_source)
     
+    #UI to indicate if there is no release
     output$no_release<-renderUI({
       div(
         if(nrow(files)>0){
@@ -32,32 +39,12 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     
     req(nrow(files) > 0)
     
-    estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
-    
-    estimate <- estimate %>%
-      merge(ref_fishing_units %>%
-              select(ID,NAME) %>%
-              rename(fishing_unit = ID,
-                     fishing_unit_label = NAME)
-      ) %>%
-      ungroup()
-    
-    estimate <- estimate %>%
-      merge(ref_species %>%
-              select(ID,NAME) %>%
-              rename(species = ID,
-                     species_label = NAME)
-      )%>%
-      ungroup()
-    
-    estimate <-estimate%>%
-      mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
-    
-    print("ARTFISH OUTPUT")
-    print(names(estimate))
+    INFO("Get Artfish computation outputs for UI")
+    estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)
     
     data_bg(estimate)
     
+    #time selector UI
     output$time_selector <- renderUI({
       
       sliderInput(
@@ -74,6 +61,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       
     })
     
+    #fishing_unit selector UI
     output$fishing_unit_selector <- renderUI({
       
       bg_ids <- unique(estimate$fishing_unit)
@@ -99,6 +87,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       )
     })
     
+    #UI for filter selectors (time, fishing_unit)
     output$filter_selectors <- renderUI({
       fluidRow(
         column(4,uiOutput(ns("time_selector")),offset = 1),
@@ -106,6 +95,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       )
     })
     
+    #Process data and based on fishing_unit/time selection
     observeEvent(c(input$fishing_unit,input$time), {
       
       req(!is.null(estimate))
@@ -151,7 +141,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       data_bg(selection)
     })
     
-    
+    #Indicators and timeline
     observeEvent(data_bg(),{
       req(!is.null(data_bg()))
       data <- data_bg()%>%
@@ -207,6 +197,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         )
       })
 
+      #Catch per fishing unit plot
       generic_chart_server(
         id = "catch_fu_tot",
         df = data,
@@ -220,6 +211,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         plot_types = c("rank_sum","donut")
       )
       
+      #Value per fishing unit plot
       generic_chart_server(
         id = "value_fu_tot",
         df = data,
@@ -233,6 +225,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         plot_types = c("rank_sum","donut")
       )
       
+      #Catch species composition per fishing unit plot
       generic_chart_server(
         id = "catch_sp_tot",
         df = data,
@@ -246,6 +239,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         plot_types = c("rank_sum","donut")
       )
       
+      #
       generic_chart_server(
         id = "catch",
         df = data,
@@ -259,6 +253,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
       )
       
+      #CPUE plot
       generic_chart_server(
         id = "cpue",
         df = data,
@@ -273,6 +268,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
       )
       
+      #Effort plot
       generic_chart_server(
         id = "effort",
         df = data_effort,
@@ -287,6 +283,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         #time_choices = c("month")
       )
       
+      #Activity Coefficient plot
       generic_chart_server(
         id = "activity",
         df = data_effort,
@@ -300,6 +297,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
       )
       
+      #Fleet engagement number
       generic_chart_server(
         id = "boats",
         df = data_effort,
@@ -313,6 +311,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
         #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
       )
       
+      #Value
       generic_chart_server(
         id = "value",
         df = data,
@@ -327,7 +326,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
       )
       
 
-      
+      #UI to render the generic charts
       output$results<-renderUI({
         
         tagList(
