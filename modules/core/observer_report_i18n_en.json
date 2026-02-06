@@ -1,18 +1,17 @@
 {
   /*Generic*/
-    "OBSERVER_REPORT_TITLE" : "Observer Program - Report Details",
-    "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
-    "BACK_TO_LIST_OF_REPORTS" : "Back to list of reports",
-    "OBSERVER_REPORT_UNIT_UNKNOWN": "Unit Unknown",
-    "OBSERVER_REPORT_UNKNOWN": "Unknown",
-    "OBSERVER_REPORT_REPORT_SELECTED" : "Report",
-    "OBSERVER_REPORT_SELECT_REPORT_LABEL" : "Select a report",
-    "OBSERVER_REPORT_OBS_PRESENT" : "Present",
-    "OBSERVER_REPORT_OBS_ABSENT" : "Absent",
-    "OBSERVER_REPORT_DAY" : "Day",
-    "OBSERVER_REPORT_NIGHT" : "Night",
-    "OBSERVER_REPORT_ETP" : "ETP",
-    
+  "OBSERVER_REPORT_TITLE" : "Observer Program - Report Details",
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json",
+  "BACK_TO_LIST_OF_REPORTS" : "Back to list of reports",
+  "OBSERVER_REPORT_UNIT_UNKNOWN": "Unknown unit",
+  "OBSERVER_REPORT_UNKNOWN": "Unknown",
+  "OBSERVER_REPORT_REPORT_SELECTED" : "Report",
+  "OBSERVER_REPORT_SELECT_REPORT_LABEL" : "Select a report",
+  "OBSERVER_REPORT_OBS_PRESENT" : "Present",
+  "OBSERVER_REPORT_OBS_ABSENT" : "Absent",
+  "OBSERVER_REPORT_DAY" : "Day",
+  "OBSERVER_REPORT_NIGHT" : "Night",
+  "OBSERVER_REPORT_ETP" : "ETP",
   /*Description Tab*/
   "OBSERVER_REPORT_DESCRIPTION_TAB_TITLE": "Description",
   "OBSERVER_REPORT_DESCRIPTION_TITLE": "Description",
@@ -33,7 +32,6 @@
   "OBSERVER_REPORT_DESCRIPTION_OBSERVATION_LABEL": "Observation Period",
   "OBSERVER_REPORT_DESCRIPTION_FROM": "From",
   "OBSERVER_REPORT_DESCRIPTION_TO": "To",
-  
   /*Vessel Informations Tab*/
   "OBSERVER_REPORT_VESSEL_TAB_TITLE": "Vessel Informations",
   "OBSERVER_REPORT_VESSEL_INFO_TITLE": "Vessel Informations",
@@ -67,7 +65,6 @@
   "OBSERVER_REPORT_NUMBER_OF_STORES": "Number of Stores",
   "OBSERVER_REPORT_STORAGE_CAPACITY": "Storage Capacity",
   "OBSERVER_REPORT_FREEZING_CAPACITY": "Freezing Capacity",
-
   /*Trip and Activities Tab*/
   "OBSERVER_REPORT_TRIP_TAB_TITLE": "Trip and Activities",
   "OBSERVER_REPORT_TRIP_TITLE": "Trip and Activities",
@@ -107,7 +104,4 @@
   "OBSERVER_REPORT_LOGBOOK_LINKED": "Logbook entry (%s) is linked to this trip",
   "OBSERVER_REPORT_LOGBOOK_NOT_LINKED": "No logbook entry is found associated to this trip",
   "OBSERVER_REPORT_LOGBOOK_TITLE": "Logbook linkage"
-
-
-
 }

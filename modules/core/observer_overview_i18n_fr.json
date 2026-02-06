@@ -1,0 +1,18 @@
+{
+  /**/
+  "OBSERVER_OVERVIEW_TITLE" : "Programme d’observateurs - Vue d’ensemble des rapports",
+  "OBSERVER_OVERVIEW_NO_DATA": "Aucune donnée",
+  "OBSERVER_OVERVIEW_EVOLUTION_NO_CHANGE" :"Aucun changement",
+  "OBSERVER_OVERVIEW_EVOLUTION_FROM_LAST_YEAR" : "vs année précédente",
+  "OBSERVER_OVERVIEW_NB_REPORTS": "Nombre de rapports",
+  "OBSERVER_OVERVIEW_NB_VESSELS": "Nombre de navires",
+  "OBSERVER_OVERVIEW_NB_OBSERVERS": "Nombre d’observateurs",
+  "OBSERVER_OVERVIEW_OBSERVATION_PERIOD": "Période d’observation",
+  "OBSERVER_OVERVIEW_OBSERVED_DAYS": "Jours observés",
+  "OBSERVER_OVERVIEW_LAST_REPORT": "Dernier rapport",
+  "OBSERVER_OVERVIEW_TOTAL_CATCH_OBSERVED": "Captures totales observées",
+  "OBSERVER_OVERVIEW_TOTAL_CATCH_REPORTED": "Captures totales déclarées",
+  "OBSERVER_OVERVIEW_AVERAGE_CATCH_OBSERVED": "Captures moyennes observées",
+  "OBSERVER_OVERVIEW_AVERAGE_CATCH_REPORTED": "Captures moyennes déclarées",
+  "OBSERVER_OVERVIEW_PLOT_NODATE_DISCLAMER" : "Aucune date associée à un rapport pour produire une visualisation graphique"
+}
