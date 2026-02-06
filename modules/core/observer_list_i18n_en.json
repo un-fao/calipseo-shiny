@@ -1,0 +1,24 @@
+{
+  /**/
+  "OBSERVER_LIST_TITLE" : "Observer Program - Reports List",
+  "SUMMARY" : "Reports",
+  "OBSERVER_LIST_YES": "Yes",
+  "OBSERVER_LIST_NO": "No",
+  "OBSERVER_LIST_UNKNOWN": "Unknown",
+  "OBSERVER_LIST_MISSING": "Missing value",
+  "OBSERVER_LIST_REPORT_ID": "Report ID",
+  "OBSERVER_LIST_VESSEL_NAME": "Vessel name",
+  "OBSERVER_LIST_OBSERVER_NAME": "Observer name",
+  "OBSERVER_LIST_EMBARKATION_START": "Embarkation date",
+  "OBSERVER_LIST_EMBARKATION_PORT": "Embarkation port",
+  "OBSERVER_LIST_EMBARKATION_END": "Disembarkation date",
+  "OBSERVER_LIST_DISEMBARKATION_PORT": "Disembarkation port",
+  "OBSERVER_LIST_DAYS_AT_SEA": "Days at sea",
+  "OBSERVER_LIST_NB_FISHING_OPERATIONS": "Fishing operations",
+  "OBSERVER_LIST_LOGBOOK_LINKED": "Logbook linked",
+  "OBSERVER_LIST_BIOLOGICAL_PRESENT": "Biological sampling",
+  "OBSERVER_LIST_TOTAL_CATCH": "Total catch",
+  "OBSERVER_LIST_TOTAL_DISCARD": "Total discard",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json"
+}

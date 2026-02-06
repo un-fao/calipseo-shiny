@@ -1,0 +1,18 @@
+{
+  /**/
+  "OBSERVER_OVERVIEW_TITLE" : "Observer Program - Reports Overview",
+  "OBSERVER_OVERVIEW_NO_DATA": "No data",
+  "OBSERVER_OVERVIEW_EVOLUTION_NO_CHANGE" :"No change",
+  "OBSERVER_OVERVIEW_EVOLUTION_FROM_LAST_YEAR" : "vs previous year",
+  "OBSERVER_OVERVIEW_NB_REPORTS": "Number of reports",
+  "OBSERVER_OVERVIEW_NB_VESSELS": "Number of vessels",
+  "OBSERVER_OVERVIEW_NB_OBSERVERS": "Number of observers",
+  "OBSERVER_OVERVIEW_OBSERVATION_PERIOD": "Observation period",
+  "OBSERVER_OVERVIEW_OBSERVED_DAYS": "Observed days",
+  "OBSERVER_OVERVIEW_LAST_REPORT": "Last report",
+  "OBSERVER_OVERVIEW_TOTAL_CATCH_OBSERVED": "Total catch observed",
+  "OBSERVER_OVERVIEW_TOTAL_CATCH_REPORTED": "Total catch reported",
+  "OBSERVER_OVERVIEW_AVERAGE_CATCH_OBSERVED": "Average catch observed",
+  "OBSERVER_OVERVIEW_AVERAGE_CATCH_REPORTED": "Average catch reported",
+  "OBSERVER_OVERVIEW_PLOT_NODATE_DISCLAMER" : "No date associated to a report to produce a graphical view"
+}

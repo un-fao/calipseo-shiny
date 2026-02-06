@@ -1,0 +1,24 @@
+{
+  /**/
+  "OBSERVER_LIST_TITLE" : "Programme d’observateurs - Liste des rapports",
+  "SUMMARY" : "Rapports",
+  "OBSERVER_LIST_YES": "Oui",
+  "OBSERVER_LIST_NO": "Non",
+  "OBSERVER_LIST_UNKNOWN": "Inconnu",
+  "OBSERVER_LIST_MISSING": "Valeur manquante",
+  "OBSERVER_LIST_REPORT_ID": "ID du rapport",
+  "OBSERVER_LIST_VESSEL_NAME": "Nom du navire",
+  "OBSERVER_LIST_OBSERVER_NAME": "Nom de l’observateur",
+  "OBSERVER_LIST_EMBARKATION_START": "Date d’embarquement",
+  "OBSERVER_LIST_EMBARKATION_PORT": "Port d’embarquement",
+  "OBSERVER_LIST_EMBARKATION_END": "Date de débarquement",
+  "OBSERVER_LIST_DISEMBARKATION_PORT": "Port de débarquement",
+  "OBSERVER_LIST_DAYS_AT_SEA": "Jours en mer",
+  "OBSERVER_LIST_NB_FISHING_OPERATIONS": "Opérations de pêche",
+  "OBSERVER_LIST_LOGBOOK_LINKED": "Journal de bord lié",
+  "OBSERVER_LIST_BIOLOGICAL_PRESENT": "Échantillonnage biologique",
+  "OBSERVER_LIST_TOTAL_CATCH": "Captures totales",
+  "OBSERVER_LIST_TOTAL_DISCARD": "Rejets totaux",
+  
+  "TABLE_LANGUAGE" : "//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json"
+}

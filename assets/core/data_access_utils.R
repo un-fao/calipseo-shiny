@@ -631,6 +631,65 @@ accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_
   return(fa)
 }
 
+#<MODULE:OBSERVER_OVERVIEW>
+#accessObserverReportSummaryFromDB
+accessObserverReportsSummaryFromDB <- function(con,report_id = NULL){
+  query_sql <- readSQL("data/core/sql/observer_reports_summary.sql")
+  where_clause <- ""
+  if (!is.null(report_id)) {
+    where_clause <- paste0(
+      " WHERE r.ID IN (",
+      paste(report_id, collapse = ","),
+      ") "
+    )
+  }
+  
+  query_sql <- gsub("/\\*__WHERE__\\*/", where_clause, query_sql)
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
+#accessFishingTripsCatchFromDB
+accessFishingTripsCatchFromDB <- function(con,trip_type = NULL){
+  fa_sql <- readSQL("data/core/sql/fishing_trips_catch.sql",language = appConfig$language)
+  if(!is.null(trip_type)){
+    fa_sql <- paste0(fa_sql, " WHERE ft.CL_FISH_FISHING_TRIP_TYPE_ID = ", trip_type)
+  }
+  fa_sql <- paste0(fa_sql, " GROUP BY ft.ID, ft.CL_FISH_FISHING_TRIP_TYPE_ID, ft.DATE_FROM, ft.DATE_TO ORDER BY ft.DATE_FROM;")
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
+
+#<MODULE:OBSERVER_REPORT>
+#accessObserverVesselsDetailsFromDB
+accessObserverVesselsDetailsFromDB <- function(con,report_id = NULL){
+  query_sql <- readSQL("data/core/sql/observer_vessels_details.sql")
+  if(!is.null(report_id)){
+    query_sql <- paste0(query_sql, " WHERE rvi.DT_OBSERVER_REPORT_ID IN ( ", paste(report_id,collapse = ","), ")")
+  }
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
+#TODO Review SQL query is broken due to OBSERVER_PRESENT field removed
+#Cf. https://github.com/un-fao/calipseo-model/commit/7fd3698fbce9e33bd715f2227d382560f1b5626b
+accessObserverTripsDetailsFromDB <- function(con,report_id = NULL){
+  query_sql <- readSQL("data/core/sql/observer_trips_details.sql")
+  if(!is.null(report_id)){
+    query_sql <- paste0(query_sql, " WHERE r.ID IN ( ", paste(report_id,collapse = ","), ")")
+  }
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
+
+accessObserverReportsHasLogbookFromDB <- function(con,report_id = NULL){
+  query_sql <- readSQL("data/core/sql/observer_report_has_logbook.sql")
+  if(!is.null(report_id)){
+    query_sql <- paste0(query_sql, " WHERE r.ID IN ( ", paste(report_id,collapse = ","), ")")
+  }
+  query <- suppressWarnings(dbGetQuery(con, query_sql))
+  return(query)
+} 
 #multireporting
 accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, receiver){
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
@@ -876,6 +935,15 @@ accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NUL
 #multireporting
 accessFDIFishingActivities <- function(con,year=NULL,month=NULL,receiver){ accessFDIFishingActivitiesFromDB(con,year=year,month=month,receiver=receiver) }
 
+#<MODULE:OBSERVER_OVERVIEW>
+accessObserverReportsSummary <- function(con,report_id=NULL){ accessObserverReportsSummaryFromDB(con,report_id)}
+accessFishingTripsCatch <- function(con,trip_type = NULL){accessFishingTripsCatchFromDB(con,trip_type=trip_type)}
+
+#<MODULE:OBSERVER_REPORT>
+accessObserverVesselsDetails <- function(con,report_id){ accessObserverVesselsDetailsFromDB(con,report_id)}
+accessObserverTripsDetails <- function(con,report_id){ accessObserverTripsDetailsFromDB(con,report_id)}
+accessObserverReportsHasLogbook <- function(con,report_id){ accessObserverReportsHasLogbookFromDB(con,report_id)}
+
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
 accessFishingTrips <- function(con,vessel_stat_type,vesselId = NULL) { accessFishingTripsFromDB(con,vessel_stat_type,vesselId) }
@@ -898,4 +966,5 @@ accessEffortSurvey <- function(con){ accessEffortSurveyFromDB(con) }
 
 #-> GFCM/Task III 
 accessTripDetailByFleetSegment <- function(con,year=NULL,month=NULL){ accessTripDetailByFleetSegmentFromDB(con,year=year,month=month) }
+
 
