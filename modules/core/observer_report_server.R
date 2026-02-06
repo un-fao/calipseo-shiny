@@ -160,6 +160,7 @@ observer_report_server <- function(id,parent.session, pool, reloader) {
     
     report_activities<-reactive({
       
+      #TODO review broken SQL
       df<-accessObserverTripsDetails(pool,report_id=report_selected())
     
     df$DATE_FROM <- as.POSIXct(as.character(df$DATE_FROM))

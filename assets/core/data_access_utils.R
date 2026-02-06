@@ -671,6 +671,8 @@ accessObserverVesselsDetailsFromDB <- function(con,report_id = NULL){
   return(query)
 } 
 
+#TODO Review SQL query is broken due to OBSERVER_PRESENT field removed
+#Cf. https://github.com/un-fao/calipseo-model/commit/7fd3698fbce9e33bd715f2227d382560f1b5626b
 accessObserverTripsDetailsFromDB <- function(con,report_id = NULL){
   query_sql <- readSQL("data/core/sql/observer_trips_details.sql")
   if(!is.null(report_id)){
