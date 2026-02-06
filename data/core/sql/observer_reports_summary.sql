@@ -2,7 +2,7 @@ SELECT
  r.ID AS report_id, 
  ft.REG_VESSEL_ID AS vessel_id, 
  v.VESSEL_NAME AS vessel_name, 
- r.OBSERVER_FULL_NAME AS observer_name, 
+ concat(ind.FIRST_NAME, ' ',ent.NAME) AS observer_name, 
  r.OBSERVATION_PERIOD_START AS observation_start, 
  r.OBSERVATION_PERIOD_END AS observation_end, 
  r.BOARDING_DATE AS embarkation_start, 
@@ -19,6 +19,8 @@ SELECT
  MAX(discard_unit.I18n_DEFAULT) AS total_discard_unit 
 FROM dt_observer_reports r 
 LEFT JOIN dt_fishing_trip ft ON ft.ID = r.DT_FISHING_TRIP_ID 
+LEFT JOIN reg_entities ent ON ent.ID = ft.REG_REPORTING_OFFICER_ID 
+LEFT JOIN reg_entity_individuals ind ON ind.REG_ENTITY_ID = ent.ID 
 LEFT JOIN dt_observer_report_vessel_information v ON v.DT_OBSERVER_REPORT_ID = r.ID 
 LEFT JOIN cl_fish_landing_sites emb_port ON emb_port.ID = r.BOARDING_PORT_ID 
 LEFT JOIN cl_fish_landing_sites dis_port ON dis_port.ID = r.DISEMBARK_PORT_ID 
@@ -26,4 +28,4 @@ LEFT JOIN dt_fishing_activities fa ON fa.DT_FISHING_TRIP_ID = ft.ID
 LEFT JOIN dt_fishing_activities_species fas ON fas.DT_FISHING_ACTIVITY_ID = fa.ID 
 LEFT JOIN cl_app_quantity_units catch_unit ON catch_unit.ID = fas.CL_APP_QUANTITY_UNIT_ID 
 LEFT JOIN cl_app_quantity_units discard_unit ON discard_unit.ID = fas.CL_APP_DISCARD_QUANTITY_UNIT_ID 
-LEFT JOIN dt_length_frequencies lf ON lf.DT_FISHING_TRIP_ID = r.DT_FISHING_TRIP_ID /*__WHERE__*/ GROUP BY r.ID, ft.REG_VESSEL_ID, v.VESSEL_NAME, r.OBSERVER_FULL_NAME, r.OBSERVATION_PERIOD_START, r.OBSERVATION_PERIOD_END, r.BOARDING_DATE, r.DISEMBARK_DATE, emb_port.I18n_DEFAULT, dis_port.I18n_DEFAULT, ft.DATE_FROM, ft.DATE_TO
+LEFT JOIN dt_length_frequencies lf ON lf.DT_FISHING_TRIP_ID = r.DT_FISHING_TRIP_ID /*__WHERE__*/ GROUP BY r.ID, ft.REG_VESSEL_ID, v.VESSEL_NAME, ent.NAME, ind.FIRST_NAME, r.OBSERVATION_PERIOD_START, r.OBSERVATION_PERIOD_END, r.BOARDING_DATE, r.DISEMBARK_DATE, emb_port.I18n_DEFAULT, dis_port.I18n_DEFAULT, ft.DATE_FROM, ft.DATE_TO
