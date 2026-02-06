@@ -1,1 +1,29 @@
-SELECT r.ID AS report_id, ft.REG_VESSEL_ID AS vessel_id, v.VESSEL_NAME AS vessel_name, r.OBSERVER_FULL_NAME AS observer_name, r.OBSERVATION_PERIOD_START AS observation_start, r.OBSERVATION_PERIOD_END AS observation_end, r.BOARDING_DATE AS embarkation_start, r.DISEMBARK_DATE AS embarkation_end, emb_port.I18n_DEFAULT AS embarkation_port, dis_port.I18n_DEFAULT AS disembarkation_port, ft.DATE_FROM AS trip_start, ft.DATE_TO AS trip_end, DATEDIFF(r.DISEMBARK_DATE, r.BOARDING_DATE) AS days_at_sea, COUNT(DISTINCT fa.ID) AS nb_fishing_operations, CASE WHEN EXISTS (SELECT 1 FROM dt_fishing_trip ft2 WHERE ft2.REG_VESSEL_ID = ft.REG_VESSEL_ID AND ft2.DATE_FROM = ft.DATE_FROM AND ft2.DATE_TO = ft.DATE_TO AND ft2.CL_FISH_FISHING_TRIP_TYPE_ID = 1) THEN 1 ELSE 0 END AS logbook_linked, CASE WHEN lf.DT_FISHING_TRIP_ID IS NOT NULL THEN 1 ELSE 0 END AS biological_present, SUM(fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT) AS total_catch, MAX(catch_unit.I18n_DEFAULT) AS total_catch_unit, SUM(fas.DISCARD_QUANTITY) AS total_discard, MAX(discard_unit.I18n_DEFAULT) AS total_discard_unit FROM dt_observer_reports r LEFT JOIN dt_fishing_trip ft ON ft.ID = r.DT_FISHING_TRIP_ID LEFT JOIN dt_observer_report_vessel_information v ON v.DT_OBSERVER_REPORT_ID = r.ID LEFT JOIN cl_fish_landing_sites emb_port ON emb_port.ID = r.BOARDING_PORT_ID LEFT JOIN cl_fish_landing_sites dis_port ON dis_port.ID = r.DISEMBARK_PORT_ID LEFT JOIN dt_fishing_activities fa ON fa.DT_FISHING_TRIP_ID = ft.ID LEFT JOIN dt_fishing_activities_species fas ON fas.DT_FISHING_ACTIVITY_ID = fa.ID LEFT JOIN cl_app_quantity_units catch_unit ON catch_unit.ID = fas.CL_APP_QUANTITY_UNIT_ID LEFT JOIN cl_app_quantity_units discard_unit ON discard_unit.ID = fas.CL_APP_DISCARD_QUANTITY_UNIT_ID LEFT JOIN dt_length_frequencies lf ON lf.DT_FISHING_TRIP_ID = r.DT_FISHING_TRIP_ID /*__WHERE__*/ GROUP BY r.ID, ft.REG_VESSEL_ID, v.VESSEL_NAME, r.OBSERVER_FULL_NAME, r.OBSERVATION_PERIOD_START, r.OBSERVATION_PERIOD_END, r.BOARDING_DATE, r.DISEMBARK_DATE, emb_port.I18n_DEFAULT, dis_port.I18n_DEFAULT, ft.DATE_FROM, ft.DATE_TO
+SELECT 
+ r.ID AS report_id, 
+ ft.REG_VESSEL_ID AS vessel_id, 
+ v.VESSEL_NAME AS vessel_name, 
+ r.OBSERVER_FULL_NAME AS observer_name, 
+ r.OBSERVATION_PERIOD_START AS observation_start, 
+ r.OBSERVATION_PERIOD_END AS observation_end, 
+ r.BOARDING_DATE AS embarkation_start, 
+ r.DISEMBARK_DATE AS embarkation_end, 
+ emb_port.I18n_DEFAULT AS embarkation_port, 
+ dis_port.I18n_DEFAULT AS disembarkation_port, 
+ ft.DATE_FROM AS trip_start, ft.DATE_TO AS trip_end, 
+ DATEDIFF(r.DISEMBARK_DATE, r.BOARDING_DATE) AS days_at_sea, 
+ COUNT(DISTINCT fa.ID) AS nb_fishing_operations, 
+ CASE WHEN EXISTS (SELECT 1 FROM dt_fishing_trip ft2 WHERE ft2.REG_VESSEL_ID = ft.REG_VESSEL_ID AND ft2.DATE_FROM = ft.DATE_FROM AND ft2.DATE_TO = ft.DATE_TO AND ft2.CL_FISH_FISHING_TRIP_TYPE_ID = 1) THEN 1 ELSE 0 END AS logbook_linked, 
+ CASE WHEN lf.DT_FISHING_TRIP_ID IS NOT NULL THEN 1 ELSE 0 END AS biological_present, SUM(fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT) AS total_catch, 
+ MAX(catch_unit.I18n_DEFAULT) AS total_catch_unit, 
+ SUM(fas.DISCARD_QUANTITY) AS total_discard, 
+ MAX(discard_unit.I18n_DEFAULT) AS total_discard_unit 
+FROM dt_observer_reports r 
+LEFT JOIN dt_fishing_trip ft ON ft.ID = r.DT_FISHING_TRIP_ID 
+LEFT JOIN dt_observer_report_vessel_information v ON v.DT_OBSERVER_REPORT_ID = r.ID 
+LEFT JOIN cl_fish_landing_sites emb_port ON emb_port.ID = r.BOARDING_PORT_ID 
+LEFT JOIN cl_fish_landing_sites dis_port ON dis_port.ID = r.DISEMBARK_PORT_ID 
+LEFT JOIN dt_fishing_activities fa ON fa.DT_FISHING_TRIP_ID = ft.ID 
+LEFT JOIN dt_fishing_activities_species fas ON fas.DT_FISHING_ACTIVITY_ID = fa.ID 
+LEFT JOIN cl_app_quantity_units catch_unit ON catch_unit.ID = fas.CL_APP_QUANTITY_UNIT_ID 
+LEFT JOIN cl_app_quantity_units discard_unit ON discard_unit.ID = fas.CL_APP_DISCARD_QUANTITY_UNIT_ID 
+LEFT JOIN dt_length_frequencies lf ON lf.DT_FISHING_TRIP_ID = r.DT_FISHING_TRIP_ID /*__WHERE__*/ GROUP BY r.ID, ft.REG_VESSEL_ID, v.VESSEL_NAME, r.OBSERVER_FULL_NAME, r.OBSERVATION_PERIOD_START, r.OBSERVATION_PERIOD_END, r.BOARDING_DATE, r.DISEMBARK_DATE, emb_port.I18n_DEFAULT, dis_port.I18n_DEFAULT, ft.DATE_FROM, ft.DATE_TO
