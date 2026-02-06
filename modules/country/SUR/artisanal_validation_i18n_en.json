@@ -1,7 +1,7 @@
 {
   /*Logbook validation title*/
-  "LOGBOOKS_VALIDATION_TITLE" : "Validate Artisanal data",
-  "LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE" : "Import a data file",
+  "ARTISANAL_VALIDATION_TITLE" : "Validate Artisanal data",
+  "ARTISANAL_VALIDATION_FILEINPUT_LABEL_TITLE" : "Import a data file",
   "ACTIONBUTTON_LABEL_TEST_VALIDITY" : "Test file validity",
   "VALIDATION_PROGRESS_MESSAGE" : "Dataset validation in progress ... ",
   "VALIDATION_PROGRESS_MESSAGE_LABEL_TRIPID" : "Trip ID",
@@ -31,7 +31,7 @@
   "ERROR_TABLE_COLNAME_5" : "Description",
   "ERROR_TABLE_DATA_FILENAME" : "errors_",
   
-  "LOGBOOK_VALIDATION_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
+  "ARTISANAL_VALIDATION_MESSAGE" :"Error has occured during upload, Please check the logbook i.e (column names, trip_#'s) and upload again!",
   
   "MODAL_NO_EXCEL" : "Invalid file",
   "MODAL_NO_EXCEL_MESSAGE" :"The uploaded file is not an Excel (.xlsx or .xls).",

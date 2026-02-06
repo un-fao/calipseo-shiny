@@ -20,7 +20,7 @@ artisanal_validation_ui <- function(id){
          )
        )
      ),
-    tags$h2(i18n("LOGBOOKS_VALIDATION_TITLE")),
+    tags$h2(i18n("ARTISANAL_VALIDATION_TITLE")),
     fluidRow(
       column(3,uiOutput(ns("file_input_wrapper"))),    
       column(1,style = "margin-top: 25px;", uiOutput(ns("validity_btn"))),

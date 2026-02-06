@@ -1,3 +1,27 @@
+# **calipseo-shiny [v2.0.9001](https://github.com/un-fao/calipseo-shiny) - 2026-01-28**
+
+# Enhancements
+
+- [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
+
+# New features
+
+- [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
+- [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
+
+# **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
+
+# Corrections
+
+- [#326](https://github.com/un-fao/calipseo-shiny/issues/326) SUR - Review Artisanal validation i18n terms
+- [#327](https://github.com/un-fao/calipseo-shiny/issues/327) SUR - Artisanal data validation fails
+
+
+# Enhancements
+
+- [#324](https://github.com/un-fao/calipseo-shiny/issues/324) Enable RMariaDB timezone_out to ensure country timezone
+
+
 # **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny) - 2025-12-01**
 
 # Corrections

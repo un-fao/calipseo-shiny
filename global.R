@@ -52,8 +52,11 @@ require(lubridate)
 require(sortable)
 require(data.tree)
 require(DiagrammeR)
+
+#R FDI packages
 require(vrule)
 require(artfishr)
+require(repfishr)
 
 #config
 #---------------------------------------------------------------------------------------
@@ -97,7 +100,8 @@ pool <- pool::dbPool(
   port = appConfig$openfismis$dbi$port,
   user = appConfig$openfismis$dbi$user,
   password = appConfig$openfismis$dbi$password,
-  bigint = "numeric" #required otherwise RMariaDB coerces integers as integer64
+  bigint = "numeric", #required otherwise RMariaDB coerces integers as integer64
+  timezone_out = appConfig$country_profile$timezone #ensure conversion of TIMESTAMP/DATETIME into country timezone
 )
 DBI::dbExecute(pool, "SET NAMES 'utf8mb4'")
 

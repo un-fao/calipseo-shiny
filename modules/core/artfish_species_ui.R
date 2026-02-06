@@ -4,11 +4,17 @@ artfish_species_ui <- function(id){
   ns <- NS(id)
   
   bs4Dash::tabItem(tabName = "artfish_species",
+            fluidRow(
+              div(
+                width = 12, style = "margin:12px;",
+                tags$h2(i18n("ARTFISH_SPECIES_TITLE")),tags$h3(class = "text-muted", i18n("ARTFISH_SPECIES_SUBTITLE"))
+              )
+            ),            
             div(class="row",
             column(3,
-              tags$h3(i18n("ARTFISH_SPECIES_TITLE")),
               uiOutput(ns("no_release")),
               uiOutput(ns("species_selector")),
+              uiOutput(ns("time_selector")),
               uiOutput(ns("fishing_unit_selector"))
             ),
             column(5,
@@ -19,7 +25,7 @@ artfish_species_ui <- function(id){
             )
             ,height=200),
           uiOutput(ns("indicators")),
-          fluidRow(plotlyOutput(ns("timeline")))
+          uiOutput(ns("results")),
   )
   
 }

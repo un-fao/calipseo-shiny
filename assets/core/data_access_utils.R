@@ -166,6 +166,14 @@ accessCountryParamFromDB <- function(con){
   country_param_sql <- readSQL("data/core/sql/country_param.sql")
   country_param <- getFromSQL(con, country_param_sql)
   return(country_param)
+}
+
+#accessCountryISOCodeFromDB
+accessCountryISOCodeFromDB <- function(con){
+  DEBUG("Query country parameter - ISO3 Code")
+  country_param_sql <- readSQL("data/core/sql/country_isocode.sql")
+  country_param <- getFromSQL(con, country_param_sql)$TEXT
+  return(country_param)
 } 
 
 #accessCountryPrefUnitWeightFromDB
@@ -680,6 +688,18 @@ accessObserverReportsHasLogbookFromDB <- function(con,report_id = NULL){
   query <- suppressWarnings(dbGetQuery(con, query_sql))
   return(query)
 } 
+#multireporting
+accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, receiver){
+  DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
+  fa_sql <- readSQL("data/core/sql/fdi_reporting_fishing_activities.sql")
+  fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s'",
+                   fa_sql, receiver, receiver, receiver)
+  if(!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
+  }
+  fa <- getFromSQL(con, fa_sql)
+}
+
 
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>
@@ -828,6 +848,7 @@ accessRefFishingUnits = function(con){ accessRefFishingUnitsFromDB(con) }
 
 #<COUNTRY PARAMETERS>
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
+accessCountryISOCode <- function(con){ accessCountryISOCodeFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
 
@@ -909,6 +930,8 @@ accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessAr
 accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+#multireporting
+accessFDIFishingActivities <- function(con,year=NULL,month=NULL,receiver){ accessFDIFishingActivitiesFromDB(con,year=year,month=month,receiver=receiver) }
 
 #<MODULE:OBSERVER_OVERVIEW>
 accessObserverReportsSummary <- function(con,report_id=NULL){ accessObserverReportsSummaryFromDB(con,report_id)}
