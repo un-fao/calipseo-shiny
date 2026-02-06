@@ -3,7 +3,7 @@ country_profile:
     iso3: CMR
     website: null
     logo: ./assets/img/CMRlogo.png
-    timezone: America/Guyana 
+    timezone: Africa/Douala 
 
 openfismis: 
     dbi:
