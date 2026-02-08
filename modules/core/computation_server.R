@@ -981,10 +981,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Action button UI
       output[[paste0("actions_",period)]] <- renderUI({
-        
-        print("here we are")
-        print(indicator_status())
-        target <- indicator_status()[indicator_status()$Period == period,]
+        target <- isolate(indicator_status()[indicator_status()$Period == period,])
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -1075,7 +1072,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
             sapply(out$indicator$reports, function(x){x$id}),
             sapply(out$indicator$reports, function(x){x$label})
           ),
-          selected = "",
+          selected = out$report,
           options = list(
             placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
             render = I('{
@@ -1096,6 +1093,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     })
     
     output$computation_summary<-renderUI({
+      print("commputation summary display")
       div(
         box(width=12,
             title = tags$b(selected_indicator$indicator$label),
