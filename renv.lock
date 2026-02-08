@@ -1747,7 +1747,7 @@
       "RemoteRepo": "fdi4R",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "6f995a04c9aa5b49dd87362d6cd386da448687e0",
+      "RemoteSha": "459d07665973c7d490c38558b5e5e86bc1aa8ef4",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },
@@ -4325,9 +4325,9 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20251222",
+      "Version": "0.1.20260208",
       "Source": "GitHub",
-      "Date": "2025-1222",
+      "Date": "2026-02-08",
       "Title": "Fisheries data reporting flows",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -4365,7 +4365,7 @@
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "13591fa7079485848e3331d297f5f638e1c56717",
+      "RemoteSha": "daa519d0f0c13e84b1f7f2b275877627066afd41",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },

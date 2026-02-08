@@ -79,6 +79,7 @@ appConfig$local <- local
 
 #debug
 if(is.null(appConfig$debug)) appConfig$debug <- FALSE
+if(appConfig$debug) options(shiny.reactlog = TRUE)
 
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
