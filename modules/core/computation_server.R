@@ -1068,18 +1068,40 @@ computation_server <- function(id, parent.session, pool, reloader) {
         selectizeInput(
           ns(paste0('select_report_', target_id)),
           label = NULL,
-          choices = setNames(
-            sapply(out$indicator$reports, function(x){x$id}),
-            sapply(out$indicator$reports, function(x){x$label})
-          ),
+          choices = NULL,
           selected = out$report,
           options = list(
+            options = {
+              reports = data.frame(
+                code = sapply(out$indicator$reports, function(x){x$id}),
+                label = sapply(out$indicator$reports, function(x){x$label}),
+                icon = sapply(out$indicator$reports, function(x){if(is.null(x$icon)) NA else x$icon})
+              )
+              lapply(seq_len(nrow(reports)), function(i) {
+                as.list(reports[i, ])
+              })
+            },
+            valueField  = "code",
+            labelField  = "label_en",
+            searchField = c("code", "label"),
             placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
-            render = I('{
+            render = I("{
+              item: function(item, escape) {
+                if(item.icon){
+                  return '<div style=\"padding:2px;\"><img src=\"'+item.icon+'\" height=30 style=\"margin-bottom:3px;margin-right:5px;float:left;\" /> <strong>' + escape(item.label) + '</strong></div>';
+                }else{
+                  return '<div style=\"padding:2px;\"><strong>' + escape(item.label) + '</strong></div>';
+                }
+              },
               option: function(item, escape) {
-                return "<div><strong>" + escape(item.label) + "</strong>"
+                if(item.icon){
+                  return '<div style=\"padding:2px;\"><img src=\"'+item.icon+'\" height=30 style=\"margin-bottom:3px;margin-right:5px;float:left;\" /> <strong>' + escape(item.label) + '</strong></div>';
+                }else{
+                  return '<div style=\"padding:2px;\"><strong>' + escape(item.label) + '</strong></div>';
+                }
               }
-            }')
+            }"),
+            onInitialize = I('function() { this.setValue(""); }')
           ),
           width = "200px"
         )
