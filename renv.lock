@@ -4325,9 +4325,9 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20260208",
+      "Version": "0.1.20260209",
       "Source": "GitHub",
-      "Date": "2026-02-08",
+      "Date": "2026-02-09",
       "Title": "Fisheries data reporting flows",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -4365,7 +4365,7 @@
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "792d0d01974c4c62ba398b1d1f943e0316a79a5e",
+      "RemoteSha": "219572d8856d076eeb25bb5e7c3eff6e68252218",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },

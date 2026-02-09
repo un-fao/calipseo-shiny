@@ -60,6 +60,19 @@ compute_nominal_catches <- function(con, year = NULL, month = NULL, raised_artis
   return(data)
 }
 
+#fao_ns1
+fao_ns1 <- function(con, data, metadata, file){
+  
+  data_for_unfao = data[data$receiver == "UN-FAO",]
+  data_for_unfao$receiver = NULL
+  reporting_flow = repfishr::reporting_flow$new(
+    sender = accessCountryISOCode(con), 
+    sender_type = "country"
+  )
+  task = reporting_flow$getReceiver("UN-FAO")$getTaskDefinitionById("unfao_task_ns1")
+  task$report(data_for_unfao, metadata, path = file)
+}
+
 #iccat_t1nc
 iccat_t1nc <- function(con, data, metadata, file){
   
@@ -73,15 +86,15 @@ iccat_t1nc <- function(con, data, metadata, file){
   task$report(data_for_iccat, metadata, path = file)
 }
 
-#fao_ns1
-fao_ns1 <- function(con, data, metadata, file){
+#wecafc_t1nc
+wecafc_t1nc <- function(con, data, metadata, file){
   
-  data_for_unfao = data[data$receiver == "UN-FAO",]
-  data_for_unfao$receiver = NULL
+  data_for_wecafc = data[data$receiver == "WECAFC",]
+  data_for_wecafc$receiver = NULL
   reporting_flow = repfishr::reporting_flow$new(
     sender = accessCountryISOCode(con), 
     sender_type = "country"
   )
-  task = reporting_flow$getReceiver("UN-FAO")$getTaskDefinitionById("unfao_task_ns1")
-  task$report(data_for_unfao, metadata, path = file)
+  task = reporting_flow$getReceiver("WECAFC")$getTaskDefinitionById("dcrf_task_I.2")
+  task$report(data_for_wecafc, metadata, path = file)
 }
