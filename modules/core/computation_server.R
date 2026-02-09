@@ -1069,11 +1069,10 @@ computation_server <- function(id, parent.session, pool, reloader) {
           ns(paste0('select_report_', target_id)),
           label = NULL,
           choices = NULL,
-          selected = out$report,
           options = list(
             options = {
               reports = data.frame(
-                code = sapply(out$indicator$reports, function(x){x$id}),
+                id = sapply(out$indicator$reports, function(x){x$id}),
                 label = sapply(out$indicator$reports, function(x){x$label}),
                 icon = sapply(out$indicator$reports, function(x){if(is.null(x$icon)) NA else x$icon})
               )
@@ -1081,9 +1080,9 @@ computation_server <- function(id, parent.session, pool, reloader) {
                 as.list(reports[i, ])
               })
             },
-            valueField  = "code",
-            labelField  = "label_en",
-            searchField = c("code", "label"),
+            valueField  = "id",
+            labelField  = "label",
+            searchField = c("id", "label"),
             placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
             render = I("{
               item: function(item, escape) {
@@ -1101,7 +1100,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
                 }
               }
             }"),
-            onInitialize = I('function() { this.setValue(""); }')
+            onInitialize = I(paste0('function() { this.setValue("',out$report,'"); }'))
           ),
           width = "200px"
         )
