@@ -55,6 +55,7 @@ require(DiagrammeR)
 
 #R FDI packages
 require(vrule)
+require(fdishinyr)
 require(artfishr)
 require(repfishr)
 
