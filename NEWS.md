@@ -1,14 +1,17 @@
-# **calipseo-shiny [v2.0.9002](https://github.com/un-fao/calipseo-shiny) - 2026-01-28**
+# **calipseo-shiny [v2.0.9003](https://github.com/un-fao/calipseo-shiny) - 2026-02-10**
 
 # Enhancements
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
+- [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
+- [#345](https://github.com/un-fao/calipseo-shiny/issues/345) Migration of Artfish toolbox to artfishr
 
 # New features
 
 - [#247](https://github.com/un-fao/calipseo-shiny/issues/247) Observer programs shiny modules
 - [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
 - [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
+
 
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
 
