@@ -485,7 +485,8 @@
         "shiny",
         "shiny.i18n",
         "shinyWidgets",
-        "bs4Dash"
+        "bs4Dash",
+        "fdishinyr"
       ],
       "Remotes": "fdiwg/vrule, fdiwg/fdishinyr",
       "Suggests": [
@@ -502,7 +503,7 @@
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "b4caa81d6f27acbd0ed3dde57266b1fe594f1831",
+      "RemoteSha": "85d7aa7d5bc09b543ae272b2adbad42c29c8e945",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
