@@ -1,9 +1,5 @@
 # **calipseo-shiny [v2.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.0) - 2026-02-11**
 
-# New requirements
-
-- Use of [calipseo-model](https://github.com/un-fao/calipseo-model) >= [`1.5.0`](https://github.com/un-fao/calipseo-model/releases/tag/v1.5.0) (2026-02-10)
-
 # Enhancements
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
@@ -18,6 +14,15 @@
 - [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
 - [#334](https://github.com/un-fao/calipseo-shiny/issues/334) Multireporting prototype for nominal catches (covering UN-FAO, WECAFC and ICCAT)
 - [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
+
+# New requirements
+
+- Use of [calipseo-model](https://github.com/un-fao/calipseo-model) >= [`1.5.0`](https://github.com/un-fao/calipseo-model/releases/tag/v1.5.0) (2026-02-10)
+- [fdishinyr](https://github.com/fdiwg/fdishinyr) R package (latest)
+- [vrule](https://github.com/fdiwg/vrule) R package (latest)
+- [repfishr](https://github.com/fdiwg/repfishr) R package (latest)
+- [artfishr](https://github.com/fdiwg/artfishr) R package (latest)
+- [shiny.i18n](https://cran.r-project.org/package=shiny.i18n) R package (latest)
 
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.4) - 2025-12-10**
 
