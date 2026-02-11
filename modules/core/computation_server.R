@@ -230,7 +230,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     indicator_output <- try(eval(parse(text = indicator_script_command)))
     
     if(!is(indicator_output, "try-error")){
-      cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
+      cat(sprintf(paste0(i18n("SUCCESS_COMPUTING_LABEL")," - '%s': %s results\n"), indicator$value, nrow(raw_output)))
       
       #export to computation directory
       progress$set(message = indicator_msg, detail = i18n("EXPORT_RESULTS_STAGING_LABEL"), value = 90)
@@ -252,12 +252,15 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       readr::write_csv(indicator_output, out$filepath)
       
-      progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
+      cat(sprintf(paste0(i18n("SUCCESS_COMPUTING_LABEL"),"- '%s'\n"), indicator$id))
+      progress$set(message = indicator_msg, detail = i18n("SUCCESS_COMPUTING_LABEL"), value = 100)
+      postMessage(title = i18n("SUCCESS"), msg = i18n("SUCCESS_COMPUTING_LABEL"), type = "success")
       out$results <- getComputationResults(indicator, config = appConfig)
       
     }else{
-      cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$id))
-      progress$set(message = i18n("ERROR_DURING_COMPUTATION"), value = 100)
+      cat(sprintf(paste0(i18n("ERROR_COMPUTING_LABEL"),"'%s'\n"), indicator$id))
+      progress$set(message = i18n("ERROR_COMPUTING_LABEL"), value = 100)
+      postMessage(title = i18n("ERROR"), msg = i18n("ERROR_COMPUTING_LABEL"), type = "error")
       out$computing <- FALSE
     }
     
@@ -1102,7 +1105,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
             }"),
             onInitialize = I(paste0('function() { this.setValue("',out$report,'"); }'))
           ),
-          width = "200px"
+          width = "300px"
         )
       })
       
@@ -1200,9 +1203,13 @@ computation_server <- function(id, parent.session, pool, reloader) {
          paste0("report", "_", out$report, "_", indicator_status()[i,"Period"], "_", toupper(indicator_status()[i,"Status"]), ".xlsx")
        },
        content = function(file) {
-         
          INFO("Click on %s report generation/download button", target_id)
+         progress <- shiny::Progress$new(session, min = 0, max = 100)
+         on.exit(progress$close())
+         
          report_def = out$indicator$reports[sapply(out$indicator$reports, function(x){x$id == out$report})][[1]]
+         progress$set(message = report_def$label, detail = "Generating report...", value = 20)
+         
          #source the reporting script
          source(report_def$script)
          #read input file
@@ -1210,13 +1217,26 @@ computation_server <- function(id, parent.session, pool, reloader) {
          indicator_computation_metadata <- NULL #in our TODO list next, how to provide standard statistical metadata for indicators
          #generate/download report
          INFO("Generate and download report")
-         print(pool)
-         eval(parse(text = paste0(report_def$fun, "(
+         out_report = try(eval(parse(text = paste0(report_def$fun, "(
                                   con = pool,
                                   data = indicator_computation_data, 
                                   metadata = indicator_computation_metadata,
                                   file = file
-                            )")))
+                            )"))))
+         progress$set(message = report_def$label, detail = "Successful report generation!", value = 100)
+         if(is(out_report, "try-error")){
+           postMessage(title = i18n("ERROR"), msg = i18n("ERROR_REPORTING_LABEL"), type = "error")
+         }else{
+           if(is(out_report, "reporting_task")){
+             if(!is.null(out_report$report_metadata)) if(!is.null(out_report$report_metadata$nb_records)){
+               if(out_report$report_metadata$nb_records == 0){
+                 postMessage(title = i18n("WARNING"), msg = i18n("WARNING_REPORTING_LABEL_EMPTY_REPORT"), type = "warning")
+               }else{
+                 postMessage(title = i18n("SUCCESS"), msg = i18n("SUCCESS_REPORTING_LABEL"), type = "success")
+               }
+             }
+           }
+         }
        }
       )
       

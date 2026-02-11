@@ -1,4 +1,8 @@
 {
+  "SUCCESS": "Success",
+  "WARNING": "Warning",
+  "ERROR": "Error",
+  
   /*computation title and subtitle*/
   "COMPUTATION_TITLE" : "Statistics",
   "COMPUTATION_SUBTITLE" : "Compute statistics and download statistical reports",
@@ -9,7 +13,6 @@
   "LOAD_R_COMPUTE_SCRIPT_PROGRESS_LABEL" : "Prepare R script...",
   "EXECUTE_INDICATOR_LABEL" : "Execute indicator",
   "EXECUTE_R_SCRIPT_LABEL" : "Execute R script...",
-  "COMPUTATION_SUCCESSFUL_LABEL" : "Successful computation!",
   "DRAFT_LABEL" : "Draft",
   
   /*computation indicator*/
@@ -62,9 +65,11 @@
   "BUTTON_RELEASE_TITLE" : "Release",
   /*errors*/
   
-  "ERROR_EXECUTING_INDICATORS_LABEL": "Error while executing indicator",
-  "ERROR_DURING_COMPUTATION" : "Error during computation",
-  "SUCCESS_COMPUTATION_INDICATOR_LABEL" : "Successful computation of indicator",
+  "ERROR_COMPUTING_LABEL": "Error while executing indicator",
+  "ERROR_REPORTING_LABEL": "Error during report generation",
+  "SUCCESS_COMPUTING_LABEL" : "Successful computation!",
+  "SUCCESS_REPORTING_LABEL": "Successfully generated report!",
+  "WARNING_REPORTING_LABEL_EMPTY_REPORT": "Generated report is empty!",
   "EXPORT_RESULTS_STAGING_LABEL" : "Export result to 'staging' area...",
   "LANDING1_RELEASE_RESULT_MISSIG_YEAR" : "Landings 1 released results missing for year",
   

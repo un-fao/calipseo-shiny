@@ -463,9 +463,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20260128",
+      "Version": "0.1.20260210",
       "Source": "GitHub",
-      "Date": "2026-01-28",
+      "Date": "2026-02-10",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -477,12 +477,18 @@
         "dplyr",
         "tidyr",
         "readr",
+        "data.table",
+        "DT",
         "lubridate",
         "vrule",
         "ggplot2",
-        "shiny"
+        "shiny",
+        "shiny.i18n",
+        "shinyWidgets",
+        "bs4Dash",
+        "fdishinyr"
       ],
-      "Remotes": "fdiwg/vrule",
+      "Remotes": "fdiwg/vrule, fdiwg/fdishinyr",
       "Suggests": [
         "testthat"
       ],
@@ -497,7 +503,7 @@
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "103ba48f66e90c287c185b0c1a3b09ca243f8e2b",
+      "RemoteSha": "85d7aa7d5bc09b543ae272b2adbad42c29c8e945",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
@@ -1750,6 +1756,42 @@
       "RemoteSha": "459d07665973c7d490c38558b5e5e86bc1aa8ef4",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
+    },
+    "fdishinyr": {
+      "Package": "fdishinyr",
+      "Version": "0.1",
+      "Source": "GitHub",
+      "Date": "2026-02-10",
+      "Title": "FDI Shiny utils",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.0)"
+      ],
+      "Imports": [
+        "shiny",
+        "shiny.i18n",
+        "bs4Dash"
+      ],
+      "Suggests": [
+        "roxygen2",
+        "testthat"
+      ],
+      "Description": "FDI Shiny utils",
+      "URL": "https://github.com/fdiwg/fdishinyr",
+      "BugReports": "https://github.com/fdiwg/fdishinyr/issues",
+      "LazyLoad": "yes",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(r6 = TRUE)",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fdishinyr",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "d72d7ad3fa3e08510e26b19e9c1a602a3466aab8",
+      "NeedsCompilation": "no",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },
     "fontawesome": {
       "Package": "fontawesome",
@@ -4325,14 +4367,14 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20260209",
+      "Version": "0.1.20260211",
       "Source": "GitHub",
-      "Date": "2026-02-09",
+      "Date": "2026-02-11",
       "Title": "Fisheries data reporting flows",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
-        "R (>= 4.0)"
+        "R (>= 4.2)"
       ],
       "Imports": [
         "R6",
@@ -4365,7 +4407,7 @@
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "219572d8856d076eeb25bb5e7c3eff6e68252218",
+      "RemoteSha": "98ab553d072da7588b651e309da6cf4b823b0e63",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
     },
@@ -5017,6 +5059,50 @@
       "Author": "Winston Chang [aut, cre] (ORCID: <https://orcid.org/0000-0002-1576-2126>), Joe Cheng [aut], JJ Allaire [aut], Carson Sievert [aut] (ORCID: <https://orcid.org/0000-0002-4958-2844>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Yihui Xie [aut], Jeff Allen [aut], Jonathan McPherson [aut], Alan Dipert [aut], Barbara Borges [aut], Posit Software, PBC [cph, fnd], jQuery Foundation [cph] (jQuery library and jQuery UI library), jQuery contributors [ctb, cph] (jQuery library; authors listed in inst/www/shared/jquery-AUTHORS.txt), jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in inst/www/shared/jqueryui/AUTHORS.txt), Mark Otto [ctb] (Bootstrap library), Jacob Thornton [ctb] (Bootstrap library), Bootstrap contributors [ctb] (Bootstrap library), Twitter, Inc [cph] (Bootstrap library), Prem Nawaz Khan [ctb] (Bootstrap accessibility plugin), Victor Tsaran [ctb] (Bootstrap accessibility plugin), Dennis Lembree [ctb] (Bootstrap accessibility plugin), Srinivasu Chakravarthula [ctb] (Bootstrap accessibility plugin), Cathy O'Connor [ctb] (Bootstrap accessibility plugin), PayPal, Inc [cph] (Bootstrap accessibility plugin), Stefan Petre [ctb, cph] (Bootstrap-datepicker library), Andrew Rowls [ctb, cph] (Bootstrap-datepicker library), Brian Reavis [ctb, cph] (selectize.js library), Salmen Bejaoui [ctb, cph] (selectize-plugin-a11y library), Denis Ineshin [ctb, cph] (ion.rangeSlider library), Sami Samhuri [ctb, cph] (Javascript strftime library), SpryMedia Limited [ctb, cph] (DataTables library), John Fraser [ctb, cph] (showdown.js library), John Gruber [ctb, cph] (showdown.js library), Ivan Sagalaev [ctb, cph] (highlight.js library), R Core Team [ctb, cph] (tar implementation from R)",
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "CRAN"
+    },
+    "shiny.i18n": {
+      "Package": "shiny.i18n",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Title": "Shiny Applications Internationalization",
+      "Authors@R": "c( person(\"Jakub\", \"Nowicki\", email = \"opensource+kuba@appsilon.com\", role = c(\"cre\", \"aut\")), person(\"Dominik\", \"Krzemiński\", email = \"raymon92@gmail.com\", role = c(\"aut\")), person(\"Krystian\", \"Igras\", email = \"krystian8207@gmail.com\", role = c(\"aut\")), person(\"Jakub\", \"Sobolewski\", email = \"jakub.sobolewski@appsilon.com\", role = c(\"aut\")), person(\"Appsilon Sp. z o.o.\", role = \"cph\", email = \"opensource@appsilon.com\") )",
+      "Description": "It provides easy internationalization of Shiny applications. It can be used as standalone translation package to translate reports, interactive visualizations or graphical elements as well.",
+      "Depends": [
+        "R (>= 3.3.0)"
+      ],
+      "Imports": [
+        "yaml",
+        "jsonlite",
+        "methods",
+        "stringr",
+        "R6",
+        "glue",
+        "shiny",
+        "rstudioapi",
+        "utils"
+      ],
+      "License": "MIT + file LICENSE",
+      "Encoding": "UTF-8",
+      "URL": "https://appsilon.github.io/shiny.i18n/, https://github.com/Appsilon/shiny.i18n",
+      "BugReports": "https://github.com/Appsilon/shiny.i18n/issues",
+      "RoxygenNote": "7.2.1",
+      "Suggests": [
+        "covr",
+        "googleLanguageR",
+        "knitr",
+        "lintr",
+        "rcmdcheck",
+        "rmarkdown",
+        "spelling",
+        "testthat",
+        "withr",
+        "quarto"
+      ],
+      "Language": "en-US",
+      "NeedsCompilation": "no",
+      "Author": "Jakub Nowicki [cre, aut], Dominik Krzemiński [aut], Krystian Igras [aut], Jakub Sobolewski [aut], Appsilon Sp. z o.o. [cph]",
+      "Maintainer": "Jakub Nowicki <opensource+kuba@appsilon.com>",
+      "Repository": "RSPM"
     },
     "shinyFiles": {
       "Package": "shinyFiles",
@@ -6235,9 +6321,9 @@
     },
     "vrule": {
       "Package": "vrule",
-      "Version": "0.1.20251222",
+      "Version": "0.1.20260209",
       "Source": "GitHub",
-      "Date": "2025-12-22",
+      "Date": "2026-02-09",
       "Title": "Tools to validate data based on business validation rules",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel@fao.org\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), email = \"alexandre.bennici@fao.org\", comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -6268,7 +6354,7 @@
       "RemoteRepo": "vrule",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "3f4b550018365c4d3e6e035bd0a856decea4b9eb",
+      "RemoteSha": "37f9c2d0800c90be2f4672302e3c43885f982cc5",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
