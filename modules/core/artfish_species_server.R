@@ -204,6 +204,7 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       col_group = "fishing_unit_label",
       col_value = "catch_nominal_landed",
       stat = "sum",
+      plot_type = 'bar_stack',
       time_label = "",
       value_label = i18n("ARTFISH_SPECIES_PLOT_CATCH_VALUE_LABEL"),
       group_label = i18n("ARTFISH_SPECIES_PLOT_CATCH_GROUP_LABEL")
@@ -235,7 +236,8 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       time_label = "",
       value_label = i18n("ARTFISH_SPECIES_PLOT_EFFORT_VALUE_LABEL"),
       group_label = i18n("ARTFISH_SPECIES_PLOT_EFFORT_GROUP_LABEL"),
-      stat = "sum"
+      stat = "sum",
+      plot_type = 'bar_stack'
       #plot_types = c("line","line_cumulate","area_stack","area_stack_pct"),
       #time_choices = c("month")
     )
@@ -250,7 +252,8 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
       time_label = "",
       value_label = i18n("ARTFISH_SPECIES_PLOT_VALUE_VALUE_LABEL"),
       group_label = i18n("ARTFISH_SPECIES_PLOT_VALUE_GROUP_LABEL"),
-      stat = "sum"
+      stat = "sum",
+      plot_type = 'bar_stack'
       #plot_types = c("line","line_cumulate","area_stack","area_stack_pct")
     )
     

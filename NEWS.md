@@ -9,6 +9,7 @@
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
 - [#345](https://github.com/un-fao/calipseo-shiny/issues/345) Migration of Artfish toolbox to artfishr
 - [#347](https://github.com/un-fao/calipseo-shiny/issues/347) Computation / Reporting - improve messaging (success, warning, error) to user
+- [#349](https://github.com/un-fao/calipseo-shiny/issues/349) Generic chart server - support plot_type argument for default plot type set
 
 # New features
 

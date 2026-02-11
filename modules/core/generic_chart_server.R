@@ -7,6 +7,7 @@ generic_chart_server <- function(
   time_label = "Date",
   value_label = "Value",
   group_label = "Group",
+  plot_type = NULL, #new arg
   plot_types = NULL,
   time_choices = c("month","year"),
   stat = "sum",    
@@ -74,7 +75,6 @@ generic_chart_server <- function(
     
     plot_type_choices <- all_plot_types[all_plot_types %in% allowed]
     if (!is.null(plot_types)) {
-      
       plot_type_choices <- plot_type_choices[plot_type_choices %in% plot_types]
     }
     
@@ -94,7 +94,7 @@ generic_chart_server <- function(
     output$plot_style_wrapper <- renderUI({
       div(
         style = if(length(plot_type_choices) == 1) "display:none;" else NULL,
-        selectInput(ns("plot_style"), "Plot style :", choices = plot_type_choices, selected = plot_type_choices[1])
+        selectInput(ns("plot_style"), "Plot style :", choices = plot_type_choices, selected = if(!is.null(plot_type)) plot_type else plot_type_choices[1])
       )
     })
     output$granularity_wrapper <- renderUI({
@@ -163,7 +163,7 @@ generic_chart_server <- function(
       d <- data_formatted()
       req(nrow(d) > 0)
       
-      style <- ifelse(is.null(input$plot_style), names(plot_type_choices)[1], input$plot_style)
+      style <- ifelse(is.null(input$plot_style), if(is.null(plot_type)) names(plot_type_choices)[1] else plot_type, input$plot_style)
       
       if (style %in% c("line","line_sum","line_mean","area_stack","area_stack_pct","bar_mean","bar_stack","bar_stack_pct")) {
         x_lab <- time_label; y_lab <- value_label
