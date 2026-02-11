@@ -71,11 +71,8 @@ fao_ns1 <- function(con, data, metadata, file){
   )
   task = reporting_flow$getReceiver("UN-FAO")$getTaskDefinitionById("unfao_task_ns1")
   out = task$report(data_for_unfao, metadata, path = file)
-  out_md = attr(out, "metadata")
-  if("nb_records" %in% names(out_md)){
-    print(out_md)
-    if(out_md$nb_records == 0) print("NO DATA IN REPORT!!!!!")
-  }
+  out_md = task$report_metadata
+  return(task)
 }
 
 #iccat_t1nc
@@ -89,11 +86,7 @@ iccat_t1nc <- function(con, data, metadata, file){
   )
   task = reporting_flow$getReceiver("ICCAT")$getTaskDefinitionById("iccat_task_t1nc")
   out = task$report(data_for_iccat, metadata, path = file)
-  out_md = attr(out, "metadata")
-  if("nb_records" %in% names(out_md)){
-    print(out_md)
-    if(out_md$nb_records == 0) print("NO DATA IN REPORT!!!!!")
-  }
+  return(task)
 }
 
 #wecafc_t1nc
@@ -107,9 +100,5 @@ wecafc_t1nc <- function(con, data, metadata, file){
   )
   task = reporting_flow$getReceiver("WECAFC")$getTaskDefinitionById("dcrf_task_I.2")
   out = task$report(data_for_wecafc, metadata, path = file)
-  out_md = attr(out, "metadata")
-  if("nb_records" %in% names(out_md)){
-    print(out_md)
-    if(out_md$nb_records == 0) print("NO DATA IN REPORT!!!!!")
-  }
+  return(task)
 }
