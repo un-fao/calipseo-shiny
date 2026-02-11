@@ -13,11 +13,10 @@ computation_ui <- function(id){
     ),
     fluidRow(
       style="display:flex;",
-      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_INDICATOR"),
+      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_INDICATOR"), solidHeader = T, status = "primary",
           uiOutput(ns("computation_by"))
       ),
-      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_PLOT"),
-          #maximizable = T,
+      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_PLOT"), solidHeader = T,  status = "primary",
           uiOutput(ns("plot_wrapper"))
       )
     ),

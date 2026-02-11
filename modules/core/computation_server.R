@@ -627,7 +627,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     if(is.null(indicator_status())){
       p(i18n("EMPTY_PLOT_LABEL"))
     }else{
-      plotlyOutput(ns("plot"))
+      plotlyOutput(ns("plot"),height = "200px")
     }
   })
   
@@ -668,10 +668,17 @@ computation_server <- function(id, parent.session, pool, reloader) {
                               '<br>', df$Status,': ',paste(round(df$percent,0),"%")),
             color = ~Status, 
             colors = colormap) %>%
-      layout(yaxis = list(title = NULL, zeroline = FALSE,
-                          showline = FALSE, ticksuffix = "%"), 
-             xaxis = list (title = "",type="category"),
-             barmode = 'stack',hoverlabel = list(bgcolor= 'white'),legend = list(traceorder = "reversed"))
+      layout(
+        yaxis = list(
+          title = NULL, zeroline = FALSE, showline = FALSE, ticksuffix = "%"
+        ), 
+        xaxis = list (title = "",type="category"),
+        barmode = 'stack', 
+        hoverlabel = list(bgcolor= 'white'),
+        legend = list(traceorder = "reversed"),
+        autosize = F,
+        height = 200
+      )
     
   })
   #--------------------------------------------
