@@ -7,7 +7,8 @@
 # Enhancements
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
-- [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Computation / Reporting - improve messaging (success, warning, error) to user
+- [#345](https://github.com/un-fao/calipseo-shiny/issues/345) Migration of Artfish toolbox to artfishr
+- [#347](https://github.com/un-fao/calipseo-shiny/issues/347) Computation / Reporting - improve messaging (success, warning, error) to user
 
 # New features
 
@@ -15,6 +16,7 @@
 - [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
 - [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
 - [#334](https://github.com/un-fao/calipseo-shiny/issues/334) Multireporting prototype for nominal catches (covering UN-FAO, WECAFC and ICCAT)
+- [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
 
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.4) - 2025-12-10**
 

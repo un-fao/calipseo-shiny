@@ -54,7 +54,9 @@ require(data.tree)
 require(DiagrammeR)
 
 #R FDI packages
+require(fdi4R)
 require(vrule)
+require(fdishinyr)
 require(artfishr)
 require(repfishr)
 
