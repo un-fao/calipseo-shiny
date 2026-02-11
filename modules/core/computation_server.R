@@ -34,13 +34,15 @@ computation_server <- function(id, parent.session, pool, reloader) {
     report = NULL
   )
   
-  available_periods<-reactiveVal(NULL)
-  full_periods<-reactiveVal(NULL)
-  selected_indicator<-reactiveValues(
+  
+  available_periods <- reactiveVal(NULL)
+  full_periods <- reactiveVal(NULL)
+  selected_indicator <- reactiveValues(
     indicator = NULL,
     period_key = NULL,
     period_value = NULL
   )
+  selected_report <- reactiveVal(NULL)
   
   indicator<-reactiveVal(NULL)
   indicator_status<-reactiveVal(NULL)
@@ -228,7 +230,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
     indicator_output <- try(eval(parse(text = indicator_script_command)))
     
     if(!is(indicator_output, "try-error")){
-      cat(sprintf(paste0(i18n("SUCCESS_COMPUTATION_INDICATOR_LABEL"),"'%s': %s results\n"), indicator$value, nrow(raw_output)))
+      cat(sprintf(paste0(i18n("SUCCESS_COMPUTING_LABEL")," - '%s': %s results\n"), indicator$value, nrow(raw_output)))
       
       #export to computation directory
       progress$set(message = indicator_msg, detail = i18n("EXPORT_RESULTS_STAGING_LABEL"), value = 90)
@@ -250,12 +252,15 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       readr::write_csv(indicator_output, out$filepath)
       
-      progress$set(message = indicator_msg, detail = i18n("COMPUTATION_SUCCESSFUL_LABEL"), value = 100)
+      cat(sprintf(paste0(i18n("SUCCESS_COMPUTING_LABEL"),"- '%s'\n"), indicator$id))
+      progress$set(message = indicator_msg, detail = i18n("SUCCESS_COMPUTING_LABEL"), value = 100)
+      postMessage(title = i18n("SUCCESS"), msg = i18n("SUCCESS_COMPUTING_LABEL"), type = "success")
       out$results <- getComputationResults(indicator, config = appConfig)
       
     }else{
-      cat(sprintf(paste0(i18n("ERROR_EXECUTING_INDICATORS_LABEL"),"'%s'\n"), indicator$id))
-      progress$set(message = i18n("ERROR_DURING_COMPUTATION"), value = 100)
+      cat(sprintf(paste0(i18n("ERROR_COMPUTING_LABEL"),"'%s'\n"), indicator$id))
+      progress$set(message = i18n("ERROR_COMPUTING_LABEL"), value = 100)
+      postMessage(title = i18n("ERROR"), msg = i18n("ERROR_COMPUTING_LABEL"), type = "error")
       out$computing <- FALSE
     }
     
@@ -825,7 +830,6 @@ computation_server <- function(id, parent.session, pool, reloader) {
     out$results <- getComputationResults(selected_indicator$indicator, config = appConfig)
     out$computation <- NULL
     out$indicator <- selected_indicator$indicator
-    out$report <- NULL
     
     #get available periods for the selected indicator
     available_periods_new <- getAvailablePeriods(
@@ -880,6 +884,17 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     mutate(Period = as.character(Period))) %>%
         mutate(Status=ifelse(is.na(Status), "not available", Status))
     }
+    
+    #moved here out of draft section due reactivity issue
+    #TODO analyze further
+    indicator_status_new$Releasable <- sapply(indicator_status_new$Period, function(x){
+      isReleasable(
+        id = indicator(), 
+        target_period = x, 
+        config = appConfig, 
+        indicators = AVAILABLE_INDICATORS
+      )
+    })
   
     #store in reactive
     indicator_status <- indicator_status(indicator_status_new)
@@ -969,8 +984,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Action button UI
       output[[paste0("actions_",period)]] <- renderUI({
-        print(indicator_status())
-        target <- indicator_status()[indicator_status()$Period == period,]
+        target <- isolate(indicator_status()[indicator_status()$Period == period,])
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {
@@ -986,20 +1000,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     if(length(out$indicator$reports)>0){
                       tagList(
                         tags$div(
-                          selectizeInput(
-                            ns(paste0('select_report_', target_id)),
-                            label = NULL,
-                            choices = setNames(sapply(out$indicator$reports, function(x){x$id}),sapply(out$indicator$reports, function(x){x$label})), selected = "",
-                            options = list(
-                              placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
-                              render = I('{
-                                option: function(item, escape) {
-                                  return "<div><strong>" + escape(item.label) + "</strong>"
-                                }
-                              }')
-                            ),
-                            width = "150px"
-                          ),
+                          uiOutput(ns(paste0('report_selector_', target_id))),
                           style = "display:inline-block;margin-left:20px;"
                         ),
                         if(!is.null(out$report)){
@@ -1021,18 +1022,12 @@ computation_server <- function(id, parent.session, pool, reloader) {
                   #we can recompute the indicator as many times as we want
                   #we can view and download the results
                   #if indicator is releasable (depending on data availability), we can release
-                  releasable <- isReleasable(
-                    id = indicator(), 
-                    target_period = period, 
-                    config = appConfig, 
-                    indicators = AVAILABLE_INDICATORS
-                  )
                   
                   return(tags$span(
                     actionButton(inputId = ns(paste0('button_compute_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_UPDATE"), label = "", icon = icon("arrows-rotate")),
                     actionButton(inputId = ns(paste0('button_view_', target_id)), class="btn btn-light", style = "border-color:transparent;padding-right:10px", title = i18n("ACTION_VIEW"), label = "", icon = icon("eye", class = "fas")),
                     downloadButtonCustom(ns(paste0("button_download_result_", target_id)),style = "border-color:transparent;padding-right:10px",title = i18n("ACTION_DOWNLOAD_RESULT"), label = "", icon = icon("download"),onclick = sprintf("Shiny.setInputValue('%s', this.id)",ns("select_button"))),
-                    if(releasable){
+                    if(target$Releasable){
                       actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE"), label = "", icon = icon("thumbs-up", class = "fas"))
                     }else{
                       disabled(actionButton(inputId = ns(paste0('button_release_', target_id)), class="btn btn-light", style = "border-color:transparent",title = i18n("ACTION_RELEASE_DISABLED_NOTRELEASABLE"), label = "", icon = icon("thumbs-up", class = "fas")))
@@ -1040,20 +1035,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
                     if(length(out$indicator$reports)>0){
                       tagList(
                         tags$div(
-                          selectizeInput(
-                            ns(paste0('select_report_', target_id)),
-                            label = NULL,
-                            choices = setNames(sapply(out$indicator$reports, function(x){x$id}),sapply(out$indicator$reports, function(x){x$label})), selected = "",
-                            options = list(
-                              placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
-                              render = I('{
-                                  option: function(item, escape) {
-                                    return "<div><strong>" + escape(item.label) + "</strong>"
-                                  }
-                                }')
-                            ),
-                            width = "150px"
-                          ),
+                          uiOutput(ns(paste0('report_selector_', target_id))),
                           style = "display:inline-block;margin-left:20px;"
                         ),
                         if(!is.null(out$report)){
@@ -1083,9 +1065,59 @@ computation_server <- function(id, parent.session, pool, reloader) {
         )
       })
       
+      # Generate the selector UI separately (NOT inside the main renderUI)
+      output[[paste0('report_selector_', target_id)]] <- renderUI({
+        print("regenerate selectize UI")
+        selectizeInput(
+          ns(paste0('select_report_', target_id)),
+          label = NULL,
+          choices = NULL,
+          options = list(
+            options = {
+              reports = data.frame(
+                id = sapply(out$indicator$reports, function(x){x$id}),
+                label = sapply(out$indicator$reports, function(x){x$label}),
+                icon = sapply(out$indicator$reports, function(x){if(is.null(x$icon)) NA else x$icon})
+              )
+              lapply(seq_len(nrow(reports)), function(i) {
+                as.list(reports[i, ])
+              })
+            },
+            valueField  = "id",
+            labelField  = "label",
+            searchField = c("id", "label"),
+            placeholder = i18n("ACTION_GENERATE_AND_DOWNLOAD_REPORT_SELECTOR"),
+            render = I("{
+              item: function(item, escape) {
+                if(item.icon){
+                  return '<div style=\"padding:2px;\"><img src=\"'+item.icon+'\" height=30 style=\"margin-bottom:3px;margin-right:5px;float:left;\" /> <strong>' + escape(item.label) + '</strong></div>';
+                }else{
+                  return '<div style=\"padding:2px;\"><strong>' + escape(item.label) + '</strong></div>';
+                }
+              },
+              option: function(item, escape) {
+                if(item.icon){
+                  return '<div style=\"padding:2px;\"><img src=\"'+item.icon+'\" height=30 style=\"margin-bottom:3px;margin-right:5px;float:left;\" /> <strong>' + escape(item.label) + '</strong></div>';
+                }else{
+                  return '<div style=\"padding:2px;\"><strong>' + escape(item.label) + '</strong></div>';
+                }
+              }
+            }"),
+            onInitialize = I(paste0('function() { this.setValue("',out$report,'"); }'))
+          ),
+          width = "300px"
+        )
+      })
+      
+      # Handle the selection change with observeEvent
+      observeEvent(input[[paste0("select_report_", target_id)]], {
+        out$report <- input[[paste0("select_report_", target_id)]]
+      }, ignoreInit = TRUE)
+      
     })
     
     output$computation_summary<-renderUI({
+      print("commputation summary display")
       div(
         box(width=12,
             title = tags$b(selected_indicator$indicator$label),
@@ -1161,9 +1193,8 @@ computation_server <- function(id, parent.session, pool, reloader) {
       )
       
       #event on report selection
-      observeEvent(input[[paste0("select_report_", target_id)]],{
-        out$report = input[[paste0("select_report_", target_id)]]
-      },ignoreInit = T)
+      # observeEvent(input[[paste0("select_report_", target_id)]],{
+      # },ignoreInit = T)
       
       #event on results reporting generation/download
       output[[paste0("button_generate_and_download_report_", target_id)]] <<- downloadHandler(
@@ -1172,9 +1203,13 @@ computation_server <- function(id, parent.session, pool, reloader) {
          paste0("report", "_", out$report, "_", indicator_status()[i,"Period"], "_", toupper(indicator_status()[i,"Status"]), ".xlsx")
        },
        content = function(file) {
-         
          INFO("Click on %s report generation/download button", target_id)
+         progress <- shiny::Progress$new(session, min = 0, max = 100)
+         on.exit(progress$close())
+         
          report_def = out$indicator$reports[sapply(out$indicator$reports, function(x){x$id == out$report})][[1]]
+         progress$set(message = report_def$label, detail = "Generating report...", value = 20)
+         
          #source the reporting script
          source(report_def$script)
          #read input file
@@ -1182,13 +1217,26 @@ computation_server <- function(id, parent.session, pool, reloader) {
          indicator_computation_metadata <- NULL #in our TODO list next, how to provide standard statistical metadata for indicators
          #generate/download report
          INFO("Generate and download report")
-         print(pool)
-         eval(parse(text = paste0(report_def$fun, "(
+         out_report = try(eval(parse(text = paste0(report_def$fun, "(
                                   con = pool,
                                   data = indicator_computation_data, 
                                   metadata = indicator_computation_metadata,
                                   file = file
-                            )")))
+                            )"))))
+         progress$set(message = report_def$label, detail = "Successful report generation!", value = 100)
+         if(is(out_report, "try-error")){
+           postMessage(title = i18n("ERROR"), msg = i18n("ERROR_REPORTING_LABEL"), type = "error")
+         }else{
+           if(is(out_report, "reporting_task")){
+             if(!is.null(out_report$report_metadata)) if(!is.null(out_report$report_metadata$nb_records)){
+               if(out_report$report_metadata$nb_records == 0){
+                 postMessage(title = i18n("WARNING"), msg = i18n("WARNING_REPORTING_LABEL_EMPTY_REPORT"), type = "warning")
+               }else{
+                 postMessage(title = i18n("SUCCESS"), msg = i18n("SUCCESS_REPORTING_LABEL"), type = "success")
+               }
+             }
+           }
+         }
        }
       )
       
@@ -1317,6 +1365,17 @@ computation_server <- function(id, parent.session, pool, reloader) {
         mutate(Status=ifelse(is.na(Status),"not available",Status))
     }
     
+    #moved here out of draft section due reactivity issue
+    #TODO analyze further
+    indicator_status_new$Releasable <- sapply(indicator_status_new$Period, function(x){
+      isReleasable(
+        id = indicator(), 
+        target_period = x, 
+        config = appConfig, 
+        indicators = AVAILABLE_INDICATORS
+      )
+    })
+    print("Update indicator status!")
     indicator_status<-indicator_status(indicator_status_new)
   })
   

@@ -1,4 +1,8 @@
 {
+  "SUCCESS": "Succès",
+  "WARNING": "Avertissement",
+  "ERROR": "Erreur",
+  
   /*computation title and subtitle*/
   "COMPUTATION_TITLE" : "Statistiques",
   "COMPUTATION_SUBTITLE" : "Caluler les statistiques et télécharger les rapports statistiques",
@@ -9,7 +13,6 @@
   "LOAD_R_COMPUTE_SCRIPT_PROGRESS_LABEL" : "Préparation du script R...",
   "EXECUTE_INDICATOR_LABEL" : "Exécuter l'indicateur",
   "EXECUTE_R_SCRIPT_LABEL" : "Execute le script R...",
-  "COMPUTATION_SUCCESSFUL_LABEL" : "Traitement avec succès!",
   "DRAFT_LABEL" : "Brouillon",
   
   /*computation indicator*/
@@ -62,9 +65,11 @@
   "BUTTON_RELEASE_TITLE" : "Release",
   /*errors*/
   
-  "ERROR_EXECUTING_INDICATORS_LABEL": "Erreur pendant l'exécution de l'indicateur",
-  "ERROR_DURING_COMPUTATION" : "Erreur pendant le calcul",
-  "SUCCESS_COMPUTATION_INDICATOR_LABEL" : "Indicateur calculé avec succès",
+  "ERROR_COMPUTING_LABEL": "Erreur pendant l'exécution de l'indicateur",
+  "ERROR_REPORTING_LABEL": "Erreur pendant la préparation du rapport",
+  "SUCCESS_COMPUTING_LABEL" : "Indicateur calculé avec succès",
+  "SUCCESS_REPORTING_LABEL": "Rapport généré avec succès",
+  "WARNING_REPORTING_LABEL_EMPTY_REPORT": "Le rapport généré est vide!",
   "EXPORT_RESULTS_STAGING_LABEL" : "Exporter le résultat vers la zone temporaire",
   "LANDING1_RELEASE_RESULT_MISSIG_YEAR" : "Les résultats release des Débarquements 1 manquent pour l'année",
   

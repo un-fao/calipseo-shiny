@@ -1,19 +1,24 @@
-# **calipseo-shiny [v2.0.9003](https://github.com/un-fao/calipseo-shiny) - 2026-02-10**
+# **calipseo-shiny [v2.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.0) - 2026-02-11**
+
+# New requirements
+
+- Use of [calipseo-model](https://github.com/un-fao/calipseo-model) >= [`1.5.0`](https://github.com/un-fao/calipseo-model/releases/tag/v1.5.0) (2026-02-10)
 
 # Enhancements
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
-- [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
 - [#345](https://github.com/un-fao/calipseo-shiny/issues/345) Migration of Artfish toolbox to artfishr
+- [#347](https://github.com/un-fao/calipseo-shiny/issues/347) Computation / Reporting - improve messaging (success, warning, error) to user
 
 # New features
 
 - [#247](https://github.com/un-fao/calipseo-shiny/issues/247) Observer programs shiny modules
 - [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
 - [#332](https://github.com/un-fao/calipseo-shiny/issues/332) Enable regional reporting framework with `repfishr`
+- [#334](https://github.com/un-fao/calipseo-shiny/issues/334) Multireporting prototype for nominal catches (covering UN-FAO, WECAFC and ICCAT)
+- [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
 
-
-# **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny) - 2025-12-10**
+# **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.4) - 2025-12-10**
 
 # Corrections
 
@@ -26,7 +31,7 @@
 - [#324](https://github.com/un-fao/calipseo-shiny/issues/324) Enable RMariaDB timezone_out to ensure country timezone
 
 
-# **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny) - 2025-12-01**
+# **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.3) - 2025-12-01**
 
 # Corrections
 
@@ -44,7 +49,7 @@
 **Module new features**
 - [#243](https://github.com/un-fao/calipseo-shiny/issues/243) Add artisanal data validation module specific to SUR
 
-# **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny) - 2025-11-13**
+# **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.2) - 2025-11-13**
 
 # Corrections
 
@@ -55,13 +60,13 @@
 
 - [#300](https://github.com/un-fao/calipseo-shiny/issues/300) Enforce R client UTF-8 character set
 
-# **calipseo-shiny [v2.0.1](https://github.com/un-fao/calipseo-shiny) - 2025-11-10**
+# **calipseo-shiny [v2.0.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.1) - 2025-11-10**
 
 # Corrections
 
 - [#294](https://github.com/un-fao/calipseo-shiny/issues/294) Fix errors for Artfishr - CPUE counting 
 
-# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny) - 2025-11-06**
+# **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.0) - 2025-11-06**
 
 
 # Corrections
