@@ -118,13 +118,17 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
        new_df<-subset(df,age>=input$age_range[1]&age<=input$age_range[2])
        
        var_list<-sapply(setNames(unname(col_av_filter()),unname(col_av_filter())), function(i) {input[[paste0("filter_", i)]]})
+       print(var_list)
        var_to_filter<-var_list[!var_list %in% list(NULL)]
+       print(var_to_filter)
        var_to_remove<-names(var_list[var_list %in% list(NULL)])
+       print(var_to_remove)
        
        if(input$mode=="pyramid"){
          group_variables<-unique(c("Gender",input$fill_col,"age_gr"))
        }else{
          group_variables<-unique(c(input$fill_col,"age_gr"))
+         print(group_variables)
        }
       
        if(length(var_to_remove)>0){
@@ -140,42 +144,85 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
        age_range<-c(input$age_range[1]:input$age_range[2])
        
        if(input$mode=="pyramid"){
-       new_df<-new_df%>%
-         mutate(value=1)%>%
-         filter(Gender%in%c("Male","Female"))%>%
-         complete(nesting(!!!syms(names(var_to_filter))),age=age_range,Gender=c("Male","Female"),fill=list(value=0))%>%
-         mutate(age_gr=cut_width(age, width =input$step,closed = "left",boundary =min(age)))%>%
-         group_by_at(group_variables)%>%
-         summarise(value=sum(value))%>%
-         arrange(Gender)%>%
-         ungroup()%>%
-         complete(!!!syms(group_variables),fill=list(value=0))
-       }else if(input$mode=="stacked_bar"){
-         new_df<-new_df%>%
-           mutate(value=1)%>%
-           complete(!!!syms(names(var_to_filter)),age=c(min(age):max(age)),fill=list(value=0))%>%
-           mutate(age_gr=cut_width(age, width =input$step,closed = "left",boundary =min(age)))%>%
-           group_by_at(group_variables)%>%
-           summarise(value=sum(value))%>%
-           ungroup()%>%
-           complete(!!!syms(group_variables),fill=list(value=0))
-       }else{
-         new_df<-new_df%>%
-           mutate(value=1)%>%
-           complete(!!!syms(names(var_to_filter)),age=c(min(age):max(age)),fill=list(value=0))%>%
-           mutate(age_gr=cut_width(age, width =input$step,closed = "left",boundary =min(age)))%>%
-           group_by_at(group_variables)%>%
-           summarise(value=sum(value))%>%
-           ungroup()%>%
-           group_by(age_gr)%>%
-           mutate(tot=sum(value))%>%
-           mutate(value=value/tot*100)%>%
-           ungroup()%>%
-           select(-tot)%>%
-           complete(!!!syms(group_variables),fill=list(value=0))
-       }
+         new_df <- new_df %>%
+           
+           # Keep only relevant genders first
+           filter(Gender %in% c("Male", "Female")) %>%
+           
+           # Create age groups BEFORE any completion
+           mutate(
+             age_gr = cut_width(
+               age,
+               width = input$step,
+               closed = "left",
+               boundary = min(age_range)
+             )
+           ) %>%
+           
+           # Aggregate immediately (this shrinks data massively)
+           group_by(across(all_of(group_variables))) %>%
+           summarise(value = n(), .groups = "drop") %>%
+           
+           arrange(Gender) %>%
+           
+           # Now complete only on grouped data (very small now)
+           complete(!!!syms(group_variables), fill = list(value = 0))
        
-        print(input$age_range)
+           readr::write_csv(new_df, "test2.csv")
+       
+       }else if(input$mode=="stacked_bar"){
+         new_df <- new_df %>%
+           
+           # Create age groups first (no need to expand raw ages)
+           mutate(
+             age_gr = cut_width(
+               age,
+               width = input$step,
+               closed = "left",
+               boundary = min(age)
+             )
+           ) %>%
+           
+           # Aggregate immediately (this shrinks data massively)
+           group_by_at(group_variables) %>%
+           summarise(value = n()) %>%
+           
+           ungroup() %>%
+           
+           # Now complete only on grouped data
+           complete(
+             !!!syms(group_variables),
+             fill = list(value = 0)
+           )
+       }else{
+         new_df <- new_df %>%
+           
+           # Create age groups first (no raw age expansion)
+           mutate(
+             age_gr = cut_width(
+               age,
+               width = input$step,
+               closed = "left",
+               boundary = min(age)
+             )
+           ) %>%
+           
+           # Aggregate immediately (shrinks data massively)
+           group_by_at(group_variables) %>%
+           summarise(value = n()) %>%
+           ungroup() %>%
+           
+           # Compute percentage within each age group
+           group_by(age_gr) %>%
+           mutate(value = value / sum(value) * 100) %>%
+           ungroup() %>%
+           
+           # Complete only on grouped data (small dataset now)
+           complete(
+             !!!syms(group_variables),
+             fill = list(value = 0)
+           )
+       }
         data_for_table<-data_for_table(new_df)
         
 

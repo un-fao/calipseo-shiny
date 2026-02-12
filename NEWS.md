@@ -3,6 +3,7 @@
 ## Corrections
 
 - [#350](https://github.com/un-fao/calipseo-shiny/issues/350) Computation module - Miss control on available periods in case of no data
+- [#351](https://github.com/un-fao/calipseo-shiny/issues/351) Age Pyramid module endless computation in some configs (vessel age based on registration)
 
 ## Enhancements
 
