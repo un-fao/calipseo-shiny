@@ -819,6 +819,16 @@ computation_server <- function(id, parent.session, pool, reloader) {
     
   })
   
+  #UI in case there are no available periods for the indicator
+  output$noDataMessage = renderUI({
+    req(!is.null(available_periods()))
+    if(nrow(available_periods())==0){
+      tags$span(i18n("COMPUTATION_NODATA"), style = "font-weight:bold;color:orange;")
+    }else{
+      NULL
+    }
+  })
+  
   #This event is the major part of process
   observeEvent(indicator(),{
     
@@ -845,12 +855,17 @@ computation_server <- function(id, parent.session, pool, reloader) {
       indicators = AVAILABLE_INDICATORS
     )
     
+    if(nrow(available_periods_new)==0){
+       WARN("No available data periods for indicator %s", selected_indicator$indicator$id)
+    }
+    
     #format available periods
     available_periods_new <- formatAvailablePeriods(available_periods_new, selected_indicator$indicator)
     #store it as reactive
     available_periods <- available_periods(available_periods_new)
     
     req(!is.null(available_periods))
+    req(nrow(available_periods())>0)
     req(!is.null(available_periods()$period))
     
     #full periods

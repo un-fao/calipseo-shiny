@@ -19,11 +19,12 @@
   "COMPUTATION_INDICATOR_LABEL" : "Statistical indicator",
   "COMPUTATION_INDICATOR_PLACEHOLDER_LABEL" : "Select an indicator",
   "RETRIEVE_INDICATOR_FOR_LABEL" : "Retrieve indicator for",
+  "COMPUTATION_NODATA": "No available data periods to run the indicator!",
   
   /*computation year*/
   "COMPUTATION_YEAR_LABEL" : "Year",
   "COMPUTATION_YEAR_PLACEHOLDER_LABEL" : "Select a year",
-  "COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY" : "No year available",
+  "COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY" : "No data available",
   "COMPUTATION_TARGET_LABEL" : "Compute indicator based on",
   "COMPUTATION_TARGET_RELEASE_ITEM" : "Released indicators only",
   "COMPUTATION_TARGET_RELEASE_AND_STAGING_ITEM" : "Released and staging indicators",

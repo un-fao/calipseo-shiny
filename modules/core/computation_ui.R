@@ -20,6 +20,7 @@ computation_ui <- function(id){
           uiOutput(ns("plot_wrapper"))
       )
     ),
+    uiOutput(ns("noDataMessage")),
     uiOutput(ns("computation_summary"))
   )
 }

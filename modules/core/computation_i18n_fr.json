@@ -19,6 +19,7 @@
   "COMPUTATION_INDICATOR_LABEL" : "Indicateur statistique",
   "COMPUTATION_INDICATOR_PLACEHOLDER_LABEL" : "Sélectionner un indicateur",
   "RETRIEVE_INDICATOR_FOR_LABEL" : "Récupérer un indicateur pour",
+  "COMPUTATION_NODATA": "Aucune période de données disponible pour lancer l'indicateur!",
   
   /*computation year*/
   "COMPUTATION_YEAR_LABEL" : "Année",

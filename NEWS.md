@@ -1,13 +1,17 @@
-# **calipseo-shiny [v2.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.0) - 2026-02-11**
+# **calipseo-shiny [v2.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.0) - 2026-02-12**
 
-# Enhancements
+## Corrections
+
+- [#350](https://github.com/un-fao/calipseo-shiny/issues/350) Computation module - Miss control on available periods in case of no data
+
+## Enhancements
 
 - [#331](https://github.com/un-fao/calipseo-shiny/issues/331) Update Artfish modules linked to the artfish method computation
 - [#345](https://github.com/un-fao/calipseo-shiny/issues/345) Migration of Artfish toolbox to artfishr
 - [#347](https://github.com/un-fao/calipseo-shiny/issues/347) Computation / Reporting - improve messaging (success, warning, error) to user
 - [#349](https://github.com/un-fao/calipseo-shiny/issues/349) Generic chart server - support plot_type argument for default plot type set
 
-# New features
+## New features
 
 - [#247](https://github.com/un-fao/calipseo-shiny/issues/247) Observer programs shiny modules
 - [#330](https://github.com/un-fao/calipseo-shiny/issues/330) Create generic graphical module for multiple type of chart
@@ -15,7 +19,7 @@
 - [#334](https://github.com/un-fao/calipseo-shiny/issues/334) Multireporting prototype for nominal catches (covering UN-FAO, WECAFC and ICCAT)
 - [#337](https://github.com/un-fao/calipseo-shiny/issues/337) Plug FDI shiny utils fdishinyr library
 
-# New requirements
+## New requirements
 
 - Use of [calipseo-model](https://github.com/un-fao/calipseo-model) >= [`1.5.0`](https://github.com/un-fao/calipseo-model/releases/tag/v1.5.0) (2026-02-10)
 - [fdishinyr](https://github.com/fdiwg/fdishinyr) R package (latest)
@@ -26,56 +30,57 @@
 
 # **calipseo-shiny [v2.0.4](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.4) - 2025-12-10**
 
-# Corrections
+## Corrections
 
 - [#326](https://github.com/un-fao/calipseo-shiny/issues/326) SUR - Review Artisanal validation i18n terms
 - [#327](https://github.com/un-fao/calipseo-shiny/issues/327) SUR - Artisanal data validation fails
 
 
-# Enhancements
+## Enhancements
 
 - [#324](https://github.com/un-fao/calipseo-shiny/issues/324) Enable RMariaDB timezone_out to ensure country timezone
 
 
 # **calipseo-shiny [v2.0.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.3) - 2025-12-01**
 
-# Corrections
+## Corrections
 
 - [#303](https://github.com/un-fao/calipseo-shiny/issues/303) Deactivated modules break the sidebar menu UI with `bs4Dash`
 - [#316](https://github.com/un-fao/calipseo-shiny/issues/316) Fix getStatPeriods blocking Artfish Montly Reports module
 - [#317](https://github.com/un-fao/calipseo-shiny/issues/317) Fix reactivity of plots in Artfish By Species Module
 - [#302](https://github.com/un-fao/calipseo-shiny/issues/302) Suriname - Logbook validation file fails
 
-# Enhancements
+## Enhancements
 
 - [#304](https://github.com/un-fao/calipseo-shiny/issues/304) Add SQL/data accessor for Artfish Effort - boat counting option
 - [#311](https://github.com/un-fao/calipseo-shiny/issues/311) Upgrade to latest [artfishr](https://github.com/fdiwg/artfishr) R package
 
-# New features
+## New features
+
 **Module new features**
 - [#243](https://github.com/un-fao/calipseo-shiny/issues/243) Add artisanal data validation module specific to SUR
 
 # **calipseo-shiny [v2.0.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.2) - 2025-11-13**
 
-# Corrections
+## Corrections
 
 - [#297](https://github.com/un-fao/calipseo-shiny/issues/297) Vessel list doesn't show up with data special/latin characters
 - [#298](https://github.com/un-fao/calipseo-shiny/issues/298) Vessel profile doesn't show up with data special/latin characters
 
-# Enhancements
+## Enhancements
 
 - [#300](https://github.com/un-fao/calipseo-shiny/issues/300) Enforce R client UTF-8 character set
 
 # **calipseo-shiny [v2.0.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.1) - 2025-11-10**
 
-# Corrections
+## Corrections
 
 - [#294](https://github.com/un-fao/calipseo-shiny/issues/294) Fix errors for Artfishr - CPUE counting 
 
 # **calipseo-shiny [v2.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.0.0) - 2025-11-06**
 
 
-# Corrections
+## Corrections
 
 - [#245](https://github.com/un-fao/calipseo-shiny/issues/245) Module Duplication on App Initialization
 - [#250](https://github.com/un-fao/calipseo-shiny/issues/250) Incorrect cascading reaction chain for indicator
@@ -84,7 +89,7 @@
 - [#268](https://github.com/un-fao/calipseo-shiny/issues/268) SQL errors with Artfish active_vessels and landings data acessors
 - [#287](https://github.com/un-fao/calipseo-shiny/issues/287) Vessel details - Main indicators (info boxes) are not displayed in some cases
 
-# Enhancements
+## Enhancements
 
 - [#251](https://github.com/un-fao/calipseo-shiny/issues/251) Cleanout `shinyauthr` related codes (not used anymore in context of ShinyProxy deployments)
 - [#257](https://github.com/un-fao/calipseo-shiny/issues/257) Computation module - further code cleaning & improvement of logs
@@ -97,7 +102,7 @@
 - [#277](https://github.com/un-fao/calipseo-shiny/issues/277) Upgrade from R `4.3.0` to R `4.5.1`
 - [#292](https://github.com/un-fao/calipseo-shiny/issues/292) Optimize Docker image size
 
-# New features
+## New features
 
 - [#244](https://github.com/un-fao/calipseo-shiny/issues/244) Versioning management for computation module and linked modules
 - [#246](https://github.com/un-fao/calipseo-shiny/issues/246) Create a new indicator to regionalize artfish result
@@ -105,13 +110,13 @@
 
 # **calipseo-shiny [v1.7.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v1.7.0) - 2025-04-12**
 
-# New features
+## New features
 
 * [#228](https://github.com/un-fao/calipseo-shiny/issues/228) Support renv and docker caching
 * [#236](https://github.com/un-fao/calipseo-shiny/issues/236) Allow text as argument of statistical indicator computation setting
 * [#237](https://github.com/un-fao/calipseo-shiny/issues/237) Implement reactivity of modules after tasks are performed in other modules
 
-# Enhancements
+## Enhancements
 
 * [#235](https://github.com/un-fao/calipseo-shiny/issues/235) Artfish standardization & packaging - refactoring of computation/visualization modules
 
