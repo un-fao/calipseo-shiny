@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.1.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.1) - 2026-02-15**
+
+## Corrections
+
+- [#352](https://github.com/un-fao/calipseo-shiny/issues/352) ICCAT T1NC reporting bugfix (through update of [repfishr](https://github.com/fdiwg/repfishr))
+
 # **calipseo-shiny [v2.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.0) - 2026-02-12**
 
 ## Corrections
