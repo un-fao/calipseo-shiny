@@ -1,3 +1,10 @@
+# **calipseo-shiny [v2.1.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.2) - 2026-02-15**
+
+## Corrections
+
+- [#353](https://github.com/un-fao/calipseo-shiny/issues/353) Nominal catches FDI fishing activities need to include both LANDING and FISHOP activity types
+
+
 # **calipseo-shiny [v2.1.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.1) - 2026-02-15**
 
 ## Corrections
