@@ -57,9 +57,10 @@ get_artfish_results_for_ui = function(files, ref_fishing_units, ref_species){
   
   estimate <- estimate %>%
     merge(ref_species %>%
-            select(ID,NAME) %>%
+            select(ID,NAME,SCIENTIFIC_NAME) %>%
             rename(species = ID,
-                   species_label = NAME)
+                   species_label = NAME,
+                   species_scientific = SCIENTIFIC_NAME)
     )%>%
     ungroup()
   
