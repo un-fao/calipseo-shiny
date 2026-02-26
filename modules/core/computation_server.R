@@ -1006,7 +1006,7 @@ computation_server <- function(id, parent.session, pool, reloader) {
       
       #Action button UI
       output[[paste0("actions_",period)]] <- renderUI({
-        target <- isolate(indicator_status()[indicator_status()$Period == period,])
+        target <- indicator_status()[indicator_status()$Period == period,]
         req(nrow(target)>0)
         switch (target$Status,
                 "release" = {

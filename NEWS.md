@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.1.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.3) - 2026-02-27**
+
+## Corrections
+
+- [#355](https://github.com/un-fao/calipseo-shiny/issues/355) Computation - action buttons don't display anymore on compute
+
 # **calipseo-shiny [v2.1.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.1.2) - 2026-02-15**
 
 ## Corrections
