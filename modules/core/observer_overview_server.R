@@ -335,7 +335,7 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
       time_table <- subset(reports_info, !is.na(observation_start) & !is.na(observation_end))
       
       if (nrow(time_table) > 0) {
-        generic_chart_ui(id = ns("ts1"))
+        fdishinyr::generic_chart_ui(id = ns("ts1"))
       } else {
         div(paste0("(", i18n("OBSERVER_OVERVIEW_PLOT_NODATE_DISCLAMER"), ")"))
       }
@@ -348,8 +348,9 @@ observer_overview_server <- function(id,parent.session, pool, reloader) {
       mutate(category="reports",value=1)%>%
       ungroup()
     
-    generic_chart_server(
+    fdishinyr::generic_chart_server(
       id = "ts1",
+      lang = appConfig$language,
       df = reports_count,
       col_date = "observation_end",
       col_group = "category",
