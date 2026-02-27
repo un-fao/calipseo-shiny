@@ -26,7 +26,7 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     INFO("Get Artfish computation outputs for UI")
     estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)
  
-     artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
+    artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
                                                  lang = appConfig$language, 
                                                  estimate = estimate, 
                                                  effort_source=effort_source)
