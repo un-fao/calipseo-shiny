@@ -37,15 +37,14 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
   
   files<-rbind(released_periods,staging_periods)
 
-  artfishr::artfish_shiny_report_server("artfish_report", 
-                                        lang = appConfig$language, 
+  artfishr::artfish_shiny_report_server("artfish_report",
+                                        lang = appConfig$language,
                                         files = files,
                                         effort_source = effort_source,
                                         minor_strata=minor_strata,
                                         ref_species=ref_species,
                                         ref_fishing_unit=ref_fishing_unit,
                                         ref_landing_site=ref_landing_site)
-  
   
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-report: END")

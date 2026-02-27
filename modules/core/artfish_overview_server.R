@@ -21,9 +21,11 @@ artfish_overview_server <- function(id, parent.session, pool, reloader){
   
   INFO("Get Artfish computation outputs for UI")
   estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)
-  
-  artfishr::artfish_shiny_overview_server("artfish_overview", lang = appConfig$language, estimate = estimate)
-  
+
+  artfishr::artfish_shiny_overview_server("artfish_overview", 
+                                          lang = appConfig$language, 
+                                          estimate = estimate)
+ 
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-overview: END")
   DEBUG_MODULE_PROCESSING_TIME("Artfish-overview", MODULE_START_TIME, MODULE_END_TIME)
