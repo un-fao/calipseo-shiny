@@ -43,26 +43,53 @@ unif_index<-function(days){
 #@param files list of computation output files
 #@ref_fishing_units reference fishing units accessed through \code{accessRefFishingUnits}
 #@ref_species reference species accessed through \code{accessRefSpecies}
-get_artfish_results_for_ui = function(files, ref_fishing_units, ref_species){
+#@ref_landing_sites reference landing sites accessed through \code{accessLandingSites}
+#@with_status boolean include file status
+get_artfish_results_for_ui = function(files, ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, with_status=FALSE){
   
-  estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
+  if(with_status){
+    estimate <- do.call(
+      rbind,
+      lapply(1:nrow(files), function(i) {
+        readr::read_csv(files$file[i]) %>%
+          mutate(status = files$status[i])
+      })
+    )
+  }else{
+    estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
+  }
   
-  estimate <- estimate %>%
-    merge(ref_fishing_units %>%
-            select(ID,NAME) %>%
-            rename(fishing_unit = ID,
-                   fishing_unit_label = NAME)
-    ) %>%
-    ungroup()
   
-  estimate <- estimate %>%
-    merge(ref_species %>%
-            select(ID,NAME,SCIENTIFIC_NAME) %>%
-            rename(species = ID,
-                   species_label = NAME,
-                   species_scientific = SCIENTIFIC_NAME)
-    )%>%
-    ungroup()
+  if(!is.null(ref_fishing_units)){
+    estimate <- estimate %>%
+      merge(ref_fishing_units %>%
+              select(ID,NAME) %>%
+              rename(fishing_unit = ID,
+                     fishing_unit_label = NAME)
+      ) %>%
+      ungroup()
+  }
+  
+  if(!is.null(ref_species)){
+    estimate <- estimate %>%
+      merge(ref_species %>%
+              select(ID,NAME,SCIENTIFIC_NAME) %>%
+              rename(species = ID,
+                     species_label = NAME,
+                     species_scientific = SCIENTIFIC_NAME)
+      )%>%
+      ungroup()
+  }
+  
+  if(!is.null(ref_landing_sites)){
+    estimate <- estimate %>%
+      merge(ref_landing_sites %>%
+              select(ID,NAME) %>%
+              rename(landing_site = ID,
+                     landing_site_label = NAME)
+      ) %>%
+      ungroup()
+  }
   
   estimate <- estimate %>%
     mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
