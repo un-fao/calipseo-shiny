@@ -2,7 +2,7 @@
 
 ## Enhancements
 
-- [#339]() Migration of Artfish UI visualization modules to artfishr
+- [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
 
 ## New requirements
 
