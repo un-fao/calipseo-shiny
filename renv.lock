@@ -463,9 +463,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20260210",
+      "Version": "0.1.20260304",
       "Source": "GitHub",
-      "Date": "2026-02-10",
+      "Date": "2026-03-04",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -486,7 +486,7 @@
         "shiny.i18n",
         "shinyWidgets",
         "bs4Dash",
-        "fdishinyr"
+        "fdishinyr (>= 0.1.20260303)"
       ],
       "Remotes": "fdiwg/vrule, fdiwg/fdishinyr",
       "Suggests": [
@@ -502,8 +502,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "85d7aa7d5bc09b543ae272b2adbad42c29c8e945",
+      "RemoteRef": "0.1.20260304",
+      "RemoteSha": "8d5e9d9eab4c4b4af8aaf0df07fdf1f28dac6965",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
@@ -1759,11 +1759,11 @@
     },
     "fdishinyr": {
       "Package": "fdishinyr",
-      "Version": "0.1",
+      "Version": "0.1.20260303",
       "Source": "GitHub",
-      "Date": "2026-02-10",
+      "Date": "2026-03-03",
       "Title": "FDI Shiny utils",
-      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
         "R (>= 4.0)"
@@ -1788,10 +1788,10 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "fdishinyr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "d72d7ad3fa3e08510e26b19e9c1a602a3466aab8",
+      "RemoteRef": "0.1.20260303",
+      "RemoteSha": "c0f49983c689c82a4e589663c56831ba3aa18418",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
     "fontawesome": {
       "Package": "fontawesome",
