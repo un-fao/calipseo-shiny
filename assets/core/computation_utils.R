@@ -54,18 +54,21 @@ getStatPeriods <- function(config, id, target = c("release", "staging", "release
     out <- data.frame(
       year = years,
       quarter = ifelse(startsWith(second, "Q"), second, NA),
-      file = files
+      file = files,
+      status = target
     )
   } else if (by_month) {
     out <- data.frame(
       year = years,
       month = ifelse(startsWith(second, "M"), second, NA),
-      file = files
+      file = files,
+      status = target
     )
   } else {
     out <- data.frame(
       year = years,
-      file = files
+      file = files,
+      status = target
     )
   }
   
