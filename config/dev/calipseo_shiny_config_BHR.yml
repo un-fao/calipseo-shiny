@@ -1,0 +1,24 @@
+language: en
+debug: true
+country_profile:
+    iso3: BHR
+    website: null
+    logo: ./assets/img/BHRlogo.png
+    timezone: Asia/Bahrain
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: bhrcalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home
+    computation:
+        title: Statistics
+    artfish:
+        title: Artfish
