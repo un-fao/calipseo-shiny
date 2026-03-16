@@ -20,25 +20,14 @@ artfish_species_explorer_server <- function(id, parent.session, pool, reloader){
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")
     
-    observe({
+    session$onFlushed(function(){
       
       n <- nrow(available_period)
       
-      hostess <- waiter::Hostess$new(max = n)
-      
-      hostess$set_loader(
-        waiter::hostess_loader(
-          preset = "circle",
-          text_color = "white",
-          class = "label-center",
-          style = "margin:0 auto;",
-          center_page = TRUE
-        )
-      )
-      
-      waiting_screen <- tagList(
+      waiting_screen <- div(
         h3(i18n("ARTFISH_SPECIES_EXPLORER_LOADER_TITLE")),
-        hostess$get_loader(),
+        waiter::spin_fading_circles(),
+        h4(id = "progress_percent", ""),
         div(id = "progress_label", i18n("ARTFISH_SPECIES_EXPLORER_LOADER_INIT_MESSAGE")),
         h4(i18n("ARTFISH_SPECIES_EXPLORER_LOADER_LOADING_MESSAGE"))
       )
@@ -48,16 +37,15 @@ artfish_species_explorer_server <- function(id, parent.session, pool, reloader){
         color = "#14141480"
       )
       
-      hostess$start()
-      
       progress_callback <- function(step, label){
         
-        hostess$set(round(step / n * 100))
-        
-        shinyjs::runjs(sprintf(
-          "$('#progress_label').text('%s (%d/%d)')",
-          label, step, n
-        ))
+        session$sendCustomMessage(
+          "update_progress_label",
+          list(
+            percent = sprintf("%d%%", round(step / n * 100)),
+            text = sprintf("%s (%d/%d)", label, step, n)
+          )
+        )
         
       }
       
@@ -66,12 +54,11 @@ artfish_species_explorer_server <- function(id, parent.session, pool, reloader){
         progress_fn = progress_callback
       )
       
-      hostess$close()
       waiter::waiter_hide()
       
       result(res)
       
-    })
+    }, once = TRUE)
     
     observe({
       
