@@ -168,6 +168,72 @@ accessCountryParamFromDB <- function(con){
   return(country_param)
 }
 
+#getCountryParamFromDB
+getCountryParamFromDB <- function(con, param, filter_enabled = TRUE){
+  DEBUG("Query country parameters - generic accessor")
+  country_param_sql <- readSQL("data/core/sql/country_param.sql")
+  country_param_sql <- paste0(
+    country_param_sql,
+    sprintf(" WHERE CODE = '%s'", param)
+  )
+  
+  if(filter_enabled){
+    country_param_sql <- paste0(country_param_sql, " AND ENABLED = 1")
+  }
+  
+  country_param <- getFromSQL(con, country_param_sql)
+  
+  if(nrow(country_param) == 0){
+    return(NULL)
+  }
+  
+if(!is.na(country_param$CL_CODE_TABLE)){
+    
+    query2 <- paste0(
+      "SELECT CODE FROM ",
+      country_param$CL_CODE_TABLE,
+      " WHERE ID = ",
+      country_param$CL_CODE_ID
+    )
+    
+    value <- dbGetQuery(con, query2)$CODE
+  } else if(!is.na(country_param$TEXT)){
+    
+    value <- country_param$TEXT
+    
+  } else if(!is.na(country_param$BOOLEAN)){
+    
+    value <- country_param$BOOLEAN
+    
+  } else {
+    
+    value <- NULL
+  }
+  
+  return(value)
+}
+
+#accessCountryEffSurvTypeFromDB
+accessCountryEffSurvTypeFromDB <- function(con,filter_enabled = TRUE){
+  DEBUG("Query country parameter - EFFSURVTPE Code")
+  country_param <- getCountryParamFromDB(con,param="EFFSURVTYPE",filter_enabled)
+  return(country_param)
+} 
+
+#accessFDIMinorStrata
+accessFDIMinorStrata <- function(con,filter_enabled = TRUE){
+  #temporary solution waiting implementation of FDI_MINORSTRATA param in ad_country_params
+  AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
+  indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == "artfish_estimates"})]
+  country_param<-indicator[[1]]$compute_with$fun_args$minor_strata$source
+  if(!is.null(country_param)) country_param<-gsub("text:","",country_param)
+  
+  #final solution (in hold)
+  #DEBUG("Query country parameter - FDI_MINORSTRATA Code")
+  #country_param <- getCountryParamFromDB(con,param="FDI_MINORSTRATA",filter_enabled)
+  return(country_param)
+}
+
 #accessCountryISOCodeFromDB
 accessCountryISOCodeFromDB <- function(con){
   DEBUG("Query country parameter - ISO3 Code")
@@ -853,6 +919,9 @@ accessRefFishingUnits = function(con){ accessRefFishingUnitsFromDB(con) }
 
 #<COUNTRY PARAMETERS>
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
+getCountryParam <- function(con, param, filter_enabled = TRUE){getCountryParamFromDB(con,param,filter_enabled)}
+accessCountryEffSurvType <- function(con,filter_enabled = TRUE){accessCountryEffSurvTypeFromDB(con, filter_enabled)}
+accessCountryMinorStrata <- function(con,filter_enabled = TRUE){accessFDIMinorStrata(con, filter_enabled)}
 accessCountryISOCode <- function(con){ accessCountryISOCodeFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
