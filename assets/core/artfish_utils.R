@@ -39,26 +39,38 @@ unif_index<-function(days){
   return(index)
 }
 
-#get_artfish_results_for_ui
-#@param files list of computation output files
-#@ref_fishing_units reference fishing units accessed through \code{accessRefFishingUnits}
-#@ref_species reference species accessed through \code{accessRefSpecies}
-#@ref_landing_sites reference landing sites accessed through \code{accessLandingSites}
-#@with_status boolean include file status
-get_artfish_results_for_ui = function(files, ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, with_status=FALSE){
+#@name get_artfish_results_for_ui
+#@param input list of computation output
+#@param type of input format (must be a list of "files" or "dataframes")
+#@param ref_fishing_units reference fishing units accessed through \code{accessRefFishingUnits}
+#@param ref_species reference species accessed through \code{accessRefSpecies}
+#@param ref_landing_sites reference landing sites accessed through \code{accessLandingSites}
+#@param with_status boolean include file status
+get_artfish_results_for_ui = function(input,input_type = c("files","dataframes"), ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, with_status=FALSE){
+  
+  input_type <- match.arg(input_type)
+  
+  if(input_type == "files"){
   
   if(with_status){
     estimate <- do.call(
       rbind,
-      lapply(1:nrow(files), function(i) {
-        readr::read_csv(files$file[i]) %>%
-          mutate(status = files$status[i])
+      lapply(1:nrow(input), function(i) {
+        readr::read_csv(input$file[i]) %>%
+          mutate(status = input$status[i])
       })
     )
   }else{
-    estimate <- do.call(rbind,lapply(files$file, readr::read_csv))
+    estimate <- do.call(rbind,lapply(input$file, readr::read_csv))
   }
-  
+  }else if(input_type == "dataframes"){
+    estimate <- dplyr::bind_rows(input)
+    
+    if(with_status){
+      estimate <- estimate %>%
+        dplyr::mutate(status = "staging")
+    }
+  }
   
   if(!is.null(ref_fishing_units)){
     estimate <- estimate %>%
