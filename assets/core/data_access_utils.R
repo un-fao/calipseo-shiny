@@ -220,8 +220,8 @@ accessCountryEffSurvTypeFromDB <- function(con,filter_enabled = TRUE){
   return(country_param)
 } 
 
-#accessFDIMinorStrata
-accessFDIMinorStrata <- function(con,filter_enabled = TRUE){
+#accessFDIMinorStrataFromDB
+accessFDIMinorStrataFromDB <- function(con,filter_enabled = TRUE){
   #temporary solution waiting implementation of FDI_MINORSTRATA param in ad_country_params
   AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
   indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == "artfish_estimates"})]
@@ -921,7 +921,7 @@ accessRefFishingUnits = function(con){ accessRefFishingUnitsFromDB(con) }
 accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
 getCountryParam <- function(con, param, filter_enabled = TRUE){getCountryParamFromDB(con,param,filter_enabled)}
 accessCountryEffSurvType <- function(con,filter_enabled = TRUE){accessCountryEffSurvTypeFromDB(con, filter_enabled)}
-accessCountryMinorStrata <- function(con,filter_enabled = TRUE){accessFDIMinorStrata(con, filter_enabled)}
+accessCountryMinorStrata <- function(con,filter_enabled = TRUE){accessFDIMinorStrataFromDB(con, filter_enabled)}
 accessCountryISOCode <- function(con){ accessCountryISOCodeFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
