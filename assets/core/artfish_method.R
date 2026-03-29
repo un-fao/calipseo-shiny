@@ -38,54 +38,40 @@ artfish_estimates_explorer<-function(pool, progress_fn = NULL){
   
   ref_effort_survey_type <- accessCountryEffSurvType(pool)
   minor_strata <-  accessFDIMinorStrata(pool)
-  available_period <- accessEffortSurveyPeriods(pool)
-  available_period <- available_period%>%arrange(year,month)
   
   effort_source<-NULL
   if(startsWith(ref_effort_survey_type,"INTERVIEW")) effort_source<- "fisher_interview"
   if(ref_effort_survey_type=="VESSELCOUNT") effort_source<- "boat_counting"
   
+  #active_vessels
   active_vessels_strategy <-"latest"
+  active_vessels=accessArtfishA(pool)
+  #effort
+  effort <- NULL
+  if(effort_source=="fisher_interview") effort<-accessArtfishB1(pool)
+  if(effort_source=="boat_counting")    effort<-accessArtfishB2(pool)
+  #active days
+  active_days = accessArtfishC(pool)
+  #landings
+  landings = accessArtfishD(pool)
   
-  data<-lapply(seq_len(nrow(available_period)), function(i){
-    temporal_unit<-available_period[i,]
-    
-    year<-temporal_unit$year
-    month<-temporal_unit$month
-    
-    label <- sprintf("artfish_estimates_%d-%02d", year, month)
-    
-    if(!is.null(progress_fn)){
-      progress_fn(i, label)
-    }
-    
-    
-    active_vessels=accessArtfishA(pool,year,month)
-    
-    effort <- NULL
-    if(effort_source=="fisher_interview") effort<-accessArtfishB1(pool,year,month)
-    if(effort_source=="boat_counting")    effort<-accessArtfishB2(pool,year,month)
-    
-    active_days=accessArtfishC(pool,year,month)
-    landings=accessArtfishD(pool,year,month)
-    
-    artfish_estimates(pool,
-                      year=year,
-                      month=month,
-                      effort=effort,
-                      effort_source=effort_source,
-                      active_vessels=active_vessels,
-                      active_vessels_strategy=active_vessels_strategy,
-                      active_days=active_days,
-                      landings=landings,
-                      minor_strata=minor_strata)
-  })
+  #compute artfish estimates
+  data = artfish_estimates(
+    pool,
+    effort = effort,
+    effort_source = effort_source,
+    active_vessels = active_vessels,
+    active_vessels_strategy = active_vessels_strategy,
+    active_days = active_days,
+    landings=landings,
+    minor_strata = minor_strata
+  )
   
   return(
     list(
-      data=data,
-      effort_source=effort_source,
-      active_vessels_strategy=active_vessels_strategy,
+      data = data,
+      effort_source = effort_source,
+      active_vessels_strategy = active_vessels_strategy,
       minor_strata
     )
   )

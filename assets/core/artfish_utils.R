@@ -41,16 +41,18 @@ unif_index<-function(days){
 
 #@name get_artfish_results_for_ui
 #@param input list of computation output
-#@param type of input format (must be a list of "files" or "dataframes")
+#@param type of input format (must be a list of "file" or "data.frame")
 #@param ref_fishing_units reference fishing units accessed through \code{accessRefFishingUnits}
 #@param ref_species reference species accessed through \code{accessRefSpecies}
 #@param ref_landing_sites reference landing sites accessed through \code{accessLandingSites}
 #@param with_status boolean include file status
-get_artfish_results_for_ui = function(input,input_type = c("files","dataframes"), ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, with_status=FALSE){
+get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"), 
+                                      ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, 
+                                      with_status = FALSE){
   
   input_type <- match.arg(input_type)
   
-  if(input_type == "files"){
+  if(input_type == "file"){
   
   if(with_status){
     estimate <- do.call(
@@ -63,8 +65,8 @@ get_artfish_results_for_ui = function(input,input_type = c("files","dataframes")
   }else{
     estimate <- do.call(rbind,lapply(input$file, readr::read_csv))
   }
-  }else if(input_type == "dataframes"){
-    estimate <- dplyr::bind_rows(input)
+  }else if(input_type == "data.frame"){
+    estimate <- input
     
     if(with_status){
       estimate <- estimate %>%

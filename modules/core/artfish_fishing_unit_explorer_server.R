@@ -67,7 +67,7 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, pool, reloa
       
       estimate <- get_artfish_results_for_ui(
         input = result()$data,
-        input_type = "dataframes",
+        input_type = "data.frame",
         ref_fishing_units = ref_fishing_units,
         ref_species = ref_species
       )

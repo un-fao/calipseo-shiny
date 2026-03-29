@@ -61,13 +61,13 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
     observe({
       
       req(result())
-      INFO("Computeded %s computation files", length(result()$data))
+      INFO("Computed %s computation files", length(result()$data))
       
       INFO("Get Artfish computation outputs for UI")
       
       estimate <- get_artfish_results_for_ui(
         input = result()$data,
-        input_type = "dataframes",
+        input_type = "data.frame",
         ref_fishing_units = ref_fishing_units,
         ref_species = ref_species
       )

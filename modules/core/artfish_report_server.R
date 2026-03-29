@@ -31,7 +31,7 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
   #get Artfish computation output files
   files <-getStatPeriods(config=appConfig, "artfish_estimates",target="release+staging")
 
-  estimate <- get_artfish_results_for_ui(input=files,input_type = "files", ref_fishing_units, ref_species, ref_landing_sites, with_status=T)
+  estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species, ref_landing_sites, with_status=T)
   
   artfishr::artfish_shiny_report_server("artfish_report",
                                         lang = appConfig$language,
