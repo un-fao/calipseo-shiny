@@ -37,13 +37,13 @@ artfish_species_explorer_server <- function(id, parent.session, pool, reloader){
         color = "#14141480"
       )
       
-      progress_callback <- function(step, label){
+      progress_callback <- function(label, p = NULL){
         
         session$sendCustomMessage(
           "update_progress_label",
           list(
-            percent = sprintf("%d%%", round(step / n * 100)),
-            text = sprintf("%s (%d/%d)", label, step, n)
+            percent = if(!is.null(p)) sprintf("%d%%", round(p * 100)) else "",
+            text = label
           )
         )
         

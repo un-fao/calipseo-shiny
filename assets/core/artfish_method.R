@@ -1,5 +1,9 @@
 ###Artfish estimates
-artfish_estimates<-function(con,year=NULL,month=NULL,effort=NULL,effort_source=c("fisher_interview","boat_counting"),active_vessels=NULL,active_vessels_strategy=NULL,active_days=NULL,landings=NULL,minor_strata=NULL){
+artfish_estimates <- function(con,
+                            year = NULL, month = NULL,
+                            effort = NULL, effort_source = c("fisher_interview", "boat_counting"),
+                            active_vessels = NULL, active_vessels_strategy = NULL, active_days = NULL,
+                            landings=NULL, minor_strata = NULL, progress_fn = NULL){
   
   effort_source = match.arg(effort_source)
   if(is.null(active_vessels))active_vessels=accessArtfishA(con,year,month)
@@ -10,31 +14,23 @@ artfish_estimates<-function(con,year=NULL,month=NULL,effort=NULL,effort_source=c
   if(is.null(active_days))active_days=accessArtfishC(con,year,month)
   if(is.null(landings))landings=accessArtfishD(con,year,month)
   
-  # fishing_units<-accessRefFishingUnits(con)
-  # fishing_units<-subset(fishing_units,select=c(CODE,NAME))
-  # names(fishing_units)<-c("EST_BGC","EST_BGC_NAME")
-  # 
-  # ref_species<-accessRefSpecies(con)
-  # ref_species$Species<-setNames(sprintf("%s [%s]",ref_species$NAME,ref_species$SCIENTIFIC_NAME),ref_species$ID)
-  # ref_species$ID<-as.character(ref_species$ID)
-  # ref_species<-subset(ref_species,select=c(ID,Species))
-  # names(ref_species)<-c("EST_SPC","EST_SPC_NAME")
-  
-  estimate<-artfishr::compute_report(
-    effort=effort,
-    effort_source=effort_source,
-    active_vessels=active_vessels,
-    active_vessels_strategy=active_vessels_strategy,
-    active_days=active_days,
-    landings=landings,
-    minor_strata=minor_strata)
+  estimate <- artfishr::compute_report(
+    effort = effort,
+    effort_source = effort_source,
+    active_vessels = active_vessels,
+    active_vessels_strategy = active_vessels_strategy,
+    active_days = active_days,
+    landings = landings,
+    minor_strata = minor_strata,
+    progress_fn = progress_fn
+  )
   
   return(estimate)
   
 }
 
 ###artfish_estimates_explorer
-artfish_estimates_explorer<-function(pool, progress_fn = NULL){
+artfish_estimates_explorer <- function(pool, progress_fn = NULL){
   
   ref_effort_survey_type <- accessCountryEffSurvType(pool)
   minor_strata <-  accessFDIMinorStrata(pool)
@@ -49,7 +45,7 @@ artfish_estimates_explorer<-function(pool, progress_fn = NULL){
   #effort
   effort <- NULL
   if(effort_source=="fisher_interview") effort<-accessArtfishB1(pool)
-  if(effort_source=="boat_counting")    effort<-accessArtfishB2(pool)
+  if(effort_source=="boat_counting") effort<-accessArtfishB2(pool)
   #active days
   active_days = accessArtfishC(pool)
   #landings
@@ -64,7 +60,8 @@ artfish_estimates_explorer<-function(pool, progress_fn = NULL){
     active_vessels_strategy = active_vessels_strategy,
     active_days = active_days,
     landings=landings,
-    minor_strata = minor_strata
+    minor_strata = minor_strata,
+    progress_fn = progress_fn
   )
   
   return(

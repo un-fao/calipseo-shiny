@@ -11,7 +11,6 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
     # reference data
     ref_species <- accessRefSpecies(pool)
     ref_fishing_units <- accessRefFishingUnits(pool)
-    available_period <- accessEffortSurveyPeriods(pool)
     
     result <- reactiveVal(NULL)
     
@@ -19,8 +18,6 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
     INFO("Run Artfish computation output based on available periods")
     
     session$onFlushed(function(){
-      
-      n <- nrow(available_period)
       
       waiting_screen <- div(
         h3(i18n("ARTFISH_OVERVIEW_EXPLORER_LOADER_TITLE")),
@@ -35,13 +32,13 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
         color = "#14141480"
       )
       
-      progress_callback <- function(step, label){
+      progress_callback <- function(label, p = NULL){
         
         session$sendCustomMessage(
           "update_progress_label",
           list(
-            percent = sprintf("%d%%", round(step / n * 100)),
-            text = sprintf("%s (%d/%d)", label, step, n)
+            percent = if(!is.null(p)) sprintf("%d%%", round(p * 100)) else "",
+            text = label
           )
         )
         
@@ -61,7 +58,6 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
     observe({
       
       req(result())
-      INFO("Computed %s computation files", length(result()$data))
       
       INFO("Get Artfish computation outputs for UI")
       
