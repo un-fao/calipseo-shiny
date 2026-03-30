@@ -700,7 +700,7 @@ accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, rec
     fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
   }
   if(exclude_landing_forms){
-    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 5"))
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 2"))
   }
   fa <- getFromSQL(con, fa_sql)
 }
