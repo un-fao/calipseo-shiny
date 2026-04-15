@@ -54,17 +54,17 @@ get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"),
   
   if(input_type == "file"){
   
-  if(with_status){
-    estimate <- do.call(
-      rbind,
-      lapply(1:nrow(input), function(i) {
-        readr::read_csv(input$file[i]) %>%
-          mutate(status = input$status[i])
-      })
-    )
-  }else{
-    estimate <- do.call(rbind,lapply(input$file, readr::read_csv))
-  }
+    if(with_status){
+      estimate <- do.call(
+        rbind,
+        lapply(1:nrow(input), function(i) {
+          readr::read_csv(input$file[i]) %>%
+            mutate(status = input$status[i])
+        })
+      )
+    }else{
+      estimate <- do.call(rbind,lapply(input$file, readr::read_csv))
+    }
   }else if(input_type == "data.frame"){
     estimate <- input
     
