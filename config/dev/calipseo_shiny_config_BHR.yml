@@ -22,3 +22,5 @@ structure:
         title: Statistics
     artfish:
         title: Artfish
+    artfish_explorer:
+        title: Artfish (Explorer)

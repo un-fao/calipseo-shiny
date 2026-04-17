@@ -1,8 +1,17 @@
-# **calipseo-shiny [v2.1.9000](https://github.com/un-fao/calipseo-shiny) - 2026-03-05**
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-17**
+
+## New requirements
+
+- [fdishinyr](https://github.com/fdiwg/fdishinyr/releases/tag/0.1.20260415) R package (0.1.20260415 pre-release)
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260417) R package (0.1.20260417 pre-release)
 
 ## Enhancements
 
 - [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
+
+## New features
+
+- [#354](https://github.com/un-fao/calipseo-shiny/issues/354) Artfish UI Explorer modules
 
 ## New requirements
 

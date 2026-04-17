@@ -20,9 +20,9 @@ artfish_species_server <- function(id, parent.session, pool, reloader){
   INFO("Retrieved %s computation files", nrow(files))
   
   INFO("Get Artfish computation outputs for UI")
-  estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)    
+  estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)    
   
-  artfishr::artfish_shiny_species_server("artfish_species", lang = appConfig$language, estimate = estimate)
+  artfishr::artfish_shiny_species_server("artfish_species", lang = appConfig$language, estimate = reactive({ estimate }))
   
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-species: END")
