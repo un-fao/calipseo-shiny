@@ -12,7 +12,6 @@ artfish_overview_explorer_ui <- function(id){
           $('#progress_label').text(data.text);
         });"
       )),
-      actionButton(ns("refresh_artfish_estimates"), "Recompute estimates"),
       artfishr::artfish_shiny_overview_ui(ns("artfish_overview_explorer"))
     )
   )
