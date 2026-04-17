@@ -24,12 +24,12 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     if(!is.null(effort_source))effort_source<-gsub("text:","",effort_source)
     
     INFO("Get Artfish computation outputs for UI")
-    estimate <- get_artfish_results_for_ui(files, ref_fishing_units, ref_species)
+    estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
  
     artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
                                                  lang = appConfig$language, 
-                                                 estimate = estimate, 
-                                                 effort_source=effort_source)
+                                                 estimate = reactive({ estimate }), 
+                                                 effort_source = reactive({ effort_source }))
     
     MODULE_END_TIME <- Sys.time()
     INFO("artfish-unit: END")

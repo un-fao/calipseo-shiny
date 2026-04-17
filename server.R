@@ -92,4 +92,45 @@ server <- function(input, output, session) {
     }
   },ignoreNULL = F)
   
+  
+  #ARTFISH PROVIDER
+  # Storage for provider (initially empty)
+  artfish_provider_r <- reactiveVal(NULL)
+  
+  # Function to get or create provider on demand
+  get_artfish_provider <- function() {
+    
+    provider <- artfish_provider_r()
+    
+    if (is.null(provider)) {
+      
+      INFO("Lazy-creating Artfish computation provider")
+      
+      progress_callback <- function(label, p = NULL) {
+        session$sendCustomMessage(
+          "update_progress_label",
+          list(
+            percent = if (!is.null(p)) sprintf("%d%%", round(p * 100)) else "",
+            text = label
+          )
+        )
+      }
+      
+      provider <- artfish_computation_provider_server(
+        id = "artfish_provider",
+        pool = pool,
+        reloader = reloader,
+        progress_fn = progress_callback
+      )
+      
+      artfish_provider_r(provider)
+    }
+    
+    provider
+  }
+  
+  # Expose getter via session$userData (read-only)
+  session$userData$get_artfish_provider <- get_artfish_provider
+  
+  
 }

@@ -1,0 +1,55 @@
+#artfish_computation_provider_server
+artfish_computation_provider_server <- function(id, parent.session, pool, reloader, progress_fn) {
+  moduleServer(id, function(input, output, session) {
+    
+    ready <- reactiveVal(FALSE)
+    
+    refresh <- reactiveVal(0)
+    
+    trigger_refresh <- function(){
+      refresh(refresh() + 1)
+    }
+    
+    observeEvent(reloader(), {
+      trigger_refresh()
+    })
+    
+    waiting_screen <- div(
+      h3(i18n("ARTFISH_EXPLORER_LOADER_TITLE")),
+      waiter::spin_fading_circles(),
+      h4(id = "progress_percent", ""),
+      div(id = "progress_label", i18n("ARTFISH_EXPLORER_LOADER_INIT_MESSAGE")),
+      h4(i18n("ARTFISH_EXPLORER_LOADER_LOADING_MESSAGE"))
+    )
+    
+    waiter::waiter_show(
+      html = waiting_screen,
+      color = "#14141480"
+    )
+    
+    compute_srv <- artfish_estimates_explorer(
+      pool = pool,
+      refresh = refresh,
+      progress_fn = progress_fn
+    )
+    
+    ref_species <- reactive({
+      accessRefSpecies(pool)
+    }) |> bindCache("ref_species")
+    
+    ref_fishing_units <- reactive({
+      accessRefFishingUnits(pool)
+    }) |> bindCache("ref_fishing_units")
+    
+    # Expose a *stable accessor*, not the module itself
+    list(
+      ready = compute_srv$ready,
+      estimates = compute_srv$estimates,
+      effort_source = compute_srv$effort_source,
+      minor_strata = compute_srv$minor_strata,
+      ref_species = ref_species,
+      ref_fishing_units = ref_fishing_units,
+      trigger_refresh = trigger_refresh
+    )
+  })
+}
