@@ -1,6 +1,2 @@
 { 
-  /*Loader*/
-    "ARTFISH_FISHING_UNIT_EXPLORER_LOADER_TITLE" : "Computing Artfish estimates",
-    "ARTFISH_FISHING_UNIT_EXPLORER_LOADER_INIT_MESSAGE" : "Starting computation...",
-    "ARTFISH_FISHING_UNIT_EXPLORER_LOADER_LOADING_MESSAGE" : "Please wait while estimates are computed"
 }

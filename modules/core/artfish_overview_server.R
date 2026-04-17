@@ -24,7 +24,7 @@ artfish_overview_server <- function(id, parent.session, pool, reloader){
 
   artfishr::artfish_shiny_overview_server("artfish_overview", 
                                           lang = appConfig$language, 
-                                          estimate = estimate)
+                                          estimate = reactive({ estimate }))
  
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-overview: END")

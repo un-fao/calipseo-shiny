@@ -1,6 +1,2 @@
 { 
-  /*Loader*/
-    "ARTFISH_SPECIES_EXPLORER_LOADER_TITLE" : "Calcul des estimations Artfish",
-    "ARTFISH_SPECIES_EXPLORER_LOADER_INIT_MESSAGE" : "Lancement du calcul...",
-    "ARTFISH_SPECIES_EXPLORER_LOADER_LOADING_MESSAGE" : "Merci de patienter, les estimations sont en cours"
 }

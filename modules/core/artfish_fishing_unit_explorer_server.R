@@ -8,79 +8,38 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, pool, reloa
     
     ns<-session$ns
     
-    #reference data
-    ref_species <- accessRefSpecies(pool)
-    ref_fishing_units <- accessRefFishingUnits(pool)
-    available_period <- accessEffortSurveyPeriods(pool)
-    
-    result <- reactiveVal(NULL)
-    
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")
     
-    session$onFlushed(function(){
-      
-      n <- nrow(available_period)
-      
-      waiting_screen <- div(
-        h3(i18n("ARTFISH_FISHING_UNIT_EXPLORER_LOADER_TITLE")),
-        waiter::spin_fading_circles(),
-        h4(id = "progress_percent", ""),
-        div(id = "progress_label", i18n("ARTFISH_FISHING_UNIT_EXPLORER_LOADER_INIT_MESSAGE")),
-        h4(i18n("ARTFISH_FISHING_UNIT_EXPLORER_LOADER_LOADING_MESSAGE"))
-      )
-
-      waiter::waiter_show(
-        html = waiting_screen,
-        color = "#14141480"
-      )
-      
-      progress_callback <- function(label, p = NULL){
-        
-        session$sendCustomMessage(
-          "update_progress_label",
-          list(
-            percent = if(!is.null(p)) sprintf("%d%%", round(p * 100)) else "",
-            text = label
-          )
-        )
-        
-      }
-      
-      res <- artfish_estimates_explorer(
-        pool,
-        progress_fn = progress_callback
-      )
-      
-      waiter::waiter_hide()
-      
-      result(res)
-      
-    }, once = TRUE)
+    refresh <- reactiveVal(0)
     
-    observe({
-      
-      req(result())
-      INFO("Computed %s computation files", length(result()$data))
-      
-      INFO("Get Artfish computation outputs for UI")
-      
-      estimate <- get_artfish_results_for_ui(
-        input = result()$data,
-        input_type = "data.frame",
-        ref_fishing_units = ref_fishing_units,
-        ref_species = ref_species
-      )
-      
-      artfishr::artfish_shiny_fishing_unit_server(
-        "artfish_fishing_unit_explorer",
-        lang = appConfig$language,
-        estimate = estimate,
-        effort_source = result()$effort_source,
-        minor_strata = result()$minor_strata
-      )
-      
+    observeEvent(input$refresh_estimates, {
+      INFO("Refreshing computation")
+      refresh(refresh() + 1)
     })
+    
+    # Request provider (this triggers computation only the first time)
+    artfish <- session$userData$get_artfish_provider()
+    
+    estimate_r <- reactive({
+      req(artfish$estimates())
+      waiter::waiter_hide()
+      get_artfish_results_for_ui(
+        input = artfish$estimates(),
+        input_type = "data.frame",
+        ref_fishing_units = artfish$ref_fishing_units(),
+        ref_species = artfish$ref_species()
+      )
+    })
+      
+    artfishr::artfish_shiny_fishing_unit_server(
+      "artfish_fishing_unit_explorer",
+      lang = appConfig$language,
+      estimate = estimate_r,
+      effort_source = artfish$effort_source,
+      minor_strata = artfish$minor_strata
+    )
+      
     
     MODULE_END_TIME <- Sys.time()
     INFO("artfish-fishing_unit_explorer: END")

@@ -28,8 +28,8 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
  
     artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
                                                  lang = appConfig$language, 
-                                                 estimate = estimate, 
-                                                 effort_source=effort_source)
+                                                 estimate = reactive({ estimate }), 
+                                                 effort_source = reactive({ effort_source }))
     
     MODULE_END_TIME <- Sys.time()
     INFO("artfish-unit: END")

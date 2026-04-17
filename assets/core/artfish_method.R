@@ -30,48 +30,63 @@ artfish_estimates <- function(con,
 }
 
 ###artfish_estimates_explorer
-artfish_estimates_explorer <- function(pool, progress_fn = NULL){
+artfish_estimates_explorer <- function(pool, refresh, progress_fn = NULL){
   
-  ref_effort_survey_type <- accessCountryEffSurvType(pool)
-  minor_strata <-  accessFDIMinorStrata(pool)
+  ref_effort_survey_type <- reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessCountryEffSurvType(pool)
+  })
+  minor_strata <- reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessFDIMinorStrata(pool)
+  })
   
   effort_source<-NULL
-  if(startsWith(ref_effort_survey_type,"INTERVIEW")) effort_source<- "fisher_interview"
-  if(ref_effort_survey_type=="VESSELCOUNT") effort_source<- "boat_counting"
+  if(startsWith(ref_effort_survey_type(),"INTERVIEW")) effort_source<- "fisher_interview"
+  if(ref_effort_survey_type()=="VESSELCOUNT") effort_source<- "boat_counting"
   
   #active_vessels
   active_vessels_strategy <-"latest"
-  active_vessels=accessArtfishA(pool)
+  active_vessels = reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishA(pool)
+  })
   #effort
   effort <- NULL
-  if(effort_source=="fisher_interview") effort<-accessArtfishB1(pool)
-  if(effort_source=="boat_counting") effort<-accessArtfishB2(pool)
+  if(effort_source=="fisher_interview") effort <- reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishB1(pool)
+  })
+  if(effort_source=="boat_counting") effort <- reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishB2(pool)
+  })
   #active days
-  active_days = accessArtfishC(pool)
+  active_days = reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishC(pool)
+  })
   #landings
-  landings = accessArtfishD(pool)
+  landings = reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishD(pool)
+  })
   
   #compute artfish estimates
-  data = artfish_estimates(
-    pool,
+  compute_srv <- artfishr::artfish_shiny_computation_server(
+    "compute_artfish",
+    refresh = refresh,
     effort = effort,
-    effort_source = effort_source,
+    effort_source = reactive({ effort_source }),
     active_vessels = active_vessels,
-    active_vessels_strategy = active_vessels_strategy,
+    active_vessels_strategy = reactive({ active_vessels_strategy }),
     active_days = active_days,
-    landings=landings,
+    landings = landings,
     minor_strata = minor_strata,
     progress_fn = progress_fn
   )
   
-  return(
-    list(
-      data = data,
-      effort_source = effort_source,
-      active_vessels_strategy = active_vessels_strategy,
-      minor_strata
-    )
-  )
+  return(compute_srv)
   
 }
 
