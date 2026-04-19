@@ -1,12 +1,18 @@
 #artfish_overview_server
-artfish_overview_server <- function(id, parent.session, pool, reloader){
+artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
     
+  ns<-session$ns
+   
   INFO("artfish-overview: START")
   MODULE_START_TIME <- Sys.time()
   
-  ns<-session$ns
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
   
   #reference data
   ref_species <- accessRefSpecies(pool)
@@ -23,7 +29,7 @@ artfish_overview_server <- function(id, parent.session, pool, reloader){
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
 
   artfishr::artfish_shiny_overview_server("artfish_overview", 
-                                          lang = appConfig$language, 
+                                          lang = lang, 
                                           estimate = reactive({ estimate }))
  
   MODULE_END_TIME <- Sys.time()

@@ -1,12 +1,18 @@
 #artfish_report_server
-artfish_report_server <- function(id, parent.session, pool, reloader){
+artfish_report_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
   
+  ns<-session$ns
+   
   INFO("artfish-report: START")
   MODULE_START_TIME <- Sys.time() 
-   
-  ns<-session$ns
+  
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
   
   AVAILABLE_INDICATORS <- getLocalCountryDataset(appConfig,"statistical_indicators.json")
   indicator <- AVAILABLE_INDICATORS[sapply(AVAILABLE_INDICATORS, function(x){x$id == "artfish_estimates"})]
@@ -34,7 +40,7 @@ artfish_report_server <- function(id, parent.session, pool, reloader){
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species, ref_landing_sites, with_status=T)
   
   artfishr::artfish_shiny_report_server("artfish_report",
-                                        lang = appConfig$language,
+                                        lang = lang,
                                         estimate = estimate,
                                         effort_source = effort_source,
                                         minor_strata=minor_strata)

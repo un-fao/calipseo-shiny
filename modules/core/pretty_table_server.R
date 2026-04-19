@@ -6,14 +6,22 @@
 #' @usage pretty_table_server(id,df,colVariables,colValue)
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param df dataframe 
 #' @param colVariables list of column names available to selection and display
 #' @param colValue column name of value
 #'    
 
-pretty_table_server <- function(id, df,colVariables=list(),colValue="value") {
+pretty_table_server <- function(id, lang = NULL, df,colVariables=list(),colValue="value") {
   moduleServer(id, function(input, output, session) {
+    
     ns <- session$ns
+    
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     #Seems not work
     max_2_item_opts <- sortable_options(
@@ -158,7 +166,7 @@ pretty_table_server <- function(id, df,colVariables=list(),colValue="value") {
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
             ),
-            language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )
       }

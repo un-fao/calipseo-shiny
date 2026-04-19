@@ -1,19 +1,25 @@
 #logbooks_overview_server
-logbooks_overview_server <- function(id, parent.session, pool, reloader){
+logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, reloader){
  
  moduleServer(id, function(input, output, session) {  
 
+  ns<-session$ns
+   
   INFO("logbooks-overview: START")
   MODULE_START_TIME <- Sys.time() 
-   
-  ns<-session$ns
+  
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
   
   #year refs
   currentyear <- as.integer(format(Sys.Date(),"%Y"))
   lastyear <- currentyear-1
   
   #reactives
-  #reactives - info boxes
+  #reactives - info
   infos_fetched <- reactiveVal(FALSE)
   infos <- reactiveValues(
     currentyear = currentyear,
@@ -168,6 +174,14 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
     
     if(isTRUE(gv_data_ready())){
       
+      gv_format_date <- if(input$gv_granu == i18n("YEARLY")){
+        "%Y"
+      }else if(input$gv_granu == i18n("MONTHLY")){
+        "%Y-%m"
+      }else if(input$gv_granu == i18n("WEEKLY")){
+        "%Y-%U"
+      }
+      
       granu<-switch(gv_format_date,
         "%Y" = i18n("GRANU_LABEL_YEAR"),
         "%Y-%m" = i18n("GRANU_LABEL_MONTH"),
@@ -198,7 +212,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
           exportOptions = list(
             modifiers = list(page = "all",selected=TRUE)
           ),
-          language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+          language = list(url = i18n("TABLE_LANGUAGE"))
         )
       )
     }
@@ -214,7 +228,8 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   
   #line chart server - GLOBAL QUANTITY
   line_chart_server(
-    id = "gq", 
+    id = "gq",
+    lang = lang,
     label = i18n("GLOBAL_QUANTITY_LABEL"),
     df = data_logbooks %>% mutate(label = "Total"), 
     colDate = "date", colTarget="label", 
@@ -227,6 +242,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   #line chart server - VESSEL TYPES
   line_chart_server(
     id = "vt", 
+    lang = lang,
     label = i18n("VESSEL_TYPE_LABEL"),
     df = data_logbooks, 
     colDate = "date",
@@ -240,7 +256,8 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   
   #line chart server - GEAR TYPES
   line_chart_server(
-    id = "gt", 
+    id = "gt",
+    lang = lang,
     label = i18n("GEAR_TYPE_LABEL"),
     df = data_logbooks, 
     colDate = "date",
@@ -255,6 +272,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   #line chart server - SPECIES
   line_chart_server(
     id = "sp", 
+    lang = lang,
     label = i18n("SPECIES_LABEL"),
     df = data_logbooks %>%
           mutate(text = sprintf("%s-<em>%s</em> (<b>%s</b>)", species_desc, species_sci, species_asfis)),
@@ -273,6 +291,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   #line chart server - SPECIES GROUPS
   line_chart_server(
     id = "fg", 
+    lang = lang,
     label = i18n("FISHING_GEAR_LABEL"),
     df = data_logbooks %>% left_join(fish_group),
     colDate = "date", 
@@ -287,6 +306,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   #line chart server - LANDING SITES
   line_chart_server(
     id = "ls", 
+    lang = lang,
     label = i18n("LANDING_SITES_LABEL"),
     df = data_logbooks %>% left_join(fish_group),
     colDate = "date",
@@ -301,6 +321,7 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
   #line chart server - FISHING ZONES
   line_chart_server(
     id = "fz", 
+    lang = lang,
     label = i18n("FISHING_ZONE_LABEL"),
     df = data_logbooks %>% left_join(fish_group),
     colDate = "date",
@@ -312,6 +333,90 @@ logbooks_overview_server <- function(id, parent.session, pool, reloader){
     mode = 'plot+table'
   )
 
+  #main UI
+  output$main <- renderUI({
+    tagList(
+      fluidRow(
+        column(
+          width = 12, style = "margin:12px;",
+          htmlOutput(ns("logbooks_overview_info"))
+        )
+      ),
+      uiOutput(ns("nb_infos")),
+      fluidRow(
+        div(
+          class = "col-md-12",
+          bs4Dash::tabsetPanel(
+            vertical = TRUE,
+            type = "pills",
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_GLOBAL_QUANTITY")), box_height = '70px', 
+              line_chart_ui(
+                id = ns("gq")
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_GLOBAL_VESSEL")), box_height = '70px', 
+              bs4Dash::box(
+                title = NULL,
+                width = 12,
+                sidebar = bs4Dash::boxSidebar(
+                  id = ns("gv_box"),
+                  width = 25,
+                  style = 'font-size:14px;',
+                  selectInput(ns("gv_granu"),label = paste0(i18n("TEMPORAL_RESOLUTION")," :"), choices = c(i18n("YEARLY"),i18n("MONTHLY"),i18n("WEEKLY")))
+                ),
+                uiOutput(ns("gv_result"))
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_BREAKDOWN_BY_VESSEL_TYPES")), box_height = '70px', 
+              line_chart_ui(
+                id = ns("vt")
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_BREAKDOWN_BY_GEAR_TYPES")), box_height = '70px',
+              line_chart_ui(
+                id = ns("gt")
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_BREAKDOWN_BY_SPECIES")), box_height = '70px',
+              bs4Dash::tabsetPanel(
+                type = "pills",
+                tabPanel(
+                  title = i18n("TABPANEL_BREAKDOWN_BY_SPECIES"),
+                  line_chart_ui(
+                    id = ns("sp")
+                  )
+                ),
+                tabPanel(
+                  title = i18n("TABPANEL_BREAKDOWN_BY_SPECIES_GROUPS"),
+                  line_chart_ui(
+                    id = ns("fg")
+                  )
+                )
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_BREAKDOWN_BY_LANDING_SITES")), box_height = '70px',
+              line_chart_ui(
+                id = ns("ls")
+              )
+            ),
+            tabPanel(
+              title = tags$h5(i18n("VERTICALTABPANEL_BREAKDOWN_BY_FISHING_ZONE")), box_height = '70px',
+              line_chart_ui(
+                id = ns("fz")
+              )
+            )
+          )
+        )
+      )
+    )
+  })
+  
   MODULE_END_TIME <- Sys.time()
   INFO("logbooks-overview: END")
   DEBUG_MODULE_PROCESSING_TIME("Logbooks-overview", MODULE_START_TIME, MODULE_END_TIME)

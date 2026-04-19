@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-17**
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-19**
 
 ## New requirements
 
@@ -8,6 +8,7 @@
 ## Enhancements
 
 - [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
+- [#338](https://github.com/un-fao/calipseo-shiny/issues/338) i18n management mechanism modernization
 
 ## New features
 

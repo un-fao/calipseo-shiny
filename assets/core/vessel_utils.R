@@ -62,6 +62,7 @@ get_vessel_license_status <- function(ls_data){
   today <- Sys.Date()
   ls_data$Valid_to_date <- as.Date(ls_data$Valid_to_date)
   ls_data$Validity <- sapply(ls_data$Valid_to_date, function(x){
+    if(is.na(x)) x = 0
     if(today - x < 0) "expired" else "valid"
   })
   return(ls_data)

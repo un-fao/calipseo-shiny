@@ -6,15 +6,22 @@
 #' @usage sunburst_chart_server(id,df,colVariables,colValue,mode)
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param df dataframe 
 #' @param colVariables list of column names available to selection and display
 #' @param colValue column name of value
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mode="plot") {
+sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colValue="value",mode="plot") {
   moduleServer(id, function(input, output, session) {
+    
     ns <- session$ns
+    
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     output$select_variable<-renderUI({
       bucket_list(
@@ -137,7 +144,7 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
             ),
-            language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )
       }

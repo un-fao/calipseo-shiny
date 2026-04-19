@@ -19,7 +19,8 @@
 #' @param rankLabel character string to specify rank label name
 #' @param plotType type of maine trace type : 'line' or 'bar'
 #' @param mode indicate mode to display result, 4 modes avaiLABEL ,'plot','table','plot+table','table+plot'
-#'    
+#'
+#' @note Deprecated. Module now delegated to \pkg{fdishinyr}.
 
 artfish_line_chart_server <- function(
     id, df,colDate, colTarget,label = colTarget, colValue, colText=colTarget,
@@ -30,9 +31,10 @@ artfish_line_chart_server <- function(
   
   moduleServer(id, function(input, output, session) {
     
+    ns <- session$ns
+    
     INFO("artfish-linechart: START")
     MODULE_START_TIME <- Sys.time()
-    ns <- session$ns
     
     data_formated<-reactiveVal(NULL)
     data_ready<-reactiveVal(FALSE)
@@ -236,7 +238,7 @@ artfish_line_chart_server <- function(
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
             ),
-            language = list(url = i18n("ARTFISH_LINECHART_TABLE_LANGUAGE"))
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )
       }

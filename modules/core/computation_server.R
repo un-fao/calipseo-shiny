@@ -1,13 +1,19 @@
 #computation_server
-computation_server <- function(id, parent.session, pool, reloader) {
+computation_server <- function(id, parent.session, lang = NULL, pool, reloader) {
 
  moduleServer(id, function(input, output, session){  
 
+  ns <- session$ns
+   
   INFO("computation: START")
   MODULE_START_TIME <- Sys.time()    
-  
-  ns <- session$ns
 
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
+  
   #--------------------------------
   #REACTIVE VARIABLES
   #--------------------------------
@@ -524,6 +530,29 @@ computation_server <- function(id, parent.session, pool, reloader) {
   
   #UI RENDERERS
   #----------------------------------------------------------------------------------------------------
+  
+  #main
+  output$main <- renderUI({
+    tagList(
+      fluidRow(
+        column(
+          width = 6,
+          htmlOutput(ns("computation_info"))
+        )
+      ),
+      fluidRow(
+        style="display:flex;",
+        bs4Dash::box(width = 6, title = i18n("LABEL_BOX_INDICATOR"), solidHeader = T, status = "primary",
+                     uiOutput(ns("computation_by"))
+        ),
+        bs4Dash::box(width = 6, title = i18n("LABEL_BOX_PLOT"), solidHeader = T,  status = "primary",
+                     uiOutput(ns("plot_wrapper"))
+        )
+      ),
+      uiOutput(ns("noDataMessage")),
+      uiOutput(ns("computation_summary"))
+    )
+  })
   
   #Selector Block
   #---------------------------------------------------

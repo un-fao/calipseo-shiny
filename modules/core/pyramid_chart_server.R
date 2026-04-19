@@ -6,6 +6,7 @@
 #' @usage pyramid_chart_server(id,df,colAge,colGender,colVariables,mode)
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param df dataframe 
 #' @param label label use to target column
 #' @param colAge column name of age variable 
@@ -14,10 +15,17 @@
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=c(),mode="plot") {
+pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVariables=c(),mode="plot") {
+  
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns
     
+    ns <- session$ns
+  
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
+      
     data_formated<-reactiveVal(NULL)
     data_for_table<-reactiveVal(NULL)
     data_ready<-reactiveVal(FALSE)
@@ -335,7 +343,7 @@ pyramid_chart_server <- function(id, df,colAge=NULL,colGender=NULL,colVariables=
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
             ),
-            language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )
       }
