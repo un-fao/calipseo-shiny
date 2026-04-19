@@ -147,8 +147,7 @@ loadRemoteReferenceDataset("cl_isscaap_group","https://raw.githubusercontent.com
 
 #language/i18n
 #---------------------------------------------------------------------------------------
-#we extend appConfig with i18n iterms
-appConfig$i18n <- getModuleI18nTerms()
+appConfig$translator = set_translator(appConfig)
 
 #modules
 #---------------------------------------------------------------------------------------

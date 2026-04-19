@@ -1,12 +1,18 @@
 #artfish_fishing_unit_explorer_server
-artfish_fishing_unit_explorer_server <- function(id, parent.session, pool, reloader){
+artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
   moduleServer(id, function(input, output, session){   
+    
+    ns<-session$ns
     
     INFO("artfish-fishing_unit_explorer: START")
     MODULE_START_TIME <- Sys.time()
     
-    ns<-session$ns
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")

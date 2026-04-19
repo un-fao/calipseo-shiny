@@ -6,6 +6,7 @@
 #' @usage trip_gantt_server(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full")
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param pool database connection 
 #' @param vessel_stat_type id number to vessel stat type
 #' @param vesselId registration number of vessel
@@ -13,9 +14,15 @@
 #' @param withMap boolean, if TRUE display fishing zone and landing site map
 #'    
 
-trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full", withMap=F) {
+trip_gantt_server <- function(id, lang = NULL, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full", withMap=F) {
   moduleServer(id, function(input, output, session) {
+    
     ns <- session$ns
+    
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     data_ready<-reactiveVal(FALSE)
     data_formated<-reactiveVal(NULL)

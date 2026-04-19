@@ -1,5 +1,5 @@
 #observer_report_server
-observer_report_server <- function(id,parent.session, pool, reloader) {
+observer_report_server <- function(id, parent.session, lang = NULL, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
     

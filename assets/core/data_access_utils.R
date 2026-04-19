@@ -132,6 +132,7 @@ accessLandingSitesFromDB <- function(con, sf = TRUE){
   landingsites <- getFromSQL(con, landingsites_sql)
   if(sf){
     landingsites <- landingsites[!is.na(landingsites$LONGITUDE) & !is.na(landingsites$LATITUDE),]
+    landingsites <- landingsites[landingsites$LONGITUDE != "" & landingsites$LATITUDE != "",]
     landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   }
   return(landingsites)
@@ -433,6 +434,7 @@ countVesselsByLandingSiteFromDB <- function(con, sf = FALSE){
   sites <- getFromSQL(con,  vesselsites_count_sql)
   if(sf){
     sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites <- sites[sites$LONGITUDE != "" & sites$LATITUDE != "",]
     sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   }
   return(sites)
@@ -445,6 +447,7 @@ countVesselTypesByLandingSiteFromDB <- function(con, sf = FALSE){
   sites <- getFromSQL(con, vesselsitesvesseltype_count_sql)
   if(sf){
     sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites <- sites[sites$LONGITUDE != "" & sites$LATITUDE != "",]
     sites.sf <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
     sites = cbind(sites.sf, LONGITUDE = sites$LONGITUDE, LATITUDE = sites$LATITUDE)
   }

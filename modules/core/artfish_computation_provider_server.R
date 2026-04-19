@@ -1,6 +1,12 @@
 #artfish_computation_provider_server
-artfish_computation_provider_server <- function(id, parent.session, pool, reloader, progress_fn) {
+artfish_computation_provider_server <- function(id, parent.session, lang = NULL, pool, reloader, progress_fn) {
   moduleServer(id, function(input, output, session) {
+    
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     ready <- reactiveVal(FALSE)
     

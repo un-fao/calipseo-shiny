@@ -1,11 +1,47 @@
 #landings1_charts_server
-landings1_charts_server <- function(id, parent.session, pool, reloader){
+landings1_charts_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session){    
     
+  ns <- session$ns
+   
   INFO("TTO_landings1-charts: START")
   MODULE_START_TIME = Sys.time() 
    
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
+  
+  output$main <- renderUI({
+    tagList(
+      fluidRow(
+        bs4Dash::box(
+          width = 6,
+          htmlOutput(ns("landings1_charts_info")),
+          collapsible = FALSE
+        ),
+        bs4Dash::box(width = 6,
+                     selectizeInput(ns("bch_name"), label = i18n("LANDING_SITE_LABEL"), choices = accessLandingSiteNames(pool),
+                                    options = list(placeholder = i18n("LANDING_SITE_PLACEHOLDER_LABEL"),
+                                                   onInitialize = I('function() { this.setValue(""); }'))),
+                     collapsible = FALSE
+        )
+      ),
+      fluidRow(
+        bs4Dash::box(width = 4, height = 345, title = "LAN", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_LAN")), collapsible = FALSE),
+        bs4Dash::box(width = 4, height = 345, title = "VAL", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_VAL")), collapsible = FALSE),
+        bs4Dash::box(width = 4, height = 345, title = "TRP", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_TRP")), collapsible = FALSE)
+      ),
+      fluidRow(
+        bs4Dash::box(width = 4, height = 345, title = "L/T", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_LT")), collapsible = FALSE),
+        bs4Dash::box(width = 4, height = 345, title = "V/T", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_VT")), collapsible = FALSE),
+        bs4Dash::box(width = 4, height = 345, title = "P/K", status = "primary", solidHeader= TRUE, plotlyOutput(ns("plot_PK")), collapsible = FALSE)
+      )
+    )
+  })
+  
   output$landings1_charts_info <- renderText({
     text <- paste0("<h2>", i18n("LANDINGS1_CHARTS_TITLE")," <small>", i18n("LANDINGS1_CHARTS_SUBTITLE"),
                    userTooltip("These charts represent the different statistical descriptors by year including the 1st raised landings (LAN), value (VAL), number of fishing trips (TRP) and ratios such as Landings/Trip (L/T), Value/Trip (V/T), and Value/Landing (P/K)",

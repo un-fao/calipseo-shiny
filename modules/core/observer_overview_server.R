@@ -1,5 +1,5 @@
 #observer_overview_server
-observer_overview_server <- function(id,parent.session, pool, reloader) {
+observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
     

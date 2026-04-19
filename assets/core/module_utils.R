@@ -98,7 +98,7 @@ listLinkedModules <- function(id, config){
 }
 
 #loadModuleServer
-loadModuleServer <- function(id, session, config, pool, module_state, reloader){
+loadModuleServer <- function(id, session, lang, config, pool, module_state, reloader){
   id_out = id
   load_module <- !id %in% module_state$initialized
   if(load_module){
@@ -123,7 +123,7 @@ loadModuleServer <- function(id, session, config, pool, module_state, reloader){
     server_fun <- try(eval(expr = parse(text = server_fun_name)), silent = TRUE)
     if(!is.null(server_fun)){
       if(!is(server_fun, "try-error")){
-        called <- try(server_fun(id, session, pool, reloader))
+        called <- try(server_fun(id, session, lang, pool, reloader))
         if(is(called, "try-error")){
           ERROR("Error while calling shiny module '%s'", id)
         }

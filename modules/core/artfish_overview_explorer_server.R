@@ -1,12 +1,18 @@
 #artfish_overview_explorer_server
-artfish_overview_explorer_server <- function(id, parent.session, pool, reloader){
+artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
   moduleServer(id, function(input, output, session){
+    
+    ns <- session$ns
     
     INFO("artfish-overview-explorer: START")
     MODULE_START_TIME <- Sys.time()
     
-    ns <- session$ns
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     result <- reactiveVal(NULL)
     
@@ -42,7 +48,7 @@ artfish_overview_explorer_server <- function(id, parent.session, pool, reloader)
 
     artfish_shiny_overview_server(
       "artfish_overview_explorer",
-      lang = appConfig$language,
+      lang = lang,
       estimate = estimate_r,
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata
