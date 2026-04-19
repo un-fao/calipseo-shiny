@@ -459,12 +459,12 @@ vessel_info_server <- function(id, parent.session, lang = NULL, pool, reloader) 
                       modifiers = list(page = "all", selected = TRUE)
                     ),
                     language = list(url = i18n("TABLE_LANGUAGE"))
-                  )) %>% 
+                  )) |> 
           formatDate(
             i18n("HISTORY_CATCHES_COLNAME_2"),
             method = "toLocaleString",
             params = list("se", list(timeZone = appConfig$country_profile$timezone)) #TODO check if needed
-          ) %>% 
+          ) |> 
           formatDate(
             i18n("HISTORY_CATCHES_COLNAME_3"),
             method = "toLocaleString",
@@ -808,7 +808,7 @@ vessel_info_server <- function(id, parent.session, lang = NULL, pool, reloader) 
       fish_group<-subset(fish_group,select=-c(isscaap_group_code))
       
       #linechart
-      line_chart_server("catches_sp", SpeciesCatchesYear%>%
+      line_chart_server("catches_sp", SpeciesCatchesYear |>
                           mutate(text=sprintf("%s-<em>%s</em>(<b>%s</b>)",
                                               species_desc,species_sci,species_asfis)),
                         mode = "plot+table", label = i18n("SPECIES_STATISTIC_LABEL"),
@@ -818,7 +818,7 @@ vessel_info_server <- function(id, parent.session, lang = NULL, pool, reloader) 
                         rank=TRUE,nbToShow=5,rankLabel=i18n("RANK_LABEL"))
       
       line_chart_server("catches_spgroups", 
-                        SpeciesCatchesYear%>%left_join(fish_group, by = "species_asfis"),
+                        SpeciesCatchesYear |>left_join(fish_group, by = "species_asfis"),
                         mode = "plot+table", label = i18n("SPECIES_GROUP_STATISTIC_LABEL"),
                         colDate = "date", colTarget="ISSCAAP_Group_En",
                         ylab=sprintf('%s (%s)',i18n("SPECIES_GROUP_YLAB"),PREF_UNIT_WEIGHT$CODE),valueUnit=tolower(PREF_UNIT_WEIGHT$CODE),

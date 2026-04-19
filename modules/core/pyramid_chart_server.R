@@ -43,7 +43,7 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
       }
     })
     
-    df<-df%>%
+    df<-df |>
            rename(setNames(colAge,"age"))
     
     
@@ -152,10 +152,10 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
        age_range<-c(input$age_range[1]:input$age_range[2])
        
        if(input$mode=="pyramid"){
-         new_df <- new_df %>%
+         new_df <- new_df |>
            
            # Keep only relevant genders first
-           filter(Gender %in% c("Male", "Female")) %>%
+           filter(Gender %in% c("Male", "Female")) |>
            
            # Create age groups BEFORE any completion
            mutate(
@@ -165,13 +165,13 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
                closed = "left",
                boundary = min(age_range)
              )
-           ) %>%
+           ) |>
            
            # Aggregate immediately (this shrinks data massively)
-           group_by(across(all_of(group_variables))) %>%
-           summarise(value = n(), .groups = "drop") %>%
+           group_by(across(all_of(group_variables))) |>
+           summarise(value = n(), .groups = "drop") |>
            
-           arrange(Gender) %>%
+           arrange(Gender) |>
            
            # Now complete only on grouped data (very small now)
            complete(!!!syms(group_variables), fill = list(value = 0))
@@ -179,7 +179,7 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
            readr::write_csv(new_df, "test2.csv")
        
        }else if(input$mode=="stacked_bar"){
-         new_df <- new_df %>%
+         new_df <- new_df |>
            
            # Create age groups first (no need to expand raw ages)
            mutate(
@@ -189,13 +189,13 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
                closed = "left",
                boundary = min(age)
              )
-           ) %>%
+           ) |>
            
            # Aggregate immediately (this shrinks data massively)
-           group_by_at(group_variables) %>%
-           summarise(value = n()) %>%
+           group_by_at(group_variables) |>
+           summarise(value = n()) |>
            
-           ungroup() %>%
+           ungroup() |>
            
            # Now complete only on grouped data
            complete(
@@ -203,7 +203,7 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
              fill = list(value = 0)
            )
        }else{
-         new_df <- new_df %>%
+         new_df <- new_df |>
            
            # Create age groups first (no raw age expansion)
            mutate(
@@ -213,17 +213,17 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
                closed = "left",
                boundary = min(age)
              )
-           ) %>%
+           ) |>
            
            # Aggregate immediately (shrinks data massively)
-           group_by_at(group_variables) %>%
-           summarise(value = n()) %>%
-           ungroup() %>%
+           group_by_at(group_variables) |>
+           summarise(value = n()) |>
+           ungroup() |>
            
            # Compute percentage within each age group
-           group_by(age_gr) %>%
-           mutate(value = value / sum(value) * 100) %>%
-           ungroup() %>%
+           group_by(age_gr) |>
+           mutate(value = value / sum(value) * 100) |>
+           ungroup() |>
            
            # Complete only on grouped data (small dataset now)
            complete(
@@ -253,14 +253,14 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
            
            print(summary(data_formated()))
            
-          maxValue = max(abs(data_formated()%>%filter(Gender=="Male")%>%pull(value)))
+          maxValue = max(abs(data_formated() |>filter(Gender=="Male") |>pull(value)))
           if(maxValue < 50) maxValue = 50
            
-          p<-data_formated() %>% 
-            mutate(value = ifelse(Gender == "Male",  -value, value)) %>%
-            mutate(abs_value = abs(value))%>%
-            plot_ly() %>% 
-            add_trace(x= ~value, y=~age_gr, color=~get(input$fill_col),type='bar',orientation = 'h', hoverinfo = 'text', text = ~abs_value) %>%
+          p<-data_formated() |> 
+            mutate(value = ifelse(Gender == "Male",  -value, value)) |>
+            mutate(abs_value = abs(value)) |>
+            plot_ly() |> 
+            add_trace(x= ~value, y=~age_gr, color=~get(input$fill_col),type='bar',orientation = 'h', hoverinfo = 'text', text = ~abs_value) |>
             layout(bargap = 0.1, barmode = 'relative',
                    yaxis = list(title = i18n("PYRAMID_Y_LABEL"),autotypenumbers = 'strict',tickfont=list(size=10)),
                    
@@ -268,23 +268,23 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
                                  ticktext = c(as.character(rev(seq(50,maxValue,50)),0,50)))
             )
          }else if(input$mode=="stacked_bar"){
-           p<-data_formated()%>%plot_ly(
+           p<-data_formated() |>plot_ly(
              x = ~age_gr,
              y = ~value,
              color = ~get(input$fill_col),
              type = "bar"
-           ) %>% 
+           ) |> 
              layout(barmode = "stack",
                     yaxis = list(title = i18n("STACKED_Y_LABEL")),
                     xaxis = list(title = i18n("STACKED_X_LABEL"))
              )
          }else{
-           p<-data_formated()%>%plot_ly(
+           p<-data_formated() |>plot_ly(
              x = ~age_gr,
              y = ~value,
              color = ~get(input$fill_col),
              type = "bar"
-           ) %>% 
+           ) |> 
              layout(barmode = "stack",
                     yaxis = list(title = i18n("PERCENT_Y_LABEL")),
                     xaxis = list(title = i18n("PERCENT_X_LABEL"))
@@ -356,21 +356,21 @@ pyramid_chart_server <- function(id, lang, df,colAge=NULL,colGender=NULL,colVari
       switch(mode,
              'plot+table'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)}),
-                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)})
+                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot")) |>withSpinner(type = 4)}),
+                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table")) |>withSpinner(type = 4)})
                )
              },
              'table+plot'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)}),
-                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)})
+                 tabPanel(i18n("TABPANEL_STATISTIC"),if(no_age_data()){uiOutput(ns("plot_no_data"))}else{DTOutput(ns("table")) |>withSpinner(type = 4)}),
+                 tabPanel(i18n("TABPANEL_PLOT"),if(no_age_data()){uiOutput(ns("table_no_data"))}else{plotlyOutput(ns("plot")) |>withSpinner(type = 4)})
                )
              },
              'plot'={
-               if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot"))%>%withSpinner(type = 4)}
+               if(no_age_data()){uiOutput(ns("plot_no_data"))}else{plotlyOutput(ns("plot")) |>withSpinner(type = 4)}
              },
              'table'={
-               if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table"))%>%withSpinner(type = 4)}
+               if(no_age_data()){uiOutput(ns("table_no_data"))}else{DTOutput(ns("table")) |>withSpinner(type = 4)}
              }
       )
     })

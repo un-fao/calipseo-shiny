@@ -106,8 +106,8 @@ plot_pyramid_data <- function(category, fill){
         scale_fill_manual(aesthetics = 'fill',values =  c('lightblue','maroon','orange',"seagreen"),drop = FALSE, name=i18n("INDIVIDUAL_OVERVIEW_LABEL_EDULEVEL"))
       
       
-      q <- ggplotly(p) %>% add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=8)) %>%
-        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=8)) %>%
+      q <- ggplotly(p) |> add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=8)) |>
+        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=8)) |>
         layout(title=FALSE,legend = list(orientation = 'h', y=-0.2),plot_bgcolor= '#fff',
                yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
@@ -126,7 +126,7 @@ plot_pyramid_data <- function(category, fill){
           ggtitle(i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"))
         
         
-        q <- ggplotly(p) %>% add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=8)) %>%
+        q <- ggplotly(p) |> add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=8)) |>
           layout(title=FALSE,legend = list(orientation = 'h', y=-0.2),plot_bgcolor= '#fff',
                  yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                  xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
@@ -144,7 +144,7 @@ plot_pyramid_data <- function(category, fill){
         
         
         q <- ggplotly(p) 
-        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=8)) %>%
+        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=8)) |>
           layout(title=FALSE,legend = list(orientation = 'h', y=-0.2),plot_bgcolor= '#fff',
                  yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                  xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
@@ -177,8 +177,8 @@ plot_pyramid_data <- function(category, fill){
         scale_fill_manual(aesthetics = 'fill',values =  c("seagreen","orange"),drop = FALSE, name=i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))
       
       
-      q <- ggplotly(p) %>% add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=10)) %>% 
-        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=10)) %>% 
+      q <- ggplotly(p) |> add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=10)) |> 
+        add_annotations(yref="paper", xref="paper",legendtitle=FALSE, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=10)) |> 
         layout(title=FALSE,legend = list(orientation = 'h', y=-0.3),plot_bgcolor= '#fff',
                yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
@@ -196,7 +196,7 @@ plot_pyramid_data <- function(category, fill){
           scale_fill_manual(aesthetics = 'fill',values =  c("seagreen","orange"),drop = FALSE, name=i18n("INDIVIDUAL_OVERVIEW_LABEL_GENDER"))+
           ggtitle(i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"))
         
-        q <- ggplotly(p) %>% add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=10)) %>% 
+        q <- ggplotly(p) |> add_annotations(yref="paper",legendtitle=FALSE, xref="paper", y=1, x=0, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_MALE"), showarrow=FALSE, font=list(size=10)) |> 
           layout(title=FALSE,legend = list(orientation = 'h', y=-0.3),plot_bgcolor= '#fff',
                  yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                  xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))
@@ -213,8 +213,8 @@ plot_pyramid_data <- function(category, fill){
           ggtitle(i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"))
         
         
-        q <- ggplotly(p) %>% 
-          add_annotations(yref="paper", xref="paper",legendtitle=F, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=10)) %>% 
+        q <- ggplotly(p) |> 
+          add_annotations(yref="paper", xref="paper",legendtitle=F, y=1, x=1, text=i18n("INDIVIDUAL_OVERVIEW_LABEL_FEMALE"), showarrow=FALSE, font=list(size=10)) |> 
           layout(title=FALSE,legend = list(orientation = 'h', y=-0.3),plot_bgcolor= '#fff',
                  yaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_AGEGROUP"),titlefont = list(size = 13)),
                  xaxis = list(title = i18n("INDIVIDUAL_OVERVIEW_LABEL_INDIVIDUAL"),titlefont = list(size = 13)))

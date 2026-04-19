@@ -47,21 +47,21 @@ sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colVal
     
     data_formating<-eventReactive(c(input$selected_variable),{
       
-      df<-df%>%
+      df<-df |>
         rename(setNames(colValue,"value"))
       
       if(!is.null(input$selected_variable)){
         
-        new_df<-df%>%
-          select(input$selected_variable,value)%>%
-          group_by_at(input$selected_variable)%>%
-          summarise(value=sum(value,na.rm=T))%>%
+        new_df<-df |>
+          select(input$selected_variable,value) |>
+          group_by_at(input$selected_variable) |>
+          summarise(value=sum(value,na.rm=T)) |>
           ungroup()
       
         data_for_table<-data_for_table(new_df)
         
-        new_df<-new_df%>%
-          mutate(parent="",root="Total")%>%
+        new_df<-new_df |>
+          mutate(parent="",root="Total") |>
           relocate(c(parent,root),.before=everything())
         
         sb_df<-do.call("rbind",lapply(2:(ncol(new_df)-1), function(i){
@@ -79,13 +79,13 @@ sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colVal
           
           target_df<-new_df[,c(1:i,ncol(new_df))]
           
-          target_df<-target_df%>%
-            group_by_at(c(target_cols))%>%
-            summarise(value=sum(value))%>%
-            rowwise()%>%
-            #mutate(ids = paste0(!!!syms(target_cols)))%>%
-            unite(ids,target_cols2, sep = " - ", remove = FALSE)%>%
-            unite(parents,target_parent, sep = " - ", remove = FALSE)%>%
+          target_df<-target_df |>
+            group_by_at(c(target_cols)) |>
+            summarise(value=sum(value)) |>
+            rowwise() |>
+            #mutate(ids = paste0(!!!syms(target_cols))) |>
+            unite(ids,target_cols2, sep = " - ", remove = FALSE) |>
+            unite(parents,target_parent, sep = " - ", remove = FALSE) |>
             ungroup()
           
           out<-data.frame(ids=target_df$ids,
@@ -111,7 +111,7 @@ sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colVal
       
       if(isTRUE(data_ready())){
         
-        p<-data_formated()%>%plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = length(colVariables)+1,hoverinfo="label+value+percent parent+percent root")
+        p<-data_formated() |>plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = length(colVariables)+1,hoverinfo="label+value+percent parent+percent root")
 
       }
     })
@@ -155,21 +155,21 @@ sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colVal
       switch(mode,
              'plot+table'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4)),
+                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4))
                )
              },
              'table+plot'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4)),
+                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4))
                )
              },
              'plot'={
-               plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+               plotlyOutput(ns("plot")) |>withSpinner(type = 4)
              },
              'table'={
-               DTOutput(ns("table"))%>%withSpinner(type = 4)
+               DTOutput(ns("table")) |>withSpinner(type = 4)
              }
       )
     })

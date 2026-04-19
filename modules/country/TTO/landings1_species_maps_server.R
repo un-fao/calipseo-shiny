@@ -132,8 +132,8 @@ landings1_species_maps_server <- function(id, parent.session, lang = NULL, pool,
       colors <- col_vector[1:(top+1)]
       
       #build the map
-      leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+      leaflet() |>
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>  
         addMinicharts(
           coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
           type = "pie",
@@ -141,8 +141,8 @@ landings1_species_maps_server <- function(id, parent.session, lang = NULL, pool,
           width = 60 * sqrt(sites_descriptor$TOTAL) / sqrt(max(sites_descriptor$TOTAL, na.rm = TRUE)), transitionTime = 0,
           colorPalette = colors)
     }else{
-      leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+      leaflet() |>
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>
         addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("LANDINGS1_SPECIES_MAPS_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br()

@@ -67,19 +67,19 @@ compute_active_vessel<-function(con=NULL,year=NULL,month=NULL){
   
   colVariables2<-setNames(names(colVariables),colVariables)
   
-  data<-data%>%
-    arrange(REGISTRATION_NUMBER,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE)%>%
-    group_by(REGISTRATION_NUMBER) %>%
+  data<-data |>
+    arrange(REGISTRATION_NUMBER,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE) |>
+    group_by(REGISTRATION_NUMBER) |>
     mutate(MANUFACTURE=paste0(unique(MANUFACTURER),collapse = "+"),
            ENGINE_TYPE=paste0(unique(ENGINE_TYPE),collapse = "+"),
-           ENERGY_TYPE=paste0(unique(ENERGY_TYPE),collapse = "+"))%>%
-    ungroup()%>%
-    distinct()%>%
-    mutate(value=1)%>%
-    group_by_at(names(colVariables))%>%
-    summarise(Number=sum(value))%>%
-    ungroup()%>%
-    rename(all_of(colVariables2))%>%
+           ENERGY_TYPE=paste0(unique(ENERGY_TYPE),collapse = "+")) |>
+    ungroup() |>
+    distinct() |>
+    mutate(value=1) |>
+    group_by_at(names(colVariables)) |>
+    summarise(Number=sum(value)) |>
+    ungroup() |>
+    rename(all_of(colVariables2)) |>
     select(-Active)
   
  return(data)  

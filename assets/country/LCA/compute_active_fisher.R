@@ -52,18 +52,18 @@ compute_active_fisher<-function(con=NULL,year=NULL,month=NULL){
     data$Site[is.na(data$Site)] <- "Unknown"
   }
 
-  data<-data%>%
-    mutate(Age=round(time_length(interval(DOB,as.Date(sprintf("%s-%02d-01",year,ifelse(is.null(month),"12",as.numeric(month))))),"years"),0))%>%
-    select(-DOB,-Regdate)%>%
-    arrange(ID,Role,Site)%>%
-    group_by(ID) %>%
+  data<-data |>
+    mutate(Age=round(time_length(interval(DOB,as.Date(sprintf("%s-%02d-01",year,ifelse(is.null(month),"12",as.numeric(month))))),"years"),0)) |>
+    select(-DOB,-Regdate) |>
+    arrange(ID,Role,Site) |>
+    group_by(ID) |>
     mutate(Role=paste0(unique(Role),collapse = "+"),
-           Site=paste0(unique(Site),collapse = "+"))%>%
-    ungroup()%>%
-    distinct()%>%
-    mutate(value=1)%>%
-    group_by(Site,Gender,Age,Education,Role,Worktime)%>%
-    summarise(Number=sum(value))%>%
+           Site=paste0(unique(Site),collapse = "+")) |>
+    ungroup() |>
+    distinct() |>
+    mutate(value=1) |>
+    group_by(Site,Gender,Age,Education,Role,Worktime) |>
+    summarise(Number=sum(value)) |>
     ungroup()
   
   return(data)

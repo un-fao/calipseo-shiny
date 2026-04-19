@@ -95,13 +95,13 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
   
   #Check consistency between vessel name and registration number
   # 
-  # test<- data%>%
-  #   select(vessel_name,vessel_registration)%>%
-  #   mutate(vessel_registration=paste0(substr(vessel_registration,1,2),"00",substr(vessel_registration,3,5)),vessel_registration)%>%
-  #   distinct()%>%
-  #   rowwise()%>%
-  #   mutate(ref_vessel_name_by_Reg=dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",vessel_registration))[1,1])%>%
-  #   mutate(test=if(ref_vessel_name_by_Reg==vessel_name){TRUE}else{FALSE})%>%
+  # test<- data |>
+  #   select(vessel_name,vessel_registration) |>
+  #   mutate(vessel_registration=paste0(substr(vessel_registration,1,2),"00",substr(vessel_registration,3,5)),vessel_registration) |>
+  #   distinct() |>
+  #   rowwise() |>
+  #   mutate(ref_vessel_name_by_Reg=dbGetQuery(pool, sprintf("SELECT NAME FROM reg_vessels where REGISTRATION_NUMBER = '%s'",vessel_registration))[1,1]) |>
+  #   mutate(test=if(ref_vessel_name_by_Reg==vessel_name){TRUE}else{FALSE}) |>
   #   filter(isFALSE(test))
   # 
   # print(test)
@@ -124,11 +124,11 @@ validateLogbookFile <- function(filename, pool,monitor=NULL){
   data$arrival_date<-as.Date(data$arrival_date,format = "%Y-%m-%d")
   data$arrival_date<-format(data$arrival_date, format = "%Y-%m-%d %H:%M:%S")
   
-  trips<-data%>%
-    select(-c(species_asfis,landed_weight_kg,starts_with("processing")))%>%
+  trips<-data |>
+    select(-c(species_asfis,landed_weight_kg,starts_with("processing"))) |>
     distinct()
   
-  species<-data%>%
+  species<-data |>
     select(`trip_#`,vessel_registration,ID,species_asfis,landed_weight_kg,starts_with("processing"))
   
   now<-as.character(format(Sys.time(), format = "%Y-%m-%d %H:%M:%S"))

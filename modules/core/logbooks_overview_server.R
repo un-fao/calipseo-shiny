@@ -123,10 +123,10 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
       "%Y-%U"
     }
     
-    df<-data_logbooks %>%
-      mutate(date = as.character(format(as.Date(date),format = gv_format_date))) %>%
-      group_by(date) %>%
-      summarise(nb_vessel = length(unique(regnum))) %>%
+    df<-data_logbooks |>
+      mutate(date = as.character(format(as.Date(date),format = gv_format_date))) |>
+      group_by(date) |>
+      summarise(nb_vessel = length(unique(regnum))) |>
       ungroup()
     
     gv_data_formated(df)
@@ -141,14 +141,14 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     
     if(isTRUE(gv_data_ready())){
     
-      p <- gv_data_formated() %>% plot_ly(x = ~date)
-      p <- p %>%    
+      p <- gv_data_formated() |> plot_ly(x = ~date)
+      p <- p |>    
             add_trace(
               type = "scatter", mode = "lines+markers",
               y = ~nb_vessel, line = list(simplyfy = F),
               text = ~sprintf(paste("%s: %s",i18n("GLOBAL_VESSEL_PLOT_UNIT")),date,round(nb_vessel)))
       
-        p%>%layout(
+        p |>layout(
           showlegend=F,
           hovermode ='closest',
           xaxis = list(
@@ -188,7 +188,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
         "%Y-%U" = i18n("GRANU_LABEL_WEEK")
       )
       
-      dt <- gv_data_formated() %>%
+      dt <- gv_data_formated() |>
         rename(!!granu:=date,
              !!i18n("GLOBAL_VESSEL_LABEL"):=nb_vessel)
       
@@ -221,8 +221,8 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
   #Main UI for plot/statistics table
   output$gv_result<-renderUI({
     tabsetPanel(
-      tabPanel(i18n("TABPANEL_PLOT"), plotlyOutput(ns("gv_plot")) %>% withSpinner(type = 4)),
-      tabPanel(i18n("TABPANEL_STATISTIC"), DTOutput(ns("gv_table")) %>% withSpinner(type = 4))
+      tabPanel(i18n("TABPANEL_PLOT"), plotlyOutput(ns("gv_plot")) |> withSpinner(type = 4)),
+      tabPanel(i18n("TABPANEL_STATISTIC"), DTOutput(ns("gv_table")) |> withSpinner(type = 4))
     )
   })
   
@@ -231,7 +231,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     id = "gq",
     lang = lang,
     label = i18n("GLOBAL_QUANTITY_LABEL"),
-    df = data_logbooks %>% mutate(label = "Total"), 
+    df = data_logbooks |> mutate(label = "Total"), 
     colDate = "date", colTarget="label", 
     ylab = sprintf('%s (%s)', i18n("QUANTITY_PLOT_YLAB"), PREF_UNIT_WEIGHT$CODE),
     valueUnit = PREF_UNIT_WEIGHT$CODE,
@@ -274,7 +274,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     id = "sp", 
     lang = lang,
     label = i18n("SPECIES_LABEL"),
-    df = data_logbooks %>%
+    df = data_logbooks |>
           mutate(text = sprintf("%s-<em>%s</em> (<b>%s</b>)", species_desc, species_sci, species_asfis)),
     colDate = "date",
     colTarget = "species_desc",
@@ -293,7 +293,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     id = "fg", 
     lang = lang,
     label = i18n("FISHING_GEAR_LABEL"),
-    df = data_logbooks %>% left_join(fish_group),
+    df = data_logbooks |> left_join(fish_group),
     colDate = "date", 
     colTarget = "ISSCAAP_Group_En",
     ylab = sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT$CODE),
@@ -308,7 +308,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     id = "ls", 
     lang = lang,
     label = i18n("LANDING_SITES_LABEL"),
-    df = data_logbooks %>% left_join(fish_group),
+    df = data_logbooks |> left_join(fish_group),
     colDate = "date",
     colTarget = "landing_site",
     ylab = sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT$CODE),
@@ -323,7 +323,7 @@ logbooks_overview_server <- function(id, parent.session, lang = NULL, pool, relo
     id = "fz", 
     lang = lang,
     label = i18n("FISHING_ZONE_LABEL"),
-    df = data_logbooks %>% left_join(fish_group),
+    df = data_logbooks |> left_join(fish_group),
     colDate = "date",
     colTarget = "fishing_zone",
     ylab = sprintf('%s (%s)',i18n("QUANTITY_PLOT_YLAB"),PREF_UNIT_WEIGHT$CODE),

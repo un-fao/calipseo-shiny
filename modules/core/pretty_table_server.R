@@ -72,45 +72,45 @@ pretty_table_server <- function(id, lang = NULL, df,colVariables=list(),colValue
     
     data_formating<-eventReactive(c(input$row_variable,input$col_variable,input$grandTotal),{
       
-      new_df<-df%>%
+      new_df<-df |>
         rename(setNames(colValue,"value"))
       
       if(length(input$row_variable)>0){
         col_to_filter<-c(input$row_variable,input$col_variable,"value")
-        new_df<-new_df%>%
+        new_df<-new_df |>
           filter_at(vars(col_to_filter), any_vars(. == 1))
         
         
         print(head(new_df))
         if(length(input$col_variable)>0){
-        new_df<-new_df%>%
-          group_by_at(c(input$row_variable,input$col_variable))%>%
-          summarise(value=sum(value,na.rm=T))%>%
-          ungroup()%>%
-          pivot_wider(names_from=input$col_variable,values_from = c(value),names_sort=T,names_vary="slowest",values_fill=list(value=0))%>%
+        new_df<-new_df |>
+          group_by_at(c(input$row_variable,input$col_variable)) |>
+          summarise(value=sum(value,na.rm=T)) |>
+          ungroup() |>
+          pivot_wider(names_from=input$col_variable,values_from = c(value),names_sort=T,names_vary="slowest",values_fill=list(value=0)) |>
           ungroup()
         }else{
-          new_df<-new_df%>%
-            group_by_at(input$row_variable)%>%
-            summarise(value=sum(value,na.rm=T))%>%
+          new_df<-new_df |>
+            group_by_at(input$row_variable) |>
+            summarise(value=sum(value,na.rm=T)) |>
             ungroup()
         }
         
         if(input$grandTotal){
-        new_df<-new_df%>%
-          rowwise() %>%
-          mutate(!!i18n("TOTAL_LABEL"):= sum(c_across((length(input$row_variable)+1):ncol(new_df))))%>%
+        new_df<-new_df |>
+          rowwise() |>
+          mutate(!!i18n("TOTAL_LABEL"):= sum(c_across((length(input$row_variable)+1):ncol(new_df)))) |>
           ungroup()
         
-          new_df<-new_df%>%
+          new_df<-new_df |>
             bind_rows(
-            new_df%>%
+            new_df |>
               summarise(across(where(~!is.numeric(.)), ~paste0(i18n("TOTAL_LABEL"))),
                         across(where(is.numeric), ~sum(.))))
         }
         
-        new_df<-new_df%>%
-          mutate(across(where(~is.character(.)),~as.factor(.)))%>%
+        new_df<-new_df |>
+          mutate(across(where(~is.character(.)),~as.factor(.))) |>
           ungroup()
         
         data_for_table<-data_for_table(new_df)
@@ -179,7 +179,7 @@ pretty_table_server <- function(id, lang = NULL, df,colVariables=list(),colValue
         if(isFALSE(data_ready())|length(input$row_variable)==0){
           p(style="text-align: center",i18n("EMPTY_TABLE_MESSAGE"))
         }else{
-          DTOutput(ns("table"))%>%withSpinner(type = 4)
+          DTOutput(ns("table")) |>withSpinner(type = 4)
         }
       })
     })

@@ -7,8 +7,9 @@
 
 ## Enhancements
 
-- [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
 - [#338](https://github.com/un-fao/calipseo-shiny/issues/338) i18n management mechanism modernization
+- [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
+- [#363](https://github.com/un-fao/calipseo-shiny/issues/363) Replace magrittr pipe by native pipe
 
 ## New features
 

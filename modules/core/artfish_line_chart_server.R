@@ -74,15 +74,15 @@ artfish_line_chart_server <- function(
 
     data_formating <- eventReactive(c(input$levels,input$number),{
      
-        df <- df %>%
-          rename(setNames(colDate,"date")) %>%
-          rename(setNames(colTarget,"target")) %>%
+        df <- df |>
+          rename(setNames(colDate,"date")) |>
+          rename(setNames(colTarget,"target")) |>
           rename(setNames(colValue,"value"))
         if(colTarget==colText){
-          df<-df %>%
+          df<-df |>
             mutate(text=target)
         }else{
-          df<-df %>%
+          df<-df |>
             rename(setNames(colText,"text"))
         }
 
@@ -90,41 +90,41 @@ artfish_line_chart_server <- function(
           if(levels_output() == "detail"){
           req(input$number)
           if(rank_method_output()=="sum"){
-            ranked <- df %>%
-              group_by(target) %>% 
-              summarise(total = sum(value)) %>%
-              mutate(rank = rank(-total)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank) %>%
+            ranked <- df |>
+              group_by(target) |> 
+              summarise(total = sum(value)) |>
+              mutate(rank = rank(-total)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }	
           
           if(rank_method_output() == "year_avg"){
-            ranked <- df %>%
-              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-              group_by(year,target) %>% 
-              summarise(total = sum(value)) %>%
-              group_by(target) %>%
-              summarise(avg = mean(total)) %>%
-              mutate(rank = rank(-avg)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank) %>%
+            ranked <- df |>
+              mutate(year = as.character(format(as.Date(date),format = '%Y'))) |>
+              group_by(year,target) |> 
+              summarise(total = sum(value)) |>
+              group_by(target) |>
+              summarise(avg = mean(total)) |>
+              mutate(rank = rank(-avg)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }
           
           if(rank_method_output() == "last_year"){
-            ranked <- df %>%
-              mutate(year = as.character(format(as.Date(date),format = '%Y'))) %>%
-              filter(year==max(year)) %>%
-              group_by(target) %>% 
-              summarise(total = sum(value)) %>%
-              mutate(rank = rank(-total)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank) %>%
+            ranked <- df |>
+              mutate(year = as.character(format(as.Date(date),format = '%Y'))) |>
+              filter(year==max(year)) |>
+              group_by(target) |> 
+              summarise(total = sum(value)) |>
+              mutate(rank = rank(-total)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }
           
-          df<-df%>%
+          df<-df |>
             filter(target%in%ranked)
           }
         }
@@ -132,21 +132,21 @@ artfish_line_chart_server <- function(
        # req(!is.null(input$levels))
         
         if(levels_output() == "detail"){
-          df <- df%>%
-            mutate(value=value) %>%
-            group_by(date,target,text) %>%
-            summarise(agg=ifelse(stat == "mean", mean(value,na.rm=T), sum(value,na.rm=T))) %>%
-            group_by(target,text)%>%
-            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) %>%
+          df <- df |>
+            mutate(value=value) |>
+            group_by(date,target,text) |>
+            summarise(agg=ifelse(stat == "mean", mean(value,na.rm=T), sum(value,na.rm=T))) |>
+            group_by(target,text) |>
+            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) |>
             ungroup()
           
         }else{
-          df <- df%>%
-            mutate(value=value) %>%
-            group_by(date) %>%
-            summarise(agg=ifelse(stat=="mean", mean(value,na.rm=T), sum(value,na.rm=T)),text="",target=i18n("ARTFISH_LINECHART_LEVEL_LABEL_GLOBAL")) %>%
-            group_by(target,text) %>%
-            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) %>%
+          df <- df |>
+            mutate(value=value) |>
+            group_by(date) |>
+            summarise(agg=ifelse(stat=="mean", mean(value,na.rm=T), sum(value,na.rm=T)),text="",target=i18n("ARTFISH_LINECHART_LEVEL_LABEL_GLOBAL")) |>
+            group_by(target,text) |>
+            complete(date = seq(min(date), max(date), 'month'),fill=list(agg=NA)) |>
             ungroup()
         }
 
@@ -160,12 +160,12 @@ artfish_line_chart_server <- function(
         data_formating()
         if(isTRUE(data_ready())){
           print(tail(data_formated(),5))
-          p<-data_formated() %>% plot_ly(
+          p<-data_formated() |> plot_ly(
             x = ~date
           )
           
           if(plotType == "line"){
-              p <- p%>%    
+              p <- p |>    
                add_trace(
                  type = "scatter",
                  mode="lines+markers",
@@ -174,7 +174,7 @@ artfish_line_chart_server <- function(
                  text = ~sprintf("%s[%s]: %s",text,date,round(agg,2)),connectgaps = FALSE
                )
             }else{
-              p <- p%>%    
+              p <- p |>    
                 add_bars(
                   y =~ agg,color= ~target,
                   line = list(simplyfy = F),
@@ -183,7 +183,7 @@ artfish_line_chart_server <- function(
             }
           
                           
-        p %>% layout(
+        p |> layout(
             showlegend = ifelse(levels_output()=="detail",T,F),
             hovermode ='closest',
             xaxis = list(
@@ -215,9 +215,9 @@ artfish_line_chart_server <- function(
       if(isTRUE(data_ready())){
         
         DT::datatable(
-          data_formated() %>%
-            select(-text) %>%
-                     rename(!!label:=target) %>%
+          data_formated() |>
+            select(-text) |>
+                     rename(!!label:=target) |>
           mutate(!!label:=as.factor(!!sym(label))),
           extensions = c("Buttons"),
           escape = FALSE,
@@ -249,21 +249,21 @@ artfish_line_chart_server <- function(
       switch(mode,
         'plot+table'={
           tabsetPanel(
-            tabPanel(i18n("ARTFISH_LINECHART_LABEL_PLOT"), plotlyOutput(ns("plot")) %>% withSpinner(type = 4)),
-            tabPanel(i18n("ARTFISH_LINECHART_LABEL_STATISTICS"), DTOutput(ns("table")) %>% withSpinner(type = 4))
+            tabPanel(i18n("ARTFISH_LINECHART_LABEL_PLOT"), plotlyOutput(ns("plot")) |> withSpinner(type = 4)),
+            tabPanel(i18n("ARTFISH_LINECHART_LABEL_STATISTICS"), DTOutput(ns("table")) |> withSpinner(type = 4))
           )
         },
         'table+plot'={
           tabsetPanel(
-            tabPanel(i18n("ARTFISH_LINECHART_LABEL_STATISTICS"), DTOutput(ns("table")) %>% withSpinner(type = 4)),
-            tabPanel(i18n("ARTFISH_LINECHART_LABEL_PLOT"), plotlyOutput(ns("plot")) %>% withSpinner(type = 4))
+            tabPanel(i18n("ARTFISH_LINECHART_LABEL_STATISTICS"), DTOutput(ns("table")) |> withSpinner(type = 4)),
+            tabPanel(i18n("ARTFISH_LINECHART_LABEL_PLOT"), plotlyOutput(ns("plot")) |> withSpinner(type = 4))
           )
         },
         'plot'={
-          plotlyOutput(ns("plot")) %>% withSpinner(type = 4)
+          plotlyOutput(ns("plot")) |> withSpinner(type = 4)
         },
         'table'={
-          DTOutput(ns("table")) %>% withSpinner(type = 4)
+          DTOutput(ns("table")) |> withSpinner(type = 4)
         }
       )
     })

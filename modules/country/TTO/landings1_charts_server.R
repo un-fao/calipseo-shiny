@@ -54,7 +54,7 @@ landings1_charts_server <- function(id, parent.session, lang = NULL, pool, reloa
     if(is.null(ts)) return(NULL)
     bch_ts <- ts[is.na(ts$gear_id)&is.na(ts$species_id)&is.na(ts$month)&ts$bch_name==bch_name,]
     bch_ts_descriptor <- bch_ts[bch_ts$descriptor == descriptor,]
-    plot_ly(bch_ts_descriptor, x = ~year, y = ~value, mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290)
+    plot_ly(bch_ts_descriptor, x = ~year, y = ~value, mode = 'lines+markers') |>  layout(autosize = TRUE, height = 290)
   }
   
   #CONTROLLERS

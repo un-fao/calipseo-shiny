@@ -100,7 +100,7 @@ getAvailablePeriods <- function(id, config, indicators){
     if(all(period %in% names(available_periods_new))){
       available_periods_new <- unique(available_periods_new[period])
     }else{
-      available_periods_new <- available_periods_new %>%
+      available_periods_new <- available_periods_new |>
         mutate("quarter"= case_when(month %in% c(1:3)~"Q1",
                                     month %in% c(4:6)~"Q2",
                                     month %in% c(7:9)~"Q3",
@@ -124,16 +124,16 @@ formatAvailablePeriods <- function(available_periods, indicator){
   if("month" %in% indicator$compute_by$period){
     available_periods_new <- subset(available_periods_new, !is.na(month))
     available_periods_new$period <- paste0(available_periods_new$year,"-","M", available_periods_new$month)
-    available_periods_new<- available_periods_new %>% arrange(desc(year),month)
+    available_periods_new<- available_periods_new |> arrange(desc(year),month)
   }
   if("quarter" %in% indicator$compute_by$period){
     available_periods_new <- subset(available_periods_new,!is.na(quarter))
     available_periods_new$period <- paste0(available_periods_new$year,"-","Q", available_periods_new$quarter)
-    available_periods_new <- available_periods_new %>% arrange(desc(year),quarter) %>% as.data.frame()
+    available_periods_new <- available_periods_new |> arrange(desc(year),quarter) |> as.data.frame()
   }
   if("year" %in% indicator$compute_by$period){
     available_periods_new$period <- available_periods_new$year
-    available_periods_new <- available_periods_new %>% arrange(desc(year)) %>% as.data.frame()
+    available_periods_new <- available_periods_new |> arrange(desc(year)) |> as.data.frame()
   }
   return(available_periods_new)
 }

@@ -81,29 +81,29 @@ vessel_overview_server <- function(id, parent.session, lang = NULL, pool, reload
       }
       
       #build sunburst_data
-      sunburst_data<-vessel_info %>%
-        arrange(ID,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE) %>%
-        group_by(ID) %>%
+      sunburst_data<-vessel_info |>
+        arrange(ID,MANUFACTURER,ENGINE_TYPE,ENERGY_TYPE) |>
+        group_by(ID) |>
         mutate(MANUFACTURER = paste0(unique(MANUFACTURER),collapse = "+"),
                ENGINE_TYPE = paste0(unique(ENGINE_TYPE),collapse = "+"),
-               ENERGY_TYPE = paste0(unique(ENERGY_TYPE),collapse = "+")) %>%
-        ungroup() %>%
-        distinct() %>%
+               ENERGY_TYPE = paste0(unique(ENERGY_TYPE),collapse = "+")) |>
+        ungroup() |>
+        distinct() |>
         mutate(value=1)
       
       #build pyramid data
-      pyramid_data <- vessel_info %>%
-        filter(OPERATIONAL_STATUS_CODE %in% c(1,2)) %>%
-        filter(!is.na(REGISTRATION_DATE)) %>%
-        mutate(Age = round(time_length(lubridate::interval(REGISTRATION_DATE,Sys.Date()),"years"),0)) %>%
-        select(-REGISTRATION_DATE, -OPERATIONAL_STATUS_CODE) %>%
-        arrange(ID, MANUFACTURER, ENGINE_TYPE,ENERGY_TYPE) %>%
-        group_by(ID) %>%
+      pyramid_data <- vessel_info |>
+        filter(OPERATIONAL_STATUS_CODE %in% c(1,2)) |>
+        filter(!is.na(REGISTRATION_DATE)) |>
+        mutate(Age = round(time_length(lubridate::interval(REGISTRATION_DATE,Sys.Date()),"years"),0)) |>
+        select(-REGISTRATION_DATE, -OPERATIONAL_STATUS_CODE) |>
+        arrange(ID, MANUFACTURER, ENGINE_TYPE,ENERGY_TYPE) |>
+        group_by(ID) |>
         mutate(MANUFACTURER = paste0(unique(MANUFACTURER),collapse = "+"),
                ENGINE_TYPE = paste0(unique(ENGINE_TYPE),collapse = "+"),
-               ENERGY_TYPE = paste0(unique(ENERGY_TYPE),collapse = "+")) %>%
-        ungroup() %>%
-        distinct() %>%
+               ENERGY_TYPE = paste0(unique(ENERGY_TYPE),collapse = "+")) |>
+        ungroup() |>
+        distinct() |>
         filter(Age > 0)
       
       #trigger pyramid chart server
@@ -139,8 +139,8 @@ vessel_overview_server <- function(id, parent.session, lang = NULL, pool, reload
       #UI Map vessels (leaflet map)
       output$map_vessels <- renderLeaflet({
         sites_vessels <- countVesselsByLandingSite(pool, sf = TRUE)
-        leaflet() %>%
-          addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%  
+        leaflet() |>
+          addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>  
           addCircles(data = sites_vessels, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7, 
                      radius = 700*sqrt(sites_vessels$COUNT/max(sites_vessels$COUNT,na.rm = TRUE)), 
                      popup = paste(
@@ -181,7 +181,7 @@ vessel_overview_server <- function(id, parent.session, lang = NULL, pool, reload
       
       
       output$rep_vessels_home_port <- renderPlotly({
-        plot_ly(df_vessel_landingsite_data, labels = ~`HOME PORT`, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") %>%
+        plot_ly(df_vessel_landingsite_data, labels = ~`HOME PORT`, values = ~COUNT, type = 'pie', sort = FALSE, direction = "clockwise") |>
           layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                  yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
       })
@@ -237,10 +237,10 @@ vessel_overview_server <- function(id, parent.session, lang = NULL, pool, reload
       
       #Map with vessel types piechart by landing site
       output$map_vessels2 <- renderLeaflet({
-        leaflet() %>%
-          addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%
+        leaflet() |>
+          addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>
           addCircles(data = vessel_landingsite_breakdown, weight = 1, color = "blue", fillColor = "blue", fillOpacity = 0.7
-          ) %>%
+          ) |>
           addMinicharts(lng = vessel_landingsite_breakdown_df$LONGITUDE,
                         lat = vessel_landingsite_breakdown_df$LATITUDE,
                         type = "pie",

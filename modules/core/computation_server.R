@@ -115,14 +115,14 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
         if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
         if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%inner_join(getAvailablePeriods(id= dep_indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
+        period_to_compute<-period_to_compute |>mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter)) |>inner_join(getAvailablePeriods(id= dep_indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
         
         release_periods<-getStatPeriods(config = appConfig, id = dep_indicator, target = "release")
         
         if(process_period == "month") release_periods$month=as.numeric(gsub("M","",release_periods$month))
         if(process_period == "quarter") release_periods$quarter=as.numeric(gsub("Q","",release_periods$quarter))
         
-        period_to_compute<-period_to_compute%>%mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter))%>%anti_join(release_periods%>%mutate(year=as.numeric(year)))
+        period_to_compute<-period_to_compute |>mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter)) |>anti_join(release_periods |>mutate(year=as.numeric(year)))
 
         if(nrow(period_to_compute)>0){
           
@@ -665,21 +665,21 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
     
     req(!is.null(indicator_status()))
     
-    df<-indicator_status()%>%
-      group_by(Status,year)%>%
-      count(Status)%>%
-      group_by(year)%>%
-      mutate(percent=n/sum(n)*100)%>%
-      rowwise()%>%
+    df<-indicator_status() |>
+      group_by(Status,year) |>
+      count(Status) |>
+      group_by(year) |>
+      mutate(percent=n/sum(n)*100) |>
+      rowwise() |>
       mutate(Status=switch (Status,
                             "release" = i18n("STATUS_APPROVED"),
                             "staging" = i18n("STATUS_COMPUTED"),
                             "available" = i18n("STATUS_TO_COMPUTE"),
                             "not available" = i18n("STATUS_NOT_AVAILABLE")
-      ))%>%
-      select(-n)%>%
-      complete(nesting(year),Status=c(i18n("STATUS_APPROVED"),i18n("STATUS_COMPUTED"),i18n("STATUS_TO_COMPUTE"),i18n("STATUS_NOT_AVAILABLE")),fill=list(percent=0))%>%
-      mutate(Status=factor(Status,levels=c(i18n("STATUS_APPROVED"),i18n("STATUS_COMPUTED"),i18n("STATUS_TO_COMPUTE"),i18n("STATUS_NOT_AVAILABLE"))))%>%
+      )) |>
+      select(-n) |>
+      complete(nesting(year),Status=c(i18n("STATUS_APPROVED"),i18n("STATUS_COMPUTED"),i18n("STATUS_TO_COMPUTE"),i18n("STATUS_NOT_AVAILABLE")),fill=list(percent=0)) |>
+      mutate(Status=factor(Status,levels=c(i18n("STATUS_APPROVED"),i18n("STATUS_COMPUTED"),i18n("STATUS_TO_COMPUTE"),i18n("STATUS_NOT_AVAILABLE")))) |>
       ungroup()
     
     colormap <- setNames(object = c("#008000", "#32cd32", "#ffa500","gray"),
@@ -696,7 +696,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
             hovertext = paste(df$year,
                               '<br>', df$Status,': ',paste(round(df$percent,0),"%")),
             color = ~Status, 
-            colors = colormap) %>%
+            colors = colormap) |>
       layout(
         yaxis = list(
           title = NULL, zeroline = FALSE, showline = FALSE, ticksuffix = "%"
@@ -901,7 +901,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
     #Create full period matrix based on typo of compute_by period
     full_periods_new <- getFullPeriods(available_periods_new, selected_indicator$indicator)
     #store it as reactive
-    full_periods <- full_periods(full_periods_new %>% arrange(desc(year)))
+    full_periods <- full_periods(full_periods_new |> arrange(desc(year)))
 
     #Merge info of results, available period and full period matrix
     DEBUG("Available periods:")
@@ -911,10 +911,10 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
     
     #over available periods, list those for which computation has been run
     #either at staging/release status
-    indicator_status_new <- available_periods() %>%
-      mutate(period = as.character(period)) %>%
-      left_join(out$results, by = c("period" = "Period")) %>%
-      mutate(Status = ifelse(is.na(Status),"available",Status)) %>%
+    indicator_status_new <- available_periods() |>
+      mutate(period = as.character(period)) |>
+      left_join(out$results, by = c("period" = "Period")) |>
+      mutate(Status = ifelse(is.na(Status),"available",Status)) |>
       rename(Period = period)
     
     
@@ -927,12 +927,12 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
       DEBUG("Computation matrix:")
       if(appConfig$debug) print(head(indicator_status_new))
       
-      indicator_status_new <- full_periods() %>%
-        mutate(year = as.character(year)) %>%
-        mutate(Period = as.character(Period)) %>%
-        left_join(indicator_status_new %>%
-                    mutate(year = as.character(year)) %>%
-                    mutate(Period = as.character(Period))) %>%
+      indicator_status_new <- full_periods() |>
+        mutate(year = as.character(year)) |>
+        mutate(Period = as.character(Period)) |>
+        left_join(indicator_status_new |>
+                    mutate(year = as.character(year)) |>
+                    mutate(Period = as.character(Period))) |>
         mutate(Status=ifelse(is.na(Status), "not available", Status))
     }
     
@@ -1327,7 +1327,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
               )
             })
             
-            DTOutput(ns(paste0("table_",period)))%>%withSpinner(type = 4)
+            DTOutput(ns(paste0("table_",period))) |>withSpinner(type = 4)
           }else{
             NULL
           }
@@ -1399,20 +1399,20 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
   observeEvent(out$results,{
     req(indicator_first_compute()==FALSE)
     
-    indicator_status_new<-available_periods()%>%
-      mutate(period=as.character(period))%>%
-      left_join(out$results, by=c("period"="Period"))%>%
-      mutate(Status=ifelse(is.na(Status),"available",Status))%>%
+    indicator_status_new<-available_periods() |>
+      mutate(period=as.character(period)) |>
+      left_join(out$results, by=c("period"="Period")) |>
+      mutate(Status=ifelse(is.na(Status),"available",Status)) |>
       rename(Period=period)
     
     
     if(length(setdiff(full_periods()$Period,indicator_status_new$Period))>0){
-      indicator_status_new<-full_periods()%>%
-        mutate(year=as.character(year))%>%
-        mutate(Period=as.character(Period))%>%
-        left_join(indicator_status_new%>%
-            mutate(year=as.character(year))%>%
-            mutate(Period=as.character(Period)))%>%
+      indicator_status_new<-full_periods() |>
+        mutate(year=as.character(year)) |>
+        mutate(Period=as.character(Period)) |>
+        left_join(indicator_status_new |>
+            mutate(year=as.character(year)) |>
+            mutate(Period=as.character(Period))) |>
         mutate(Status=ifelse(is.na(Status),"not available",Status))
     }
     

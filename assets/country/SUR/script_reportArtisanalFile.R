@@ -2,27 +2,27 @@ reportArtisanalFile<-function(data,errors,referentials,path,add_cell_comments=F)
 
 type_levels <- c("ERROR", "WARNING", "VALID")
 
-summary_table <- errors %>%
-  filter(!is.na(column)) %>%
-  mutate(type = factor(type, levels = type_levels, ordered = TRUE)) %>%
-  group_by(row, column) %>%
-  slice_min(order_by = type, n = 1) %>%  
-  ungroup() %>%
-  group_by(column, type) %>%
-  summarise(n = n_distinct(row), .groups = "drop") %>%
-  complete(column,type = type_levels,fill = list(n = 0)) %>%
-  tidyr::pivot_wider(names_from = type, values_from = n, values_fill = 0) %>%
-  mutate(across(any_of(c("VALID", "WARNING", "ERROR")), ~replace_na(.x, 0))) %>%   
-  select(column, any_of(c("VALID", "WARNING", "ERROR"))) %>%                    
-  mutate(TOTAL = rowSums(across(any_of(c("VALID", "WARNING", "ERROR"))))) %>%     
+summary_table <- errors |>
+  filter(!is.na(column)) |>
+  mutate(type = factor(type, levels = type_levels, ordered = TRUE)) |>
+  group_by(row, column) |>
+  slice_min(order_by = type, n = 1) |>  
+  ungroup() |>
+  group_by(column, type) |>
+  summarise(n = n_distinct(row), .groups = "drop") |>
+  complete(column,type = type_levels,fill = list(n = 0)) |>
+  tidyr::pivot_wider(names_from = type, values_from = n, values_fill = 0) |>
+  mutate(across(any_of(c("VALID", "WARNING", "ERROR")), ~replace_na(.x, 0))) |>   
+  select(column, any_of(c("VALID", "WARNING", "ERROR"))) |>                    
+  mutate(TOTAL = rowSums(across(any_of(c("VALID", "WARNING", "ERROR"))))) |>     
   arrange(column)
 
 summary_ref <- NULL
 if (!is.null(referentials) && nrow(referentials) > 0) {
-  summary_ref <- referentials %>%
-    group_by(table, type) %>%
-    summarise(n = n_distinct(value), .groups = "drop") %>%
-    tidyr::pivot_wider(names_from = type, values_from = n, values_fill = 0) %>%
+  summary_ref <- referentials |>
+    group_by(table, type) |>
+    summarise(n = n_distinct(value), .groups = "drop") |>
+    tidyr::pivot_wider(names_from = type, values_from = n, values_fill = 0) |>
     arrange(table)
 }
 
@@ -36,23 +36,23 @@ style_valid   <- createStyle(fgFill = "#90EE90")
 if (add_cell_comments) {
   writeData(wb, "Data", data)
   
-  validation_agg <- errors %>%
-    filter(!is.na(column)) %>%
-    group_by(row, column) %>%
+  validation_agg <- errors |>
+    filter(!is.na(column)) |>
+    group_by(row, column) |>
     summarise(
-      type = factor(type, levels = type_levels, ordered = TRUE) %>% min() %>% as.character(),
+      type = factor(type, levels = type_levels, ordered = TRUE) |> min() |> as.character(),
       message = paste0(sprintf("[%s] %s: %s", type, category, message), collapse = "\n"),
       .groups = "drop"
-    ) %>%
+    ) |>
     filter(type != "VALID")
   
   if (nrow(validation_agg) > 0) {
     
-    validation_agg <- validation_agg %>%
+    validation_agg <- validation_agg |>
       mutate(col_num = sapply(column, function(col) {
         idx <- which(names(data) == col)
         if (length(idx) == 1) idx else NA_integer_
-      })) %>%
+      })) |>
       filter(!is.na(col_num))
     
     for (t in c("ERROR", "WARNING")) {
@@ -75,7 +75,7 @@ if (add_cell_comments) {
 }
 
 addWorksheet(wb, "Error report")
-error_report <- errors %>% filter(type != "VALID")
+error_report <- errors |> filter(type != "VALID")
 writeData(wb, "Error report", error_report)
 
 style_error   <- createStyle(bgFill = "#F08080")

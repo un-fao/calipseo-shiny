@@ -172,45 +172,45 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     })
     
     report_activities_sum<-reactive({
-        report_activities()%>%
-      group_by(REPORT_ID, TRIP_ID, ACTIVITY_ID, DATE_FROM, DATE_TO, LONGITUDE, LATITUDE, OBSERVER_PRESENT, WIRED_CABLE, IS_DAYTIME)%>%
+        report_activities() |>
+      group_by(REPORT_ID, TRIP_ID, ACTIVITY_ID, DATE_FROM, DATE_TO, LONGITUDE, LATITUDE, OBSERVER_PRESENT, WIRED_CABLE, IS_DAYTIME) |>
       summarise(LANDED_QUANTITY = sum(LANDED_QUANTITY,na.rm=T),
                 DISCARD_QUANTITY = sum(DISCARD_QUANTITY, na.rm=T),
-                SP_IS_ETP = ifelse(any(1 %in% SP_IS_ETP),1,0))%>%
+                SP_IS_ETP = ifelse(any(1 %in% SP_IS_ETP),1,0)) |>
       ungroup()
     })    
     
-    tot_landed<-reactive({report_activities()%>%
-      filter(LANDED_QUANTITY>0)%>%
+    tot_landed<-reactive({report_activities() |>
+      filter(LANDED_QUANTITY>0) |>
       summarise(SP=length(unique(SP_CODE)),
                 QUANTITY=sum(LANDED_QUANTITY,n.rm=T),
                 UNIT = unique(LANDED_QUANTITY_UNIT)
-      )%>%
+      ) |>
       ungroup()
     })
     
-    tot_discard<-reactive({report_activities()%>%
-      filter(DISCARD_QUANTITY>0)%>%
+    tot_discard<-reactive({report_activities() |>
+      filter(DISCARD_QUANTITY>0) |>
       summarise(SP=length(unique(SP_CODE)),
                 QUANTITY=sum(DISCARD_QUANTITY,n.rm=T),
                 UNIT = unique(DISCARD_QUANTITY_UNIT)
-      )%>%
+      ) |>
       ungroup()
     })
     
-    tot_sp<-reactive({report_activities()%>%
-      select(SP_CODE,SP_IS_ETP)%>%
-      distinct()%>%
+    tot_sp<-reactive({report_activities() |>
+      select(SP_CODE,SP_IS_ETP) |>
+      distinct() |>
       summarise(SP=length(unique(SP_CODE)),
-                ETP=sum(SP_IS_ETP,na.rm=T))%>%
+                ETP=sum(SP_IS_ETP,na.rm=T)) |>
       ungroup()
     })
     
-    tot_act<-reactive({report_activities()%>%
-      select(ACTIVITY_ID,OBSERVER_PRESENT)%>%
-      distinct()%>%
+    tot_act<-reactive({report_activities() |>
+      select(ACTIVITY_ID,OBSERVER_PRESENT) |>
+      distinct() |>
       summarise(ACTIVITY=length(unique(ACTIVITY_ID)),
-                OBSERVED=sum(OBSERVER_PRESENT,na.rm=T))%>%
+                OBSERVED=sum(OBSERVER_PRESENT,na.rm=T)) |>
       ungroup()
     })
     
@@ -228,7 +228,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
         
         #Embarkation period
       if(!is.na(reports_info()$embarkation_start))if(!is.na(reports_info()$embarkation_end))if(reports_info()$embarkation_start<=reports_info()$embarkation_end){
-       p <- p %>% 
+       p <- p |> 
          add_segments(
           x = reports_info()$embarkation_start,
           xend = reports_info()$embarkation_end,
@@ -247,7 +247,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
        
       #Trip period
       if(!is.na(reports_info()$trip_start))if(!is.na(reports_info()$trip_end))if(reports_info()$trip_start<=reports_info()$trip_end){
-        p <- p %>%
+        p <- p |>
           add_segments(
             x = reports_info()$trip_start,
             xend = reports_info()$trip_end,
@@ -266,7 +266,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
         
         #Observation period
          if(!is.na(reports_info()$observation_start))if(!is.na(reports_info()$observation_end))if(reports_info()$observation_start<=reports_info()$observation_end){
-        p <- p %>%
+        p <- p |>
           add_segments(
           x = reports_info()$trip_start,
           xend = reports_info()$trip_end,
@@ -283,7 +283,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
         )
          }
         
-        p <- p %>%
+        p <- p |>
           layout(
           xaxis = list(title = NULL),
           yaxis = list(title = "", showticklabels = FALSE),
@@ -441,7 +441,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     
     assign_activity_lanes <- function(df) {
       
-      df <- df %>% arrange(DATE_FROM)
+      df <- df |> arrange(DATE_FROM)
       
       lane_end <- c()               
       lane_id  <- integer(nrow(df)) 
@@ -473,7 +473,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     
     output$activities_timeline <- renderPlotly({
       
-      d <- report_activities_sum() %>%
+      d <- report_activities_sum() |>
         mutate(
           obs_status = ifelse(OBSERVER_PRESENT == 1, "Observer Present", "Observer Absent"),
           tooltip = paste0(
@@ -489,8 +489,8 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
             "<br>", i18n("OBSERVER_REPORT_TRIP_WIRED_CABLE"), ": ",
             ifelse(WIRED_CABLE == 1, i18n("OBSERVER_REPORT_TRIP_YES"), i18n("OBSERVER_REPORT_TRIP_NO"))
           )
-        ) %>%
-        assign_activity_lanes() %>%
+        ) |>
+        assign_activity_lanes() |>
         mutate(
           y_lane = - lane
         )
@@ -504,7 +504,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
       
       y_levels <- c(trip_lane, unique(d$y_lane))
       
-      p <- plotly::plot_ly() %>%
+      p <- plotly::plot_ly() |>
         
         add_segments(
           x = trip_start,
@@ -514,7 +514,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
           line = list(width = 14, color = "rgba(180,180,180,0.35)"),
           name = i18n("OBSERVER_REPORT_TRIP_FULL_TRIP"),
           hoverinfo = "none"
-        ) %>%
+        ) |>
         
         add_segments(
           data = d,
@@ -530,7 +530,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
           line = list(width = 6),
           text = ~tooltip,
           hoverinfo = "text"
-        ) %>%
+        ) |>
         
         layout(
           xaxis = list(
@@ -635,7 +635,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
       
       df <- report_activities()
       
-      df_formatted <- df %>%
+      df_formatted <- df |>
         mutate(
           OBSERVER_PRESENT = purrr::map_chr(OBSERVER_PRESENT, ~ as.character(icon_user_status(.x))),
           IS_DAYTIME       = purrr::map_chr(IS_DAYTIME, ~ as.character(icon_day_night(.x))),
@@ -665,7 +665,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
               paste0(round(..1, 2), " ", ..2)
             }
           )
-        ) %>%
+        ) |>
         select(
           ACTIVITY_ID, OBSERVER_PRESENT, DATE_FROM, DATE_TO, IS_DAYTIME,
           GEAR, SPECIES, ETP, LANDED_QUANTITY, DISCARD_QUANTITY
@@ -701,7 +701,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     #Trip Tab - Map
     output$map <- renderLeaflet({
       
-      d <- report_activities_sum() %>%
+      d <- report_activities_sum() |>
         filter(!is.na(LONGITUDE), !is.na(LATITUDE))
       
       req(nrow(d) > 0)
@@ -713,15 +713,15 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
           maxZoom = 12,
           worldCopyJump = TRUE
         )
-      ) %>%
-        addProviderTiles(providers$Esri.OceanBasemap, group = "Ocean") %>%
-        addProviderTiles(providers$CartoDB.Positron, group = "Light") %>%
-        addProviderTiles(providers$OpenStreetMap.Mapnik, group = "OSM") %>%
+      ) |>
+        addProviderTiles(providers$Esri.OceanBasemap, group = "Ocean") |>
+        addProviderTiles(providers$CartoDB.Positron, group = "Light") |>
+        addProviderTiles(providers$OpenStreetMap.Mapnik, group = "OSM") |>
         
         addLayersControl(
           baseGroups = c("Ocean", "Light", "OSM"),
           options = layersControlOptions(collapsed = TRUE)
-        ) %>%
+        ) |>
         addCircleMarkers(
           lng = ~LONGITUDE,
           lat = ~LATITUDE,
@@ -737,7 +737,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
             i18n("OBSERVER_REPORT_TRIP_FROM"), ": ", DATE_FROM, "<br/>",
             i18n("OBSERVER_REPORT_TRIP_TO"), ": ", DATE_TO
           )
-        ) %>%
+        ) |>
         fitBounds(
           lng1 = min(d$LONGITUDE),
           lat1 = min(d$LATITUDE),
@@ -749,7 +749,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     #Trip Tab - Plot
     prepare_bar_species <- function(df, top_n = 10) {
       
-      df %>%
+      df |>
         mutate(
           LANDED_QUANTITY  = replace_na(LANDED_QUANTITY, 0),
           DISCARD_QUANTITY = replace_na(DISCARD_QUANTITY, 0),
@@ -758,23 +758,23 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
             i18n("OBSERVER_REPORT_UNKNOWN"),
             SP_NAME
           )
-        ) %>%
-        group_by(SPECIES) %>%
+        ) |>
+        group_by(SPECIES) |>
         summarise(
           LANDED  = sum(LANDED_QUANTITY, na.rm = TRUE),
           DISCARD = sum(DISCARD_QUANTITY, na.rm = TRUE),
           .groups = "drop"
-        ) %>%
-        mutate(TOTAL = LANDED + DISCARD) %>%
-        arrange(desc(TOTAL)) %>%
+        ) |>
+        mutate(TOTAL = LANDED + DISCARD) |>
+        arrange(desc(TOTAL)) |>
         mutate(
           SPECIES_GROUP = ifelse(
             row_number() <= top_n,
             SPECIES,
             i18n("OBSERVER_REPORT_TRIP_OTHER_SPECIES")
           )
-        ) %>%
-        group_by(SPECIES_GROUP) %>%
+        ) |>
+        group_by(SPECIES_GROUP) |>
         summarise(
           LANDED  = sum(LANDED),
           DISCARD = sum(DISCARD),
@@ -783,12 +783,12 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
     }
     
     prepare_bar_long <- function(df) {
-      df %>%
+      df |>
         tidyr::pivot_longer(
           cols = c(LANDED, DISCARD),
           names_to = "TYPE",
           values_to = "QUANTITY"
-        ) %>%
+        ) |>
         mutate(
           TYPE_LABEL = recode(
             TYPE,
@@ -816,7 +816,7 @@ observer_report_server <- function(id, parent.session, lang = NULL, pool, reload
           "<b>%{color}</b><br>",
           "%{y}: %{x:.2f}<extra></extra>"
         )
-      ) %>%
+      ) |>
         layout(
           barmode = "stack",
           xaxis = list(

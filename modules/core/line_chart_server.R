@@ -134,16 +134,16 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
     
     data_formating<-eventReactive(c(input$stat,input$granu,input$number),{
       
-        df<-df%>%
-          rename(setNames(colDate,"date"))%>%
-          rename(setNames(colTarget,"target"))%>%
+        df<-df |>
+          rename(setNames(colDate,"date")) |>
+          rename(setNames(colTarget,"target")) |>
           rename(setNames(colValue,"value"))
         
         if(colTarget==colText){
-          df<-df%>%
+          df<-df |>
             mutate(text=target)
         }else{
-          df<-df%>%
+          df<-df |>
             rename(setNames(colText,"text"))
         }
         
@@ -153,49 +153,49 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
           rank_method_output <- getRankMethodOutput(input$rank_method)
           
           if(rank_method_output=="sum"){
-            ranked <- df %>%
-              group_by(target) %>% 
-              summarise(total = sum(value))%>%
-              mutate(rank = rank(-total)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank)%>%
+            ranked <- df |>
+              group_by(target) |> 
+              summarise(total = sum(value)) |>
+              mutate(rank = rank(-total)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }	
           
           if(rank_method_output=="year_avg"){
-            ranked <- df %>%
-              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-              group_by(year,target) %>% 
-              summarise(total = sum(value))%>%
-              group_by(target)%>%
-              summarise(avg = mean(total))%>%
-              mutate(rank = rank(-avg)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank)%>%
+            ranked <- df |>
+              mutate(year = as.character(format(as.Date(date),format = '%Y'))) |>
+              group_by(year,target) |> 
+              summarise(total = sum(value)) |>
+              group_by(target) |>
+              summarise(avg = mean(total)) |>
+              mutate(rank = rank(-avg)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }
           
           if(rank_method_output=="last_year"){
-            ranked <- df %>%
-              mutate(year = as.character(format(as.Date(date),format = '%Y')))%>%
-              filter(year==max(year))%>%
-              group_by(target) %>% 
-              summarise(total = sum(value))%>%
-              mutate(rank = rank(-total)) %>%
-              filter(rank <=as.numeric(input$number)) %>%
-              arrange(rank)%>%
+            ranked <- df |>
+              mutate(year = as.character(format(as.Date(date),format = '%Y'))) |>
+              filter(year==max(year)) |>
+              group_by(target) |> 
+              summarise(total = sum(value)) |>
+              mutate(rank = rank(-total)) |>
+              filter(rank <=as.numeric(input$number)) |>
+              arrange(rank) |>
               pull(target)
           }
           
-          df<-df%>%
+          df<-df |>
             filter(target%in%ranked)
         }
         
-        df<-df%>%
-          mutate(date = as.character(format(as.Date(date),format = getDateFormat(input$granu))))%>%
-          group_by(date,target,text,trip_id)%>%
-          summarise(sum_by_trip = sum(value))%>%
-          group_by(date,target,text)%>%
+        df<-df |>
+          mutate(date = as.character(format(as.Date(date),format = getDateFormat(input$granu)))) |>
+          group_by(date,target,text,trip_id) |>
+          summarise(sum_by_trip = sum(value)) |>
+          group_by(date,target,text) |>
           summarise(
             n = length(unique(trip_id)),
             sum = round(sum(sum_by_trip, na.rm = TRUE),2),
@@ -211,13 +211,13 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
             ci_stud_coef = round(qt(.975, df = n - 1) * se,2),
             q025=round(quantile(sum_by_trip, probs = 0.025, na.rm = TRUE, names = FALSE),2),
             q975=round(quantile(sum_by_trip, probs = 0.975, na.rm = TRUE, names = FALSE),2)
-          )%>%
-          mutate(target=as.factor(target))%>%
+          ) |>
+          mutate(target=as.factor(target)) |>
           mutate(sd = ifelse(is.na(sd), 0.00, sd),
                  se = ifelse(is.na(se), 0.00, se),
                  ci_norm_coef = ifelse(is.na(ci_norm_coef), 0.00, ci_norm_coef),
                  ci_stud_coef = ifelse(is.na(ci_stud_coef), 0.00, ci_stud_coef)
-                 )%>%
+                 ) |>
           ungroup()
         
         data_formated(df)
@@ -231,20 +231,20 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
         
         if(isTRUE(data_ready())){
         
-          p<-data_formated()%>%plot_ly(
+          p<-data_formated() |>plot_ly(
             x = ~date
             
           )
           stat_output <- getStatOutput(input$stat)
                           
           if(isTRUE(input$withquartile) & stat_output=="median"){
-            p<-p%>%add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
+            p<-p |>add_boxplot(x = ~date,color= ~target,type = "box", q1=~ q1, median=~ median,q3=~ q3, mean=~ mean,lowerfence=~ min,upperfence=~ max)
           }else{
             if(plotType=="line"){
-              p<-p%>%    
+              p<-p |>    
                add_trace(type="scatter",mode="lines+markers",y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",valueUnit),text,date,round(get(stat_output),2)))
             }else{
-              p<-p%>%    
+              p<-p |>    
                 add_bars(y =~ get(stat_output),color= ~target,line = list(simplyfy = F),legendgroup = ~target,text = ~sprintf(paste("%s[%s]: %s",valueUnit),text,date,round(get(stat_output),2))) 
             }
           }
@@ -255,7 +255,7 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
             
             if(witherror_output!="none"&stat_output=="mean"){
 
-              p<-p%>%add_ribbons(color= ~target,
+              p<-p |>add_ribbons(color= ~target,
                                  ymin = ~ switch(witherror_output,
                                    "sd"= {get(stat_output)-sd},
                                    "se"= {get(stat_output)-se},
@@ -275,7 +275,7 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
             }
           }
                           
-          p%>%layout(
+          p |>layout(
             showlegend=T,
             hovermode ='closest',
             xaxis = list(
@@ -305,10 +305,10 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
                     "%Y-%m"=i18n("GRANU_LABEL_MONTH"),
                     "%Y-%U"=i18n("GRANU_LABEL_WEEK"))
       
-      df <- data_formated()%>%
-        select(-text)%>%
-        rename(!!granu:=date)%>%
-        rename(!!label:=target)%>%
+      df <- data_formated() |>
+        select(-text) |>
+        rename(!!granu:=date) |>
+        rename(!!label:=target) |>
         mutate(!!label:=as.factor(!!sym(label)))
       
       colnames(df)[4] <- i18n("STATISTIC_TABLE_COLNAME_4")
@@ -347,21 +347,21 @@ line_chart_server <- function(id, lang = NULL, df,colDate, colTarget,label=colTa
       switch(mode,
         'plot+table'={
           tabsetPanel(
-            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
-            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4))
+            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4)),
+            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4))
           )
         },
         'table+plot'={
           tabsetPanel(
-            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4)),
-            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+            tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4)),
+            tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4))
           )
         },
         'plot'={
-          plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+          plotlyOutput(ns("plot")) |>withSpinner(type = 4)
         },
         'table'={
-          DTOutput(ns("table"))%>%withSpinner(type = 4)
+          DTOutput(ns("table")) |>withSpinner(type = 4)
         }
       )
   })

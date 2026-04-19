@@ -25,7 +25,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
     
     safe_summarise <- function(df, year_filter = NULL) {
       df_filtered <- df
-      if(!is.null(year_filter)) df_filtered <- df %>% filter(year == year_filter)
+      if(!is.null(year_filter)) df_filtered <- df |> filter(year == year_filter)
       
       if(nrow(df_filtered) == 0) {
         return(tibble(
@@ -41,7 +41,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
         ))
       }
       
-      df_filtered %>%
+      df_filtered |>
         summarise(
           nb_reports      = n_distinct(report_id),
           nb_vessels      = n_distinct(vessel_id),
@@ -63,7 +63,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
     
     safe_summarise_logbook <- function(df, year_filter = NULL) {
       df_filtered <- df
-      if(!is.null(year_filter)) df_filtered <- df %>% filter(year == year_filter)
+      if(!is.null(year_filter)) df_filtered <- df |> filter(year == year_filter)
       
       if(nrow(df_filtered) == 0) {
         return(tibble(
@@ -72,7 +72,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
         ))
       }
       
-      df_filtered %>%
+      df_filtered |>
         summarise(
           total_catch     = sum(total_catch, na.rm = TRUE),
           average_catch   = ifelse(n_distinct(trip_id) > 0, sum(total_catch, na.rm = TRUE)/n_distinct(trip_id), NA_real_)
@@ -83,14 +83,14 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
     agg_cy  <- safe_summarise(reports_info, year_filter = current_year)
     agg_ly  <- safe_summarise(reports_info, year_filter = current_year - 1)
     
-    agg_all <- agg_all %>% mutate(across(everything(), as.character))
-    agg_cy  <- agg_cy  %>% mutate(across(everything(), as.character))
-    agg_ly  <- agg_ly  %>% mutate(across(everything(), as.character))
+    agg_all <- agg_all |> mutate(across(everything(), as.character))
+    agg_cy  <- agg_cy  |> mutate(across(everything(), as.character))
+    agg_ly  <- agg_ly  |> mutate(across(everything(), as.character))
     
-    merged_tbl <- agg_all %>%
-      pivot_longer(everything(), names_to = "variable", values_to = "all") %>%
-      left_join(agg_cy %>% pivot_longer(everything(), names_to = "variable", values_to = "c_year"), by = "variable") %>%
-      left_join(agg_ly %>% pivot_longer(everything(), names_to = "variable", values_to = "l_year"), by = "variable") %>%
+    merged_tbl <- agg_all |>
+      pivot_longer(everything(), names_to = "variable", values_to = "all") |>
+      left_join(agg_cy |> pivot_longer(everything(), names_to = "variable", values_to = "c_year"), by = "variable") |>
+      left_join(agg_ly |> pivot_longer(everything(), names_to = "variable", values_to = "l_year"), by = "variable") |>
       mutate(
         evolution_pct = case_when(
           is.na(c_year) | is.na(l_year) ~ NA_character_,
@@ -99,7 +99,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
         )
       )
     
-    merged_tbl <- merged_tbl %>%
+    merged_tbl <- merged_tbl |>
       mutate(
         current_year_rounded = case_when(
           variable %in% c("total_obs_days", "total_catch", "average_catch") & !is.na(c_year) ~ as.character(round(as.numeric(c_year))),
@@ -111,7 +111,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
           !is.na(current_year_rounded) ~ paste0(current_year, ": ", current_year_rounded),
           TRUE ~ i18n("OBSERVER_OVERVIEW_NO_DATA")
         )
-      ) %>%
+      ) |>
       select(-current_year_rounded)
     
     logbooks_info<-accessFishingTripsCatch(pool,trip_type = "1")
@@ -126,14 +126,14 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
     agg_cy  <- safe_summarise_logbook(logbooks_info, year_filter = current_year)
     agg_ly  <- safe_summarise_logbook(logbooks_info, year_filter = current_year - 1)
     
-    agg_all <- agg_all %>% mutate(across(everything(), as.character))
-    agg_cy  <- agg_cy  %>% mutate(across(everything(), as.character))
-    agg_ly  <- agg_ly  %>% mutate(across(everything(), as.character))
+    agg_all <- agg_all |> mutate(across(everything(), as.character))
+    agg_cy  <- agg_cy  |> mutate(across(everything(), as.character))
+    agg_ly  <- agg_ly  |> mutate(across(everything(), as.character))
     
-    merged_tbl_logbook <- agg_all %>%
-      pivot_longer(everything(), names_to = "variable", values_to = "all") %>%
-      left_join(agg_cy %>% pivot_longer(everything(), names_to = "variable", values_to = "c_year"), by = "variable") %>%
-      left_join(agg_ly %>% pivot_longer(everything(), names_to = "variable", values_to = "l_year"), by = "variable") %>%
+    merged_tbl_logbook <- agg_all |>
+      pivot_longer(everything(), names_to = "variable", values_to = "all") |>
+      left_join(agg_cy |> pivot_longer(everything(), names_to = "variable", values_to = "c_year"), by = "variable") |>
+      left_join(agg_ly |> pivot_longer(everything(), names_to = "variable", values_to = "l_year"), by = "variable") |>
       mutate(
         evolution_pct = case_when(
           is.na(c_year) | is.na(l_year) ~ NA_character_,
@@ -142,7 +142,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
         )
       )
     
-    merged_tbl_logbook <- merged_tbl_logbook %>%
+    merged_tbl_logbook <- merged_tbl_logbook |>
       mutate(
         current_year_rounded = case_when(
           !is.na(c_year) ~ as.character(round(as.numeric(c_year))),
@@ -152,7 +152,7 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
           !is.na(current_year_rounded) ~ paste0(current_year, ": ", current_year_rounded),
           TRUE ~ i18n("OBSERVER_OVERVIEW_NO_DATA")
         )
-      ) %>%
+      ) |>
       select(-current_year_rounded)
     
     catch_unit<-unique(reports_info$total_catch_unit)
@@ -341,11 +341,11 @@ observer_overview_server <- function(id,parent.session, lang = NULL, pool, reloa
       }
     })
     
-    reports_count<- reports_info %>%
-      filter(!is.na(observation_start), !is.na(observation_end)) %>%
-      select(report_id,vessel_id,observation_start,observation_end)%>%
-      distinct()%>%
-      mutate(category="reports",value=1)%>%
+    reports_count<- reports_info |>
+      filter(!is.na(observation_start), !is.na(observation_end)) |>
+      select(report_id,vessel_id,observation_start,observation_end) |>
+      distinct() |>
+      mutate(category="reports",value=1) |>
       ungroup()
     
     fdishinyr::generic_chart_server(

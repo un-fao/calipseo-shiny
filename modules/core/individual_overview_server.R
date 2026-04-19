@@ -105,17 +105,17 @@ individual_overview_server <- function(id, parent.session, lang = NULL, pool, re
       }
       
       #pyramid data
-      pyramid_data <- ind_info %>%
-        filter(!is.na(DOB)) %>%
-        mutate(Age = round(time_length(interval(DOB, Sys.Date()),"years"),0)) %>%
-        select(-DOB,-Regdate,-GenderCode) %>%
-        arrange(ID,License,Role,Site) %>%
-        group_by(ID) %>%
+      pyramid_data <- ind_info |>
+        filter(!is.na(DOB)) |>
+        mutate(Age = round(time_length(interval(DOB, Sys.Date()),"years"),0)) |>
+        select(-DOB,-Regdate,-GenderCode) |>
+        arrange(ID,License,Role,Site) |>
+        group_by(ID) |>
         mutate(License=paste0(unique(License),collapse = "+"),
                Role=paste0(unique(Role),collapse = "+"),
-               Site=paste0(unique(Site),collapse = "+")) %>%
-        ungroup() %>%
-        distinct() %>%
+               Site=paste0(unique(Site),collapse = "+")) |>
+        ungroup() |>
+        distinct() |>
         filter(Age>0)
       py_colVariables<-setNames(names(colVariables),colVariables)
       
@@ -131,15 +131,15 @@ individual_overview_server <- function(id, parent.session, lang = NULL, pool, re
       )
       
       #sunburst data
-      sunburst_data <- ind_info %>%
-        select(-DOB,-Regdate,-GenderCode) %>%
-        arrange(ID,License,Role,Site) %>%
-        group_by(ID) %>%
+      sunburst_data <- ind_info |>
+        select(-DOB,-Regdate,-GenderCode) |>
+        arrange(ID,License,Role,Site) |>
+        group_by(ID) |>
         mutate(License=paste0(unique(License),collapse = "+"),
                Role=paste0(unique(Role),collapse = "+"),
-               Site=paste0(unique(Site),collapse = "+")) %>%
-        ungroup() %>%
-        distinct() %>%
+               Site=paste0(unique(Site),collapse = "+")) |>
+        ungroup() |>
+        distinct() |>
         mutate(value = 1)
       
       #sunburst chart server

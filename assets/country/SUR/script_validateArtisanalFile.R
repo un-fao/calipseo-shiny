@@ -56,10 +56,10 @@ new_dt_effort_survey<-calipseo$load_table(table_name ="dt_effort_survey")
 
 new_custom_reg_entity_individuals<-list()
 new_custom_reg_entity_individuals$VIEW_DB_TABLE<-function(){
-new_reg_entity_individuals$VIEW_DB_TABLE()%>%select(ID, REG_ENTITY_ID, FIRST_NAME, MIDDLE_NAME, SUFFIX_NAME)%>%
-  left_join(new_reg_entities$VIEW_DB_TABLE()%>%select(ID,NAME),by=c("REG_ENTITY_ID"="ID"))%>%
-  mutate(FULL_NAME=paste(FIRST_NAME, MIDDLE_NAME, SUFFIX_NAME, NAME, sep=" ")%>% gsub("\\s+", " ", .) %>%trimws())%>%
-  ungroup()%>%
+new_reg_entity_individuals$VIEW_DB_TABLE() |>select(ID, REG_ENTITY_ID, FIRST_NAME, MIDDLE_NAME, SUFFIX_NAME) |>
+  left_join(new_reg_entities$VIEW_DB_TABLE() |>select(ID,NAME),by=c("REG_ENTITY_ID"="ID")) |>
+  mutate(FULL_NAME=paste(FIRST_NAME, MIDDLE_NAME, SUFFIX_NAME, NAME, sep=" ") |> gsub("\\s+", " ", .) |>trimws()) |>
+  ungroup() |>
   rename(REG_INDIVIDUAL_ID=ID)
 }
 
@@ -80,11 +80,11 @@ calipseo_cl_ref_gears<-new_cl_ref_gears$VIEW_DB_TABLE()
 
 #GENERIC FUNCTION
 normalize_name <- function(x) {
-  x %>%
-    tolower() %>%                               
-    stringi::stri_trans_general("Latin-ASCII") %>% 
-    gsub("[[:punct:]]", "", .) %>%              
-    gsub("\\s+", " ", .) %>%                    
+  x |>
+    tolower() |>                               
+    stringi::stri_trans_general("Latin-ASCII") |> 
+    gsub("[[:punct:]]", "", .) |>              
+    gsub("\\s+", " ", .) |>                    
     trimws()                                    
 }
 
@@ -93,12 +93,12 @@ mapping_table<-function(value,db_table,match_column="NAME",return_column="ID",ex
   table<-get(paste0("calipseo_",db_table))
   
   if(exact){
-    result<-table %>%
-      filter(.data[[match_column]] == value) %>%
+    result<-table |>
+      filter(.data[[match_column]] == value) |>
       pull(!!sym(return_column))
   }else{
-    result<-table %>%
-      filter(normalize_name(.data[[match_column]]) == normalize_name(value)) %>%
+    result<-table |>
+      filter(normalize_name(.data[[match_column]]) == normalize_name(value)) |>
       pull(!!sym(return_column))
   }
   
@@ -112,8 +112,8 @@ mapping_table<-function(value,db_table,match_column="NAME",return_column="ID",ex
 }
 
 apply_product_factor<-function(value,x,column="ID"){
-  factor<-new_cl_ref_fishery_products$VIEW_DB_TABLE() %>%
-    filter(.data[[column]] == x) %>%
+  factor<-new_cl_ref_fishery_products$VIEW_DB_TABLE() |>
+    filter(.data[[column]] == x) |>
     pull(COEFFICIENT_LIVE_WEIGHT)
   
   return(value*factor)
@@ -149,19 +149,19 @@ print("Cheching the validity of the document...")
 
 if(!is.null(monitor))monitor(0.1,"Normalize dataset")
 #Global data cleaning
-data<-data%>%
+data<-data |>
   mutate(across(everything(), ~ na_if(., "-9999")),
-         across(everything(), ~ na_if(., "NA")))%>%
-  rowwise()%>%
+         across(everything(), ~ na_if(., "NA"))) |>
+  rowwise() |>
   mutate(
     survey_type=ifelse(startsWith(vessel_registration_nr,"BV"),"INTERVIEW5",ifelse(startsWith(vessel_registration_nr,"SK"),"INTERVIEW30",NA)),
     recording_date=convert_dates(recording_date),
     departure_date=convert_dates(departure_date),
     arrival_date=convert_dates(arrival_date),
     unit_time_spent_fishing=ifelse(unit_time_spent_fishing=="Hours","Hour",ifelse(unit_time_spent_fishing=="Days","Day",unit_time_spent_fishing))
-  )%>%
-  ungroup()%>%
-  mutate(row_id = row_number())%>%
+  ) |>
+  ungroup() |>
+  mutate(row_id = row_number()) |>
   relocate(row_id,.before = everything())
 
 ## "identifier"
@@ -170,9 +170,9 @@ validate_identifier<-function(data,monitor){
   if(!is.null(monitor))monitor(0.01,"Validating column : 'identifier'")
   
   
-  data%>%
-    select(row_id,identifier)%>%
-    rowwise()%>%
+  data |>
+    select(row_id,identifier) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(identifier) ~ 
@@ -194,11 +194,11 @@ validate_identifier<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="identifier")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="identifier") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -206,13 +206,13 @@ validate_identifier<-function(data,monitor){
 validate_vessel_registration<-function(data,monitor){
   print(sprintf("Validating column : 'vessel_registration_nr'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'vessel_registration_nr'")
-  data%>%
-    select(row_id,vessel_registration_nr,vessel_name)%>%
-    left_join(calipseo_reg_vessels%>%select(ID,REGISTRATION_NUMBER,NAME)%>%group_by(REGISTRATION_NUMBER)%>%
-                summarise(n=length(ID),NAME=NAME[1],ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("vessel_registration_nr"="REGISTRATION_NUMBER"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,vessel_registration_nr,vessel_name) |>
+    left_join(calipseo_reg_vessels |>select(ID,REGISTRATION_NUMBER,NAME) |>group_by(REGISTRATION_NUMBER) |>
+                summarise(n=length(ID),NAME=NAME[1],ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("vessel_registration_nr"="REGISTRATION_NUMBER")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(vessel_registration_nr) ~ 
@@ -258,11 +258,11 @@ validate_vessel_registration<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="vessel_registration_nr")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="vessel_registration_nr") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -270,13 +270,13 @@ validate_vessel_registration<-function(data,monitor){
 validate_departure_site_name<-function(data,monitor){
   print(sprintf("Validating column : 'departure_site_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'departure_site_name'")
-  data%>%
-    select(row_id,departure_site_name)%>%
-    left_join(calipseo_cl_fish_landing_sites%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("departure_site_name"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,departure_site_name) |>
+    left_join(calipseo_cl_fish_landing_sites |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("departure_site_name"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(departure_site_name) ~ 
@@ -310,11 +310,11 @@ validate_departure_site_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="departure_site_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="departure_site_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -322,13 +322,13 @@ validate_departure_site_name<-function(data,monitor){
 validate_landing_site_name<-function(data,monitor){
   print(sprintf("Validating column : 'landing_site_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'landing_site_name'")
-  data%>%
-    select(row_id,landing_site_name)%>%
-    left_join(calipseo_cl_fish_landing_sites%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("landing_site_name"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,landing_site_name) |>
+    left_join(calipseo_cl_fish_landing_sites |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("landing_site_name"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(landing_site_name) ~ 
@@ -362,11 +362,11 @@ validate_landing_site_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="landing_site_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="landing_site_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -374,13 +374,13 @@ validate_landing_site_name<-function(data,monitor){
 validate_fishing_unit_name<-function(data,monitor){
   print(sprintf("Validating column : 'fishing_unit_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'fishing_unit_name'")
-  data%>%
-    select(row_id,fishing_unit_name)%>%
-    left_join(calipseo_cl_fish_fishing_units%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fishing_unit_name"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,fishing_unit_name) |>
+    left_join(calipseo_cl_fish_fishing_units |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fishing_unit_name"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(fishing_unit_name) ~ 
@@ -414,11 +414,11 @@ validate_fishing_unit_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="fishing_unit_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="fishing_unit_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -426,13 +426,13 @@ validate_fishing_unit_name<-function(data,monitor){
 validate_gear_name<-function(data,monitor){
   print(sprintf("Validating column : 'gear_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'gear_name'")
-  data%>%
-    select(row_id,gear_name)%>%
-    left_join(calipseo_cl_ref_gears%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("gear_name"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,gear_name) |>
+    left_join(calipseo_cl_ref_gears |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("gear_name"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(gear_name) ~ 
@@ -466,11 +466,11 @@ validate_gear_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="gear_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="gear_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -479,13 +479,13 @@ validate_fishing_zone_name<-function(data,monitor){
   print(sprintf("Validating column : 'fishing_zone_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'fishing_zone_name'")
   
-  data%>%
-    select(row_id,fishing_zone_name)%>%
-    left_join(calipseo_cl_fish_fishing_zones%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fishing_zone_name"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,fishing_zone_name) |>
+    left_join(calipseo_cl_fish_fishing_zones |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fishing_zone_name"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(fishing_zone_name) ~ 
@@ -519,11 +519,11 @@ validate_fishing_zone_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="fishing_zone_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="fishing_zone_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -531,14 +531,14 @@ validate_fishing_zone_name<-function(data,monitor){
 validate_recorder_name<-function(data,monitor){
   print(sprintf("Validating column : 'recorder_name'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'recorder_name'")
-  data%>%
-    select(row_id,recorder_name)%>%
-    mutate(n_recorder_name=normalize_name(recorder_name))%>%
-    left_join(calipseo_custom_reg_entity_individuals%>%select(REG_INDIVIDUAL_ID,FULL_NAME)%>%mutate(FULL_NAME=normalize_name(FULL_NAME))%>%group_by(FULL_NAME)%>%
-                summarise(n=length(REG_INDIVIDUAL_ID),REG_INDIVIDUAL_ID=paste0(REG_INDIVIDUAL_ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("n_recorder_name"="FULL_NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,recorder_name) |>
+    mutate(n_recorder_name=normalize_name(recorder_name)) |>
+    left_join(calipseo_custom_reg_entity_individuals |>select(REG_INDIVIDUAL_ID,FULL_NAME) |>mutate(FULL_NAME=normalize_name(FULL_NAME)) |>group_by(FULL_NAME) |>
+                summarise(n=length(REG_INDIVIDUAL_ID),REG_INDIVIDUAL_ID=paste0(REG_INDIVIDUAL_ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("n_recorder_name"="FULL_NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(recorder_name) ~ 
@@ -572,11 +572,11 @@ validate_recorder_name<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="recorder_name")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="recorder_name") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -584,13 +584,13 @@ validate_recorder_name<-function(data,monitor){
 validate_species<-function(data,monitor){
   print(sprintf("Validating column : 'species'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'species'")
-  data%>%
-    select(row_id,species_code,species_name_scientific,landed_weight_kg)%>%
-    left_join(calipseo_cl_ref_species%>%select(ID,ASFIS_CODE,SCIENTIFIC_NAME)%>%group_by(ASFIS_CODE)%>%
-                summarise(n=length(ID),SCIENTIFIC_NAME=SCIENTIFIC_NAME[1],ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("species_code"="ASFIS_CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,species_code,species_name_scientific,landed_weight_kg) |>
+    left_join(calipseo_cl_ref_species |>select(ID,ASFIS_CODE,SCIENTIFIC_NAME) |>group_by(ASFIS_CODE) |>
+                summarise(n=length(ID),SCIENTIFIC_NAME=SCIENTIFIC_NAME[1],ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("species_code"="ASFIS_CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(species_code) & !is.na(landed_weight_kg) ~ 
@@ -630,11 +630,11 @@ validate_species<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="species_code")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="species_code") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -642,13 +642,13 @@ validate_species<-function(data,monitor){
 validate_fish_product_code<-function(data,monitor){
   print(sprintf("Validating column : 'fish_product_code'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'fish_product_code'")
-  data%>%
-    select(row_id,fish_product_code,species_code)%>%
-    left_join(calipseo_cl_ref_fishery_products%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fish_product_code"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,fish_product_code,species_code) |>
+    left_join(calipseo_cl_ref_fishery_products |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("fish_product_code"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(fish_product_code) & !is.na(species_code) ~ 
@@ -688,11 +688,11 @@ validate_fish_product_code<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="fish_product_code")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="fish_product_code") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -700,13 +700,13 @@ validate_fish_product_code<-function(data,monitor){
 validate_currency_catch_price<-function(data,monitor){
   print(sprintf("Validating column : 'currency_catch_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'currency_catch_price'")
-  data%>%
-    select(row_id,currency_catch_price,catch_price)%>%
-    left_join(calipseo_cl_ref_currencies%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_catch_price"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,currency_catch_price,catch_price) |>
+    left_join(calipseo_cl_ref_currencies |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_catch_price"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(currency_catch_price) & !is.na(catch_price) ~ 
@@ -740,11 +740,11 @@ validate_currency_catch_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="currency_catch_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="currency_catch_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -752,13 +752,13 @@ validate_currency_catch_price<-function(data,monitor){
 validate_currency_food_cost<-function(data,monitor){
   print(sprintf("Validating column : 'currency_food_cost'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'currency_food_cost'")
-  data%>%
-    select(row_id,currency_food_cost,food_cost)%>%
-    left_join(calipseo_cl_ref_currencies%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_food_cost"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,currency_food_cost,food_cost) |>
+    left_join(calipseo_cl_ref_currencies |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_food_cost"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(currency_food_cost) & !is.na(food_cost) ~ 
@@ -792,11 +792,11 @@ validate_currency_food_cost<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="currency_food_cost")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="currency_food_cost") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -804,13 +804,13 @@ validate_currency_food_cost<-function(data,monitor){
 validate_currency_fuel_price<-function(data,monitor){
   print(sprintf("Validating column : 'currency_fuel_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'currency_fuel_price'")
-  data%>%
-    select(row_id,currency_fuel_price,fuel_price)%>%
-    left_join(calipseo_cl_ref_currencies%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_fuel_price"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,currency_fuel_price,fuel_price) |>
+    left_join(calipseo_cl_ref_currencies |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_fuel_price"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(currency_fuel_price) & !is.na(fuel_price) ~ 
@@ -844,11 +844,11 @@ validate_currency_fuel_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="currency_fuel_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="currency_fuel_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -856,13 +856,13 @@ validate_currency_fuel_price<-function(data,monitor){
 validate_currency_ice_price<-function(data,monitor){
   print(sprintf("Validating column : 'currency_ice_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'currency_ice_price'")
-  data%>%
-    select(row_id,currency_ice_price,ice_price)%>%
-    left_join(calipseo_cl_ref_currencies%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_ice_price"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,currency_ice_price,ice_price) |>
+    left_join(calipseo_cl_ref_currencies |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("currency_ice_price"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(currency_ice_price) & !is.na(ice_price) ~ 
@@ -896,11 +896,11 @@ validate_currency_ice_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="currency_ice_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="currency_ice_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -908,13 +908,13 @@ validate_currency_ice_price<-function(data,monitor){
 validate_unit_time_spent_fishing<-function(data,monitor){
   print(sprintf("Validating column : 'unit_time_spent_fishing'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'unit_time_spent_fishing'")
-  data%>%
-    select(row_id,unit_time_spent_fishing,time_spent_fishing)%>%
-    left_join(calipseo_cl_app_quantity_units%>%select(ID,NAME)%>%group_by(NAME)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("unit_time_spent_fishing"="NAME"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,unit_time_spent_fishing,time_spent_fishing) |>
+    left_join(calipseo_cl_app_quantity_units |>select(ID,NAME) |>group_by(NAME) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("unit_time_spent_fishing"="NAME")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(unit_time_spent_fishing) & !is.na(time_spent_fishing) ~ 
@@ -948,11 +948,11 @@ validate_unit_time_spent_fishing<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="unit_time_spent_fishing")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="unit_time_spent_fishing") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -960,10 +960,10 @@ validate_unit_time_spent_fishing<-function(data,monitor){
 validate_time_spent_fishing<-function(data,monitor){
   print(sprintf("Validating column : 'time_spent_fishing'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'time_spent_fishing'")
-  data%>%
-    select(row_id,time_spent_fishing)%>%
-    rowwise()%>%
-    mutate(n_time_spent_fishing=suppressWarnings(as.numeric(time_spent_fishing)))%>%
+  data |>
+    select(row_id,time_spent_fishing) |>
+    rowwise() |>
+    mutate(n_time_spent_fishing=suppressWarnings(as.numeric(time_spent_fishing))) |>
     mutate(
       validation = case_when(
         is.na(time_spent_fishing) & !is.na(time_spent_fishing) ~ 
@@ -991,11 +991,11 @@ validate_time_spent_fishing<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="time_spent_fishing")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="time_spent_fishing") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1003,10 +1003,10 @@ validate_time_spent_fishing<-function(data,monitor){
 validate_landed_weight_kg<-function(data,monitor){
   print(sprintf("Validating column : 'landed_weight_kg'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'landed_weight_kg'")
-  data%>%
-    select(row_id,landed_weight_kg,species_code)%>%
-    rowwise()%>%
-    mutate(n_landed_weight_kg=suppressWarnings(as.numeric(landed_weight_kg)))%>%
+  data |>
+    select(row_id,landed_weight_kg,species_code) |>
+    rowwise() |>
+    mutate(n_landed_weight_kg=suppressWarnings(as.numeric(landed_weight_kg))) |>
     mutate(
       validation = case_when(
         is.na(landed_weight_kg) & !is.na(species_code) ~ 
@@ -1034,11 +1034,11 @@ validate_landed_weight_kg<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="landed_weight_kg")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="landed_weight_kg") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1046,10 +1046,10 @@ validate_landed_weight_kg<-function(data,monitor){
 validate_catch_price<-function(data,monitor){
   print(sprintf("Validating column : 'catch_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'catch_price'")
-  data%>%
-    select(row_id,catch_price)%>%
-    rowwise()%>%
-    mutate(n_catch_price=suppressWarnings(as.numeric(catch_price)))%>%
+  data |>
+    select(row_id,catch_price) |>
+    rowwise() |>
+    mutate(n_catch_price=suppressWarnings(as.numeric(catch_price))) |>
     mutate(
       validation = case_when(
         !is.na(catch_price) & is.na(n_catch_price) ~ 
@@ -1071,11 +1071,11 @@ validate_catch_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="catch_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="catch_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1083,10 +1083,10 @@ validate_catch_price<-function(data,monitor){
 validate_food_cost<-function(data,monitor){
   print(sprintf("Validating column : 'food_cost'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'food_cost'")
-  data%>%
-    select(row_id,food_cost)%>%
-    rowwise()%>%
-    mutate(n_food_cost=suppressWarnings(as.numeric(food_cost)))%>%
+  data |>
+    select(row_id,food_cost) |>
+    rowwise() |>
+    mutate(n_food_cost=suppressWarnings(as.numeric(food_cost))) |>
     mutate(
       validation = case_when(
         !is.na(food_cost) & is.na(n_food_cost) ~ 
@@ -1108,11 +1108,11 @@ validate_food_cost<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="food_cost")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="food_cost") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1120,10 +1120,10 @@ validate_food_cost<-function(data,monitor){
 validate_fuel_consumed_liter<-function(data,monitor){
   print(sprintf("Validating column : 'fuel_consumed_liter'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'fuel_consumed_liter'")
-  data%>%
-    select(row_id,fuel_consumed_liter)%>%
-    rowwise()%>%
-    mutate(n_fuel_consumed_liter=suppressWarnings(as.numeric(fuel_consumed_liter)))%>%
+  data |>
+    select(row_id,fuel_consumed_liter) |>
+    rowwise() |>
+    mutate(n_fuel_consumed_liter=suppressWarnings(as.numeric(fuel_consumed_liter))) |>
     mutate(
       validation = case_when(
         !is.na(fuel_consumed_liter) & is.na(n_fuel_consumed_liter) ~ 
@@ -1145,11 +1145,11 @@ validate_fuel_consumed_liter<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="fuel_consumed_liter")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="fuel_consumed_liter") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1157,10 +1157,10 @@ validate_fuel_consumed_liter<-function(data,monitor){
 validate_fuel_price<-function(data,monitor){
   print(sprintf("Validating column : 'fuel_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'fuel_price'")
-  data%>%
-    select(row_id,fuel_price)%>%
-    rowwise()%>%
-    mutate(n_fuel_price=suppressWarnings(as.numeric(fuel_price)))%>%
+  data |>
+    select(row_id,fuel_price) |>
+    rowwise() |>
+    mutate(n_fuel_price=suppressWarnings(as.numeric(fuel_price))) |>
     mutate(
       validation = case_when(
         !is.na(fuel_price) & is.na(n_fuel_price) ~ 
@@ -1182,11 +1182,11 @@ validate_fuel_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="fuel_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="fuel_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1194,10 +1194,10 @@ validate_fuel_price<-function(data,monitor){
 validate_ice_bought_m3<-function(data,monitor){
   print(sprintf("Validating column : 'ice_bought_m3'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'ice_bought_m3'")
-  data%>%
-    select(row_id,ice_bought_m3)%>%
-    rowwise()%>%
-    mutate(n_ice_bought_m3=suppressWarnings(as.numeric(ice_bought_m3)))%>%
+  data |>
+    select(row_id,ice_bought_m3) |>
+    rowwise() |>
+    mutate(n_ice_bought_m3=suppressWarnings(as.numeric(ice_bought_m3))) |>
     mutate(
       validation = case_when(
         !is.na(ice_bought_m3) & is.na(n_ice_bought_m3) ~ 
@@ -1219,11 +1219,11 @@ validate_ice_bought_m3<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="ice_bought_m3")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="ice_bought_m3") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1231,10 +1231,10 @@ validate_ice_bought_m3<-function(data,monitor){
 validate_ice_price<-function(data,monitor){
   print(sprintf("Validating column : 'ice_price'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'ice_price'")
-  data%>%
-    select(row_id,ice_price)%>%
-    rowwise()%>%
-    mutate(n_ice_price=suppressWarnings(as.numeric(ice_price)))%>%
+  data |>
+    select(row_id,ice_price) |>
+    rowwise() |>
+    mutate(n_ice_price=suppressWarnings(as.numeric(ice_price))) |>
     mutate(
       validation = case_when(
         !is.na(ice_price) & is.na(n_ice_price) ~ 
@@ -1256,11 +1256,11 @@ validate_ice_price<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="ice_price")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="ice_price") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1268,10 +1268,10 @@ validate_ice_price<-function(data,monitor){
 validate_nr_fishers<-function(data,monitor){
   print(sprintf("Validating column : 'nr_fishers'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'nr_fishers'")
-  data%>%
-    select(row_id,nr_fishers)%>%
-    rowwise()%>%
-    mutate(n_nr_fishers=suppressWarnings(as.integer(nr_fishers)))%>%
+  data |>
+    select(row_id,nr_fishers) |>
+    rowwise() |>
+    mutate(n_nr_fishers=suppressWarnings(as.integer(nr_fishers))) |>
     mutate(
       validation = case_when(
         !is.na(nr_fishers) & is.na(n_nr_fishers) ~ 
@@ -1299,11 +1299,11 @@ validate_nr_fishers<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="nr_fishers")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="nr_fishers") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1311,10 +1311,10 @@ validate_nr_fishers<-function(data,monitor){
 validate_boat_activity_days<-function(data,monitor){
   print(sprintf("Validating column : 'boat_activity_days'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'boat_activity_days'")
-  data%>%
-    select(row_id,boat_activity_days)%>%
-    rowwise()%>%
-    mutate(n_boat_activity_days=suppressWarnings(as.integer(boat_activity_days)))%>%
+  data |>
+    select(row_id,boat_activity_days) |>
+    rowwise() |>
+    mutate(n_boat_activity_days=suppressWarnings(as.integer(boat_activity_days))) |>
     mutate(
       validation = case_when(
         is.na(boat_activity_days) ~ 
@@ -1348,11 +1348,11 @@ validate_boat_activity_days<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="boat_activity_days")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="boat_activity_days") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1360,9 +1360,9 @@ validate_boat_activity_days<-function(data,monitor){
 validate_departure_date<-function(data,monitor){
   print(sprintf("Validating column : 'departure_date'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'departure_date'")
-  data%>%
-    select(row_id,departure_date,arrival_date)%>%
-    rowwise()%>%
+  data |>
+    select(row_id,departure_date,arrival_date) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(departure_date) ~ 
@@ -1396,11 +1396,11 @@ validate_departure_date<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="departure_date")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="departure_date") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1408,9 +1408,9 @@ validate_departure_date<-function(data,monitor){
 validate_arrival_date<-function(data,monitor){
   print(sprintf("Validating column : 'arrival_date'"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'arrival_date'")
-  data%>%
-    select(row_id,departure_date,arrival_date)%>%
-    rowwise()%>%
+  data |>
+    select(row_id,departure_date,arrival_date) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(arrival_date) ~ 
@@ -1444,11 +1444,11 @@ validate_arrival_date<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="arrival_date")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="arrival_date") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1456,13 +1456,13 @@ validate_arrival_date<-function(data,monitor){
 validate_survey_type<-function(data,monitor){
   print(sprintf("Validating column : 'survey_type' (derived from vessel_registration_nr)"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'survey_type' (derived from vessel_registration_nr)")
-  data%>%
-    select(row_id,survey_type)%>%
-    left_join(calipseo_cl_stat_effort_survey_types%>%select(ID,CODE)%>%group_by(CODE)%>%
-                summarise(n=length(ID),ID=paste0(ID,collapse=";"))%>%
-                ungroup()%>%
-                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("survey_type"="CODE"))%>%
-    rowwise()%>%
+  data |>
+    select(row_id,survey_type) |>
+    left_join(calipseo_cl_stat_effort_survey_types |>select(ID,CODE) |>group_by(CODE) |>
+                summarise(n=length(ID),ID=paste0(ID,collapse=";")) |>
+                ungroup() |>
+                mutate(DUPLICATE=ifelse(n>1,TRUE,FALSE)),by=c("survey_type"="CODE")) |>
+    rowwise() |>
     mutate(
       validation = case_when(
         is.na(survey_type) ~ 
@@ -1496,11 +1496,11 @@ validate_survey_type<-function(data,monitor){
             message=NA_character_
           ))
       )
-    )%>%
-    ungroup() %>%
-    unnest_wider(validation)%>%
-    mutate(column="survey_type")%>%
-    select(row_id,column,type,category,message)%>%
+    ) |>
+    ungroup() |>
+    unnest_wider(validation) |>
+    mutate(column="survey_type") |>
+    select(row_id,column,type,category,message) |>
     rename(row=row_id)
 }
 
@@ -1513,19 +1513,19 @@ validate_quantity_duplicates <- function(data,monitor) {
                 "landing_site_name", "fishing_zone_name", "species_code",
                 "processing_name", "fish_product_code", "landed_weight_kg")
   
-  data %>%
-    mutate(duplicate_key = do.call(paste, c(across(all_of(all_cols)), sep = "_"))) %>%
-    group_by(duplicate_key) %>%
-    filter(n() > 1) %>%
-    ungroup() %>%
-    distinct(row_id) %>%
+  data |>
+    mutate(duplicate_key = do.call(paste, c(across(all_of(all_cols)), sep = "_"))) |>
+    group_by(duplicate_key) |>
+    filter(n() > 1) |>
+    ungroup() |>
+    distinct(row_id) |>
     mutate(
       row = row_id,
       column = "landed_weight_kg",
       type = "WARNING",
       category = "duplicate",
       message = "Multiple same entry for this combination trip - species - product - quantity"
-    ) %>%
+    ) |>
     select(row, column, type, category, message)
 }
 
@@ -1537,19 +1537,19 @@ validate_conflict_quantity <- function(data,monitor) {
                  "landing_site_name", "fishing_zone_name", "species_code",
                  "processing_name", "fish_product_code")
   
-  data %>%
-    mutate(combination_key = do.call(paste, c(across(all_of(base_cols)), sep = "_"))) %>%
-    group_by(combination_key) %>%
-    filter(n_distinct(landed_weight_kg) > 1) %>%
-    ungroup() %>%
-    distinct(row_id) %>%
+  data |>
+    mutate(combination_key = do.call(paste, c(across(all_of(base_cols)), sep = "_"))) |>
+    group_by(combination_key) |>
+    filter(n_distinct(landed_weight_kg) > 1) |>
+    ungroup() |>
+    distinct(row_id) |>
     mutate(
       row = row_id,
       column = "landed_weight_kg",
       type = "WARNING",
       category = "conflict values",
       message = "Conflict different quantity for this combination trip - species - product"
-    ) %>%
+    ) |>
     select(row, column, type, category, message)
 }
 
@@ -1558,19 +1558,19 @@ validate_conflict_identifier <- function(data,monitor) {
   print(sprintf("Validating column : 'identifier' (conflict in identifier)"))
   if(!is.null(monitor))monitor(0.01,"Validating column : 'identifier' (conflict in identifier)")
   
-  sub_data <- data %>%
+  sub_data <- data |>
     select(identifier, row_id, recorder_name, vessel_registration_nr, boat_activity_days,
            fishing_unit_name, departure_date, arrival_date, departure_site_name,
            landing_site_name, fishing_zone_name, nr_fishers, food_cost,
            currency_food_cost, ice_bought_m3, ice_price, currency_ice_price,
-           fuel_consumed_liter, fuel_price, currency_fuel_price) %>%
+           fuel_consumed_liter, fuel_price, currency_fuel_price) |>
     distinct()
   
   other_cols <- setdiff(names(sub_data), c("identifier", "row_id"))
   
-  sub_data_conflict <- sub_data %>%
-    group_by(identifier) %>%
-    filter(n() > 1) %>%
+  sub_data_conflict <- sub_data |>
+    group_by(identifier) |>
+    filter(n() > 1) |>
     summarise(
       problem_columns = {
         current_data <- cur_data_all()
@@ -1584,14 +1584,14 @@ validate_conflict_identifier <- function(data,monitor) {
         paste(na.omit(problems), collapse = "; ")
       },
       .groups = "drop"
-    ) %>%
+    ) |>
     filter(problem_columns != "")  # filtrer les cas où aucun conflit n'a été détecté
   
   if (nrow(sub_data_conflict) == 0) return(NULL)
   
-  data %>%
-    semi_join(sub_data_conflict, by = "identifier") %>%
-    left_join(sub_data_conflict, by = "identifier") %>%
+  data |>
+    semi_join(sub_data_conflict, by = "identifier") |>
+    left_join(sub_data_conflict, by = "identifier") |>
     mutate(
       type = "ERROR",
       category = "conflict value",
@@ -1601,7 +1601,7 @@ validate_conflict_identifier <- function(data,monitor) {
         identifier,
         problem_columns
       )
-    ) %>%
+    ) |>
     select(row = row_id, column, type, category, message)
 }
 
@@ -1670,57 +1670,57 @@ validate_referential <- function(data, data_col, ref_table, ref_code_col, ref_id
   ref_vals  <- ref_table[[ref_code_col]]
   
   if (normalize) {
-    data_df <- tibble(value = data_vals, key = get_norm(data_vals)) %>% filter(!is.na(key))
-    ref_df  <- tibble(key = get_norm(ref_vals)) %>% filter(!is.na(key))
+    data_df <- tibble(value = data_vals, key = get_norm(data_vals)) |> filter(!is.na(key))
+    ref_df  <- tibble(key = get_norm(ref_vals)) |> filter(!is.na(key))
     
     new_keys <- setdiff(unique(data_df$key), unique(ref_df$key))
-    missing_values <- data_df %>% filter(key %in% new_keys) %>% distinct(value)
+    missing_values <- data_df |> filter(key %in% new_keys) |> distinct(value)
   } else {
     ref_values_clean <- unique(na.omit(ref_vals))
     missing_values <- tibble(value = setdiff(unique(na.omit(data_vals)), ref_values_clean))
   }
   
-  df_missing <- missing_values %>%
+  df_missing <- missing_values |>
     mutate(
       table = table_name,
       type = "missing",
       description = sprintf("Value '%s' not found in reference table '%s'", value, table_name)
-    ) %>%
+    ) |>
     select(table, value, type, description)
   
   if (normalize) {
-    ref_norm <- ref_table %>%
-      mutate(norm_key = get_norm(.data[[ref_code_col]])) %>%
+    ref_norm <- ref_table |>
+      mutate(norm_key = get_norm(.data[[ref_code_col]])) |>
       filter(norm_key %in% data_df$key)
     
-    dup_ref <- ref_norm %>%
-      group_by(norm_key) %>%
+    dup_ref <- ref_norm |>
+      group_by(norm_key) |>
       summarise(
         n = n_distinct(.data[[ref_id_col]]),
         ID_list = paste(unique(.data[[ref_id_col]]), collapse = ", "),
         value = first(.data[[ref_code_col]]),
         .groups = "drop"
-      ) %>%
+      ) |>
       filter(n > 1)
   } else {
-    dup_ref <- ref_table %>%
-      filter(.data[[ref_code_col]] %in% na.omit(data_vals)) %>%
-      group_by(code = .data[[ref_code_col]]) %>%
+    dup_ref <- ref_table |>
+      filter(.data[[ref_code_col]] %in% na.omit(data_vals)) |>
+      group_by(code = .data[[ref_code_col]]) |>
       summarise(
         n = n_distinct(.data[[ref_id_col]]),
         ID_list = paste(unique(.data[[ref_id_col]]), collapse = ", "),
         value = first(code),
         .groups = "drop"
-      ) %>%
+      ) |>
       filter(n > 1)
   }
   
-  df_duplicate <- dup_ref %>%
+  df_duplicate <- dup_ref |>
     mutate(
       table = table_name,
       type = "duplicate",
       description = sprintf("Value '%s' returns multiple IDs in reference table '%s' (%s)", value, table_name, ID_list)
-    ) %>%
+    ) |>
     select(table, value, type, description)
   
   bind_rows(df_missing, df_duplicate)
@@ -1742,7 +1742,7 @@ referentials <- bind_rows(
   validate_referential(data, "currency_fuel_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
   validate_referential(data, "currency_ice_price", calipseo_cl_ref_currencies, "CODE", "ID", "cl_ref_currencies",monitor = monitor),
   validate_referential(data, "gear_name", calipseo_cl_ref_gears, "NAME", "ID", "cl_ref_gears",monitor = monitor)
-)%>%
+) |>
   distinct()
 
 data_sql<-c()
@@ -1760,12 +1760,12 @@ if(nrow(subset(referentials,type=="ERROR"))>0|nrow(subset(errors,type=="ERROR"))
 if(valid){
 #Generate SQL
 
-  data_effort<-data%>%
-    select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
-    distinct()%>%
-    select(arrival_date,survey_type,boat_activity_days,landing_site_name,fishing_unit_name)%>%
-    filter(!is.na(survey_type))%>%
-    rowwise()%>%
+  data_effort<-data |>
+    select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes) |>
+    distinct() |>
+    select(arrival_date,survey_type,boat_activity_days,landing_site_name,fishing_unit_name) |>
+    filter(!is.na(survey_type)) |>
+    rowwise() |>
     mutate(year=year(arrival_date),
            month=month(arrival_date),
            day=day(arrival_date),
@@ -1773,9 +1773,9 @@ if(valid){
            landing_site_name=mapping_table(landing_site_name,"cl_fish_landing_sites","NAME",exact = F),
            fishing_unit_name=mapping_table(fishing_unit_name,"cl_fish_fishing_units","NAME"),
            boat_activity_days=as.numeric(boat_activity_days)
-    )%>%
-    group_by(year,month,day,survey_type,landing_site_name,fishing_unit_name)%>%
-    summarise(boat_activity_days=sum(boat_activity_days,na.rm=T))%>%
+    ) |>
+    group_by(year,month,day,survey_type,landing_site_name,fishing_unit_name) |>
+    summarise(boat_activity_days=sum(boat_activity_days,na.rm=T)) |>
     ungroup()
   
 for(i in 1:nrow(data_effort)){
@@ -1800,14 +1800,14 @@ for(i in 1:nrow(data_effort)){
 for(trip in unique(data$identifier)){
 
 print(trip)
-data_target<-data%>%
+data_target<-data |>
   filter(identifier==trip)
 
 print("data_trip")
-data_trip<-data_target%>%
-  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,gear_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes)%>%
-  distinct()%>%
-  rowwise()%>%
+data_trip<-data_target |>
+  select(identifier,recorder_name,vessel_registration_nr,boat_activity_days,fishing_unit_name,gear_name,recorder_name,departure_date,arrival_date,time_spent_fishing,unit_time_spent_fishing,departure_site_name,landing_site_name,fishing_zone_name,nr_fishers,food_cost,currency_food_cost,ice_bought_m3,ice_price,currency_ice_price,fuel_consumed_liter,fuel_price,currency_fuel_price,survey_type,notes) |>
+  distinct() |>
+  rowwise() |>
   mutate(recorder_name=mapping_table(recorder_name,"custom_reg_entity_individuals","FULL_NAME","REG_ENTITY_ID",exact=F),
          unit_time_spent_fishing=mapping_table(unit_time_spent_fishing,"cl_app_quantity_units","NAME"),
          survey_type=mapping_table(survey_type,"cl_stat_effort_survey_types","CODE"),
@@ -1820,17 +1820,17 @@ data_trip<-data_target%>%
          currency_food_cost=mapping_table(currency_food_cost,"cl_ref_currencies","CODE"),
          currency_ice_price=mapping_table(currency_ice_price,"cl_ref_currencies","CODE"),
          currency_fuel_price=mapping_table(currency_fuel_price,"cl_ref_currencies","CODE")
-         )%>%
+         ) |>
   ungroup()
 
-data_species<-data_target%>%
-  select(species_code,landed_weight_kg,catch_price,fish_product_code,currency_catch_price)%>%
-  rowwise()%>%
+data_species<-data_target |>
+  select(species_code,landed_weight_kg,catch_price,fish_product_code,currency_catch_price) |>
+  rowwise() |>
   mutate(species_code=mapping_table(species_code,"cl_ref_species","ASFIS_CODE"),
          fish_product_code=mapping_table(fish_product_code,"cl_ref_fishery_products","CODE"),
          quantity_live_weight=apply_product_factor(as.numeric(landed_weight_kg),fish_product_code),
          currency_catch_price=mapping_table(currency_catch_price,"cl_ref_currencies","CODE")
-         )%>%
+         ) |>
   ungroup()
 
 new_dt_fishing_trip$ADD_ENTRY(

@@ -53,7 +53,7 @@ observer_list_server <- function(id, parent.session, lang = NULL, pool, reloader
       }
     }
       
-    summary_report_dt <- reports_info %>%
+    summary_report_dt <- reports_info |>
       select(
         report_id, vessel_name, observer_name,
         embarkation_start, embarkation_port,
@@ -62,7 +62,7 @@ observer_list_server <- function(id, parent.session, lang = NULL, pool, reloader
         logbook_linked, biological_present,
         total_catch, total_catch_unit,
         total_discard, total_discard_unit
-      ) %>%
+      ) |>
       mutate(
         vessel_name = purrr::map_chr(vessel_name, icon_missing_chr),
         observer_name = purrr::map_chr(observer_name, icon_missing_chr),
@@ -87,7 +87,7 @@ observer_list_server <- function(id, parent.session, lang = NULL, pool, reloader
             paste0(round(.x, 0), " ", .y)
           }
         )
-      )%>%
+      ) |>
       select(-c(total_catch_unit,total_discard_unit))
     
     

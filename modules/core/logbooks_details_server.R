@@ -54,7 +54,7 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
   })
   
   output$plot_vessel <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel, x = ~ctrl$data_for_vessel[,1], y = ~ctrl$data_for_vessel[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT$CODE)))
+    plot_ly(ctrl$data_for_vessel, x = ~ctrl$data_for_vessel[,1], y = ~ctrl$data_for_vessel[,2], mode = 'lines+markers') |>  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT$CODE)))
   })
   
   output$data_vessel <- renderDataTable(
@@ -112,7 +112,7 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
   
  
   output$plot_vessel_owner <- renderPlotly({
-    plot_ly(ctrl$data_for_vessel_owner, x = ~ctrl$data_for_vessel_owner[,1], y = ~ctrl$data_for_vessel_owner[,2], mode = 'lines+markers') %>%  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT$CODE)))
+    plot_ly(ctrl$data_for_vessel_owner, x = ~ctrl$data_for_vessel_owner[,1], y = ~ctrl$data_for_vessel_owner[,2], mode = 'lines+markers') |>  layout(autosize = TRUE, height = 290,xaxis = list(title=i18n("TABLE_COLNAME_YEAR")),yaxis =list(title=sprintf('%s (%s)',i18n("TABLE_COLNAME_QUANTITY"),PREF_UNIT_WEIGHT$CODE)))
   })
   
   output$data_vessel_owner <- renderDataTable(
@@ -241,8 +241,8 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
     if(nrow(sites_descriptor)>0){
       maxValue <- max(sites_descriptor$quantity, na.rm = TRUE)
       #build the map
-      leaflet() %>%
-        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%  
+      leaflet() |>
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>  
         addCircles(data = sites_descriptor, weight = 1, color = color, fillColor = color, fillOpacity = 0.7, 
                    radius = 700*sqrt(sites_descriptor$quantity/maxValue), 
                    popup = paste(
@@ -250,8 +250,8 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
                      em(paste0(i18n("MAP_POPUP_QUANTITY_LABEL"),": ")), sites_descriptor$quantity 
                    ))
     }else{
-      leaflet() %>%
-        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%
+      leaflet() |>
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor$NAME,br()
@@ -269,8 +269,8 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
     
     if(nrow(sites_descriptor)>0){
       #build the map
-      leaflet() %>%
-        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%  
+      leaflet() |>
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>  
         addMinicharts(
           coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
           type = "pie",
@@ -278,8 +278,8 @@ logbooks_details_server <- function(id, parent.session, lang = NULL, pool, reloa
           width = 60 * sqrt(sites_descriptor@data[,"TOTAL"]) / sqrt(max(sites_descriptor@data[,"TOTAL"], na.rm = TRUE)), transitionTime = 0,
           colorPalette = colors)
     }else{
-      leaflet() %>%
-        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) %>%
+      leaflet() |>
+        addProviderTiles(providers$OpenStreetMap, options = providerTileOptions(noWrap = TRUE)) |>
         addCircles(data = accessLandingSites(pool), weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("MAP_POPUP_LANDINGSITE_LABEL"),": ")), sites_descriptor[,1],br()
