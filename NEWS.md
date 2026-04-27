@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-19**
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-27**
 
 ## New requirements
 
