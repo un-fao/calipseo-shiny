@@ -21,6 +21,7 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
     
     #refresh
     observeEvent(input$refresh_artfish_estimates, {
+      disable(ns("refresh_artfish_estimates"))
       artfish <- session$userData$get_artfish_provider()
       req(artfish)
       
@@ -30,6 +31,7 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
       }
       
       artfish$trigger_refresh()
+      enable(ns("refresh_artfish_estimates"))
     })
     
     # Request provider (this triggers computation only the first time)
@@ -51,7 +53,10 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
       lang = lang,
       estimate = estimate_r,
       effort_source = artfish$effort_source,
-      minor_strata = artfish$minor_strata
+      minor_strata = artfish$minor_strata,
+      opts = list(
+        refresh_ui = actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = "")
+      )
     )
     
     MODULE_END_TIME <- Sys.time()

@@ -462,6 +462,7 @@ QUARTILES,quartiles
 RANK_LABEL,Afficher les x espèces les plus pêchées :
 RANK_METHOD,Méthode de classement :
 RECOMPUTE_REASON,Explication
+REFRESH,Rafraîchir
 REGISTRATION_NUMBER,Numéro d'enregistrement
 REGISTRATION_PORT,Port d'enregistrement
 RELEASE_DEPENDENT_LABEL,Effectuer un release pour les indicateurs dépendants
