@@ -55,10 +55,13 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata,
       opts = list(
-        refresh_ui = actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = ""),
-        values_ui = if(sum(estimate_r()$trade_value, na.rm = T) == 0) FALSE else TRUE
+        refresh_ui = uiOutput(ns("refresher"))
       )
     )
+    
+    output$refresher <- renderUI({
+      actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = i18n("REFRESH"))
+    })
       
     
     MODULE_END_TIME <- Sys.time()
