@@ -53,7 +53,8 @@ artfish_species_explorer_server <- function(id, parent.session, lang = NULL, poo
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata,
       opts = list(
-        refresh_ui = actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = "")
+        refresh_ui = actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = ""),
+        values_ui = if(sum(estimate_r()$trade_value, na.rm = T) == 0) FALSE else TRUE
       )
     )
     

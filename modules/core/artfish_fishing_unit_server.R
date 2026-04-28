@@ -35,7 +35,10 @@ artfish_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, r
     artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
                                                  lang = appConfig$language, 
                                                  estimate = reactive({ estimate }), 
-                                                 effort_source = reactive({ effort_source }))
+                                                 effort_source = reactive({ effort_source }),
+                                                 opts = list(
+                                                   values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                                 ))
     
     MODULE_END_TIME <- Sys.time()
     INFO("artfish-unit: END")

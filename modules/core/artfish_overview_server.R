@@ -27,10 +27,13 @@ artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloa
   
   INFO("Get Artfish computation outputs for UI")
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
-
+  
   artfishr::artfish_shiny_overview_server("artfish_overview", 
                                           lang = lang, 
-                                          estimate = reactive({ estimate }))
+                                          estimate = reactive({ estimate }),
+                                          opts = list(
+                                            values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                          ))
  
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-overview: END")

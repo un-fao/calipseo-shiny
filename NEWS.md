@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.2.01](https://github.com/un-fao/calipseo-shiny) - 2026-04-28**
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-28**
 
 ## New requirements
 
@@ -7,6 +7,7 @@
 ## Enhancements
 
 - [#364](https://github.com/un-fao/calipseo-shiny/issues/364) ArtFish UI modules refresh feature
+- [#365](https://github.com/un-fao/calipseo-shiny/issues/365) Support disabling of values UI in Artfish modules
 
 # **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-27**
 
