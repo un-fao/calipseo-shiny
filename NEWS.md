@@ -1,3 +1,14 @@
+# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260501) R package (0.1.20260501 pre-release)
+
+## Bug fixes
+
+- [#366](https://github.com/un-fao/calipseo-shiny/issues/366) Artfish UI - App reload doesn't recompute statistics and blocks refresh button
+
+
 # **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-30**
 
 ## New requirements
