@@ -15,7 +15,6 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
     #-----------------------------------------------------------------------------
     
     result <- reactiveVal(NULL)
-    show_values_ui <- reactiveVal(NULL)
     
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")

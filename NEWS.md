@@ -1,8 +1,8 @@
-# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-28**
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-30**
 
 ## New requirements
 
-- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260428) R package (0.1.20260428 pre-release)
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260430) R package (0.1.20260430 pre-release)
 
 ## Enhancements
 

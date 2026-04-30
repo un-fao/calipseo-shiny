@@ -30,10 +30,7 @@ artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloa
   
   artfishr::artfish_shiny_overview_server("artfish_overview", 
                                           lang = lang, 
-                                          estimate = reactive({ estimate }),
-                                          opts = list(
-                                            values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
-                                          ))
+                                          estimate = reactive({ estimate }))
  
   MODULE_END_TIME <- Sys.time()
   INFO("artfish-overview: END")
