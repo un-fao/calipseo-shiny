@@ -59,7 +59,7 @@ artfish_computation_provider_server <- function(id, parent.session, lang = NULL,
         html = waiting_screen,
         color = "#14141480"
       )
-    }, ignoreInit = TRUE)
+    }, ignoreInit = TRUE, priority = 100)
     observe({
       if (isTRUE(compute_srv$ready())) {
         waiter::waiter_hide()
