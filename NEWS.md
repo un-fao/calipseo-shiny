@@ -4,6 +4,11 @@
 
 * [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
 
+## Enhancements
+
+* [#367](https://github.com/un-fao/calipseo-shiny/issues/367) Migrate country-specific R scripts to calipseo-data repo
+
+
 # **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
 
 ## New requirements
