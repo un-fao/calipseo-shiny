@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.2.9000](https://github.com/un-fao/calipseo-shiny) - 2026-05-12**
+
+## Bug fixes
+
+* [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
+
 # **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
 
 ## New requirements

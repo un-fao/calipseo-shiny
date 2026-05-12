@@ -115,14 +115,19 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
         if(target_period=="month"&process_period=="quarter")period_to_compute<-data.frame(year=computation_year,month=NA,quarter=quarter(computation_month))
         if(target_period=="month"&process_period=="month")period_to_compute<-data.frame(year=computation_year,month=computation_month,quarter=NA)
         
-        period_to_compute<-period_to_compute |>mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter)) |>inner_join(getAvailablePeriods(id= dep_indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
+        period_to_compute$year = as.numeric(period_to_compute$year)
+        period_to_compute$month = as.numeric(period_to_compute$month)
+        period_to_compute$quarter = as.numeric(period_to_compute$quarter)
+        period_to_compute <- period_to_compute |> 
+          dplyr::inner_join(getAvailablePeriods(id= dep_indicator,config = appConfig, indicators = AVAILABLE_INDICATORS))
         
-        release_periods<-getStatPeriods(config = appConfig, id = dep_indicator, target = "release")
-        
+        release_periods <- getStatPeriods(config = appConfig, id = dep_indicator, target = "release")
+        release_periods$year = as.numeric(release_periods$year)
         if(process_period == "month") release_periods$month=as.numeric(gsub("M","",release_periods$month))
         if(process_period == "quarter") release_periods$quarter=as.numeric(gsub("Q","",release_periods$quarter))
-        
-        period_to_compute<-period_to_compute |>mutate(year=as.numeric(year),month=as.numeric(month),quarter=as.numeric(quarter)) |>anti_join(release_periods |>mutate(year=as.numeric(year)))
+
+        period_to_compute = period_to_compute |>
+          dplyr::anti_join(release_periods)
 
         if(nrow(period_to_compute)>0){
           
