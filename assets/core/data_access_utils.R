@@ -74,12 +74,12 @@ loadLocalDataset <- function(filename){
 
 #loadLocalCountryDatasets
 loadLocalCountryDatasets <- function(config){
-  local_dir <- if(config$local) "../calipseo-data" else "data"
-  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
+  country_dir <- sprintf("../calipseo-data/country/%s", config$country_profile$iso3)
   if(dir.exists(country_dir)){
     files <- list.files(path = country_dir, full.names = TRUE)
+    files = files[grepl("\\.(xlsx|csv)$", files, ignore.case = TRUE)]
     for(file in files){
-      message(sprintf("Loading local dataset '%s'", file))
+      INFO("Loading local dataset '%s'", file)
       loadLocalDataset(file)
     }
   }
