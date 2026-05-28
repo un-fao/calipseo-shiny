@@ -158,6 +158,8 @@ accessRefFishingUnitsFromDB <- function(con){
   return(ref_fishing_units)
 }
 
+#accessProcessingTypesFromDB
+
 
 #<COUNTRY PARAMETERS>
 #accessCountryParamFromDB
@@ -695,12 +697,26 @@ accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, rec
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
   fa_sql <- readSQL("data/core/sql/fdi_reporting_fishing_activities.sql")
   fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s'",
-                   fa_sql, receiver, receiver, receiver)
+                   fa_sql, receiver, receiver, receiver) #, receiver)
   if(!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
   }
   if(exclude_landing_forms){
-    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 2"))
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 5"))
+  }
+  fa <- getFromSQL(con, fa_sql)
+}
+
+accessFDIFishingCEFromDB <- function(con, year = NULL, month = NULL, receiver, exclude_landing_forms = FALSE){
+  DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
+  fa_sql <- readSQL("data/core/sql/fdi_reporting_catch_effort.sql") #AMA CHANGED TO NEW SQL QUERY
+  fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s' AND fmct.CODE = '%s'", #ADD CLASSIFICATION TYPE FILTER
+                   fa_sql, receiver, receiver, receiver, receiver)
+  if(!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
+  }
+  if(exclude_landing_forms){
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 5"))
   }
   fa <- getFromSQL(con, fa_sql)
 }
@@ -937,6 +953,7 @@ accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ ac
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 #multireporting
 accessFDIFishingActivities <- function(con,year=NULL,month=NULL,receiver,exclude_landing_forms=NULL){ accessFDIFishingActivitiesFromDB(con,year=year,month=month,receiver=receiver,exclude_landing_forms=exclude_landing_forms) }
+accessFDIFishingCE <- function(con,year=NULL,month=NULL,receiver,exclude_landing_forms=NULL){ accessFDIFishingCEFromDB(con,year=year,month=month,receiver=receiver,exclude_landing_forms=exclude_landing_forms) }
 
 #<MODULE:OBSERVER_OVERVIEW>
 accessObserverReportsSummary <- function(con,report_id=NULL){ accessObserverReportsSummaryFromDB(con,report_id)}
