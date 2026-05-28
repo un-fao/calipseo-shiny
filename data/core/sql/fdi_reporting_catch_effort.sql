@@ -15,13 +15,12 @@ geo.latitude_start,
 geo.longitude_end,
 geo.latitude_end,
 sp.ASFIS_CODE as species,
-'LW' as processing_type, #READY TO BE UPDATED WITH NEW PROCESSING TYPE TABLES cl_fish_processing_types
-# ONLY FOR T1NC! '1.33' as conversion_factor, #TO BE EXTRACTED FROM CONVERSION FACTOR jt_ref_species_fish_processing_type - after, in R: NOTE: If the species-conversionFactor combination is not available at the JT, use DEFAULT_CONVERSION_FACTOR / NOTE: If processing type = NULL, use 1 (LW)
+pt.CODE_FOR_CLASSIFICATION_TYPE as processing_type,
 gear.CODE_FOR_CLASSIFICATION_TYPE as gear_type,
 ffm.CODE as fishing_mode,
 fmci.CODE as fishing_mode_org,
 'catch' as measurement,
-'RC' as measurement_type, #RC (Retain catch)
+'RC' as measurement_type,
 fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as measurement_value,
 lower(unit.CODE) as measurement_unit 
 FROM dt_fishing_activities as fa 
@@ -46,11 +45,10 @@ LEFT JOIN cl_ref_fishing_mode_classification_types as fmct ON fmct.ID = fmci.CL_
 LEFT JOIN jt_fish_fishing_zone_ref_fishing_zone_classification_item as fzmap ON fzmap.CL_FISH_FISHING_ZONE_ID = ft.CL_FISH_FISHING_ZONE_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_items as fz ON fz.ID = fzmap.CL_REF_FISHING_ZONE_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_types as fzct ON fzct.ID = fz.CL_REF_FISHING_ZONE_CLASSIFICATION_TYPE_ID 
-
-LEFT JOIN jt_fish_fishing_zone_ref_fishing_zone_classification_item as fzmap ON fzmap.CL_FISH_FISHING_ZONE_ID = ft.CL_FISH_FISHING_ZONE_ID 
-LEFT JOIN cl_ref_fishing_zone_classification_items as fz ON fz.ID = fzmap.CL_REF_FISHING_ZONE_CLASSIFICATION_ITEM_ID 
-LEFT JOIN cl_ref_fishing_zone_classification_types as fzct ON fzct.ID = fz.CL_REF_FISHING_ZONE_CLASSIFICATION_TYPE_ID 
-
+LEFT JOIN cl_fish_processing_types as fpt ON fpt.ID = fas.CL_FISH_PROCESSING_TYPE_ID 
+LEFT JOIN jt_fish_processing_type_ref_processing_type_classification_item as fptmap ON fptmap.CL_FISH_PROCESSING_TYPE_ID = fas.CL_FISH_PROCESSING_TYPE_ID 
+LEFT JOIN cl_ref_processing_type_classification_items as pt ON pt.ID = fptmap.CL_REF_PROCESSING_TYPE_CLASSIFICATION_ITEM_ID 
+LEFT JOIN cl_ref_processing_type_classification_types as ptct ON ptct.ID = pt.CL_REF_PROCESS_TYPE_CLASSIFICATION_TYPE_ID 
 LEFT JOIN (SELECT 
     pos.DT_FISHING_ACTIVITY_ID,
     MAX(CASE WHEN post.CODE = 'SPT' THEN pos.LONGITUDE END) AS longitude_start,
