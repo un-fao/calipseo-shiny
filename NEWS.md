@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.2.9001](https://github.com/un-fao/calipseo-shiny) - 2026-05-12**
+# **calipseo-shiny [v2.2.9002](https://github.com/un-fao/calipseo-shiny) - 2026-05-28**
 
 ## Bug fixes
 
@@ -7,6 +7,7 @@
 ## Enhancements
 
 * [#367](https://github.com/un-fao/calipseo-shiny/issues/367) Migrate country-specific R scripts to calipseo-data (private) repo
+* [#371](https://github.com/un-fao/calipseo-shiny/issues/371) ICCAT T1NC reporting - Addition of conversion factors
 
 
 # **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
