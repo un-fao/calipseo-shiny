@@ -13,6 +13,7 @@ geo.latitude_start,
 geo.longitude_end,
 geo.latitude_end,
 sp.ASFIS_CODE as species,
+COALESCE(rspft.CONVERSION_FACTOR,fpt.DEFAULT_CONVERSION_FACTOR,1) AS conversion_factor,
 gear.CODE_FOR_CLASSIFICATION_TYPE as gear_type,
 'catch' as measurement,
 'NL' as measurement_type,
@@ -35,6 +36,8 @@ LEFT JOIN cl_ref_gear_classification_types as gearct ON gearct.ID = gear.CL_REF_
 LEFT JOIN jt_fish_fishing_zone_ref_fishing_zone_classification_item as fzmap ON fzmap.CL_FISH_FISHING_ZONE_ID = ft.CL_FISH_FISHING_ZONE_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_items as fz ON fz.ID = fzmap.CL_REF_FISHING_ZONE_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_types as fzct ON fzct.ID = fz.CL_REF_FISHING_ZONE_CLASSIFICATION_TYPE_ID 
+LEFT JOIN jt_ref_species_fish_processing_type as rspft ON rspft.CL_REF_SPECIES_ID = fas.CL_REF_SPECIES_ID AND rspft.CL_FISH_PROCESSING_TYPE_ID = fas.CL_FISH_PROCESSING_TYPE_ID 
+LEFT JOIN cl_fish_processing_types as fpt ON fpt.ID = fas.CL_FISH_PROCESSING_TYPE_ID 
 LEFT JOIN (SELECT 
     pos.DT_FISHING_ACTIVITY_ID,
     MAX(CASE WHEN post.CODE = 'SPT' THEN pos.LONGITUDE END) AS longitude_start,
@@ -45,4 +48,4 @@ FROM dt_fishing_activity_positions pos
 LEFT JOIN cl_fish_fishing_activity_positions_types as post ON post.ID = pos.CL_FISH_FISHING_ACTIVITY_POSITIONS_TYPE_ID 
 WHERE pos.CL_FISH_FISHING_ACTIVITY_POSITIONS_TYPE_ID IN(1,2) 
 GROUP BY pos.DT_FISHING_ACTIVITY_ID) as geo ON geo.DT_FISHING_ACTIVITY_ID = fa.ID 
-WHERE fa.CL_FISH_FISHING_ACTIVITY_TYPE_ID IN(1,3) AND fag.NO_CATCHES = '0'
+WHERE fa.CL_FISH_FISHING_ACTIVITY_TYPE_ID IN(1,3) AND fag.NO_CATCHES = '0' 
