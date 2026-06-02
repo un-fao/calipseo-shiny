@@ -76,9 +76,10 @@ vessel_info_server <- function(id, parent.session, lang = NULL, pool, reloader) 
         attr(vesselCatches$ret_datetime, "tzone") <- appConfig$country_profile$timezone
         atSea = vesselCatches$ret_datetime-vesselCatches$dep_datetime
         atSea <- switch(attr(atSea, "units"),
+                        "secs" = as.numeric(atSea)/3600/24,
                         "mins" = as.numeric(atSea)/60/24,
                         "hours" = as.numeric(atSea)/24,
-                        "days" = as.numeric(atSea)
+                        "days" = as.numeric(atSea),
         )
         vesselCatches$daysAtSea <- round(atSea, 2)
         
@@ -852,6 +853,7 @@ vessel_info_server <- function(id, parent.session, lang = NULL, pool, reloader) 
       
       DaysatSea = vesselDaysATSea$ret_datetime-vesselDaysATSea$dep_datetime
       DaysatSea <- switch(attr(DaysatSea, "units"),
+                          "secs" = as.numeric(DaysatSea)/3600/24,
                           "mins" = as.numeric(DaysatSea)/60/24,
                           "hours" = as.numeric(DaysatSea)/24,
                           "days" = as.numeric(DaysatSea)

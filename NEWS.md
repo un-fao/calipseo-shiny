@@ -1,8 +1,9 @@
-# **calipseo-shiny [v2.2.9002](https://github.com/un-fao/calipseo-shiny) - 2026-05-28**
+# **calipseo-shiny [v2.2.9003](https://github.com/un-fao/calipseo-shiny) - 2026-06-02**
 
 ## Bug fixes
 
 * [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
+* [#373](https://github.com/un-fao/calipseo-shiny/issues/373) Vessel info - Days at sea computation fails if time difference is 0 (units = secs)
 
 ## Enhancements
 
