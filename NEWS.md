@@ -4,6 +4,7 @@
 
 * [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
 * [#373](https://github.com/un-fao/calipseo-shiny/issues/373) Vessel info - Days at sea computation fails if time difference is 0 (units = secs)
+* [#374](https://github.com/un-fao/calipseo-shiny/issues/374) App breaks when no landing site coordinates are available
 
 ## Enhancements
 

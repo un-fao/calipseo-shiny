@@ -221,18 +221,20 @@ vessel_overview_server <- function(id, parent.session, lang = NULL, pool, reload
       #prepare data for vessel type piechart map by landing site
       vessel_landingsite_breakdown <- countVesselTypesByLandingSiteFromDB(pool, sf = TRUE)
       vessel_landingsite_breakdown_df = as.data.frame(vessel_landingsite_breakdown)
-      vessel_landingsite_breakdown_df$geometry = NULL
-      vessel_landingsite_breakdown_df <- reshape(vessel_landingsite_breakdown_df, direction = 'wide', idvar = c('LATITUDE','LONGITUDE','HOME_PORT_LANDING_SITE'),
-                                                 timevar = 'VESSEL_TYPE')
-      names(vessel_landingsite_breakdown_df) <- gsub("COUNT.", "", names(vessel_landingsite_breakdown_df), fixed = TRUE)
-      for (i in 2:ncol(vessel_landingsite_breakdown_df)) {
-        vessel_landingsite_breakdown_df[,i]<- as.numeric(vessel_landingsite_breakdown_df[,i])
-      }
-      if(ncol(vessel_landingsite_breakdown_df)==4){
-        vessel_landingsite_breakdown_df$Total = vessel_landingsite_breakdown_df[,4]
-      }else{
-        print(colnames(vessel_landingsite_breakdown_df))
-        vessel_landingsite_breakdown_df$Total <- rowSums(vessel_landingsite_breakdown_df[,4:ncol(vessel_landingsite_breakdown_df)], na.rm = T)
+      if(nrow(vessel_landingsite_breakdown_df)>0){
+        vessel_landingsite_breakdown_df$geometry = NULL
+        vessel_landingsite_breakdown_df <- reshape(vessel_landingsite_breakdown_df, direction = 'wide', idvar = c('LATITUDE','LONGITUDE','HOME_PORT_LANDING_SITE'),
+                                                   timevar = 'VESSEL_TYPE')
+        names(vessel_landingsite_breakdown_df) <- gsub("COUNT.", "", names(vessel_landingsite_breakdown_df), fixed = TRUE)
+        for (i in 2:ncol(vessel_landingsite_breakdown_df)) {
+          vessel_landingsite_breakdown_df[,i]<- as.numeric(vessel_landingsite_breakdown_df[,i])
+        }
+        if(ncol(vessel_landingsite_breakdown_df)==4){
+          vessel_landingsite_breakdown_df$Total = vessel_landingsite_breakdown_df[,4]
+        }else{
+          print(colnames(vessel_landingsite_breakdown_df))
+          vessel_landingsite_breakdown_df$Total <- rowSums(vessel_landingsite_breakdown_df[,4:ncol(vessel_landingsite_breakdown_df)], na.rm = T)
+        }
       }
       
       #Map with vessel types piechart by landing site
