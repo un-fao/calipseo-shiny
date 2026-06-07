@@ -1,0 +1,71 @@
+language: en
+country_profile:
+    iso3: DEMO
+    website: null
+    logo: ./assets/img/DEMOlogo.png
+    timezone: America/Guyana 
+
+openfismis: 
+    dbi:
+        drv: MariaDB
+        dbname: democalipseo
+        host: localhost
+        port: 3306
+        user: root
+        password: root
+    
+structure:
+    home:
+        title: Home
+    vessels:
+        title: Vessels
+    individuals: 
+        title: Individuals
+    logbooks:
+        title: Logbooks
+    statistics:
+        title: Statistics
+    artfish:
+        title: Artfish
+modules:
+    vessel_list:
+        title: Vessels list
+        icon: table
+        enable: true
+    vessel_breakdown:
+        title: Vessels breakdown
+        icon: ship
+        enable: true
+    vessel_qa:
+        title: Vessels quality assessment
+        icon: ship
+        enable: true
+    individual_list: 
+        title: Individual list
+        enable: true
+    individual_qa:
+        enable: true
+    individual_overview:
+        enable: true
+    individual_info:
+        enable: true
+    computation:
+      enabled: true
+    artfish_accuracy:
+      enabled: true
+    artfish_fishing_unit:
+      enabled: true
+    artfish_line_chart:
+      enabled: true
+    artfish_overview:
+      enabled: true
+    artfish_report:
+      enabled: true
+    artfish_species:
+      enabled: true
+    logbooks_details:
+      enabled: true
+    logbooks_overview:
+      enabled: true
+    logbooks_trips:
+      enabled: true
