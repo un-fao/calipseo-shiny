@@ -26,7 +26,9 @@ structure:
     statistics:
         title: Statistics
     artfish:
-        title: Artfish
+        title: Artfish (SWS)
+    artfish_explorer:
+        title: Artfish (Explorer)
 modules:
     vessel_list:
         title: Vessels list
