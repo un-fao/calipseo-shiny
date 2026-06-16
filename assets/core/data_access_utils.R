@@ -228,6 +228,14 @@ accessFDIMinorStrataFromDB <- function(con,filter_enabled = TRUE){
   return(country_param)
 }
 
+#accessPrefMarketFromDB
+accessPrefMarketFromDB <- function(con,filter_enabled = TRUE){
+  DEBUG("Query country parameter - PREFMARKET Code")
+  country_param <- getCountryParamFromDB(con,param="PREFMARKET",filter_enabled)
+  return(country_param)
+}
+
+
 #accessCountryISOCodeFromDB
 accessCountryISOCodeFromDB <- function(con){
   DEBUG("Query country parameter - ISO3 Code")
@@ -752,6 +760,17 @@ accessObserverReportsHasLogbookFromDB <- function(con,report_id = NULL){
   query <- suppressWarnings(dbGetQuery(con, query_sql))
   return(query)
 } 
+
+
+#<MODULE:MARKET_TRADE_DATA_EXPORTER>
+#accessMarketTradeExporterFromDB
+accessMarketTradeExporterFromDB <- function(con){
+  DEBUG("Query market data exporter")
+  sql <- readSQL("data/core/sql/market_trade_exporter.sql")
+  data <- getFromSQL(con, sql)
+  return(data)
+}
+
 #multireporting
 accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, receiver, exclude_landing_forms = FALSE){
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
@@ -918,6 +937,7 @@ accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
 getCountryParam <- function(con, param, filter_enabled = TRUE){getCountryParamFromDB(con,param,filter_enabled)}
 accessCountryEffSurvType <- function(con,filter_enabled = TRUE){accessCountryEffSurvTypeFromDB(con, filter_enabled)}
 accessFDIMinorStrata <- function(con,filter_enabled = TRUE){accessFDIMinorStrataFromDB(con, filter_enabled)}
+accessPrefMarket <- function(con,filter_enabled = TRUE){accessPrefMarketFromDB(con, filter_enabled)}
 accessCountryISOCode <- function(con){ accessCountryISOCodeFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
@@ -1011,6 +1031,10 @@ accessFishingTripsCatch <- function(con,trip_type = NULL){accessFishingTripsCatc
 accessObserverVesselsDetails <- function(con,report_id){ accessObserverVesselsDetailsFromDB(con,report_id)}
 accessObserverTripsDetails <- function(con,report_id){ accessObserverTripsDetailsFromDB(con,report_id)}
 accessObserverReportsHasLogbook <- function(con,report_id){ accessObserverReportsHasLogbookFromDB(con,report_id)}
+
+#<MODULE:MARKET_TRADE_DATA_EXPORTER>
+#accessMarketTradeExporter
+accessMarketTradeExporter <- function(con,report_id){ accessMarketTradeExporterFromDB(con)}
 
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>

@@ -1,0 +1,6 @@
+{
+  "type": "subitem",
+  "parent": "market_trade",
+  "rank": 1,
+  "title": "Market Trade Data exporter"
+}
