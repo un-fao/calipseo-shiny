@@ -1,10 +1,18 @@
 #vessel_qa_server
-vessel_qa_server <- function(id, parent.session, pool, reloader) {
+vessel_qa_server <- function(id, parent.session, lang = NULL, pool, reloader) {
   
  moduleServer(id, function(input, output, session) {
     
+  ns <- session$ns 
+   
   INFO("vessel-qa: START")
   MODULE_START_TIME = Sys.time()
+  
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
    
   output$vessel_qa_info <- renderText({
     text <- paste0("<h3>", i18n("VESSEL_QA_TITLE")," – <small>", i18n("VESSEL_QA_SUBTITLE"),"</small></h3><hr>")
@@ -202,6 +210,77 @@ vessel_qa_server <- function(id, parent.session, pool, reloader) {
                     dom = 't',
                     language = list(url = i18n("TABLE_LANGUAGE"))
                   ))
+  })
+  
+  #main UI
+  output$main <- renderUI({
+    tagList(
+      fluidRow(
+        column(
+          width = 12, style = "margin:12px;",
+          htmlOutput(ns("vessel_qa_info"))
+        )
+      ),
+      bs4Dash::tabsetPanel(
+        vertical = TRUE,
+        type = "pills",
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_NAMES")), box_height = '70px',
+          bs4Dash::box(
+            width = 12, height = 480, 
+            title = i18n("VESSEL_QA_TITLE_NAMES"),
+            DT::dataTableOutput(ns("vessel_names")),
+            collapsible = FALSE
+          )
+        ) ,
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_VOP_STATUS")), box_height = '70px',
+          bs4Dash::box(
+            width = 12, height = 480, 
+            title = i18n("VESSEL_QA_TITLE_VOP_STATUS"),
+            DT::dataTableOutput(ns("vessel_operational_status")),
+            collapsible = FALSE
+          )
+        ),
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_PORTS")), box_height = '70px',
+          bs4Dash::box(
+            width = 12, height = 480, 
+            title = i18n("VESSEL_QA_TITLE_PORTS"), 
+            DT::dataTableOutput(ns("vessel_ports")),
+            collapsible = FALSE
+          ),
+          sliderWidth = 25
+        ),
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_CHARACTERISTICS")), box_height = '70px',
+          bs4Dash::box(
+            width = 12, height = 480,
+            title = i18n("VESSEL_QA_TITLE_CHARACTERISTICS"),
+            DT::dataTableOutput(ns("vessel_characteristics")),
+            collapsible = FALSE
+          )
+        ),
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_LICENSE")), box_height = '70px',
+          bs4Dash::box(
+            width = 12, height = 480, 
+            title = i18n("VESSEL_QA_TITLE_LICENSE"),
+            DT::dataTableOutput(ns("vessel_license")),
+            collapsible = FALSE
+          )
+        ),
+        tabPanel(
+          title = tags$h5(i18n("VERTICALTABPANEL_VESSEL_QA_ACTIVITY")), box_height='70px',
+          bs4Dash::box(
+            width = 12, height = 480, 
+            title = i18n("VESSEL_QA_TITLE_ACTIVITY"),
+            DT::dataTableOutput(ns("vessel_activity")),
+            collapsible = FALSE
+          )
+        )
+      )
+    )
   })
   
   MODULE_END_TIME <- Sys.time()

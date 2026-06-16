@@ -65,7 +65,11 @@ server <- function(input, output, session) {
     
     module <- input[["calipseo-tabs"]]
     INFO("UI - Accessing module '%s' from sidebar menu", module)
-    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, appConfig, pool, module_state, reloader)
+    
+    lang = appConfig$language
+    if(!is.null(input$selected_language)) lang = input$selected_language
+    
+    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, lang = lang, appConfig, pool, module_state, reloader)
     switch(attr(id_out, "status"),
       "initialize" = {
         module_state$initialized = c(module_state$initialized, id_out)
@@ -92,6 +96,38 @@ server <- function(input, output, session) {
     }
   },ignoreNULL = F)
   
+  #i18n
+  #-----------------------------------------------------------------------------
+  output$app_language <- renderUI({
+    req(!is.null(appConfig$language_selector)) #display app_language only in case it is specified in app config
+    
+    #default language choices
+    language_choices = setNames(
+      appConfig$translator$get_languages()[-1],
+      c("العربية", "English", "Español", "Français","Русский","中文")
+    )
+    #restraint language choices in case language list is provided in config
+    if(!is.null(appConfig$language_list)){
+      language_choices = language_choices[language_choices %in% appConfig$language_list]
+    }
+    
+    tags$div(
+      selectInput(
+        "selected_language", label = NULL,
+        choices = language_choices,
+        selected = appConfig$translator$get_translation_language(),
+        width = "110px",
+        
+      ),
+      style = "float:right;margin-left:5px;padding-top:2px;"
+    )
+  })
+  
+  #we render on dynamic language (provided by the selector)
+  observeEvent(input$selected_language, {
+    shiny.i18n::update_lang(input$selected_language)
+  })
+  #-----------------------------------------------------------------------------
   
   #ARTFISH PROVIDER
   # Storage for provider (initially empty)

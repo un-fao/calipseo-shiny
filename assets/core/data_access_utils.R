@@ -74,12 +74,12 @@ loadLocalDataset <- function(filename){
 
 #loadLocalCountryDatasets
 loadLocalCountryDatasets <- function(config){
-  local_dir <- if(config$local) "../calipseo-data" else "data"
-  country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
+  country_dir <- sprintf("../calipseo-data/country/%s", config$country_profile$iso3)
   if(dir.exists(country_dir)){
-    files <- list.files(path = country_dir, full.names = TRUE)
+    files <- list.files(path = country_dir, full.names = TRUE, recursive = T)
+    files = files[grepl("\\.(xlsx|csv)$", files, ignore.case = TRUE)]
     for(file in files){
-      message(sprintf("Loading local dataset '%s'", file))
+      INFO("Loading local dataset '%s'", file)
       loadLocalDataset(file)
     }
   }
@@ -132,6 +132,7 @@ accessLandingSitesFromDB <- function(con, sf = TRUE){
   landingsites <- getFromSQL(con, landingsites_sql)
   if(sf){
     landingsites <- landingsites[!is.na(landingsites$LONGITUDE) & !is.na(landingsites$LATITUDE),]
+    landingsites <- landingsites[landingsites$LONGITUDE != "" & landingsites$LATITUDE != "",]
     landingsites <- sf::st_as_sf(landingsites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   }
   return(landingsites)
@@ -226,6 +227,14 @@ accessFDIMinorStrataFromDB <- function(con,filter_enabled = TRUE){
   country_param <- getCountryParamFromDB(con,param="FDI_MINORSTRATA",filter_enabled)
   return(country_param)
 }
+
+#accessPrefMarketFromDB
+accessPrefMarketFromDB <- function(con,filter_enabled = TRUE){
+  DEBUG("Query country parameter - PREFMARKET Code")
+  country_param <- getCountryParamFromDB(con,param="PREFMARKET",filter_enabled)
+  return(country_param)
+}
+
 
 #accessCountryISOCodeFromDB
 accessCountryISOCodeFromDB <- function(con){
@@ -433,6 +442,7 @@ countVesselsByLandingSiteFromDB <- function(con, sf = FALSE){
   sites <- getFromSQL(con,  vesselsites_count_sql)
   if(sf){
     sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites <- sites[sites$LONGITUDE != "" & sites$LATITUDE != "",]
     sites <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   }
   return(sites)
@@ -445,6 +455,7 @@ countVesselTypesByLandingSiteFromDB <- function(con, sf = FALSE){
   sites <- getFromSQL(con, vesselsitesvesseltype_count_sql)
   if(sf){
     sites <- sites[!is.na(sites$LONGITUDE) & !is.na(sites$LATITUDE),]
+    sites <- sites[sites$LONGITUDE != "" & sites$LATITUDE != "",]
     sites.sf <- sf::st_as_sf(sites, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
     sites = cbind(sites.sf, LONGITUDE = sites$LONGITUDE, LATITUDE = sites$LATITUDE)
   }
@@ -749,6 +760,17 @@ accessObserverReportsHasLogbookFromDB <- function(con,report_id = NULL){
   query <- suppressWarnings(dbGetQuery(con, query_sql))
   return(query)
 } 
+
+
+#<MODULE:MARKET_TRADE_DATA_EXPORTER>
+#accessMarketTradeExporterFromDB
+accessMarketTradeExporterFromDB <- function(con){
+  DEBUG("Query market data exporter")
+  sql <- readSQL("data/core/sql/market_trade_exporter.sql")
+  data <- getFromSQL(con, sql)
+  return(data)
+}
+
 #multireporting
 accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, receiver, exclude_landing_forms = FALSE){
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
@@ -759,7 +781,7 @@ accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, rec
     fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
   }
   if(exclude_landing_forms){
-    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 5"))
+    fa_sql <- paste0(fa_sql, sprintf(" AND ft.CL_FISH_FISHING_TRIP_TYPE_ID <> 2"))
   }
   fa <- getFromSQL(con, fa_sql)
 }
@@ -915,6 +937,7 @@ accessCountryParam <- function(con){ accessCountryParamFromDB(con) }
 getCountryParam <- function(con, param, filter_enabled = TRUE){getCountryParamFromDB(con,param,filter_enabled)}
 accessCountryEffSurvType <- function(con,filter_enabled = TRUE){accessCountryEffSurvTypeFromDB(con, filter_enabled)}
 accessFDIMinorStrata <- function(con,filter_enabled = TRUE){accessFDIMinorStrataFromDB(con, filter_enabled)}
+accessPrefMarket <- function(con,filter_enabled = TRUE){accessPrefMarketFromDB(con, filter_enabled)}
 accessCountryISOCode <- function(con){ accessCountryISOCodeFromDB(con) }
 accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(con) }
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
@@ -1008,6 +1031,10 @@ accessFishingTripsCatch <- function(con,trip_type = NULL){accessFishingTripsCatc
 accessObserverVesselsDetails <- function(con,report_id){ accessObserverVesselsDetailsFromDB(con,report_id)}
 accessObserverTripsDetails <- function(con,report_id){ accessObserverTripsDetailsFromDB(con,report_id)}
 accessObserverReportsHasLogbook <- function(con,report_id){ accessObserverReportsHasLogbookFromDB(con,report_id)}
+
+#<MODULE:MARKET_TRADE_DATA_EXPORTER>
+#accessMarketTradeExporter
+accessMarketTradeExporter <- function(con,report_id){ accessMarketTradeExporterFromDB(con)}
 
 #GENERIC SERVER FUNCTIONS
 #<TRIP_GANTT_SERVER>

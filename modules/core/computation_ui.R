@@ -5,22 +5,6 @@ computation_ui <- function(id){
   
   bs4Dash::tabItem(
     tabName = "computation",
-    fluidRow(
-      column(
-        width = 6,
-        htmlOutput(ns("computation_info"))
-      )
-    ),
-    fluidRow(
-      style="display:flex;",
-      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_INDICATOR"), solidHeader = T, status = "primary",
-          uiOutput(ns("computation_by"))
-      ),
-      bs4Dash::box(width = 6, title = i18n("LABEL_BOX_PLOT"), solidHeader = T,  status = "primary",
-          uiOutput(ns("plot_wrapper"))
-      )
-    ),
-    uiOutput(ns("noDataMessage")),
-    uiOutput(ns("computation_summary"))
+    uiOutput(ns("main"))
   )
 }

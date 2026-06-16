@@ -102,33 +102,33 @@ artfish_year_summary<-function(data,target_year=NULL,variable,value, value_fun =
   summary<-data
   
   if(!is.null(levels)){
-    summary<-summary%>%filter(!!sym(variable)%in%levels)
+    summary<-summary |>filter(!!sym(variable)%in%levels)
   }
   
-  summary<-summary%>%
-    select(!!sym(variable),month,!!sym(value)) %>%
-    group_by(!!sym(variable),month)%>%
-    dplyr::summarise(!!value:=value_fun(!!sym(value),na.rm=T))%>%
+  summary<-summary |>
+    select(!!sym(variable),month,!!sym(value)) |>
+    group_by(!!sym(variable),month) |>
+    dplyr::summarise(!!value:=value_fun(!!sym(value),na.rm=T)) |>
     dplyr::mutate(month=sprintf('%02d',month),
-           !!variable:= as.character(!!sym(variable))) %>%
-    ungroup() %>% 
-    complete(nesting(!!sym(variable)),month=c("01","02","03","04","05","06","07","08","09","10","11","12"))%>%
-   bind_rows(group_by(.,!!sym(variable)) %>%
-               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
-               dplyr::mutate(month='Total')) %>%
-   bind_rows(group_by(.,month) %>%
-               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) %>%
-               dplyr::mutate(!!variable:='Total')) %>%
-   pivot_wider(names_from = month, values_from = !!sym(value))%>%
+           !!variable:= as.character(!!sym(variable))) |>
+    ungroup() |> 
+    complete(nesting(!!sym(variable)),month=c("01","02","03","04","05","06","07","08","09","10","11","12")) |>
+   bind_rows(group_by(.,!!sym(variable)) |>
+               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) |>
+               dplyr::mutate(month='Total')) |>
+   bind_rows(group_by(.,month) |>
+               dplyr::summarise(!!value:=sum(!!sym(value),na.rm=T)) |>
+               dplyr::mutate(!!variable:='Total')) |>
+   pivot_wider(names_from = month, values_from = !!sym(value)) |>
    select(!!sym(variable),`01`,`02`,`03`,`04`,`05`,`06`,`07`,`08`,`09`,`10`,`11`,`12`,"Total")
              
-  rank<-summary%>%
-    select(!!sym(variable),Total)%>%
-    filter(!!sym(variable)!="Total")%>%
-    dplyr::mutate(rank=rank(-Total))%>%
-    dplyr::mutate(percent=Total/sum(Total))%>%
-    arrange(-percent)%>%
-    dplyr::mutate(cum_percent=cumsum(percent))%>%
+  rank<-summary |>
+    select(!!sym(variable),Total) |>
+    filter(!!sym(variable)!="Total") |>
+    dplyr::mutate(rank=rank(-Total)) |>
+    dplyr::mutate(percent=Total/sum(Total)) |>
+    arrange(-percent) |>
+    dplyr::mutate(cum_percent=cumsum(percent)) |>
     select(!!sym(variable),rank,Total,percent,cum_percent)
              
   return(list(accuracy=accuracy,summary=summary,rank=rank))

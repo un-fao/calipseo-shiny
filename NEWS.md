@@ -1,4 +1,37 @@
-# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-17**
+# **calipseo-shiny [v2.2.9001](https://github.com/un-fao/calipseo-shiny) - 2026-05-12**
+
+## Bug fixes
+
+* [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
+
+## Enhancements
+
+* [#367](https://github.com/un-fao/calipseo-shiny/issues/367) Migrate country-specific R scripts to calipseo-data (private) repo
+
+
+# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260501) R package (0.1.20260501 pre-release)
+
+## Bug fixes
+
+- [#366](https://github.com/un-fao/calipseo-shiny/issues/366) Artfish UI - App reload doesn't recompute statistics and blocks refresh button
+
+
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-30**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260430) R package (0.1.20260430 pre-release)
+
+## Enhancements
+
+- [#364](https://github.com/un-fao/calipseo-shiny/issues/364) ArtFish UI modules refresh feature
+- [#365](https://github.com/un-fao/calipseo-shiny/issues/365) Support disabling of values UI in Artfish modules
+
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-27**
 
 ## New requirements
 
@@ -7,7 +40,9 @@
 
 ## Enhancements
 
+- [#338](https://github.com/un-fao/calipseo-shiny/issues/338) i18n management mechanism modernization
 - [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
+- [#363](https://github.com/un-fao/calipseo-shiny/issues/363) Replace magrittr pipe by native pipe
 
 ## New features
 

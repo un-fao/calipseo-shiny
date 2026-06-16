@@ -1,10 +1,18 @@
 #home_ui
-home_server <- function(id, parent.session, pool, reloader){
+home_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
  moduleServer(id, function(input, output, session) {
   
+  ns = session$ns
+   
   INFO("home: START")
   MODULE_START_TIME <- Sys.time()
+  
+  #i18n
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
   
   infos_fetched <- reactiveVal(FALSE)
   infos <- reactiveValues(
@@ -27,6 +35,22 @@ home_server <- function(id, parent.session, pool, reloader){
   observe({
     
     if(all(!sapply(reactiveValuesToList(infos), is.null))) infos_fetched(TRUE)
+    
+    output$main <- renderUI({
+      tagList(
+        uiOutput(ns("header")),
+        withSpinner(uiOutput(ns("nb_infos")))
+      )
+    })
+    
+    output$header <- renderUI({
+      fluidRow(
+        div(
+          width = 12, style = "margin:12px;",
+          tags$h2(i18n("HOME_CALIPSEO_TITLE"),tags$small(i18n("HOME_CALIPSEO_SUBTITLE")))
+        )
+      )
+    })
     
     output$nb_infos <- renderUI({
       fluidRow(

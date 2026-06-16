@@ -58,7 +58,7 @@ get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"),
       estimate <- do.call(
         rbind,
         lapply(1:nrow(input), function(i) {
-          readr::read_csv(input$file[i]) %>%
+          readr::read_csv(input$file[i]) |>
             mutate(status = input$status[i])
         })
       )
@@ -69,43 +69,43 @@ get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"),
     estimate <- input
     
     if(with_status){
-      estimate <- estimate %>%
+      estimate <- estimate |>
         dplyr::mutate(status = "staging")
     }
   }
   
   if(!is.null(ref_fishing_units)){
-    estimate <- estimate %>%
-      merge(ref_fishing_units %>%
-              select(ID,NAME) %>%
+    estimate <- estimate |>
+      merge(ref_fishing_units |>
+              select(ID,NAME) |>
               rename(fishing_unit = ID,
                      fishing_unit_label = NAME)
-      ) %>%
+      ) |>
       ungroup()
   }
   
   if(!is.null(ref_species)){
-    estimate <- estimate %>%
-      merge(ref_species %>%
-              select(ID,NAME,SCIENTIFIC_NAME) %>%
+    estimate <- estimate |>
+      merge(ref_species |>
+              select(ID,NAME,SCIENTIFIC_NAME) |>
               rename(species = ID,
                      species_label = NAME,
                      species_scientific = SCIENTIFIC_NAME)
-      )%>%
+      ) |>
       ungroup()
   }
   
   if(!is.null(ref_landing_sites)){
-    estimate <- estimate %>%
-      merge(ref_landing_sites %>%
-              select(ID,NAME) %>%
+    estimate <- estimate |>
+      merge(ref_landing_sites |>
+              select(ID,NAME) |>
               rename(landing_site = ID,
                      landing_site_label = NAME)
-      ) %>%
+      ) |>
       ungroup()
   }
   
-  estimate <- estimate %>%
+  estimate <- estimate |>
     mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
   return(estimate)
 }

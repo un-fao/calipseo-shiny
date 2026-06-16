@@ -1,12 +1,18 @@
 #artfish_fishing_unit_server
-artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
+artfish_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
   moduleServer(id, function(input, output, session){   
   
+    ns<-session$ns
+    
     INFO("artfish-fishing_unit: START")
     MODULE_START_TIME <- Sys.time()
     
-    ns<-session$ns
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     #reference data
     ref_species <- accessRefSpecies(pool)
@@ -29,7 +35,10 @@ artfish_fishing_unit_server <- function(id, parent.session, pool, reloader){
     artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
                                                  lang = appConfig$language, 
                                                  estimate = reactive({ estimate }), 
-                                                 effort_source = reactive({ effort_source }))
+                                                 effort_source = reactive({ effort_source }),
+                                                 opts = list(
+                                                   values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                                 ))
     
     MODULE_END_TIME <- Sys.time()
     INFO("artfish-unit: END")

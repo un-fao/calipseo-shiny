@@ -24,3 +24,5 @@ structure:
         title: Artfish
     artfish_explorer:
         title: Artfish (Explorer)
+    market_trade_data_exporter:
+        title: Market trade

@@ -6,6 +6,7 @@
 #' @usage trip_gantt_server(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full")
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param pool database connection 
 #' @param vessel_stat_type id number to vessel stat type
 #' @param vesselId registration number of vessel
@@ -13,9 +14,15 @@
 #' @param withMap boolean, if TRUE display fishing zone and landing site map
 #'    
 
-trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full", withMap=F) {
+trip_gantt_server <- function(id, lang = NULL, pool,vessel_stat_type=NULL,vesselId=NULL,mode="full", withMap=F) {
   moduleServer(id, function(input, output, session) {
+    
     ns <- session$ns
+    
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     data_ready<-reactiveVal(FALSE)
     data_formated<-reactiveVal(NULL)
@@ -30,7 +37,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         bs4Dash::box(id='trip-box', width = 12,
             fluidPage(
               fluidRow(column(8,offset=4,p(i18n("DISPLAY_TRIP_MSG")))),
-              fluidRow(plotlyOutput(ns("gantt"))%>%withSpinner(type = 4))
+              fluidRow(plotlyOutput(ns("gantt")) |>withSpinner(type = 4))
             ),
             collapsible = FALSE,
             maximizable = TRUE
@@ -68,7 +75,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
               column(3,offset=1,uiOutput(ns("page_selector"))),
               column(8,uiOutput(ns("message")))
             ),
-            plotlyOutput(ns("gantt"))%>%withSpinner(type = 4),
+            plotlyOutput(ns("gantt")) |>withSpinner(type = 4),
             collapsible = FALSE,
             maximizable = TRUE
           )
@@ -158,9 +165,9 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       if(!is.null(input$vesselname)){
         formated<-subset(formated,vesselname%in%input$vesselname)
       }
-      formated<-formated%>%
-        arrange(vesselname,date_from)%>%
-        group_by(vesselname)%>%
+      formated<-formated |>
+        arrange(vesselname,date_from) |>
+        group_by(vesselname) |>
         mutate(y=cur_group_id())
       
       output$page_selector<-renderUI({
@@ -188,9 +195,9 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
       
   if(mode=="light"){
     output$gantt<-renderPlotly({
-      trips<-trips%>%
-      arrange(vesselname,date_from)%>%
-      group_by(vesselname)%>%
+      trips<-trips |>
+      arrange(vesselname,date_from) |>
+      group_by(vesselname) |>
       mutate(y=cur_group_id())
         
       fig <- plot_ly(source="gantt")
@@ -224,7 +231,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                                  tickmode = "array", tickvals = unique(trips$y), ticktext = unique(trips$vesselname),
                                  domain = c(0, 1))
                     
-      )%>%event_register('plotly_click') 
+      ) |>event_register('plotly_click') 
     })
   }else{
     output$gantt<-renderPlotly({
@@ -263,7 +270,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                                      tickmode = "array", tickvals = unique(trips$y), ticktext = unique(trips$vesselname),
                                      domain = c(0, 1))
                         
-          )%>%event_register('plotly_click') 
+          ) |>event_register('plotly_click') 
         }
     })
   }
@@ -280,14 +287,14 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         output$table <- DT::renderDT(server = FALSE, {
           
-          species<-trip%>%
-            mutate(Species= sprintf("%s [<b>%s</b>]<br><em>%s</em> ",species_desc,species_asfis,species_sci))%>%
-            group_by(Species,quantity_unit)%>%
-            summarise(quantity=sum(quantity))%>%
-            ungroup()%>%
-            mutate(Percent=quantity/sum(quantity))%>%
-            arrange(-quantity)%>%
-            mutate(Quantity= sprintf("%s %s",round(quantity,0),tolower(quantity_unit)))%>%
+          species<-trip |>
+            mutate(Species= sprintf("%s [<b>%s</b>]<br><em>%s</em> ",species_desc,species_asfis,species_sci)) |>
+            group_by(Species,quantity_unit) |>
+            summarise(quantity=sum(quantity)) |>
+            ungroup() |>
+            mutate(Percent=quantity/sum(quantity)) |>
+            arrange(-quantity) |>
+            mutate(Quantity= sprintf("%s %s",round(quantity,0),tolower(quantity_unit))) |>
             select(Species,Quantity,Percent)
           
           names(species) <- c(i18n("TRIP_TABLE_COLNAME_1"),i18n("TRIP_TABLE_COLNAME_2"),
@@ -300,8 +307,8 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
             options = list(
               pageLength = 10, dom = 'tip',
               language = list(url = i18n("TABLE_LANGUAGE")))
-          )  %>%
-            formatPercentage(i18n("TRIP_TABLE_COLNAME_3"), 1) %>%
+          )  |>
+            formatPercentage(i18n("TRIP_TABLE_COLNAME_3"), 1) |>
             formatStyle(
               i18n("TRIP_TABLE_COLNAME_3"),
               background = styleColorBar(c(0,1), '#0288D1',-90),
@@ -315,10 +322,10 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         if(isTRUE(withMap)){
         
-        landing_site<-trip%>%
-          select(landing_site,ls_longitude,ls_latitude)%>%
-          distinct()%>%
-          rename(longitude=ls_longitude)%>%
+        landing_site<-trip |>
+          select(landing_site,ls_longitude,ls_latitude) |>
+          distinct() |>
+          rename(longitude=ls_longitude) |>
           rename(latitude=ls_latitude)
         
         output$landing_map <- renderUI({
@@ -331,17 +338,17 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         if(!is.na(landing_site$latitude)&!is.na(landing_site$longitude)){
           output$map_ls <- renderLeaflet({
-            leaflet() %>%
-              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
-              addMarkers(data = landing_site, lat = as.numeric(landing_site$latitude), lng = as.numeric(landing_site$longitude))%>%
+            leaflet() |>
+              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>
+              addMarkers(data = landing_site, lat = as.numeric(landing_site$latitude), lng = as.numeric(landing_site$longitude)) |>
               setView(lat = as.numeric(landing_site$latitude), lng = as.numeric(landing_site$longitude),zoom=6)
           })
         }
         
-        fishing_zone<-trip%>%
-          select(fishing_zone,fz_longitude,fz_latitude)%>%
-          distinct()%>%
-          rename(longitude=fz_longitude)%>%
+        fishing_zone<-trip |>
+          select(fishing_zone,fz_longitude,fz_latitude) |>
+          distinct() |>
+          rename(longitude=fz_longitude) |>
           rename(latitude=fz_latitude)
         
         output$fishingZone_map <- renderUI({
@@ -354,9 +361,9 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
         
         if(!is.na(fishing_zone$latitude)&!is.na(fishing_zone$longitude)){
           output$map_fz <- renderLeaflet({
-            leaflet() %>%
-              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
-              addMarkers(data = fishing_zone, lat = as.numeric(fishing_zone$latitude), lng = as.numeric(fishing_zone$longitude))%>%
+            leaflet() |>
+              addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>
+              addMarkers(data = fishing_zone, lat = as.numeric(fishing_zone$latitude), lng = as.numeric(fishing_zone$longitude)) |>
               setView(lat = as.numeric(fishing_zone$latitude), lng = as.numeric(fishing_zone$longitude),zoom=6)
           })
         }
@@ -422,7 +429,7 @@ trip_gantt_server <- function(id, pool,vessel_stat_type=NULL,vesselId=NULL,mode=
                   width = 4, color = "indigo"
                 )
               ),
-              fluidRow(column(10, align="center",offset=1,DTOutput(ns("table"))%>%withSpinner(type = 4)))
+              fluidRow(column(10, align="center",offset=1,DTOutput(ns("table")) |>withSpinner(type = 4)))
             )
             ,
             title = sprintf(paste(i18n("TITLE_TRIP_DETAILS_FOR_VESSEL"),"'%s' [%s]"),toupper(trip$vessel_name[1]),trip$reg_number[1]),

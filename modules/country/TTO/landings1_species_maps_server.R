@@ -1,12 +1,43 @@
 #landings1_species_maps_server
-landings1_species_maps_server <- function(id, parent.session, pool, reloader){
+landings1_species_maps_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
  moduleServer(id, function(input, output, session){  
+   
+   ns<-session$ns
    
    INFO("TTO_landings1-species-maps: START")
    MODULE_START_TIME = Sys.time() 
    
-   ns<-session$ns
+   #i18n
+   #-----------------------------------------------------------------------------
+   i18n_translator <- get_reactive_translator(lang)
+   i18n <- function(key){ i18n_translator()$t(key) }
+   #-----------------------------------------------------------------------------
+   
+   output$main <- renderUI({
+     tagList(
+       fluidRow(
+         bs4Dash::box(
+           width = 6,
+           htmlOutput(ns("landings1_species_maps_info")),
+           collapsible = FALSE
+         ),
+         bs4Dash::box(width = 6,
+                      div(class = "col-md-6",
+                          uiOutput(ns("mode_selector"))
+                      ),
+                      div(class = "col-md-6",
+                          uiOutput(ns("year_map_species_selector"))
+                      ),
+                      collapsible = FALSE
+         )
+       ),
+       fluidRow(
+         bs4Dash::box(width = 6, height = 645, title = "LAN", status = "primary", solidHeader = TRUE, leafletOutput(ns("map_species_LAN"), height = 600), collapsible = FALSE),
+         bs4Dash::box(width = 6, height = 645, title = "VAL", status = "primary", solidHeader = TRUE, leafletOutput(ns("map_species_VAL"), height = 600), collapsible = FALSE)
+       )
+     )
+   })
    
    output$mode_selector<-renderUI({
      
@@ -101,8 +132,8 @@ landings1_species_maps_server <- function(id, parent.session, pool, reloader){
       colors <- col_vector[1:(top+1)]
       
       #build the map
-      leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%  
+      leaflet() |>
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>  
         addMinicharts(
           coordinates(sites_descriptor)[,1L], coordinates(sites_descriptor)[,2L],
           type = "pie",
@@ -110,8 +141,8 @@ landings1_species_maps_server <- function(id, parent.session, pool, reloader){
           width = 60 * sqrt(sites_descriptor$TOTAL) / sqrt(max(sites_descriptor$TOTAL, na.rm = TRUE)), transitionTime = 0,
           colorPalette = colors)
     }else{
-      leaflet() %>%
-        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) %>%
+      leaflet() |>
+        addProviderTiles(providers$Esri.OceanBasemap, options = providerTileOptions(noWrap = TRUE)) |>
         addCircles(data = sites_descriptor, weight = 1, color = "#000000", fillColor = "#000000", fillOpacity = 0.7,
                    popup = paste(
                      em(paste0(i18n("LANDINGS1_SPECIES_MAPS_LANDING_SITE_LABEL"),": ")), sites_descriptor$NAME,br()
