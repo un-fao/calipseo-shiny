@@ -328,14 +328,14 @@ market_trade_data_exporter_server <- function(id, parent.session, lang = NULL, p
       
       #Compute aggregate by species group
       res_gr <- res_sp %>%
-        dplyr::mutate(species ="zzz")%>%
-        dplyr::group_by(species_group,species)%>%
+        dplyr::group_by(species_group)%>%
         dplyr::summarise(
-          mif = sum(mif),
+          species = "zzz",
           whs = sum(mif*whs) / sum(mif),
-          ret = sum(mif*ret) / sum(mif)
-        )%>%
-        dplyr::ungroup()
+          ret = sum(mif*ret) / sum(mif),
+          mif = sum(mif),
+          .groups = "drop"
+        )
       
       #Arrange, round and rename result
       res<-res_sp%>%
