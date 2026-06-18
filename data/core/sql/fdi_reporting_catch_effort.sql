@@ -3,7 +3,7 @@ v.REGISTRATION_NUMBER as vessel,
 ft.DATE_FROM as time_start,
 ft.DATE_TO as time_end,
 ft.TIME_SPENT_FISHING_ZONE as effort_fishing_duration,
-qu.NAME as effort_fishing_duration_type,
+fdi.CODE_FOR_CLASSIFICATION_TYPE as effort_fishing_duration_unit,
 ft.ID as fishing_trip,
 ftt.CODE as fishing_trip_type,
 ftt.RANKING as fishing_trip_type_priority,
@@ -17,8 +17,10 @@ geo.latitude_end,
 sp.ASFIS_CODE as species,
 pt.CODE_FOR_CLASSIFICATION_TYPE as processing_type,
 gear.CODE_FOR_CLASSIFICATION_TYPE as gear_type,
-ffm.CODE as fishing_mode,
-fmci.CODE as fishing_mode_org,
+fagc.VALUE_MEASURE as effort_number_gears,
+gchi.CODE_FOR_CLASSIFICATION_TYPE as effort_number_gears_unit,
+fa.NB_SETS as effort_number_sets,
+fmci.CODE_FOR_CLASSIFICATION_TYPE as fishing_mode,
 'catch' as measurement,
 'RC' as measurement_type,
 fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as measurement_value,
@@ -38,6 +40,13 @@ LEFT JOIN dt_fishing_activities_gear as fag ON fag.ID = fas.DT_FISHING_ACTIVITY_
 LEFT JOIN jt_ref_gear_ref_gear_classification_item as fagmap ON fagmap.CL_REF_GEAR_ID = fag.CL_REF_GEAR_ID 
 LEFT JOIN cl_ref_gear_classification_items as gear ON gear.ID = fagmap.CL_REF_GEAR_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_ref_gear_classification_types as gearct ON gearct.ID = gear.CL_REF_GEAR_CLASSIFICATION_TYPE_ID 
+LEFT JOIN dt_fishing_activity_gear_characteristics as fagc ON fagc.ID = fas.DT_FISHING_ACTIVITY_GEAR_ID 
+LEFT JOIN jt_fish_gear_characteristic_ref_effort_unit_classification_item as fagcmap ON fagcmap.CL_REF_GEAR_CHARACTERISTIC_ID = fagc.CL_REF_GEAR_CHARACTERISTIC_ID 
+LEFT JOIN cl_ref_gear_characteristic_classification_items as gchi ON gchi.ID = fagcmap.CL_REF_GEAR_CHARACTERISTIC_CLASSIFICATION_ITEM_ID 
+LEFT JOIN cl_ref_gear_characteristic_classification_types as gcht ON gcht.ID = gchi.CL_REF_GEAR_CHARACTERISTIC_CLASSIFICATION_TYPE_ID 
+LEFT JOIN jt_app_quantity_unit_ref_effort_unit_classification_item as fdmap ON fdmap.CL_APP_QUANTITY_UNIT_ID = qu.ID 
+LEFT JOIN cl_ref_gear_characteristic_classification_items as fdi ON fdi.ID = fdmap.CL_REF_GEAR_CHARACTERISTIC_CLASSIFICATION_ITEM_ID 
+LEFT JOIN cl_ref_gear_characteristic_classification_types as fdt ON fdt.ID = fdi.CL_REF_GEAR_CHARACTERISTIC_CLASSIFICATION_TYPE_ID 
 LEFT JOIN cl_fish_fishing_modes as ffm ON ffm.ID = fa.CL_FISH_FISHING_MODE_ID 
 LEFT JOIN jt_fish_fishing_mode_ref_fishing_mode_classification_item as fmmap ON fmmap.CL_FISH_FISHING_MODE_ID = ffm.ID 
 LEFT JOIN cl_ref_fishing_mode_classification_items as fmci ON fmci.ID = fmmap.CL_REF_FISHING_MODE_CLASSIFICATION_ITEM_ID 
