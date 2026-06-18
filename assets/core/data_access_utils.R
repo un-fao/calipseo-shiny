@@ -697,7 +697,7 @@ accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, rec
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
   fa_sql <- readSQL("data/core/sql/fdi_reporting_fishing_activities.sql")
   fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s'",
-                   fa_sql, receiver, receiver, receiver) #, receiver)
+                   fa_sql, receiver, receiver, receiver, receiver) #, receiver)
   if(!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
   }
@@ -710,8 +710,8 @@ accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, rec
 accessFDIFishingCEFromDB <- function(con, year = NULL, month = NULL, receiver, exclude_landing_forms = FALSE){
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
   fa_sql <- readSQL("data/core/sql/fdi_reporting_catch_effort.sql") #AMA CHANGED TO NEW SQL QUERY
-  fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s' AND fmct.CODE = '%s' AND ptct.CODE = '%s'", #ADDED PROCESSING TYPE FILTER
-                   fa_sql, receiver, receiver, receiver, receiver, receiver)
+  fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s' AND fmct.CODE = '%s' AND ptct.CODE = '%s' AND (gcht.CODE = '%s' OR gcht.CODE IS NULL) AND fdt.CODE = '%s'", #ADDED PROCESSING TYPE AND EFFORT TYPE FILTERS
+                   fa_sql, receiver, receiver, receiver, receiver, receiver, receiver, receiver)
   if(!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" AND year(ft.DATE_TO) = %s", year))
   }

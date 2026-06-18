@@ -164,6 +164,21 @@ iccat_t1nc <- function(con, data, metadata, file){
   return(task)
 }
 
+#iccat_t2ce
+iccat_t2ce <- function(con, data, metadata, file){
+  
+  data_for_iccat = data[data$receiver == "ICCAT",]
+  data_for_iccat$receiver = NULL
+  reporting_flow = repfishr::reporting_flow$new(
+    sender = accessCountryISOCode(con), 
+    sender_type = "country"
+  )
+  task = reporting_flow$getReceiver("ICCAT")$getTaskDefinitionById("iccat_task_t2ce")
+  out = task$report(data_for_iccat, metadata, path = file)
+  print(out)
+  return(task)
+}
+
 #wecafc_t1nc
 wecafc_t1nc <- function(con, data, metadata, file){
   
