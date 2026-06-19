@@ -1,4 +1,4 @@
-# **calipseo-shiny [v2.2.9004](https://github.com/un-fao/calipseo-shiny) - 2026-06-16**
+# **calipseo-shiny [v2.3.0](https://github.com/un-fao/calipseo-shiny) - 2026-06-19**
 
 ## Bug fixes
 
