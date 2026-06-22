@@ -87,7 +87,7 @@ loadLocalCountryDatasets <- function(config){
 
 #getLocalCountryDataset
 getLocalCountryDataset <- function(config,filename){
-  local_dir <- if(config$local) "../calipseo-data" else "data"
+  local_dir <- "../calipseo-data"
   country_dir <- sprintf("%s/country/%s", local_dir, config$country_profile$iso3)
   filename <- file.path(country_dir, filename)
   data <- switch(mime::guess_type(filename),
