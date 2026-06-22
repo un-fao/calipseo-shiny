@@ -1,4 +1,10 @@
-# **calipseo-shiny [v2.3.0](https://github.com/un-fao/calipseo-shiny) - 2026-06-19**
+# **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
+
+## Bug fixes
+
+* [#377](https://github.com/un-fao/calipseo-shiny/issues/377) Align getLocalCountryDataset on calipseo-data dir
+
+# **calipseo-shiny [v2.3.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.0) - 2026-06-19**
 
 ## Bug fixes
 
@@ -15,7 +21,7 @@
 
 * [#359](https://github.com/un-fao/calipseo-shiny/issues/359) Market Trade data exporter
 
-# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
+# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.2) - 2026-05-01**
 
 ## New requirements
 
@@ -26,7 +32,7 @@
 - [#366](https://github.com/un-fao/calipseo-shiny/issues/366) Artfish UI - App reload doesn't recompute statistics and blocks refresh button
 
 
-# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-30**
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.1) - 2026-04-30**
 
 ## New requirements
 
@@ -37,7 +43,7 @@
 - [#364](https://github.com/un-fao/calipseo-shiny/issues/364) ArtFish UI modules refresh feature
 - [#365](https://github.com/un-fao/calipseo-shiny/issues/365) Support disabling of values UI in Artfish modules
 
-# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-27**
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.0) - 2026-04-27**
 
 ## New requirements
 
