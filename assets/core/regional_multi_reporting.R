@@ -174,7 +174,16 @@ iccat_t2ce <- function(con, data, metadata, file){
     sender_type = "country"
   )
   task = reporting_flow$getReceiver("ICCAT")$getTaskDefinitionById("iccat_task_t2ce")
-  out = task$report(data_for_iccat, metadata, path = file)
+  
+  extra_params = list(
+    fishing_zones = {
+      country_dir <- sprintf("../calipseo-data/country/%s", reporting_flow$sender$id)
+      filename <- file.path(country_dir, "data/fishing_zones.gpkg")
+      sf::st_read(filename)
+    }
+  )
+  
+  out = task$report(data_for_iccat, metadata, params = extra_params, path = file)
   print(out)
   return(task)
 }
