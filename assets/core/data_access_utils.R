@@ -92,7 +92,9 @@ getLocalCountryDataset <- function(config,filename){
   filename <- file.path(country_dir, filename)
   data <- switch(mime::guess_type(filename),
                  "application/json" = jsonlite::read_json(filename),
-                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename))
+                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = as.data.frame(readxl::read_xlsx(filename)),
+                 "application/geopackage+sqlite3" = sf::st_read(filename),
+                 "application/vnd.shp" = sf::st_read(filename)
   )
   return(data)
 }
