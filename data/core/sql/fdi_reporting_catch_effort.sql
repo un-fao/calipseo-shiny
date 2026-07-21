@@ -9,6 +9,7 @@ ftt.CODE as fishing_trip_type,
 ftt.RANKING as fishing_trip_type_priority,
 ds.CODE_FOR_CLASSIFICATION_TYPE as data_source,
 fa.ID as fishing_activity,
+fafz.CODE as activity_zone,
 fz.CODE_FOR_CLASSIFICATION_TYPE as fishing_zone,
 geo.longitude_start,
 geo.latitude_start,
@@ -51,6 +52,7 @@ LEFT JOIN cl_fish_fishing_modes as ffm ON ffm.ID = fa.CL_FISH_FISHING_MODE_ID
 LEFT JOIN jt_fish_fishing_mode_ref_fishing_mode_classification_item as fmmap ON fmmap.CL_FISH_FISHING_MODE_ID = ffm.ID 
 LEFT JOIN cl_ref_fishing_mode_classification_items as fmci ON fmci.ID = fmmap.CL_REF_FISHING_MODE_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_ref_fishing_mode_classification_types as fmct ON fmct.ID = fmci.CL_REF_FISHING_MODE_CLASSIFICATION_TYPE_ID 
+LEFT JOIN cl_fish_fishing_zones as fafz ON fafz.ID = ft.CL_FISH_FISHING_ZONE_ID 
 LEFT JOIN jt_fish_fishing_zone_ref_fishing_zone_classification_item as fzmap ON fzmap.CL_FISH_FISHING_ZONE_ID = ft.CL_FISH_FISHING_ZONE_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_items as fz ON fz.ID = fzmap.CL_REF_FISHING_ZONE_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_ref_fishing_zone_classification_types as fzct ON fzct.ID = fz.CL_REF_FISHING_ZONE_CLASSIFICATION_TYPE_ID 
