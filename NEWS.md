@@ -1,3 +1,9 @@
+# **calipseo-shiny [v2.9999](https://github.com/un-fao/calipseo-shiny) - 2026-07-22** 
+
+## Enhancements
+
+* [#378](https://github.com/un-fao/calipseo-shiny/issues/378) Renaming tables to align on calipseo-model 2.0.0-RC1
+
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 
 ## Bug fixes
