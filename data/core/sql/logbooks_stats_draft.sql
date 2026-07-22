@@ -18,11 +18,11 @@ ft.ID as landing_id,
 ft.DATE_FROM as dep_datetime, ft.DATE_TO as ret_datetime, year(ft.DATE_TO) as year, month(ft.DATE_TO) as month, yearweek(ft.DATE_TO),
 vt.I18n_DEFAULT as vesstype, 
 fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as quantity
-FROM dt_fishing_activities as fa 
-LEFT JOIN dt_fishing_activities_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
-LEFT JOIN dt_fishing_trip as ft ON fa.DT_FISHING_TRIP_ID = ft.ID 
+FROM dt_fishing_trip_activities as fa 
+LEFT JOIN dt_fishing_trip_activity_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
+LEFT JOIN dt_fishing_trips as ft ON fa.DT_FISHING_TRIP_ID = ft.ID 
 LEFT JOIN reg_vessels as v ON ft.REG_VESSEL_ID = v.ID 
-LEFT JOIN cl_ref_vessel_types as vt ON vt.ID = v.CL_REF_VESSEL_TYPE_ID 
+LEFT JOIN cl_fish_vessel_types as vt ON vt.ID = v.CL_REF_VESSEL_TYPE_ID 
 WHERE v.CL_APP_VESSEL_STAT_TYPE_ID = 2
 ) as q
 GROUP BY q.landing_id, q.vesstype, q.year) as trip

@@ -9,4 +9,4 @@ LEFT JOIN reg_entities as e ON v.REG_ENTITY_OWNER_ID = e.ID
 LEFT JOIN cl_app_entity_types as et ON e.CL_APP_ENTITY_TYPE_ID = et.ID 
 LEFT JOIN reg_entity_individuals as ei ON e.ID = ei.REG_ENTITY_ID  
 LEFT JOIN cl_app_genders as g ON ei.CL_APP_GENDER_ID = g.ID 
-LEFT JOIN cl_ref_vessel_types as vt ON vt.ID = v.CL_REF_VESSEL_TYPE_ID 
+LEFT JOIN cl_fish_vessel_types as vt ON vt.ID = v.CL_REF_VESSEL_TYPE_ID 
