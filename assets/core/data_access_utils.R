@@ -778,7 +778,7 @@ accessMarketTradeExporterFromDB <- function(con){
 #multireporting
 accessFDIFishingActivitiesFromDB <- function(con, year = NULL, month = NULL, receiver, exclude_landing_forms = FALSE){
   DEBUG("Query FDI fishing activities for year %s - tailored to %s reporting", year, receiver)
-  fa_sql <- readSQL("data/core/sql/fdi_reporting_fishing_activities.sql")
+  fa_sql <- readSQL("data/core/sql/fdi_reporting_nominal_catch.sql")
   fa_sql = sprintf("%s AND gearct.CODE = '%s' AND fzct.CODE = '%s' AND dsct.CODE = '%s'",
                    fa_sql, receiver, receiver, receiver, receiver) #, receiver)
   if(!is.null(year)){
