@@ -627,6 +627,18 @@ accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
+#accessArtfishAFromDB
+accessArtfishAEffortSurveyFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_A_active_vessels_by_effort_survey.sql")
+  if(!is.null(fishing_unit)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
+  }
+  
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
 #accessArtfishB1FromDB
 accessArtfishB1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
   fa_sql <- readSQL("data/core/sql/artfish_B1_effort.sql")
@@ -1014,6 +1026,7 @@ accessSurveyPeriods <- function(con){ accessSurveyPeriodsFromDB(con) }
 accessEffortSurveyPeriods <- function(con){ accessEffortSurveyPeriodsFromDB(con)}
 #accessors for Artfish methodology
 accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishAEffortSurvey <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAEffortSurveyFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishB2 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB2FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
