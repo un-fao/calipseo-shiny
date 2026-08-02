@@ -661,6 +661,9 @@ accessArtfishB2FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL
     fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
+  if(any(is.na(fa$fleet_engagement_max))){
+    fa[is.na(fa$fleet_engagement_max),]$fleet_engagement_max = fa[is.na(fa$fleet_engagement_max),]$fleet_engagement_number
+  }
   return(fa)
 }
 #accessArtfishCFromDB
@@ -1025,8 +1028,18 @@ accessVesselsOwnersWithLogBooks <- function(con){ accessVesselsOwnersWithLogBook
 accessSurveyPeriods <- function(con){ accessSurveyPeriodsFromDB(con) }
 accessEffortSurveyPeriods <- function(con){ accessEffortSurveyPeriodsFromDB(con)}
 #accessors for Artfish methodology
-accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishAEffortSurvey <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAEffortSurveyFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+  cnt_iso3 = accessCountryISOCode(con)
+  if(cnt_iso3 %in% c("BHR")){
+    #specific case of BHR (for now) where Artfish active vessels are derived from effort survey
+    #parameterization deferred to Calipseo model 2.0 / Calipseo 3.0 with the transition to APIs
+    INFO("Bahrain active vessels - derived from effort survey")
+    accessArtfishAEffortSurvey(con, year=year, month=month, fishing_unit=fishing_unit)
+  }else{
+    accessArtfishAFromDB(con,year=year,month=month,fishing_unit=fishing_unit)  
+  }
+}
 accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishB2 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB2FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
 accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
