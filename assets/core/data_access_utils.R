@@ -622,7 +622,7 @@ accessArtfishAFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
     fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
   
   fa <- getFromSQL(con, fa_sql)
   return(fa)
@@ -634,7 +634,7 @@ accessArtfishAEffortSurveyFromDB <- function(con,year = NULL,month=NULL,fishing_
     fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
   
   fa <- getFromSQL(con, fa_sql)
   return(fa)
@@ -676,7 +676,7 @@ accessArtfishCFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL)
     fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
+  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
   
   fa <- getFromSQL(con, fa_sql)
   return(fa)
