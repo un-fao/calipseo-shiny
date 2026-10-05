@@ -463,21 +463,23 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20260529",
+      "Version": "0.1.20261005",
       "Source": "GitHub",
-      "Date": "2026-05-29",
+      "Date": "2026-10-05",
       "Title": "ArtFish for R",
-      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
+      "Authors@R": "c( person(\"Johanna\", \"Herfaut\", role = c(\"aut\")), person(\"Yann\", \"Laurent\", role = c(\"aut\")), person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Bracken\", \"Van Niekerk\", role = c(\"ctb\")) )",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
         "R (>= 4.1)"
       ],
       "Imports": [
         "methods",
+        "rlang",
         "dplyr",
         "tidyr",
+        "jsonlite",
+        "tibble",
         "readr",
-        "data.table",
         "DT",
         "lubridate",
         "vrule",
@@ -485,27 +487,32 @@
         "shiny",
         "shiny.i18n",
         "shinyWidgets",
+        "shinycssloaders",
         "bs4Dash",
-        "fdishinyr (>= 0.1.20260415)"
+        "plotly",
+        "fdishinyr (>= 0.1.20260911)"
       ],
       "Remotes": "fdiwg/vrule, fdiwg/fdishinyr",
       "Suggests": [
-        "testthat"
+        "testthat",
+        "knitr",
+        "rmarkdown"
       ],
       "Description": "Set of functions in support of ArtFish implementation.",
-      "License": "MIT",
+      "License": "MIT + file LICENSE",
       "URL": "https://github.com/fdiwg/artfishr, https://fdiwg.github.io/artfishr/",
       "BugReports": "https://github.com/fdiwg/artfishr/issues",
       "RoxygenNote": "7.3.3",
       "VignetteBuilder": "knitr",
+      "Encoding": "UTF-8",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "dfc3f7c07fe9cff6c523d7b426d93ca3733f37a1",
+      "RemoteSha": "073f7c038b9902a0981adab0f565cbcbf979a007",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
+      "Author": "Johanna Herfaut [aut], Yann Laurent [aut], Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Bracken Van Niekerk [ctb]"
     },
     "askpass": {
       "Package": "askpass",
@@ -1765,10 +1772,10 @@
     },
     "fdishinyr": {
       "Package": "fdishinyr",
-      "Version": "0.1.20260415",
+      "Version": "0.1.20260911",
       "Source": "GitHub",
-      "Date": "2026-04-15",
-      "Title": "FDI Shiny utils",
+      "Date": "2026-09-11",
+      "Title": "FDI Shiny Utils",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
@@ -1777,15 +1784,24 @@
       "Imports": [
         "shiny",
         "shiny.i18n",
-        "bs4Dash"
+        "shinycssloaders",
+        "bs4Dash",
+        "rlang",
+        "dplyr",
+        "plotly",
+        "scales",
+        "DT",
+        "htmlwidgets",
+        "tidyr"
       ],
       "Suggests": [
         "roxygen2",
         "testthat"
       ],
-      "Description": "FDI Shiny utils",
-      "URL": "https://github.com/fdiwg/fdishinyr",
+      "Description": "Set of common widgets in support to FDI shiny applications.",
+      "URL": "https://github.com/fdiwg/fdishinyr, https://fdiwg.github.io/fdishinyr/",
       "BugReports": "https://github.com/fdiwg/fdishinyr/issues",
+      "License": "MIT + file LICENSE",
       "LazyLoad": "yes",
       "Encoding": "UTF-8",
       "RoxygenNote": "7.3.3",
@@ -1794,8 +1810,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "fdishinyr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "0.1.20260415",
-      "RemoteSha": "db78f01148a5ed1a4137781f18e5b7b39c753faf",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "e05b5c2fc87618cd903d9889469bfb04ad893d8e",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
