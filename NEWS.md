@@ -1,15 +1,27 @@
-# **calipseo-shiny [v2.2.9001](https://github.com/un-fao/calipseo-shiny) - 2026-05-12**
+# **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
+
+## Bug fixes
+
+* [#377](https://github.com/un-fao/calipseo-shiny/issues/377) Align getLocalCountryDataset on calipseo-data dir
+
+# **calipseo-shiny [v2.3.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.0) - 2026-06-19**
 
 ## Bug fixes
 
 * [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
+* [#373](https://github.com/un-fao/calipseo-shiny/issues/373) Vessel info - Days at sea computation fails if time difference is 0 (units = secs)
+* [#374](https://github.com/un-fao/calipseo-shiny/issues/374) App breaks when no landing site coordinates are available
 
 ## Enhancements
 
 * [#367](https://github.com/un-fao/calipseo-shiny/issues/367) Migrate country-specific R scripts to calipseo-data (private) repo
+* [#371](https://github.com/un-fao/calipseo-shiny/issues/371) ICCAT T1NC reporting - Addition of conversion factors
 
+## New features
 
-# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny) - 2026-05-01**
+* [#359](https://github.com/un-fao/calipseo-shiny/issues/359) Market Trade data exporter
+
+# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.2) - 2026-05-01**
 
 ## New requirements
 
@@ -20,7 +32,7 @@
 - [#366](https://github.com/un-fao/calipseo-shiny/issues/366) Artfish UI - App reload doesn't recompute statistics and blocks refresh button
 
 
-# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny) - 2026-04-30**
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.1) - 2026-04-30**
 
 ## New requirements
 
@@ -31,7 +43,7 @@
 - [#364](https://github.com/un-fao/calipseo-shiny/issues/364) ArtFish UI modules refresh feature
 - [#365](https://github.com/un-fao/calipseo-shiny/issues/365) Support disabling of values UI in Artfish modules
 
-# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny) - 2026-04-27**
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.0) - 2026-04-27**
 
 ## New requirements
 

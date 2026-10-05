@@ -463,9 +463,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20260428",
+      "Version": "0.1.20260529",
       "Source": "GitHub",
-      "Date": "2026-04-28",
+      "Date": "2026-05-29",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -502,8 +502,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "0.1.20260501",
-      "RemoteSha": "f726d3e9c0cd6224d6d05f5896a5148d30ca480e",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "dfc3f7c07fe9cff6c523d7b426d93ca3733f37a1",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
     },
@@ -825,35 +825,6 @@
       "Author": "Winston Chang [aut, cre], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "CRAN"
-    },
-    "calipseoManagerR": {
-      "Package": "calipseoManagerR",
-      "Version": "0.1.0",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "SQL Management Tools for Calipseo Model",
-      "Author": "",
-      "Authors@R": "person(given = \"Alexandre\", family = \"Bennici\", email = \"bennicialexandre@gmail.com\", role = c(\"aut\", \"cre\"))",
-      "Maintainer": "The package maintainer <yourself@somewhere.net>",
-      "Description": "Provides R6 classes to manage SQL tables and data loading  for the Calipseo data model. Includes automated table discovery,  data entry, and SQL statement generation using DBI and pool.",
-      "License": "MIT",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.2.3",
-      "Imports": [
-        "DBI",
-        "R6",
-        "pool",
-        "dplyr",
-        "data.table",
-        "readr"
-      ],
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "calipseoManagerR",
-      "RemoteUsername": "abennici",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "7a986581adf842d30930b784c37c3f9aa71ad22d",
-      "NeedsCompilation": "no"
     },
     "cellranger": {
       "Package": "cellranger",
@@ -1754,6 +1725,41 @@
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
       "RemoteSha": "459d07665973c7d490c38558b5e5e86bc1aa8ef4",
+      "NeedsCompilation": "no",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
+    },
+    "fdisfdata": {
+      "Package": "fdisfdata",
+      "Version": "0.1",
+      "Source": "GitHub",
+      "Date": "2026-03-02",
+      "Title": "Spatial datasets for fisheries data interoperability",
+      "Authors@R": "c(person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Arturo\", \"Muñoz Albero\", role = c(\"ctb\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.2)"
+      ],
+      "Imports": [
+        "sf"
+      ],
+      "Suggests": [
+        "testthat",
+        "usethis",
+        "ows4R"
+      ],
+      "Description": "Spatial datasets for fisheries data interoperability",
+      "License": "MIT",
+      "URL": "https://github.com/fdiwg/fdisfdata",
+      "BugReports": "https://github.com/fdiwg/fdisfdata/issues",
+      "RoxygenNote": "7.3.3",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fdisfdata",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "c478e52f7de4634285dc998f36b692cfda423a33",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },
@@ -4038,26 +4044,6 @@
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "RSPM"
     },
-    "rJava": {
-      "Package": "rJava",
-      "Version": "1.0-11",
-      "Source": "Repository",
-      "Title": "Low-Level R to Java Interface",
-      "Author": "Simon Urbanek <simon.urbanek@r-project.org>",
-      "Maintainer": "Simon Urbanek <simon.urbanek@r-project.org>",
-      "Depends": [
-        "R (>= 3.6.0)",
-        "methods"
-      ],
-      "Description": "Low-level interface to Java VM very much like .C/.Call and friends. Allows creation of objects, calling methods and accessing fields.",
-      "License": "LGPL-2.1",
-      "URL": "http://www.rforge.net/rJava/",
-      "SystemRequirements": "Java JDK 1.2 or higher (for JRI/REngine JDK 1.4 or higher), GNU make",
-      "BugReports": "https://github.com/s-u/rJava/issues",
-      "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
-    },
     "rapidjsonr": {
       "Package": "rapidjsonr",
       "Version": "1.2.1",
@@ -4367,11 +4353,11 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20260214",
+      "Version": "0.1.20260528",
       "Source": "GitHub",
-      "Date": "2026-02-14",
+      "Date": "2026-05-28",
       "Title": "Fisheries data reporting flows",
-      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Arturo\", \"Muñoz Albero\", role = c(\"ctb\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
         "R (>= 4.2)"
@@ -4387,10 +4373,11 @@
         "mime",
         "vrule",
         "fdi4R",
+        "fdisfdata",
         "writexl",
         "openxlsx"
       ],
-      "Remotes": "fdiwg/vrule, fdiwg/fdi4R",
+      "Remotes": "fdiwg/vrule, fdiwg/fdi4R, fdiwg/fdisfdata",
       "Suggests": [
         "parallel",
         "testthat"
@@ -4406,10 +4393,10 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "c8bab4ff57c7b1928110ed03a6603aa0e85ba20e",
+      "RemoteRef": "0.1.20260528",
+      "RemoteSha": "6d416c333a59d97a84b65d07c647529628ddbb3a",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },
     "reshape2": {
       "Package": "reshape2",
@@ -6565,66 +6552,6 @@
       "Author": "Yihui Xie [aut, cre, cph] (ORCID: <https://orcid.org/0000-0003-0645-5666>, URL: https://yihui.org), Wush Wu [ctb], Daijiang Li [ctb], Xianying Tan [ctb], Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>), Christophe Dervieux [ctb]",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
-    },
-    "xlsx": {
-      "Package": "xlsx",
-      "Version": "0.6.5",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files",
-      "Imports": [
-        "rJava",
-        "xlsxjars",
-        "grDevices",
-        "utils"
-      ],
-      "LazyLoad": "yes",
-      "Authors@R": "c(person(given = \"Adrian\", family = \"Dragulescu\", role = c(\"aut\"), email = \"adrian.dragulescu@gmail.com\"), person(given = \"Cole\", family = \"Arendt\", role = c(\"aut\", \"cre\"), email = \"cole.arendt@outlook.com\") )",
-      "Description": "Provide R functions to read/write/format Excel 2007 and Excel 97/2000/XP/2003 file formats.",
-      "License": "GPL-3",
-      "URL": "https://github.com/colearendt/xlsx",
-      "BugReports": "https://github.com/colearendt/xlsx/issues",
-      "SystemRequirements": "java (>= 1.6)",
-      "Suggests": [
-        "rprojroot",
-        "testthat",
-        "covr",
-        "tibble",
-        "knitr",
-        "rmarkdown"
-      ],
-      "RoxygenNote": "7.1.0",
-      "VignetteBuilder": "knitr",
-      "NeedsCompilation": "no",
-      "Author": "Adrian Dragulescu [aut], Cole Arendt [aut, cre]",
-      "Maintainer": "Cole Arendt <cole.arendt@outlook.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
-    },
-    "xlsxjars": {
-      "Package": "xlsxjars",
-      "Version": "0.9.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Package Required POI Jars for the xlsx Package",
-      "Date": "2025-07-02",
-      "Depends": [
-        "rJava"
-      ],
-      "LazyLoad": "yes",
-      "Authors@R": "c(person(\"Cole\", \"Arendt\",  role = c(\"aut\", \"cre\"), email = \"cole.arendt@outlook.com\"), person(c(\"Adrian\", \"A.\"), \"Dragulescu\",  role = \"aut\", email = \"adrian.dragulescu@gmail.com\"),  person(\"The Apache Software Foundation\",  role = c(\"ctb\", \"cph\"),  comment = \"Apache POI, Apache XMLBeans, Apache Commons Codec\"))",
-      "Description": "The xlsxjars package collects all the external jars required for the xlxs package. This release corresponds to POI 3.13.",
-      "License": "GPL-3",
-      "Copyright": "See file COPYRIGHTS",
-      "NeedsCompilation": "no",
-      "SystemRequirements": "java (>= 1.6)",
-      "Suggests": [
-        "testthat (>= 3.0.0)"
-      ],
-      "Author": "Cole Arendt [aut, cre], Adrian A. Dragulescu [aut], The Apache Software Foundation [ctb, cph] (Apache POI, Apache XMLBeans, Apache Commons Codec)",
-      "Maintainer": "Cole Arendt <cole.arendt@outlook.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
     },
     "xml2": {
       "Package": "xml2",
