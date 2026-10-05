@@ -1,6 +1,6 @@
 SELECT * FROM 
  (SELECT 
- ft.ID as fishing_trip, 
+ ft.ID as fishing_trips, 
  year(ft.DATE_FROM) as year,
  month(ft.DATE_FROM) as month,
  day(ft.DATE_FROM) as day,
@@ -13,8 +13,8 @@ SELECT * FROM
  fas.CATCH_QUANTITY_LIVE_WEIGHT_EQUIVALENT as catch_nominal_landed, 
  fas.TOTAL_VALUE as trade_value, 
  fas.CATCH_NUMBER as catch_number 
- FROM dt_fishing_activities as fa 
- LEFT JOIN dt_fishing_activities_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
- LEFT JOIN cl_ref_species as sp ON fas.CL_REF_SPECIES_ID = sp.ID 
- LEFT JOIN dt_fishing_trip as ft ON fa.DT_FISHING_TRIP_ID = ft.ID
+ FROM dt_fishing_trip_activities as fa 
+ LEFT JOIN dt_fishing_trip_activity_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
+ LEFT JOIN cl_fish_species as sp ON fas.CL_REF_SPECIES_ID = sp.ID 
+ LEFT JOIN dt_fishing_trips as ft ON fa.DT_FISHING_TRIP_ID = ft.ID
  LEFT JOIN cl_fish_landing_sites as site ON ft.CL_TO_PORT_SITE_ID = site.ID) as l 

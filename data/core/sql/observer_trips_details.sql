@@ -20,13 +20,13 @@ SELECT
   sp.SCIENTIFIC_NAME AS SP_SCIENTIFIC_NAME, 
   sp.IS_ETP AS SP_IS_ETP 
 FROM dt_observer_reports r 
-LEFT JOIN dt_fishing_trip ft ON ft.ID = r.DT_FISHING_TRIP_ID 
-LEFT JOIN dt_fishing_activities fa ON fa.DT_FISHING_TRIP_ID = ft.ID 
-LEFT JOIN (SELECT DT_FISHING_ACTIVITY_ID, AVG(LONGITUDE) AS LONGITUDE, AVG(LATITUDE) AS LATITUDE FROM dt_fishing_activity_positions GROUP BY DT_FISHING_ACTIVITY_ID) pos ON pos.DT_FISHING_ACTIVITY_ID = fa.ID 
-LEFT JOIN dt_fishing_activities_observer fao ON fao.DT_FISHING_ACTIVITY_ID = fa.ID 
-LEFT JOIN dt_fishing_activities_species fas ON fas.DT_FISHING_ACTIVITY_ID = fa.ID 
+LEFT JOIN dt_fishing_trips ft ON ft.ID = r.DT_FISHING_TRIP_ID 
+LEFT JOIN dt_fishing_trip_activities fa ON fa.DT_FISHING_TRIP_ID = ft.ID 
+LEFT JOIN (SELECT DT_FISHING_ACTIVITY_ID, AVG(LONGITUDE) AS LONGITUDE, AVG(LATITUDE) AS LATITUDE FROM dt_fishing_trip_activity_positions GROUP BY DT_FISHING_ACTIVITY_ID) pos ON pos.DT_FISHING_ACTIVITY_ID = fa.ID 
+LEFT JOIN dt_fishing_trip_activity_observers fao ON fao.DT_FISHING_ACTIVITY_ID = fa.ID 
+LEFT JOIN dt_fishing_trip_activity_species fas ON fas.DT_FISHING_ACTIVITY_ID = fa.ID 
 LEFT JOIN cl_app_quantity_units u_landed ON u_landed.ID = fas.CL_APP_QUANTITY_UNIT_ID 
 LEFT JOIN cl_app_quantity_units u_discard ON u_discard.ID = fas.CL_APP_DISCARD_QUANTITY_UNIT_ID 
-LEFT JOIN dt_fishing_activities_gear fag ON fag.ID = fas.DT_FISHING_ACTIVITY_GEAR_ID 
-LEFT JOIN cl_ref_gears gear ON gear.ID = fag.CL_REF_GEAR_ID 
-LEFT JOIN cl_ref_species sp ON sp.ID = fas.CL_REF_SPECIES_ID
+LEFT JOIN dt_fishing_trip_activity_gears fag ON fag.ID = fas.DT_FISHING_ACTIVITY_GEAR_ID 
+LEFT JOIN cl_fish_gears gear ON gear.ID = fag.CL_REF_GEAR_ID 
+LEFT JOIN cl_fish_species sp ON sp.ID = fas.CL_REF_SPECIES_ID
