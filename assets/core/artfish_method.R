@@ -1,15 +1,20 @@
 ###Artfish estimates
 artfish_estimates <- function(con,
                             year = NULL, month = NULL,
-                            effort = NULL, effort_source = c("fisher_interview", "boat_counting"),
-                            active_vessels = NULL, active_vessels_strategy = NULL, active_days = NULL,
-                            landings=NULL, minor_strata = NULL, progress_fn = NULL){
+                            effort = NULL, effort_source = c("fisher_interview", "boat_counting", "household_interview"),
+                            active_vessels = NULL, active_vessels_strategy = NULL, 
+                            active_days = NULL,
+                            landings = NULL, 
+                            census_typology = NULL,
+                            minor_strata = NULL, progress_fn = NULL){
   
   effort_source = match.arg(effort_source)
-  if(is.null(active_vessels))active_vessels=accessArtfishA(con,year,month)
+  if(is.null(active_vessels)) active_vessels=accessArtfishA(con,year,month)
+  if(is.null(census_typology)) census_typology=accessArtfishA2(con,year,month)
   if(is.null(effort)) effort = switch(effort_source,
     "fisher_interview" = accessArtfishB1(con,year,month),
-    "boat_counting" = accessArtfishB2(con,year,month)
+    "boat_counting" = accessArtfishB2(con,year,month),
+    "household_interview" = accessArtfishB3(con,year,month)
   )
   if(is.null(active_days))active_days=accessArtfishC(con,year,month)
   if(is.null(landings))landings=accessArtfishD(con,year,month)
@@ -19,6 +24,7 @@ artfish_estimates <- function(con,
     effort_source = effort_source,
     active_vessels = active_vessels,
     active_vessels_strategy = active_vessels_strategy,
+    census_typology = census_typology,
     active_days = active_days,
     landings = landings,
     minor_strata = minor_strata,
@@ -42,14 +48,21 @@ artfish_estimates_explorer <- function(pool, refresh, progress_fn = NULL){
   })
   
   effort_source<-NULL
-  if(startsWith(ref_effort_survey_type(),"INTERVIEW")) effort_source<- "fisher_interview"
-  if(ref_effort_survey_type()=="VESSELCOUNT") effort_source<- "boat_counting"
+  if(startsWith(ref_effort_survey_type(),"INTERVIEW")) effort_source <- "fisher_interview"
+  if(ref_effort_survey_type()=="VESSELCOUNT") effort_source <- "boat_counting"
+  if(ref_effort_survey_type()=="HHINTERVIEW") effort_source<- "household_interview"
+  
   
   #active_vessels
   active_vessels_strategy <-"latest"
   active_vessels = reactive({
     refresh() #ensure we fetch DB data only on refresh
     accessArtfishA(pool)
+  })
+  #census_typology
+  census_typology = reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishA2(pool)
   })
   #effort
   effort <- NULL
@@ -60,6 +73,10 @@ artfish_estimates_explorer <- function(pool, refresh, progress_fn = NULL){
   if(effort_source=="boat_counting") effort <- reactive({
     refresh() #ensure we fetch DB data only on refresh
     accessArtfishB2(pool)
+  })
+  if(effort_source=="household_interview") effort <- reactive({
+    refresh() #ensure we fetch DB data only on refresh
+    accessArtfishB3(pool)
   })
   #active days
   active_days = reactive({
@@ -80,6 +97,7 @@ artfish_estimates_explorer <- function(pool, refresh, progress_fn = NULL){
     effort_source = reactive({ effort_source }),
     active_vessels = active_vessels,
     active_vessels_strategy = reactive({ active_vessels_strategy }),
+    census_typology = census_typology,
     active_days = active_days,
     landings = landings,
     minor_strata = minor_strata,
