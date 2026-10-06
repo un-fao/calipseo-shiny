@@ -463,43 +463,56 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20260128",
+      "Version": "0.1.20261005",
       "Source": "GitHub",
-      "Date": "2026-01-28",
+      "Date": "2026-10-05",
       "Title": "ArtFish for R",
-      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Johanna\", \"Herfaut\", role = c(\"aut\")))",
+      "Authors@R": "c( person(\"Johanna\", \"Herfaut\", role = c(\"aut\")), person(\"Yann\", \"Laurent\", role = c(\"aut\")), person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Bracken\", \"Van Niekerk\", role = c(\"ctb\")) )",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
-        "R (>= 4.0)"
+        "R (>= 4.1)"
       ],
       "Imports": [
         "methods",
+        "rlang",
         "dplyr",
         "tidyr",
+        "jsonlite",
+        "tibble",
         "readr",
+        "DT",
         "lubridate",
         "vrule",
         "ggplot2",
-        "shiny"
+        "shiny",
+        "shiny.i18n",
+        "shinyWidgets",
+        "shinycssloaders",
+        "bs4Dash",
+        "plotly",
+        "fdishinyr (>= 0.1.20260911)"
       ],
-      "Remotes": "fdiwg/vrule",
+      "Remotes": "fdiwg/vrule, fdiwg/fdishinyr",
       "Suggests": [
-        "testthat"
+        "testthat",
+        "knitr",
+        "rmarkdown"
       ],
       "Description": "Set of functions in support of ArtFish implementation.",
-      "License": "MIT",
+      "License": "MIT + file LICENSE",
       "URL": "https://github.com/fdiwg/artfishr, https://fdiwg.github.io/artfishr/",
       "BugReports": "https://github.com/fdiwg/artfishr/issues",
       "RoxygenNote": "7.3.3",
       "VignetteBuilder": "knitr",
+      "Encoding": "UTF-8",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "103ba48f66e90c287c185b0c1a3b09ca243f8e2b",
+      "RemoteSha": "073f7c038b9902a0981adab0f565cbcbf979a007",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Johanna Herfaut [aut]"
+      "Author": "Johanna Herfaut [aut], Yann Laurent [aut], Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Bracken Van Niekerk [ctb]"
     },
     "askpass": {
       "Package": "askpass",
@@ -820,35 +833,6 @@
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "CRAN"
     },
-    "calipseoManagerR": {
-      "Package": "calipseoManagerR",
-      "Version": "0.1.0",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "SQL Management Tools for Calipseo Model",
-      "Author": "",
-      "Authors@R": "person(given = \"Alexandre\", family = \"Bennici\", email = \"bennicialexandre@gmail.com\", role = c(\"aut\", \"cre\"))",
-      "Maintainer": "The package maintainer <yourself@somewhere.net>",
-      "Description": "Provides R6 classes to manage SQL tables and data loading  for the Calipseo data model. Includes automated table discovery,  data entry, and SQL statement generation using DBI and pool.",
-      "License": "MIT",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.2.3",
-      "Imports": [
-        "DBI",
-        "R6",
-        "pool",
-        "dplyr",
-        "data.table",
-        "readr"
-      ],
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "calipseoManagerR",
-      "RemoteUsername": "abennici",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "7a986581adf842d30930b784c37c3f9aa71ad22d",
-      "NeedsCompilation": "no"
-    },
     "cellranger": {
       "Package": "cellranger",
       "Version": "1.1.0",
@@ -988,10 +972,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "3.6.5",
+      "Version": "3.6.6",
       "Source": "Repository",
       "Title": "Helpers for Developing Command Line Interfaces",
-      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"gabor@posit.co\", role = c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", role = \"ctb\"), person(\"Kirill\", \"Müller\", role = \"ctb\"), person(\"Salim\", \"Brüggemann\", , \"salim-b@pm.me\", role = \"ctb\", comment = c(ORCID = \"0000-0002-5329-5987\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"gabor@posit.co\", role = c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", role = \"ctb\"), person(\"Kirill\", \"Müller\", role = \"ctb\"), person(\"Salim\", \"Brüggemann\", , \"salim-b@pm.me\", role = \"ctb\", comment = c(ORCID = \"0000-0002-5329-5987\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
       "Description": "A suite of tools to build attractive command line interfaces ('CLIs'), from semantic elements: headings, lists, alerts, paragraphs, etc. Supports custom themes via a 'CSS'-like language. It also contains a number of lower level 'CLI' elements: rules, boxes, trees, and 'Unicode' symbols with 'ASCII' alternatives. It support ANSI colors and text styles as well.",
       "License": "MIT + file LICENSE",
       "URL": "https://cli.r-lib.org, https://github.com/r-lib/cli",
@@ -1026,10 +1010,11 @@
       ],
       "Config/Needs/website": "r-lib/asciicast, bench, brio, cpp11, decor, desc, fansi, prettyunits, sessioninfo, tidyverse/tidytemplate, usethis, vctrs",
       "Config/testthat/edition": "3",
+      "Config/usethis/last-upkeep": "2025-04-25",
       "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.2",
+      "RoxygenNote": "7.3.2.9000",
       "NeedsCompilation": "yes",
-      "Author": "Gábor Csárdi [aut, cre], Hadley Wickham [ctb], Kirill Müller [ctb], Salim Brüggemann [ctb] (<https://orcid.org/0000-0002-5329-5987>), Posit Software, PBC [cph, fnd]",
+      "Author": "Gábor Csárdi [aut, cre], Hadley Wickham [ctb], Kirill Müller [ctb], Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Gábor Csárdi <gabor@posit.co>",
       "Repository": "CRAN"
     },
@@ -1605,7 +1590,7 @@
     },
     "ellipsis": {
       "Package": "ellipsis",
-      "Version": "0.3.2",
+      "Version": "0.3.3",
       "Source": "Repository",
       "Title": "Tools for Working with ...",
       "Description": "The ellipsis is a powerful tool for extending functions. Unfortunately  this power comes at a cost: misspelled arguments will be silently ignored.  The ellipsis package provides a collection of functions to catch problems and alert the user.",
@@ -1619,16 +1604,16 @@
         "R (>= 3.2)"
       ],
       "Imports": [
-        "rlang (>= 0.3.0)"
+        "rlang (>= 1.1.7)"
       ],
       "Suggests": [
         "covr",
         "testthat"
       ],
-      "NeedsCompilation": "yes",
+      "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut, cre], RStudio [cph]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-      "Repository": "RSPM"
+      "Repository": "CRAN"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -1747,9 +1732,88 @@
       "RemoteRepo": "fdi4R",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "6f995a04c9aa5b49dd87362d6cd386da448687e0",
+      "RemoteSha": "459d07665973c7d490c38558b5e5e86bc1aa8ef4",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
+    },
+    "fdisfdata": {
+      "Package": "fdisfdata",
+      "Version": "0.1.20260710",
+      "Source": "GitHub",
+      "Date": "2026-07-10",
+      "Title": "Spatial datasets for fisheries data interoperability",
+      "Authors@R": "c(person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Arturo\", \"Muñoz Albero\", role = c(\"ctb\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.2)"
+      ],
+      "Imports": [
+        "sf"
+      ],
+      "Suggests": [
+        "testthat",
+        "usethis",
+        "ows4R"
+      ],
+      "Description": "Spatial datasets for fisheries data interoperability",
+      "License": "MIT",
+      "URL": "https://github.com/fdiwg/fdisfdata",
+      "BugReports": "https://github.com/fdiwg/fdisfdata/issues",
+      "RoxygenNote": "7.3.3",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fdisfdata",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "3f0a0fcaaf6f0905bfb925e0d7205f4f11b3628b",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
+    },
+    "fdishinyr": {
+      "Package": "fdishinyr",
+      "Version": "0.1.20260911",
+      "Source": "GitHub",
+      "Date": "2026-09-11",
+      "Title": "FDI Shiny Utils",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")))",
+      "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
+      "Depends": [
+        "R (>= 4.1)"
+      ],
+      "Imports": [
+        "shiny",
+        "shiny.i18n",
+        "shinycssloaders",
+        "bs4Dash",
+        "rlang",
+        "dplyr",
+        "plotly",
+        "scales",
+        "DT",
+        "htmlwidgets",
+        "tidyr"
+      ],
+      "Suggests": [
+        "roxygen2",
+        "testthat"
+      ],
+      "Description": "Set of common widgets in support to FDI shiny applications.",
+      "URL": "https://github.com/fdiwg/fdishinyr, https://fdiwg.github.io/fdishinyr/",
+      "BugReports": "https://github.com/fdiwg/fdishinyr/issues",
+      "License": "MIT + file LICENSE",
+      "LazyLoad": "yes",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(r6 = TRUE)",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fdishinyr",
+      "RemoteUsername": "fdiwg",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "e05b5c2fc87618cd903d9889469bfb04ad893d8e",
+      "NeedsCompilation": "no",
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
     "fontawesome": {
       "Package": "fontawesome",
@@ -1823,16 +1887,16 @@
     },
     "fs": {
       "Package": "fs",
-      "Version": "1.6.6",
+      "Version": "2.1.0",
       "Source": "Repository",
       "Title": "Cross-Platform File System Operations Based on 'libuv'",
-      "Authors@R": "c( person(\"Jim\", \"Hester\", role = \"aut\"), person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = \"aut\"), person(\"Gábor\", \"Csárdi\", , \"csardi.gabor@gmail.com\", role = c(\"aut\", \"cre\")), person(\"libuv project contributors\", role = \"cph\", comment = \"libuv library\"), person(\"Joyent, Inc. and other Node contributors\", role = \"cph\", comment = \"libuv library\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Authors@R": "c( person(\"Jim\", \"Hester\", role = \"aut\"), person(\"Hadley\", \"Wickham\", role = \"aut\"), person(\"Gábor\", \"Csárdi\", role = \"aut\"), person(\"Jeroen\", \"Ooms\", , \"jeroenooms@gmail.com\", role = \"cre\"), person(\"libuv project contributors\", role = \"cph\", comment = \"libuv library\"), person(\"Joyent, Inc. and other Node contributors\", role = \"cph\", comment = \"libuv library\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
       "Description": "A cross-platform interface to file system operations, built on top of the 'libuv' C library.",
       "License": "MIT + file LICENSE",
       "URL": "https://fs.r-lib.org, https://github.com/r-lib/fs",
       "BugReports": "https://github.com/r-lib/fs/issues",
       "Depends": [
-        "R (>= 3.6)"
+        "R (>= 4.1)"
       ],
       "Imports": [
         "methods"
@@ -1850,17 +1914,17 @@
         "withr"
       ],
       "VignetteBuilder": "knitr",
-      "ByteCompile": "true",
+      "SystemRequirements": "libuv: libuv-devel (rpm) or libuv1-dev (deb). Alternatively to build the vendored libuv 'cmake' is required. GNU make.",
       "Config/Needs/website": "tidyverse/tidytemplate",
       "Config/testthat/edition": "3",
+      "Config/usethis/last-upkeep": "2025-04-23",
       "Copyright": "file COPYRIGHTS",
       "Encoding": "UTF-8",
       "Language": "en-US",
-      "RoxygenNote": "7.2.3",
-      "SystemRequirements": "GNU make",
+      "RoxygenNote": "7.3.3",
       "NeedsCompilation": "yes",
-      "Author": "Jim Hester [aut], Hadley Wickham [aut], Gábor Csárdi [aut, cre], libuv project contributors [cph] (libuv library), Joyent, Inc. and other Node contributors [cph] (libuv library), Posit Software, PBC [cph, fnd]",
-      "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
+      "Author": "Jim Hester [aut], Hadley Wickham [aut], Gábor Csárdi [aut], Jeroen Ooms [cre], libuv project contributors [cph] (libuv library), Joyent, Inc. and other Node contributors [cph] (libuv library), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
+      "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
     },
     "generics": {
@@ -3086,7 +3150,7 @@
     },
     "lifecycle": {
       "Package": "lifecycle",
-      "Version": "1.0.4",
+      "Version": "1.0.5",
       "Source": "Repository",
       "Title": "Manage the Life Cycle of your Package Functions",
       "Authors@R": "c( person(\"Lionel\", \"Henry\", , \"lionel@posit.co\", role = c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = \"aut\", comment = c(ORCID = \"0000-0003-4757-117X\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")) )",
@@ -3099,29 +3163,28 @@
       ],
       "Imports": [
         "cli (>= 3.4.0)",
-        "glue",
         "rlang (>= 1.1.0)"
       ],
       "Suggests": [
         "covr",
-        "crayon",
         "knitr",
-        "lintr",
+        "lintr (>= 3.1.0)",
         "rmarkdown",
         "testthat (>= 3.0.1)",
         "tibble",
         "tidyverse",
         "tools",
         "vctrs",
-        "withr"
+        "withr",
+        "xml2"
       ],
       "VignetteBuilder": "knitr",
       "Config/Needs/website": "tidyverse/tidytemplate, usethis",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
-      "RoxygenNote": "7.2.1",
+      "RoxygenNote": "7.3.3",
       "NeedsCompilation": "no",
-      "Author": "Lionel Henry [aut, cre], Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>), Posit Software, PBC [cph, fnd]",
+      "Author": "Lionel Henry [aut, cre], Hadley Wickham [aut] (ORCID: <https://orcid.org/0000-0003-4757-117X>), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Lionel Henry <lionel@posit.co>",
       "Repository": "CRAN"
     },
@@ -3996,26 +4059,6 @@
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "RSPM"
     },
-    "rJava": {
-      "Package": "rJava",
-      "Version": "1.0-11",
-      "Source": "Repository",
-      "Title": "Low-Level R to Java Interface",
-      "Author": "Simon Urbanek <simon.urbanek@r-project.org>",
-      "Maintainer": "Simon Urbanek <simon.urbanek@r-project.org>",
-      "Depends": [
-        "R (>= 3.6.0)",
-        "methods"
-      ],
-      "Description": "Low-level interface to Java VM very much like .C/.Call and friends. Allows creation of objects, calling methods and accessing fields.",
-      "License": "LGPL-2.1",
-      "URL": "http://www.rforge.net/rJava/",
-      "SystemRequirements": "Java JDK 1.2 or higher (for JRI/REngine JDK 1.4 or higher), GNU make",
-      "BugReports": "https://github.com/s-u/rJava/issues",
-      "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
-    },
     "rapidjsonr": {
       "Package": "rapidjsonr",
       "Version": "1.2.1",
@@ -4325,14 +4368,14 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20251222",
+      "Version": "0.1.20260716",
       "Source": "GitHub",
-      "Date": "2025-1222",
+      "Date": "2026-07-16",
       "Title": "Fisheries data reporting flows",
-      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")))",
+      "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Arturo\", \"Muñoz Albero\", role = c(\"ctb\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Depends": [
-        "R (>= 4.0)"
+        "R (>= 4.2)"
       ],
       "Imports": [
         "R6",
@@ -4343,19 +4386,22 @@
         "yaml",
         "readr",
         "mime",
+        "lubridate",
         "vrule",
         "fdi4R",
+        "fdisfdata",
         "writexl",
         "openxlsx"
       ],
-      "Remotes": "fdiwg/vrule, fdiwg/fdi4R",
+      "Remotes": "fdiwg/vrule, fdiwg/fdi4R, fdiwg/fdisfdata",
       "Suggests": [
         "parallel",
         "testthat"
       ],
       "Description": "R framework to facilitate fisheries data reporting flows, with first intention to help countries to validate,  format and send data to relevant organizations including regional fisheries management organizations or bodies handling data collection reference frameworks, and FAO.",
-      "URL": "https://github.com/fdiwg/repfishr",
+      "URL": "https://github.com/fdiwg/repfishr, https://fdiwg.github.io/repfishr/",
       "BugReports": "https://github.com/fdiwg/repfishr/issues",
+      "License": "MIT + file LICENSE",
       "LazyLoad": "yes",
       "Encoding": "UTF-8",
       "RoxygenNote": "7.3.3",
@@ -4365,9 +4411,9 @@
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "13591fa7079485848e3331d297f5f638e1c56717",
+      "RemoteSha": "115ae2863ec1eb12deecb0842dd37f7489a61cd5",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>)"
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },
     "reshape2": {
       "Package": "reshape2",
@@ -4438,16 +4484,16 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.1.6",
+      "Version": "1.3.0",
       "Source": "Repository",
       "Title": "Functions for Base Types and Core R and 'Tidyverse' Features",
+      "Authors@R": "c( person(\"Lionel\", \"Henry\", , \"lionel@posit.co\", role = c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = \"aut\"), person(\"mikefc\", , , \"mikefc@coolbutuseless.com\", role = \"cph\", comment = \"Hash implementation based on Mike's xxhashlite\"), person(\"Yann\", \"Collet\", role = \"cph\", comment = \"Author of the embedded xxHash library\"), person(\"Posit, PBC\", role = c(\"cph\", \"fnd\")) )",
       "Description": "A toolbox for working with base types, core R features like the condition system, and core 'Tidyverse' features like tidy evaluation.",
-      "Authors@R": "c( person(\"Lionel\", \"Henry\", ,\"lionel@posit.co\", c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", ,\"hadley@posit.co\", \"aut\"), person(given = \"mikefc\", email = \"mikefc@coolbutuseless.com\", role = \"cph\", comment = \"Hash implementation based on Mike's xxhashlite\"), person(given = \"Yann\", family = \"Collet\", role = \"cph\", comment = \"Author of the embedded xxHash library\"), person(given = \"Posit, PBC\", role = c(\"cph\", \"fnd\")) )",
       "License": "MIT + file LICENSE",
-      "ByteCompile": "true",
-      "Biarch": "true",
+      "URL": "https://rlang.r-lib.org, https://github.com/r-lib/rlang",
+      "BugReports": "https://github.com/r-lib/rlang/issues",
       "Depends": [
-        "R (>= 3.5.0)"
+        "R (>= 4.0.0)"
       ],
       "Imports": [
         "utils"
@@ -4466,7 +4512,7 @@
         "pkgload",
         "rmarkdown",
         "stats",
-        "testthat (>= 3.2.0)",
+        "testthat (>= 3.3.2)",
         "tibble",
         "usethis",
         "vctrs (>= 0.2.3)",
@@ -4475,13 +4521,14 @@
       "Enhances": [
         "winch"
       ],
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.2",
-      "URL": "https://rlang.r-lib.org, https://github.com/r-lib/rlang",
-      "BugReports": "https://github.com/r-lib/rlang/issues",
+      "Biarch": "true",
+      "ByteCompile": "true",
       "Config/build/compilation-database": "true",
-      "Config/testthat/edition": "3",
       "Config/Needs/website": "dplyr, tidyverse/tidytemplate",
+      "Config/roxygen2/version": "8.0.0",
+      "Config/testthat/edition": "3",
+      "Config/testthat/parallel": "true",
+      "Encoding": "UTF-8",
       "NeedsCompilation": "yes",
       "Author": "Lionel Henry [aut, cre], Hadley Wickham [aut], mikefc [cph] (Hash implementation based on Mike's xxhashlite), Yann Collet [cph] (Author of the embedded xxHash library), Posit, PBC [cph, fnd]",
       "Maintainer": "Lionel Henry <lionel@posit.co>",
@@ -5017,6 +5064,50 @@
       "Author": "Winston Chang [aut, cre] (ORCID: <https://orcid.org/0000-0002-1576-2126>), Joe Cheng [aut], JJ Allaire [aut], Carson Sievert [aut] (ORCID: <https://orcid.org/0000-0002-4958-2844>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Yihui Xie [aut], Jeff Allen [aut], Jonathan McPherson [aut], Alan Dipert [aut], Barbara Borges [aut], Posit Software, PBC [cph, fnd], jQuery Foundation [cph] (jQuery library and jQuery UI library), jQuery contributors [ctb, cph] (jQuery library; authors listed in inst/www/shared/jquery-AUTHORS.txt), jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in inst/www/shared/jqueryui/AUTHORS.txt), Mark Otto [ctb] (Bootstrap library), Jacob Thornton [ctb] (Bootstrap library), Bootstrap contributors [ctb] (Bootstrap library), Twitter, Inc [cph] (Bootstrap library), Prem Nawaz Khan [ctb] (Bootstrap accessibility plugin), Victor Tsaran [ctb] (Bootstrap accessibility plugin), Dennis Lembree [ctb] (Bootstrap accessibility plugin), Srinivasu Chakravarthula [ctb] (Bootstrap accessibility plugin), Cathy O'Connor [ctb] (Bootstrap accessibility plugin), PayPal, Inc [cph] (Bootstrap accessibility plugin), Stefan Petre [ctb, cph] (Bootstrap-datepicker library), Andrew Rowls [ctb, cph] (Bootstrap-datepicker library), Brian Reavis [ctb, cph] (selectize.js library), Salmen Bejaoui [ctb, cph] (selectize-plugin-a11y library), Denis Ineshin [ctb, cph] (ion.rangeSlider library), Sami Samhuri [ctb, cph] (Javascript strftime library), SpryMedia Limited [ctb, cph] (DataTables library), John Fraser [ctb, cph] (showdown.js library), John Gruber [ctb, cph] (showdown.js library), Ivan Sagalaev [ctb, cph] (highlight.js library), R Core Team [ctb, cph] (tar implementation from R)",
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "CRAN"
+    },
+    "shiny.i18n": {
+      "Package": "shiny.i18n",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Title": "Shiny Applications Internationalization",
+      "Authors@R": "c( person(\"Jakub\", \"Nowicki\", email = \"opensource+kuba@appsilon.com\", role = c(\"cre\", \"aut\")), person(\"Dominik\", \"Krzemiński\", email = \"raymon92@gmail.com\", role = c(\"aut\")), person(\"Krystian\", \"Igras\", email = \"krystian8207@gmail.com\", role = c(\"aut\")), person(\"Jakub\", \"Sobolewski\", email = \"jakub.sobolewski@appsilon.com\", role = c(\"aut\")), person(\"Appsilon Sp. z o.o.\", role = \"cph\", email = \"opensource@appsilon.com\") )",
+      "Description": "It provides easy internationalization of Shiny applications. It can be used as standalone translation package to translate reports, interactive visualizations or graphical elements as well.",
+      "Depends": [
+        "R (>= 3.3.0)"
+      ],
+      "Imports": [
+        "yaml",
+        "jsonlite",
+        "methods",
+        "stringr",
+        "R6",
+        "glue",
+        "shiny",
+        "rstudioapi",
+        "utils"
+      ],
+      "License": "MIT + file LICENSE",
+      "Encoding": "UTF-8",
+      "URL": "https://appsilon.github.io/shiny.i18n/, https://github.com/Appsilon/shiny.i18n",
+      "BugReports": "https://github.com/Appsilon/shiny.i18n/issues",
+      "RoxygenNote": "7.2.1",
+      "Suggests": [
+        "covr",
+        "googleLanguageR",
+        "knitr",
+        "lintr",
+        "rcmdcheck",
+        "rmarkdown",
+        "spelling",
+        "testthat",
+        "withr",
+        "quarto"
+      ],
+      "Language": "en-US",
+      "NeedsCompilation": "no",
+      "Author": "Jakub Nowicki [cre, aut], Dominik Krzemiński [aut], Krystian Igras [aut], Jakub Sobolewski [aut], Appsilon Sp. z o.o. [cph]",
+      "Maintainer": "Jakub Nowicki <opensource+kuba@appsilon.com>",
+      "Repository": "RSPM"
     },
     "shinyFiles": {
       "Package": "shinyFiles",
@@ -6235,9 +6326,9 @@
     },
     "vrule": {
       "Package": "vrule",
-      "Version": "0.1.20251222",
+      "Version": "0.1.20260209",
       "Source": "GitHub",
-      "Date": "2025-12-22",
+      "Date": "2026-02-09",
       "Title": "Tools to validate data based on business validation rules",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel@fao.org\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), email = \"alexandre.bennici@fao.org\", comment = c(ORCID = \"0000-0003-2160-3487\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -6268,7 +6359,7 @@
       "RemoteRepo": "vrule",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "3f4b550018365c4d3e6e035bd0a856decea4b9eb",
+      "RemoteSha": "37f9c2d0800c90be2f4672302e3c43885f982cc5",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>)"
     },
@@ -6479,66 +6570,6 @@
       "Author": "Yihui Xie [aut, cre, cph] (ORCID: <https://orcid.org/0000-0003-0645-5666>, URL: https://yihui.org), Wush Wu [ctb], Daijiang Li [ctb], Xianying Tan [ctb], Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>), Christophe Dervieux [ctb]",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
-    },
-    "xlsx": {
-      "Package": "xlsx",
-      "Version": "0.6.5",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files",
-      "Imports": [
-        "rJava",
-        "xlsxjars",
-        "grDevices",
-        "utils"
-      ],
-      "LazyLoad": "yes",
-      "Authors@R": "c(person(given = \"Adrian\", family = \"Dragulescu\", role = c(\"aut\"), email = \"adrian.dragulescu@gmail.com\"), person(given = \"Cole\", family = \"Arendt\", role = c(\"aut\", \"cre\"), email = \"cole.arendt@outlook.com\") )",
-      "Description": "Provide R functions to read/write/format Excel 2007 and Excel 97/2000/XP/2003 file formats.",
-      "License": "GPL-3",
-      "URL": "https://github.com/colearendt/xlsx",
-      "BugReports": "https://github.com/colearendt/xlsx/issues",
-      "SystemRequirements": "java (>= 1.6)",
-      "Suggests": [
-        "rprojroot",
-        "testthat",
-        "covr",
-        "tibble",
-        "knitr",
-        "rmarkdown"
-      ],
-      "RoxygenNote": "7.1.0",
-      "VignetteBuilder": "knitr",
-      "NeedsCompilation": "no",
-      "Author": "Adrian Dragulescu [aut], Cole Arendt [aut, cre]",
-      "Maintainer": "Cole Arendt <cole.arendt@outlook.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
-    },
-    "xlsxjars": {
-      "Package": "xlsxjars",
-      "Version": "0.9.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Package Required POI Jars for the xlsx Package",
-      "Date": "2025-07-02",
-      "Depends": [
-        "rJava"
-      ],
-      "LazyLoad": "yes",
-      "Authors@R": "c(person(\"Cole\", \"Arendt\",  role = c(\"aut\", \"cre\"), email = \"cole.arendt@outlook.com\"), person(c(\"Adrian\", \"A.\"), \"Dragulescu\",  role = \"aut\", email = \"adrian.dragulescu@gmail.com\"),  person(\"The Apache Software Foundation\",  role = c(\"ctb\", \"cph\"),  comment = \"Apache POI, Apache XMLBeans, Apache Commons Codec\"))",
-      "Description": "The xlsxjars package collects all the external jars required for the xlxs package. This release corresponds to POI 3.13.",
-      "License": "GPL-3",
-      "Copyright": "See file COPYRIGHTS",
-      "NeedsCompilation": "no",
-      "SystemRequirements": "java (>= 1.6)",
-      "Suggests": [
-        "testthat (>= 3.0.0)"
-      ],
-      "Author": "Cole Arendt [aut, cre], Adrian A. Dragulescu [aut], The Apache Software Foundation [ctb, cph] (Apache POI, Apache XMLBeans, Apache Commons Codec)",
-      "Maintainer": "Cole Arendt <cole.arendt@outlook.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
     },
     "xml2": {
       "Package": "xml2",

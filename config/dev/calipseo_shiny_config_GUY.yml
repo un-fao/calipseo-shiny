@@ -1,4 +1,5 @@
 language: en
+debug: true
 country_profile:
     iso3: GUY
     website: null

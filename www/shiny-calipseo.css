@@ -87,3 +87,7 @@ ul.vessel li {
   min-width: 0;
 }
 
+.toasts-bottom-right {
+  right: 20px !important;
+  bottom: 40px !important;
+}

@@ -1,9 +1,15 @@
 #artisanal_validation_server
-artisanal_validation_server <- function(id, parent.session, pool, reloader) {
+artisanal_validation_server <- function(id, parent.session, lang = NULL, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
 
     ns <- session$ns
+    
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     #Initialize object
     out<-reactiveValues(
@@ -34,6 +40,22 @@ artisanal_validation_server <- function(id, parent.session, pool, reloader) {
       "currency_ice_price", "unit_volume_ice_price", "departure_site_name",
       "departure_district", "fishing_zone_name", "notes"
     )
+    
+    #main UI
+    output$main <- renderUI({
+      
+      tagList(
+        tags$h2(i18n("ARTISANAL_VALIDATION_TITLE")),
+        fluidRow(
+          column(3,uiOutput(ns("file_input_wrapper"))),    
+          column(1,style = "margin-top: 25px;", uiOutput(ns("validity_btn"))),
+          column(1,style = "margin-top: 25px;", uiOutput(ns("generate_SQL_btn"))),
+          column(1,style = "margin-top: 25px;", uiOutput(ns("generate_report_btn")))
+        ),
+        uiOutput(ns("validity_result"))
+      )    
+      
+    })
     
     go_visualisation<-reactiveVal(FALSE)
     

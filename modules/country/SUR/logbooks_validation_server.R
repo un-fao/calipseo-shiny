@@ -1,12 +1,18 @@
 #logbooks_validation_server
-logbooks_validation_server <- function(id, parent.session, pool, reloader) {
+logbooks_validation_server <- function(id, parent.session, lang = NULL, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
+    
+    ns <- session$ns
     
     INFO("SUR_logbooks-validation: START")
     MODULE_START_TIME = Sys.time()
     
-    ns <- session$ns
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     out<-reactiveValues(
       result=NULL,
@@ -22,6 +28,23 @@ logbooks_validation_server <- function(id, parent.session, pool, reloader) {
       "fishing_zone_code", "fishing_zone_name", "fishing_gear_code",
       "fishing_gear_name"
     )
+    
+    output$main <- renderUI({
+      tagList(
+        tags$h2(i18n("LOGBOOKS_VALIDATION_TITLE")),
+        fluidRow(
+          column(3,
+                 fileInput(inputId = ns("file_to_validate"), label = paste0(i18n("LOGBOOK_VALIDATION_FILEINPUT_LABEL_TITLE"),":"),multiple = FALSE,accept = c(".xlsx"))),
+          column(2,style = "margin-top: 25px;",uiOutput(ns("validity_btn")))
+        ),
+        fluidRow(
+          uiOutput(ns("validity_result"))
+        ),
+        fluidRow(
+          uiOutput(ns("generate_SQL_btn"))
+        )
+      )
+    })
     
     #Validity to file in input
     output$validity_btn<-renderUI({
@@ -211,7 +234,6 @@ logbooks_validation_server <- function(id, parent.session, pool, reloader) {
         
       }
     })
-    
     
     observeEvent(input$file_to_validate, {
       output$validity_result<-renderUI(NULL)

@@ -9,6 +9,10 @@ ui <- shiny::tagList(
           HTML(createBase64Image(src = appConfig$country_profile$logo, width = '60px', alt = 'Logo')),
           style = "margin: 8px !important;"
         )
+      ),
+      rightUi = tags$li(
+        class = "dropdown",
+        uiOutput("app_language", inline = T)
       )
     ),
     bs4Dash::dashboardSidebar(
@@ -24,7 +28,8 @@ ui <- shiny::tagList(
         tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js")
       ),
       loadModuleUIs(appConfig),
-      shinyjs::useShinyjs()
+      shinyjs::useShinyjs(),
+      waiter::useWaiter()
     )
   ),
   tags$footer(footer(getAppId(), getAppVersion(), getAppDate()), align = "center")

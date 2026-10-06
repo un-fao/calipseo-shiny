@@ -6,15 +6,22 @@
 #' @usage sunburst_chart_server(id,df,colVariables,colValue,mode)
 #'                 
 #' @param id specific id of module to be able to link ui and server part
+#' @param lang lang
 #' @param df dataframe 
 #' @param colVariables list of column names available to selection and display
 #' @param colValue column name of value
 #' @param mode indicate mode to display result, 4 modes available ,'plot','table','plot+table','table+plot'
 #'    
 
-sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mode="plot") {
+sunburst_chart_server <- function(id, lang = NULL, df,colVariables=list(),colValue="value",mode="plot") {
   moduleServer(id, function(input, output, session) {
+    
     ns <- session$ns
+    
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
     
     output$select_variable<-renderUI({
       bucket_list(
@@ -40,21 +47,21 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
     
     data_formating<-eventReactive(c(input$selected_variable),{
       
-      df<-df%>%
+      df<-df |>
         rename(setNames(colValue,"value"))
       
       if(!is.null(input$selected_variable)){
         
-        new_df<-df%>%
-          select(input$selected_variable,value)%>%
-          group_by_at(input$selected_variable)%>%
-          summarise(value=sum(value,na.rm=T))%>%
+        new_df<-df |>
+          select(input$selected_variable,value) |>
+          group_by_at(input$selected_variable) |>
+          summarise(value=sum(value,na.rm=T)) |>
           ungroup()
       
         data_for_table<-data_for_table(new_df)
         
-        new_df<-new_df%>%
-          mutate(parent="",root="Total")%>%
+        new_df<-new_df |>
+          mutate(parent="",root="Total") |>
           relocate(c(parent,root),.before=everything())
         
         sb_df<-do.call("rbind",lapply(2:(ncol(new_df)-1), function(i){
@@ -72,13 +79,13 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
           
           target_df<-new_df[,c(1:i,ncol(new_df))]
           
-          target_df<-target_df%>%
-            group_by_at(c(target_cols))%>%
-            summarise(value=sum(value))%>%
-            rowwise()%>%
-            #mutate(ids = paste0(!!!syms(target_cols)))%>%
-            unite(ids,target_cols2, sep = " - ", remove = FALSE)%>%
-            unite(parents,target_parent, sep = " - ", remove = FALSE)%>%
+          target_df<-target_df |>
+            group_by_at(c(target_cols)) |>
+            summarise(value=sum(value)) |>
+            rowwise() |>
+            #mutate(ids = paste0(!!!syms(target_cols))) |>
+            unite(ids,target_cols2, sep = " - ", remove = FALSE) |>
+            unite(parents,target_parent, sep = " - ", remove = FALSE) |>
             ungroup()
           
           out<-data.frame(ids=target_df$ids,
@@ -104,7 +111,7 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
       
       if(isTRUE(data_ready())){
         
-        p<-data_formated()%>%plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = length(colVariables)+1,hoverinfo="label+value+percent parent+percent root")
+        p<-data_formated() |>plot_ly(ids = ~ids, labels = ~labels, parents = ~parents,values= ~values, type = 'sunburst',branchvalues = 'total',maxdepth = length(colVariables)+1,hoverinfo="label+value+percent parent+percent root")
 
       }
     })
@@ -137,7 +144,7 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
             exportOptions = list(
               modifiers = list(page = "all",selected=TRUE)
             ),
-            language = list(url = i18n("STATISTIC_TABLE_LANGUAGE"))
+            language = list(url = i18n("TABLE_LANGUAGE"))
           )
         )
       }
@@ -148,21 +155,21 @@ sunburst_chart_server <- function(id, df,colVariables=list(),colValue="value",mo
       switch(mode,
              'plot+table'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4)),
+                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4))
                )
              },
              'table+plot'={
                tabsetPanel(
-                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table"))%>%withSpinner(type = 4)),
-                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot"))%>%withSpinner(type = 4))
+                 tabPanel(i18n("TABPANEL_STATISTIC"),DTOutput(ns("table")) |>withSpinner(type = 4)),
+                 tabPanel(i18n("TABPANEL_PLOT"),plotlyOutput(ns("plot")) |>withSpinner(type = 4))
                )
              },
              'plot'={
-               plotlyOutput(ns("plot"))%>%withSpinner(type = 4)
+               plotlyOutput(ns("plot")) |>withSpinner(type = 4)
              },
              'table'={
-               DTOutput(ns("table"))%>%withSpinner(type = 4)
+               DTOutput(ns("table")) |>withSpinner(type = 4)
              }
       )
     })

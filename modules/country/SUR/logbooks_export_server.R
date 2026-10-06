@@ -1,12 +1,48 @@
 #logbooks_export_server
-logbooks_export_server <- function(id, parent.session, pool, reloader) {
+logbooks_export_server <- function(id, parent.session, lang = NULL, pool, reloader) {
   
   moduleServer(id, function(input, output, session){  
+    
+    ns <- session$ns
     
     INFO("SUR_logbooks-export: START")
     MODULE_START_TIME = Sys.time()
     
-    ns <- session$ns
+    #i18n
+    #-----------------------------------------------------------------------------
+    i18n_translator <- get_reactive_translator(lang)
+    i18n <- function(key){ i18n_translator()$t(key) }
+    #-----------------------------------------------------------------------------
+    
+    output$main <- renderUI({
+      tagList(
+        tags$h2(i18n("LOGBOOKS_EXPORT_TITLE")),
+        fluidRow(
+          div(
+            class = "col-md-2",
+            uiOutput(ns("year_wrapper"))
+          ),
+          div(
+            class = "col-md-2",
+            uiOutput(ns("aggregate_wrapper"))
+          ),
+          div(
+            class = "col-md-2",
+            uiOutput(ns("task_wrapper"))
+          ),
+          div(
+            class = "col-md-2",
+            uiOutput(ns("format_wrapper"))
+          )
+        ),
+        fluidRow(
+          div(
+            class = "col-md-2",
+            uiOutput(ns("btn_wrapper"))
+          )
+        )
+      )
+    })
     
     output$year_wrapper<-renderUI({
       years<-accessAvailableYears(pool)$year

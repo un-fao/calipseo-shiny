@@ -65,7 +65,11 @@ server <- function(input, output, session) {
     
     module <- input[["calipseo-tabs"]]
     INFO("UI - Accessing module '%s' from sidebar menu", module)
-    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, appConfig, pool, module_state, reloader)
+    
+    lang = appConfig$language
+    if(!is.null(input$selected_language)) lang = input$selected_language
+    
+    id_out <- loadModuleServer(input[["calipseo-tabs"]], session, lang = lang, appConfig, pool, module_state, reloader)
     switch(attr(id_out, "status"),
       "initialize" = {
         module_state$initialized = c(module_state$initialized, id_out)
@@ -91,5 +95,78 @@ server <- function(input, output, session) {
       DEBUG("- modules to be reloaded: %s", paste0(module_state$toreload, collapse = ","))
     }
   },ignoreNULL = F)
+  
+  #i18n
+  #-----------------------------------------------------------------------------
+  output$app_language <- renderUI({
+    req(!is.null(appConfig$language_selector)) #display app_language only in case it is specified in app config
+    
+    #default language choices
+    language_choices = setNames(
+      appConfig$translator$get_languages()[-1],
+      c("العربية", "English", "Español", "Français","Русский","中文")
+    )
+    #restraint language choices in case language list is provided in config
+    if(!is.null(appConfig$language_list)){
+      language_choices = language_choices[language_choices %in% appConfig$language_list]
+    }
+    
+    tags$div(
+      selectInput(
+        "selected_language", label = NULL,
+        choices = language_choices,
+        selected = appConfig$translator$get_translation_language(),
+        width = "110px",
+        
+      ),
+      style = "float:right;margin-left:5px;padding-top:2px;"
+    )
+  })
+  
+  #we render on dynamic language (provided by the selector)
+  observeEvent(input$selected_language, {
+    shiny.i18n::update_lang(input$selected_language)
+  })
+  #-----------------------------------------------------------------------------
+  
+  #ARTFISH PROVIDER
+  # Storage for provider (initially empty)
+  artfish_provider_r <- reactiveVal(NULL)
+  
+  # Function to get or create provider on demand
+  get_artfish_provider <- function() {
+    
+    provider <- artfish_provider_r()
+    
+    if (is.null(provider)) {
+      
+      INFO("Lazy-creating Artfish computation provider")
+      
+      progress_callback <- function(label, p = NULL) {
+        session$sendCustomMessage(
+          "update_progress_label",
+          list(
+            percent = if (!is.null(p)) sprintf("%d%%", round(p * 100)) else "",
+            text = label
+          )
+        )
+      }
+      
+      provider <- artfish_computation_provider_server(
+        id = "artfish_provider",
+        pool = pool,
+        reloader = reloader,
+        progress_fn = progress_callback
+      )
+      
+      artfish_provider_r(provider)
+    }
+    
+    provider
+  }
+  
+  # Expose getter via session$userData (read-only)
+  session$userData$get_artfish_provider <- get_artfish_provider
+  
   
 }

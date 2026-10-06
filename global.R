@@ -54,7 +54,9 @@ require(data.tree)
 require(DiagrammeR)
 
 #R FDI packages
+require(fdi4R)
 require(vrule)
+require(fdishinyr)
 require(artfishr)
 require(repfishr)
 
@@ -79,6 +81,7 @@ appConfig$local <- local
 
 #debug
 if(is.null(appConfig$debug)) appConfig$debug <- FALSE
+if(appConfig$debug) options(shiny.reactlog = TRUE)
 
 #language (in case not part of configuration)
 if(is.null(appConfig$language)) appConfig$language <- "en"
@@ -112,13 +115,17 @@ CALIPSEO_SHINY_ENV <- new.env()
 #utilities
 #---------------------------------------------------------------------------------------
 #core R script utils
+source("assets/core/utils.R") #to load loggers
 core_assets <- list.files("assets/core", pattern = ".R", full.names = T)
 for(core_asset in core_assets) source(core_asset)
 
 #country R script utils
-country_assets <- list.files(path = file.path("./assets/country", appConfig$country_profile$iso3), 
+country_assets <- list.files(path = file.path("../calipseo-data/country", appConfig$country_profile$iso3), 
                              pattern = ".R", recursive = TRUE, full.names = TRUE)
-for(country_asset in country_assets){ source(country_asset) }
+for(country_asset in country_assets){
+  INFO("Loading country R script '%s'", country_asset)
+  source(country_asset) 
+}
 
 #country profile
 #---------------------------------------------------------------------------------------
@@ -144,8 +151,7 @@ loadRemoteReferenceDataset("cl_isscaap_group","https://raw.githubusercontent.com
 
 #language/i18n
 #---------------------------------------------------------------------------------------
-#we extend appConfig with i18n iterms
-appConfig$i18n <- getModuleI18nTerms()
+appConfig$translator = set_translator(appConfig)
 
 #modules
 #---------------------------------------------------------------------------------------
