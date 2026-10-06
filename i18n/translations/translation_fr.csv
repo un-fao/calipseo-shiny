@@ -68,6 +68,8 @@ COMPUTATION_TITLE,Statistiques
 COMPUTATION_YEAR_LABEL,Année
 COMPUTATION_YEAR_PLACEHOLDER_LABEL,Sélectionner une année
 COMPUTATION_YEAR_PLACEHOLDER_LABEL_EMPTY,Pas d'année disponible
+COMPUTATION_LOCKED,"Ce résultat a été approuvé, vous pouvez relancer le calcul en fournissant une explication"
+COMPUTATION_UNLOCKED,"Ce résulat a été calculé mais pas approuvé à ce stade, vous pouvez relancer le calcul"
 CONFIDENCE_INTERVAL_NORMAL_DISTRIBUTION,Intervalle de confiance (CI) - distribution normale
 CONFIDENCE_INTERVAL_QUANTILE_METHOD,Intervalle de confiance (CI) - méthode par quantile
 CONFIDENCE_INTERVAL_T_DISTRIBUTION,Intervalle de confiance (CI) - distribution t
@@ -494,7 +496,7 @@ STATISTIC_TABLE_COLNAME_5,Moyenne
 STATISTIC_TABLE_COLNAME_6,Médiane
 STATUS,Statut
 STATUS_APPROVED,Approuvé
-STATUS_COMPUTED,Terminé
+STATUS_COMPUTED,Calculé
 STATUS_NOT_AVAILABLE,Non calculable
 STATUS_TO_COMPUTE,A calculer
 STEP_SELECTOR_LABEL,Grouper les âges par :
