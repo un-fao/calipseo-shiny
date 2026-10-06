@@ -1,4 +1,4 @@
-# **calipseo-shiny - 3.0.0.9000 - 2026-10-05**
+# **calipseo-shiny - 3.0.0.9000 - 2026-10-06**
 
 ## Enhancements
 
@@ -6,6 +6,7 @@
 * [#382](https://github.com/un-fao/calipseo-shiny/issues/382) Create specific accessor for Bahrain active vessels
 * [#383](https://github.com/un-fao/calipseo-shiny/issues/383) Create specific accessor for Bahrain active days
 * [#384](https://github.com/un-fao/calipseo-shiny/issues/384) Add minor_strata to all Artfishr SQL queries
+* [#336](https://github.com/un-fao/calipseo-shiny/issues/336) Computation module scalability and user-friendliness enhancements
 
 ## New features
 
