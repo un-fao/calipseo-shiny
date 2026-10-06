@@ -1,6 +1,6 @@
 SELECT * FROM 
  (SELECT 
- ft.ID as fishing_trips, 
+ ft.ID as fishing_trip, 
  year(ft.DATE_FROM) as year,
  month(ft.DATE_FROM) as month,
  day(ft.DATE_FROM) as day,
