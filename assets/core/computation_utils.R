@@ -229,7 +229,6 @@ isReleasable <- function(id, target_period, config, indicators){
   })
   
   releasable<-all(result)
-  INFO("[ISReleasable] '%s' indicator is %s for the period '%s'",id,ifelse(releasable,"releasable","not releasable"),target_period)
   return(releasable)
   
 }
