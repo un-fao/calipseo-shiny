@@ -1,5 +1,5 @@
-#artfish_fishing_unit_server
-artfish_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_sws_fishing_unit_server
+artfish_sws_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
   moduleServer(id, function(input, output, session){   
   
@@ -32,7 +32,7 @@ artfish_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, r
     INFO("Get Artfish computation outputs for UI")
     estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
  
-    artfishr::artfish_shiny_fishing_unit_server("artfish_fishing_unit", 
+    artfishr::artfish_shiny_fishing_unit_server("artfish_sws_fishing_unit", 
                                                  lang = appConfig$language, 
                                                  estimate = reactive({ estimate }), 
                                                  effort_source = reactive({ effort_source }),

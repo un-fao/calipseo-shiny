@@ -1,6 +1,6 @@
 {
   "type": "subitem",
-  "parent": "statistics",
+  "parent": "sws",
   "rank": 2,
   "title": "1st Landings - Charts",
   "icon": "chart-line"

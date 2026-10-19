@@ -1,5 +1,5 @@
-#artfish_report_server
-artfish_report_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_sws_report_server
+artfish_sws_report_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
   
@@ -39,7 +39,7 @@ artfish_report_server <- function(id, parent.session, lang = NULL, pool, reloade
 
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species, ref_landing_sites, with_status=T)
   
-  artfishr::artfish_shiny_report_server("artfish_report",
+  artfishr::artfish_shiny_report_server("artfish_sws_report",
                                         lang = lang,
                                         estimate = estimate,
                                         effort_source = effort_source,

@@ -1,6 +1,6 @@
 {
   "type": "subitem",
-  "parent": "statistics",
+  "parent": "sws",
   "rank": 5,
   "title": "Monthly Report",
   "icon": "table"

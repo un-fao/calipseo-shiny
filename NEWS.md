@@ -11,10 +11,13 @@
 * [#394](https://github.com/un-fao/calipseo-shiny/issues/394) Move Artfish modules to Statistics (computation) menu
 * [#395](https://github.com/un-fao/calipseo-shiny/issues/395) Display 'No results' UI on Artfish UI when no results
 
-
 ## New features
 
 * [#387](https://github.com/un-fao/calipseo-shiny/issues/387) Support Household type Artfishr queries
+
+## Bug fixes
+
+* [#396](https://github.com/un-fao/calipseo-shiny/issues/396) Computation module triggers reload of Artfish explorer modules
 
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 

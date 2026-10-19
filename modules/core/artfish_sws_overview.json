@@ -1,6 +1,6 @@
 {
   "type": "subitem",
-  "parent": "statistics",
+  "parent": "sws",
   "rank": 2,
   "title": "Total Catch and Effort",
   "icon": "chart-line"
