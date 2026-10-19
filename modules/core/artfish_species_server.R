@@ -25,7 +25,11 @@ artfish_species_server <- function(id, parent.session, lang = NULL, pool, reload
   artfishr::artfish_shiny_species_server("artfish_species", lang = lang, 
                                          estimate = reactive({ estimate }),
                                          opts = list(
-                                           values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                           values_ui = if(!is.null(estimate)){
+                                             if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                           }else{
+                                             FALSE
+                                           }
                                          ))
   
   MODULE_END_TIME <- Sys.time()

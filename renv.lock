@@ -463,9 +463,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20261005",
+      "Version": "0.1.20261019",
       "Source": "GitHub",
-      "Date": "2026-10-05",
+      "Date": "2026-10-19",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Johanna\", \"Herfaut\", role = c(\"aut\")), person(\"Yann\", \"Laurent\", role = c(\"aut\")), person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Bracken\", \"Van Niekerk\", role = c(\"ctb\")) )",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -510,7 +510,7 @@
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
-      "RemoteSha": "073f7c038b9902a0981adab0f565cbcbf979a007",
+      "RemoteSha": "36c9fb983306da829b8a3c044c10a597e0e49b7c",
       "NeedsCompilation": "no",
       "Author": "Johanna Herfaut [aut], Yann Laurent [aut], Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Bracken Van Niekerk [ctb]"
     },

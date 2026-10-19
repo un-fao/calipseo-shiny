@@ -23,8 +23,6 @@ artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloa
   files <- getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
   INFO("Retrieved %s computation files", nrow(files))
   
-  req(nrow(files) > 0)
-  
   INFO("Get Artfish computation outputs for UI")
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
   

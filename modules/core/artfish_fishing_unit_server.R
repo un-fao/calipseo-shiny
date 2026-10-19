@@ -37,7 +37,11 @@ artfish_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, r
                                                  estimate = reactive({ estimate }), 
                                                  effort_source = reactive({ effort_source }),
                                                  opts = list(
-                                                   values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                                   values_ui = if(!is.null(estimate)){
+                                                     if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                                   }else{
+                                                     FALSE
+                                                   }
                                                  ))
     
     MODULE_END_TIME <- Sys.time()
