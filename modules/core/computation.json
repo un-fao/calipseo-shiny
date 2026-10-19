@@ -1,8 +1,8 @@
 {
   "type": "subitem",
-  "parent": "statistics",
+  "parent": "sws",
   "rank": 1,
   "title": "Compute indicators",
   "icon": "database",
-  "linked_modules": ["artfish_*", "landings1_*"]
+  "linked_modules": ["artfish_sws_*", "landings1_*"]
 }

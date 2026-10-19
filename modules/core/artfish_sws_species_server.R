@@ -1,5 +1,5 @@
-#artfish_species_server
-artfish_species_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_sws_species_server
+artfish_sws_species_server <- function(id, parent.session, lang = NULL, pool, reloader){
  
  moduleServer(id, function(input, output, session){   
    
@@ -22,10 +22,14 @@ artfish_species_server <- function(id, parent.session, lang = NULL, pool, reload
   INFO("Get Artfish computation outputs for UI")
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)    
   
-  artfishr::artfish_shiny_species_server("artfish_species", lang = lang, 
+  artfishr::artfish_shiny_species_server("artfish_sws_species", lang = lang, 
                                          estimate = reactive({ estimate }),
                                          opts = list(
-                                           values_ui = if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                           values_ui = if(!is.null(estimate)){
+                                             if(sum(estimate$trade_value, na.rm = T) == 0) FALSE else TRUE
+                                           }else{
+                                             FALSE
+                                           }
                                          ))
   
   MODULE_END_TIME <- Sys.time()

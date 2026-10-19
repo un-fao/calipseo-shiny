@@ -50,6 +50,8 @@ get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"),
                                       ref_fishing_units = NULL, ref_species = NULL, ref_landing_sites = NULL, 
                                       with_status = FALSE){
   
+  if(nrow(input)==0) return(NULL)
+  
   input_type <- match.arg(input_type)
   
   if(input_type == "file"){
@@ -107,5 +109,6 @@ get_artfish_results_for_ui = function(input,input_type = c("file","data.frame"),
   
   estimate <- estimate |>
     mutate(date = as.Date(sprintf("%04d-%02d-01",year,month)))
+  if(nrow(estimate)==0) estimate = NULL
   return(estimate)
 }

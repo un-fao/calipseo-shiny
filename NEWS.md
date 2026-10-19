@@ -1,4 +1,4 @@
-# **calipseo-shiny - 3.0.0.9000 - 2026-10-06**
+# **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-19**
 
 ## Enhancements
 
@@ -7,10 +7,17 @@
 * [#383](https://github.com/un-fao/calipseo-shiny/issues/383) Create specific accessor for Bahrain active days
 * [#384](https://github.com/un-fao/calipseo-shiny/issues/384) Add minor_strata to all Artfishr SQL queries
 * [#336](https://github.com/un-fao/calipseo-shiny/issues/336) Computation module scalability and user-friendliness enhancements
+* [#393](https://github.com/un-fao/calipseo-shiny/issues/393) Add missing logos for VUT / SOM
+* [#394](https://github.com/un-fao/calipseo-shiny/issues/394) Move Artfish modules to Statistics (computation) menu
+* [#395](https://github.com/un-fao/calipseo-shiny/issues/395) Display 'No results' UI on Artfish UI when no results
 
 ## New features
 
 * [#387](https://github.com/un-fao/calipseo-shiny/issues/387) Support Household type Artfishr queries
+
+## Bug fixes
+
+* [#396](https://github.com/un-fao/calipseo-shiny/issues/396) Computation module triggers reload of Artfish explorer modules
 
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 

@@ -1,7 +1,7 @@
 {
   "type": "subitem",
-  "parent": "artfish",
-  "rank": 3,
+  "parent": "sws",
+  "rank": 4,
   "title": "C&E by Species",
   "icon": "fish"
 }

@@ -1,18 +1,20 @@
-#artfish_species_explorer_server
-artfish_species_explorer_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_explorer_overview_server
+artfish_explorer_overview_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
-  moduleServer(id, function(input, output, session){   
+  moduleServer(id, function(input, output, session){
     
-    ns<-session$ns
+    ns <- session$ns
     
-    INFO("artfish-species_explorer: START")
-    MODULE_START_TIME <- Sys.time()  
-  
+    INFO("artfish-overview-explorer: START")
+    MODULE_START_TIME <- Sys.time()
+    
     #i18n
     #-----------------------------------------------------------------------------
     i18n_translator <- get_reactive_translator(lang)
     i18n <- function(key){ i18n_translator()$t(key) }
     #-----------------------------------------------------------------------------
+    
+    result <- reactiveVal(NULL)
     
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")
@@ -45,10 +47,10 @@ artfish_species_explorer_server <- function(id, parent.session, lang = NULL, poo
         ref_species = artfish$ref_species()
       )
     })
-      
-    artfishr::artfish_shiny_species_server(
-      "artfish_species_explorer", 
-      lang = lang, 
+    
+    artfishr::artfish_shiny_overview_server(
+      "artfish_explorer_overview",
+      lang = lang,
       estimate = estimate_r,
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata,
@@ -62,9 +64,9 @@ artfish_species_explorer_server <- function(id, parent.session, lang = NULL, poo
     })
     
     MODULE_END_TIME <- Sys.time()
-    INFO("artfish-species_explorer: END")
-    DEBUG_MODULE_PROCESSING_TIME("Artfish-species_explorer", MODULE_START_TIME, MODULE_END_TIME)
     
-  })  
-  
+    INFO("artfish-overview-explorer: END")
+    DEBUG_MODULE_PROCESSING_TIME("Artfish-overview-explorer", MODULE_START_TIME, MODULE_END_TIME)
+    
+  })
 }

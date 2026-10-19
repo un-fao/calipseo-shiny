@@ -450,8 +450,11 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
     file.remove(target)
 
     if(file.exists(gsub("staging", "release", target))){
+      #we release
+      INFO("Refresh UI after releasing")
       selected_results <- selected_results(getComputationResults(out$indicator, config = appConfig))
       selection_triggered <- selection_triggered(Sys.time())
+      indicator_status <- indicator_status(getIndicatorStatus(out$indicator))
       torelease(NULL) #reinitialize reactive
     }
     
@@ -1416,7 +1419,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
   #--------------------------------------------------------
   #This event release the indicator and update the result
   observeEvent(input$goRelease, {
-    WARN("Triggered Release!!!")
+    INFO("Go releasing indicator result")
     out<-releaseIndicator(out=out,session=session,target=torelease(),release_dependent_indicators=input$releaseDependent)
     reloader <- reloader(id)
     removeModal()

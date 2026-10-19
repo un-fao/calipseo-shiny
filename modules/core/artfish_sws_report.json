@@ -1,7 +1,7 @@
 {
   "type": "subitem",
-  "parent": "artfish",
-  "rank": 4,
+  "parent": "sws",
+  "rank": 5,
   "title": "Monthly Report",
   "icon": "table"
 }

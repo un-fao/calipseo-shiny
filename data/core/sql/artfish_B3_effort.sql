@@ -19,4 +19,4 @@ SELECT
 FROM dt_activity_surveys as surv 
 LEFT JOIN cl_fish_landing_sites as sit ON surv.CL_FISH_LANDING_SITE_ID = sit.ID 
 LEFT JOIN reg_entity_households as eh ON surv.REG_ENTITY_ID = eh.REG_ENTITY_ID 
-LEFT JOIN dt_activity_records as rec ON surv.DT_SURVEY_ID = rec.DT_ACTIVITY_SURVEY_ID
+LEFT JOIN dt_activity_records as rec ON surv.ID = rec.DT_ACTIVITY_SURVEY_ID

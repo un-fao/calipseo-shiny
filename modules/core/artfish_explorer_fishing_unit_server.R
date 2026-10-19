@@ -1,11 +1,11 @@
-#artfish_overview_explorer_server
-artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_explorer_fishing_unit_server
+artfish_explorer_fishing_unit_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
-  moduleServer(id, function(input, output, session){
+  moduleServer(id, function(input, output, session){   
     
-    ns <- session$ns
+    ns<-session$ns
     
-    INFO("artfish-overview-explorer: START")
+    INFO("artfish-fishing_unit_explorer: START")
     MODULE_START_TIME <- Sys.time()
     
     #i18n
@@ -14,10 +14,10 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
     i18n <- function(key){ i18n_translator()$t(key) }
     #-----------------------------------------------------------------------------
     
-    result <- reactiveVal(NULL)
-    
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")
+    
+    refresh <- reactiveVal(0)
     
     #refresh
     observeEvent(input$refresh_artfish_estimates, {
@@ -47,10 +47,10 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
         ref_species = artfish$ref_species()
       )
     })
-    
-    artfish_shiny_overview_server(
-      "artfish_overview_explorer",
-      lang = lang,
+      
+    artfishr::artfish_shiny_fishing_unit_server(
+      "artfish_explorer_fishing_unit",
+      lang = appConfig$language,
       estimate = estimate_r,
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata,
@@ -62,11 +62,12 @@ artfish_overview_explorer_server <- function(id, parent.session, lang = NULL, po
     output$refresher <- renderUI({
       actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = i18n("REFRESH"))
     })
+      
     
     MODULE_END_TIME <- Sys.time()
+    INFO("artfish-fishing_unit_explorer: END")
+    DEBUG_MODULE_PROCESSING_TIME("Artfish-fishing_unit_explorer", MODULE_START_TIME, MODULE_END_TIME)
     
-    INFO("artfish-overview-explorer: END")
-    DEBUG_MODULE_PROCESSING_TIME("Artfish-overview-explorer", MODULE_START_TIME, MODULE_END_TIME)
-    
-  })
+  })  
+  
 }

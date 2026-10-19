@@ -1,13 +1,13 @@
-#artfish_fishing_unit_explorer_server
-artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_explorer_species_server
+artfish_explorer_species_server <- function(id, parent.session, lang = NULL, pool, reloader){
   
   moduleServer(id, function(input, output, session){   
     
     ns<-session$ns
     
-    INFO("artfish-fishing_unit_explorer: START")
-    MODULE_START_TIME <- Sys.time()
-    
+    INFO("artfish-species_explorer: START")
+    MODULE_START_TIME <- Sys.time()  
+  
     #i18n
     #-----------------------------------------------------------------------------
     i18n_translator <- get_reactive_translator(lang)
@@ -16,8 +16,6 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL
     
     #run Artfish computation
     INFO("Run Artfish computation output based on available periods")
-    
-    refresh <- reactiveVal(0)
     
     #refresh
     observeEvent(input$refresh_artfish_estimates, {
@@ -48,9 +46,9 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL
       )
     })
       
-    artfishr::artfish_shiny_fishing_unit_server(
-      "artfish_fishing_unit_explorer",
-      lang = appConfig$language,
+    artfishr::artfish_shiny_species_server(
+      "artfish_explorer_species", 
+      lang = lang, 
       estimate = estimate_r,
       effort_source = artfish$effort_source,
       minor_strata = artfish$minor_strata,
@@ -62,11 +60,10 @@ artfish_fishing_unit_explorer_server <- function(id, parent.session, lang = NULL
     output$refresher <- renderUI({
       actionButton(ns("refresh_artfish_estimates"), icon = icon("refresh"), label = i18n("REFRESH"))
     })
-      
     
     MODULE_END_TIME <- Sys.time()
-    INFO("artfish-fishing_unit_explorer: END")
-    DEBUG_MODULE_PROCESSING_TIME("Artfish-fishing_unit_explorer", MODULE_START_TIME, MODULE_END_TIME)
+    INFO("artfish-species_explorer: END")
+    DEBUG_MODULE_PROCESSING_TIME("Artfish-species_explorer", MODULE_START_TIME, MODULE_END_TIME)
     
   })  
   

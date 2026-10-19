@@ -1,5 +1,5 @@
-#artfish_overview_server
-artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloader){
+#artfish_sws_overview_server
+artfish_sws_overview_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session){   
     
@@ -23,12 +23,10 @@ artfish_overview_server <- function(id, parent.session, lang = NULL, pool, reloa
   files <- getStatPeriods(config = appConfig, id = "artfish_estimates",target = "release")
   INFO("Retrieved %s computation files", nrow(files))
   
-  req(nrow(files) > 0)
-  
   INFO("Get Artfish computation outputs for UI")
   estimate <- get_artfish_results_for_ui(input=files,input_type = "file", ref_fishing_units, ref_species)
   
-  artfishr::artfish_shiny_overview_server("artfish_overview", 
+  artfishr::artfish_shiny_overview_server("artfish_sws_overview", 
                                           lang = lang, 
                                           estimate = reactive({ estimate }))
  
