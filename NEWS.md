@@ -1,4 +1,4 @@
-# **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-15**
+# **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-1**
 
 ## Enhancements
 
@@ -7,6 +7,7 @@
 * [#383](https://github.com/un-fao/calipseo-shiny/issues/383) Create specific accessor for Bahrain active days
 * [#384](https://github.com/un-fao/calipseo-shiny/issues/384) Add minor_strata to all Artfishr SQL queries
 * [#336](https://github.com/un-fao/calipseo-shiny/issues/336) Computation module scalability and user-friendliness enhancements
+* [#393](https://github.com/un-fao/calipseo-shiny/issues/393) Add missing logos for VUT / SOM
 
 ## New features
 
