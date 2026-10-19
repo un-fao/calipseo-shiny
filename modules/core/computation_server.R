@@ -1421,6 +1421,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
   observeEvent(input$goRelease, {
     INFO("Go releasing indicator result")
     out<-releaseIndicator(out=out,session=session,target=torelease(),release_dependent_indicators=input$releaseDependent)
+    reloader <- reloader(id)
     removeModal()
   })
   
