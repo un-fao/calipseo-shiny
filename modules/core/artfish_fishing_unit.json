@@ -1,7 +1,7 @@
 {
   "type": "subitem",
-  "parent": "artfish",
-  "rank": 2,
+  "parent": "statistics",
+  "rank": 3,
   "title": "C&E by Fishing Unit",
   "icon": "ship"
 }

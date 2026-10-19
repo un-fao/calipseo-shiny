@@ -8,6 +8,7 @@
 * [#384](https://github.com/un-fao/calipseo-shiny/issues/384) Add minor_strata to all Artfishr SQL queries
 * [#336](https://github.com/un-fao/calipseo-shiny/issues/336) Computation module scalability and user-friendliness enhancements
 * [#393](https://github.com/un-fao/calipseo-shiny/issues/393) Add missing logos for VUT / SOM
+* [#394](https://github.com/un-fao/calipseo-shiny/issues/394) https://github.com/un-fao/calipseo-shiny/issues/394
 
 ## New features
 
