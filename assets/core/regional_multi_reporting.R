@@ -201,3 +201,42 @@ wecafc_t1nc <- function(con, data, metadata, file){
   out = task$report(data = data_for_wecafc, metadata = metadata, path = file)
   return(task)
 }
+
+#iotc_f1rc
+iotc_f1rc <- function(con, data, metadata, file){
+  
+  data_for_iotc = data[data$receiver == "IOTC",]
+  data_for_iotc$receiver = NULL
+  reporting_flow = repfishr::reporting_flow$new(
+    sender = accessCountryISOCode(con), 
+    sender_type = "country"
+  )
+  task = reporting_flow$getReceiver("IOTC")$getTaskDefinitionById("iotc_form_f1rc")
+  out = task$report(data = data_for_iotc, metadata = metadata, path = file)
+  print(out)
+  return(task)
+}
+
+#iotc_f3ce
+iotc_f3ce <- function(con, data, metadata, file){
+  
+  data_for_iotc = data[data$receiver == "IOTC",]
+  data_for_iotc$receiver = NULL
+  reporting_flow = repfishr::reporting_flow$new(
+    sender = accessCountryISOCode(con), 
+    sender_type = "country"
+  )
+  task = reporting_flow$getReceiver("IOTC")$getTaskDefinitionById("iotc_form_f3ce")
+  
+  extra_params = list(
+    fishing_zones = {
+      country_dir <- sprintf("../calipseo-data/country/%s", reporting_flow$sender$id)
+      filename <- file.path(country_dir, "data/fishing_zones.gpkg")
+      sf::st_read(filename)
+    }
+  )
+  
+  out = task$report(data = data_for_iotc, metadata = metadata, params = extra_params, path = file)
+  print(out)
+  return(task)
+}
