@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "sws",
+  "rank": 2,
+  "title": "Total Catch and Effort",
+  "icon": "chart-line"
+}

@@ -1,15 +1,21 @@
 #logbooks_trips_server
-logbooks_trips_server <- function(id, parent.session, pool, reloader){
+logbooks_trips_server <- function(id, parent.session, lang = NULL, pool, reloader){
 
  moduleServer(id, function(input, output, session) {
   
+  ns<-session$ns
+   
   INFO("logbooks-trips: START")
   MODULE_START_TIME <- Sys.time() 
-   
-  ns<-session$ns
+  
+  #-----------------------------------------------------------------------------
+  i18n_translator <- get_reactive_translator(lang)
+  i18n <- function(key){ i18n_translator()$t(key) }
+  #-----------------------------------------------------------------------------
   
   trip_gantt_server(
     id = "trips",
+    lang = lang,
     pool = pool,
     vessel_stat_type = 2,
     vesselId = NULL,
