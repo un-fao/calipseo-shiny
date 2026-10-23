@@ -23,16 +23,16 @@ compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NUL
   active_vessels <- select_active_vessels(periods = ref_period, active_vessels = active_vessels, active_vessels_strategy = active_vessels_strategy)
   
   # select columns in artfish_results
-  estimates <- artfish_results %>% select(year, month, fishing_unit, species, catch_nominal_landed)
+  estimates <- artfish_results |> select(year, month, fishing_unit, species, catch_nominal_landed)
   
   # Total number of vessel per fishing unit
-  FU_tot <- active_vessels %>%
-    group_by(fishing_unit) %>%
+  FU_tot <- active_vessels |>
+    group_by(fishing_unit) |>
     summarize(FU_tot = sum(fleet_engagement_number), .groups = "drop")
   
   # Number of vessel per fishing unit per region (get data from frame survey with accessArtfishAregion)
-  FU_repart_var <- active_vessels %>%
-    group_by(fishing_unit, repart_var) %>%
+  FU_repart_var <- active_vessels |>
+    group_by(fishing_unit, repart_var) |>
     summarize(FU_repart_var = sum(fleet_engagement_number), .groups = "drop")
   
   # For each fishing unit the total number of vessel per region is retrieved
@@ -44,7 +44,7 @@ compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NUL
   n_repart_var <- length(unique(active_vessels$repart_var))
   
   # Create duplicate lines for each region
-  estimates_expanded <- estimates %>%
+  estimates_expanded <- estimates |>
     crossing(repart_var = unique(active_vessels$repart_var))
   
   # Calculate the catch by region
@@ -53,8 +53,8 @@ compute_catch_repartition<-function(con, year=NULL, month=NULL, minor_strata=NUL
   estimates_expanded$catch_repart_var<-estimates_expanded$ratio*estimates_expanded$catch_nominal_landed
   
   if(!is.null(repartition_label)){
-    estimates_expanded<-estimates_expanded%>%
-      rename(setNames("repart_var",repartition_label))%>%
+    estimates_expanded<-estimates_expanded |>
+      rename(setNames("repart_var",repartition_label)) |>
       rename(setNames("catch_repart_var",paste0("catch_",repartition_label)))
   }
     

@@ -1,0 +1,7 @@
+{
+  "type": "subitem",
+  "parent": "artfish_explorer",
+  "rank": 1,
+  "title": "Total Catch and Effort",
+  "icon": "chart-line"
+}

@@ -17,7 +17,7 @@ vesselFindeR <- function(name, flag_iso2){
     
     
     html2 = httr::content(httr::GET(link, httr::add_headers("User-Agent" = "vesselFindeR")))
-    df<-html2%>%
+    df<-html2 |>
       rvest::html_table("tparams", header=F)
     df<-df[[1]]
     
@@ -62,6 +62,7 @@ get_vessel_license_status <- function(ls_data){
   today <- Sys.Date()
   ls_data$Valid_to_date <- as.Date(ls_data$Valid_to_date)
   ls_data$Validity <- sapply(ls_data$Valid_to_date, function(x){
+    if(is.na(x)) x = 0
     if(today - x < 0) "expired" else "valid"
   })
   return(ls_data)

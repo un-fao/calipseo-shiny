@@ -53,4 +53,4 @@ LEFT JOIN dt_observer_report_vessel_fish_preservation pres ON pres.DT_OBSERVER_R
 LEFT JOIN cl_app_quantity_units storage_unit ON storage_unit.ID = pres.CL_APP_QUANTITY_UNIT_ID_STORAGE_CAPACITY 
 LEFT JOIN cl_app_quantity_units freezing_unit ON freezing_unit.ID = pres.CL_APP_QUANTITY_UNIT_ID_FREEZING_CAPACITY 
 LEFT JOIN dt_observer_report_vessel_call_type_frequency vct ON vct.DT_OBSERVER_REPORT_VESSEL_INFO_ID = rvi.ID 
-LEFT JOIN cl_app_vessel_call_types call_type ON call_type.ID = vct.CL_APP_VESSEL_CALL_TYPE_ID
+LEFT JOIN cl_fish_vessel_call_types call_type ON call_type.ID = vct.CL_APP_VESSEL_CALL_TYPE_ID

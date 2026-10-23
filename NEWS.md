@@ -1,8 +1,89 @@
-# **calipseo-shiny [v2.1.9000](https://github.com/un-fao/calipseo-shiny) - 2026-03-05**
+# **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-19**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20261019) R package (0.1.20261019 pre-release)
 
 ## Enhancements
 
+* [#378](https://github.com/un-fao/calipseo-shiny/issues/378) Renaming tables to align on calipseo-model 2.0.0-RC1
+* [#382](https://github.com/un-fao/calipseo-shiny/issues/382) Create specific accessor for Bahrain active vessels
+* [#383](https://github.com/un-fao/calipseo-shiny/issues/383) Create specific accessor for Bahrain active days
+* [#384](https://github.com/un-fao/calipseo-shiny/issues/384) Add minor_strata to all Artfishr SQL queries
+* [#336](https://github.com/un-fao/calipseo-shiny/issues/336) Computation module scalability and user-friendliness enhancements
+* [#393](https://github.com/un-fao/calipseo-shiny/issues/393) Add missing logos for VUT / SOM
+* [#394](https://github.com/un-fao/calipseo-shiny/issues/394) Move Artfish modules to Statistics (computation) menu
+* [#395](https://github.com/un-fao/calipseo-shiny/issues/395) Display 'No results' UI on Artfish UI when no results
+
+## New features
+
+* [#387](https://github.com/un-fao/calipseo-shiny/issues/387) Support Household type Artfishr queries
+
+## Bug fixes
+
+* [#396](https://github.com/un-fao/calipseo-shiny/issues/396) Computation module triggers reload of Artfish explorer modules
+
+# **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
+
+## Bug fixes
+
+* [#377](https://github.com/un-fao/calipseo-shiny/issues/377) Align getLocalCountryDataset on calipseo-data dir
+
+# **calipseo-shiny [v2.3.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.0) - 2026-06-19**
+
+## Bug fixes
+
+* [#368](https://github.com/un-fao/calipseo-shiny/issues/368) `dplyr::mutate` on year column conflicts with `lubridate::year` function
+* [#373](https://github.com/un-fao/calipseo-shiny/issues/373) Vessel info - Days at sea computation fails if time difference is 0 (units = secs)
+* [#374](https://github.com/un-fao/calipseo-shiny/issues/374) App breaks when no landing site coordinates are available
+
+## Enhancements
+
+* [#367](https://github.com/un-fao/calipseo-shiny/issues/367) Migrate country-specific R scripts to calipseo-data (private) repo
+* [#371](https://github.com/un-fao/calipseo-shiny/issues/371) ICCAT T1NC reporting - Addition of conversion factors
+
+## New features
+
+* [#359](https://github.com/un-fao/calipseo-shiny/issues/359) Market Trade data exporter
+
+# **calipseo-shiny [v2.2.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.2) - 2026-05-01**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260501) R package (0.1.20260501 pre-release)
+
+## Bug fixes
+
+- [#366](https://github.com/un-fao/calipseo-shiny/issues/366) Artfish UI - App reload doesn't recompute statistics and blocks refresh button
+
+
+# **calipseo-shiny [v2.2.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.1) - 2026-04-30**
+
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260430) R package (0.1.20260430 pre-release)
+
+## Enhancements
+
+- [#364](https://github.com/un-fao/calipseo-shiny/issues/364) ArtFish UI modules refresh feature
+- [#365](https://github.com/un-fao/calipseo-shiny/issues/365) Support disabling of values UI in Artfish modules
+
+# **calipseo-shiny [v2.2.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.2.0) - 2026-04-27**
+
+## New requirements
+
+- [fdishinyr](https://github.com/fdiwg/fdishinyr/releases/tag/0.1.20260415) R package (0.1.20260415 pre-release)
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20260417) R package (0.1.20260417 pre-release)
+
+## Enhancements
+
+- [#338](https://github.com/un-fao/calipseo-shiny/issues/338) i18n management mechanism modernization
 - [#339](https://github.com/un-fao/calipseo-shiny/issues/339) Migration of Artfish UI visualization modules to artfishr
+- [#363](https://github.com/un-fao/calipseo-shiny/issues/363) Replace magrittr pipe by native pipe
+
+## New features
+
+- [#354](https://github.com/un-fao/calipseo-shiny/issues/354) Artfish UI Explorer modules
 
 ## New requirements
 
