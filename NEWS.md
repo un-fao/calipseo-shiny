@@ -1,5 +1,9 @@
 # **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-19**
 
+## New requirements
+
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20261019) R package (0.1.20261019 pre-release)
+
 ## Enhancements
 
 * [#378](https://github.com/un-fao/calipseo-shiny/issues/378) Renaming tables to align on calipseo-model 2.0.0-RC1

@@ -13,7 +13,7 @@ geo.latitude_start,
 geo.longitude_end,
 geo.latitude_end,
 sp.ASFIS_CODE as species,
-COALESCE(rspft.CONVERSION_FACTOR,fpt.DEFAULT_CONVERSION_FACTOR,1) AS conversion_factor,
+COALESCE(rspft.CONVERSION_FACTOR,rspgft.CONVERSION_FACTOR,fpt.DEFAULT_CONVERSION_FACTOR,1) AS conversion_factor,
 gear.CODE_FOR_CLASSIFICATION_TYPE as gear_type,
 'catch' as measurement,
 'NL' as measurement_type,
@@ -36,7 +36,9 @@ LEFT JOIN cl_fish_gear_classification_types as gearct ON gearct.ID = gear.CL_REF
 LEFT JOIN jt_fish_fishing_zone_fish_fishing_zone_classification_item as fzmap ON fzmap.CL_FISH_FISHING_ZONE_ID = ft.CL_FISH_FISHING_ZONE_ID 
 LEFT JOIN cl_fish_fishing_zone_classification_items as fz ON fz.ID = fzmap.CL_REF_FISHING_ZONE_CLASSIFICATION_ITEM_ID 
 LEFT JOIN cl_fish_fishing_zone_classification_types as fzct ON fzct.ID = fz.CL_REF_FISHING_ZONE_CLASSIFICATION_TYPE_ID 
+LEFT JOIN jt_fish_species_fish_species_group as spg ON spg.CL_REF_SPECIES_ID = fas.CL_REF_SPECIES_ID 
 LEFT JOIN jt_fish_species_fish_processing_type as rspft ON rspft.CL_REF_SPECIES_ID = fas.CL_REF_SPECIES_ID AND rspft.CL_FISH_PROCESSING_TYPE_ID = fas.CL_FISH_PROCESSING_TYPE_ID 
+LEFT JOIN jt_fish_species_group_fish_processing_type as rspgft ON rspgft.CL_REF_SPECIES_GROUP_ID = spg.CL_REF_SPECIES_GROUP_ID 
 LEFT JOIN cl_fish_processing_types as fpt ON fpt.ID = fas.CL_FISH_PROCESSING_TYPE_ID 
 LEFT JOIN (SELECT 
     pos.DT_FISHING_ACTIVITY_ID,

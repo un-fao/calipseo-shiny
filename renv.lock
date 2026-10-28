@@ -509,8 +509,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "36c9fb983306da829b8a3c044c10a597e0e49b7c",
+      "RemoteRef": "0.1.20261019",
+      "RemoteSha": "f3adb0362af6dc6403bf3de2bd3d2832fd23d31c",
       "NeedsCompilation": "no",
       "Author": "Johanna Herfaut [aut], Yann Laurent [aut], Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Bracken Van Niekerk [ctb]"
     },
