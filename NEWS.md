@@ -1,3 +1,9 @@
+# **calipseo-shiny -[v3.0.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.1) - 2026-10-28**
+
+## Enhancements
+
+* [#399](https://github.com/un-fao/calipseo-shiny/issues/399) Reporting - Nominal catches - propagate species group conversion factors
+
 # **calipseo-shiny -[v3.0.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.0) - 2026-10-19**
 
 ## New requirements
