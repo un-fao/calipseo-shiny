@@ -1,3 +1,9 @@
+# **calipseo-shiny -[v3.0.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.2) - 2026-10-29**
+
+## Enhancements
+
+* [#402](https://github.com/un-fao/calipseo-shiny/issues/402) Artfish D Landings query filter on fishing trip type
+
 # **calipseo-shiny -[v3.0.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.1) - 2026-10-28**
 
 ## Enhancements
