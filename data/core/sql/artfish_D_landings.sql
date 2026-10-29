@@ -16,5 +16,7 @@ SELECT * FROM
  FROM dt_fishing_trip_activities as fa 
  LEFT JOIN dt_fishing_trip_activity_species as fas ON fa.ID = fas.DT_FISHING_ACTIVITY_ID 
  LEFT JOIN cl_fish_species as sp ON fas.CL_REF_SPECIES_ID = sp.ID 
- LEFT JOIN dt_fishing_trips as ft ON fa.DT_FISHING_TRIP_ID = ft.ID
- LEFT JOIN cl_fish_landing_sites as site ON ft.CL_TO_PORT_SITE_ID = site.ID) as l 
+ LEFT JOIN dt_fishing_trips as ft ON fa.DT_FISHING_TRIP_ID = ft.ID 
+ LEFT JOIN cl_fish_fishing_trip_types as ftt ON ft.CL_FISH_FISHING_TRIP_TYPE_ID = ftt.ID 
+ LEFT JOIN cl_fish_landing_sites as site ON ft.CL_TO_PORT_SITE_ID = site.ID 
+ WHERE ftt.CODE = 'LANDFORM') as l 
