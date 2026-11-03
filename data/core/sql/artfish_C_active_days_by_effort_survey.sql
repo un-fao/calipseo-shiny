@@ -7,7 +7,7 @@ SELECT
   CL_FISH_FISHING_UNIT_ID as fishing_unit, 
   COUNT(DISTINCT CONCAT(YEAR, '-', CL_APP_MONTH_ID, '-', DAYS)) AS effort_fishable_duration 
 FROM 
-  dt_effort_survey 
+  dt_effort_surveys 
 LEFT JOIN cl_fish_landing_sites as site 
 ON CL_FISH_LANDING_SITE_ID = site.ID 
 WHERE 
