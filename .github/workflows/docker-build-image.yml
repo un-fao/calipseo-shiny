@@ -86,3 +86,65 @@ jobs:
             docker push "${IMAGE}:latest"
             docker push "${IMAGE}:${TAG_NAME}"
           fi
+          
+      - name: Authenticate to Google Cloud
+        if: github.ref == 'refs/heads/review'
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_ID_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        if: github.ref == 'refs/heads/review'
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ vars.PROJECT_ID }}
+          
+      - name: Update Review Docker image
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "docker pull ghcr.io/un-fao/calipseo-shiny:review"
+      
+      - name: Restart Review ShinyProxy
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "sudo systemctl restart shinyproxy"
+        
+      - name: Health check
+        run: |
+          # Fail the run if the application does not answer within 3 minutes of the restart
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "for i in \$(seq 1 36); do \
+                if curl -sf -o /dev/null http://localhost:8484/shinyproxy/login; then echo 'Calipseo Shiny Proxy is up'; exit 0; fi; \
+                sleep 5; \
+              done; \
+              echo 'Calipseo Shiny Proxy did not start, last errors:'; \
+              sudo journalctl -u shinyproxy -p err -n 1 --no-pager \
+              exit 1"
+
+      - name: Wait for load balancer
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: |
+          # The load balancer keeps answering 503 until its own health checks see the restarted app:
+          # only report the deployment as done once the public URL serves the login page
+          if [ -z "$APP_URL" ]; then
+            echo "::notice::APP_URL is not set for this environment, skipping the public URL check"
+            exit 0
+          fi
+          for i in $(seq 1 24); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${APP_URL%/}/shinyproxy/login" || true)
+            if [ "$code" = "200" ]; then echo "${APP_URL} is serving after $((i * 5)) s"; exit 0; fi
+            echo "HTTP ${code}, waiting..."
+            sleep 5
+          done
+          echo "${APP_URL} still not serving 2 minutes after the application started"
+          exit 1       
