@@ -40,7 +40,6 @@ jobs:
             type=semver,pattern={{version}}
             
       - name: Login to image repository
-        if: github.ref == 'refs/heads/review' || github.ref_type == 'tag'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -120,6 +119,7 @@ jobs:
             --command "sudo systemctl restart shinyproxy"
         
       - name: Health check
+        if: github.ref == 'refs/heads/review'
         run: |
           # Fail the run if the application does not answer within 3 minutes of the restart
           gcloud compute ssh "${{ vars.VM_NAME }}" \
@@ -130,10 +130,11 @@ jobs:
                 sleep 5; \
               done; \
               echo 'Calipseo Shiny Proxy did not start, last errors:'; \
-              sudo journalctl -u shinyproxy -p err -n 1 --no-pager \
+              sudo journalctl -u shinyproxy -p err -n 1 --no-pager;\
               exit 1"
 
       - name: Wait for load balancer
+        if: github.ref == 'refs/heads/review'
         env:
           APP_URL: ${{ vars.APP_URL }}
         run: |
