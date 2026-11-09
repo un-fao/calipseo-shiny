@@ -1012,10 +1012,14 @@ accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
 
 #<MODULE:HOME>
-countVessels <- function(con){ countVesselsFromDB(con) }
-countVesselOwners <- function(con){ countVesselOwnersFromDB(con) }
-countVesselCaptains <- function(con){ countVesselCaptainsFromDB(con) }
-countFishingTrips <- function(con){ countFishingTripsFromDB(con) }
+#with the Calipseo API (see calipseo_api_utils.R), the counters only count what the user may see (data silo);
+#owners and captains are then people, each counted once even if linked to several vessels
+countVessels <- function(con){ if(useCalipseoAPI()) countFromAPI("vessels") else countVesselsFromDB(con) }
+countVesselOwners <- function(con){ if(useCalipseoAPI()) countFromAPI("vessel_owners") else countVesselOwnersFromDB(con) }
+countVesselCaptains <- function(con){ if(useCalipseoAPI()) countFromAPI("vessel_captains") else countVesselCaptainsFromDB(con) }
+countFishingTrips <- function(con){ if(useCalipseoAPI()) countFromAPI("fishing_trips") else countFishingTripsFromDB(con) }
+countYears <- function(con){ if(useCalipseoAPI()) countFromAPI("years") else nrow(accessAvailableYears(con)) }
+#no API counter yet: landing sites will follow the Artfish data silo rules
 countLandingSites <- function(con){ countLandingSitesFromDB(con) }
 
 #<COMMON:VESSELS>
