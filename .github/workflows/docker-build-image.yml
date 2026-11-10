@@ -88,6 +88,19 @@ jobs:
             docker push "${IMAGE}:latest"
             docker push "${IMAGE}:${TAG_NAME}"
           fi
+       
+      - name: Generate ssh key
+        if: github.ref == 'refs/heads/review'
+        run: |
+          # Generate ssh key
+          mkdir -p "$HOME/.ssh"
+          ssh-keygen -t rsa -b 3072 -f "$HOME/.ssh/google_compute_engine" -N "" -q
+
+          # Force-upload the public key
+          gcloud compute os-login ssh-keys add \
+            --key-file="$HOME/.ssh/google_compute_engine.pub" \
+            --project=fao-calipseo-review \
+            --ttl=20m 
           
       - name: Authenticate to Google Cloud
         if: github.ref == 'refs/heads/review'
