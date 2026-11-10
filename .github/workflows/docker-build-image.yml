@@ -18,11 +18,9 @@ env:
   RENV_PATHS_ROOT: ~/.cache/R/renv
 
 jobs:
-  docker:
+  build-and-push:
+    name: "🐳 Build/Publish Docker image"
     runs-on: ubuntu-latest
-    environment: 'review'
-    permissions:
-      id-token: write
     steps:
       -
         name: Checkout
@@ -88,20 +86,15 @@ jobs:
             docker push "${IMAGE}:latest"
             docker push "${IMAGE}:${TAG_NAME}"
           fi
-       
-      - name: Generate ssh key
-        if: github.ref == 'refs/heads/review'
-        run: |
-          # Generate ssh key
-          mkdir -p "$HOME/.ssh"
-          ssh-keygen -t rsa -b 3072 -f "$HOME/.ssh/google_compute_engine" -N "" -q
-
-          # Force-upload the public key
-          gcloud compute os-login ssh-keys add \
-            --key-file="$HOME/.ssh/google_compute_engine.pub" \
-            --project=fao-calipseo-review \
-            --ttl=20m 
-          
+    
+  deploy-review:
+    name: "🧪 Deploy for Review"
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: 'review'
+    permissions:
+      id-token: write
+    steps:
       - name: Authenticate to Google Cloud
         if: github.ref == 'refs/heads/review'
         uses: google-github-actions/auth@v3
@@ -114,6 +107,19 @@ jobs:
         uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: ${{ vars.PROJECT_ID }}
+          
+      - name: Generate ssh key
+        if: github.ref == 'refs/heads/review'
+        run: |
+          # Generate ssh key
+          mkdir -p "$HOME/.ssh"
+          ssh-keygen -t rsa -b 3072 -f "$HOME/.ssh/google_compute_engine" -N "" -q
+
+          # Force-upload the public key
+          gcloud compute os-login ssh-keys add \
+            --key-file="$HOME/.ssh/google_compute_engine.pub" \
+            --project=fao-calipseo-review \
+            --ttl=20m 
           
       - name: Update Review Docker image
         if: github.ref == 'refs/heads/review'
