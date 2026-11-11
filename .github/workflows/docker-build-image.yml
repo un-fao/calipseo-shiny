@@ -152,6 +152,14 @@ jobs:
               sudo journalctl -u shinyproxy -p err -n 1 --no-pager;\
               exit 1"
 
+      - name: Remove Docker dangling images
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "docker image prune -f"
+
       - name: Wait for load balancer
         if: github.ref == 'refs/heads/review'
         env:
