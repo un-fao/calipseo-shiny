@@ -166,14 +166,16 @@ jobs:
           APP_URL: ${{ vars.APP_URL }}
         run: |
           # The load balancer keeps answering 503 until its own health checks see the restarted app:
-          # only report the deployment as done once the public URL serves the login page
+          # only report the deployment as done once the public URL serves the login page.
+          # The login page answers 200 with ShinyProxy's own login form, and 302 (redirect to the
+          # identity provider) with `authentication: openid`: both mean ShinyProxy is serving
           if [ -z "$APP_URL" ]; then
             echo "::notice::APP_URL is not set for this environment, skipping the public URL check"
             exit 0
           fi
           for i in $(seq 1 24); do
             code=$(curl -s -o /dev/null -w '%{http_code}' "${APP_URL%/}/shinyproxy/login" || true)
-            if [ "$code" = "200" ]; then echo "${APP_URL} is serving after $((i * 5)) s"; exit 0; fi
+            if [ "$code" = "200" ] || [ "$code" = "302" ]; then echo "${APP_URL} is serving (HTTP ${code}) after $((i * 5)) s"; exit 0; fi
             echo "HTTP ${code}, waiting..."
             sleep 5
           done
