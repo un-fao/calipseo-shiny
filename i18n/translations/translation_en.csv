@@ -742,3 +742,6 @@ MARKET_TRADE_DATA_EXPORTER_COL_WHS,Wholesale price
 MARKET_TRADE_DATA_EXPORTER_COL_RET,Retail price
 MARKET_TRADE_DATA_EXPORTER_COL_PM,Profit margin
 MARKET_TRADE_DATA_NO_DATA,No data available for this selection
+SESSION_EXPIRED_MESSAGE,Your session has expired. Please log in again to continue.
+SESSION_EXPIRED_LOGIN,Log in again
+SESSION_EXPIRED_TITLE,Session expired
