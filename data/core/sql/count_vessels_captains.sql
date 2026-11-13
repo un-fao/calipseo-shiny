@@ -1,1 +1,1 @@
-select distinct count(REG_ENTITY_CAPTAIN_ID) as COUNT from reg_vessels
+select count(*) AS COUNT from (select distinct REG_ENTITY_CAPTAIN_ID as COUNT from reg_vessels WHERE REG_ENTITY_CAPTAIN_ID IS NOT NULL) as captains

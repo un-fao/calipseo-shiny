@@ -1,8 +1,14 @@
-# **calipseo-shiny -[v3.0.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.3) - ONGOING**
+# **calipseo-shiny -[v3.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.0) - ONGOING**
 
 ## Bug fixes
 
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
+* []
+
+## CI/CD
+
+* [#406](https://github.com/un-fao/calipseo-shiny/issues/406) Set-up CI/CD for review branch
+* [413](https://github.com/un-fao/calipseo-shiny/pull/413) CI: accept the OpenID Connect redirect when waiting for the load balancer
 
 # **calipseo-shiny -[v3.0.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.2) - 2026-10-29**
 
