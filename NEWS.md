@@ -3,7 +3,7 @@
 ## Bug fixes
 
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
-* []
+* [#414](https://github.com/un-fao/calipseo-shiny/issues/414) Home counters - Fix wrong reference SQL queries for captains / owners
 
 ## CI/CD
 
