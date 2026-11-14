@@ -5,6 +5,10 @@
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
 * [#414](https://github.com/un-fao/calipseo-shiny/issues/414) Home counters - Fix wrong reference SQL queries for captains / owners
 
+## Enhancements
+
+* [415](https://github.com/un-fao/calipseo-shiny/pull/415) Remove 'fishing_unit' filter in Artfish data queries
+
 ## CI/CD
 
 * [#406](https://github.com/un-fao/calipseo-shiny/issues/406) Set-up CI/CD for review branch
