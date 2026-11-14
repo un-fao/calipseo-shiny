@@ -4,6 +4,7 @@
 
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
 * [#414](https://github.com/un-fao/calipseo-shiny/issues/414) Home counters - Fix wrong reference SQL queries for captains / owners
+* [#416](https://github.com/un-fao/calipseo-shiny/issues/416) Artfish B2 Effort query - wrong join landing sites / frame survey
 
 ## Enhancements
 
