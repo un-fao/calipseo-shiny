@@ -5,6 +5,7 @@
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
 * [#414](https://github.com/un-fao/calipseo-shiny/issues/414) Home counters - Fix wrong reference SQL queries for captains / owners
 * [#416](https://github.com/un-fao/calipseo-shiny/issues/416) Artfish B2 Effort query - wrong join landing sites / frame survey
+* [#417](https://github.com/un-fao/calipseo-shiny/issues/417) artfishr - Activity coefficient - Control in case missing values for fleet_engagement_number
 
 ## Enhancements
 
@@ -51,6 +52,12 @@
 ## Bug fixes
 
 * [#396](https://github.com/un-fao/calipseo-shiny/issues/396) Computation module triggers reload of Artfish explorer modules
+
+# **calipseo-shiny [v2.3.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.2) - 2026-11-16 (Patch revision)** 
+
+## Bug fixes
+
+* [#417](https://github.com/un-fao/calipseo-shiny/issues/417) artfishr - Activity coefficient - Control in case missing values for fleet_engagement_number
 
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 
