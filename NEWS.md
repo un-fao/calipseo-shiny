@@ -1,3 +1,10 @@
+# **calipseo-shiny [v2.3.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.2) - 2026-11-16** 
+
+## Bug fixes
+
+* [#417](https://github.com/un-fao/calipseo-shiny/issues/417) artfishr - Activity coefficient - Control in case missing values for fleet_engagement_number
+
+
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 
 ## Bug fixes
