@@ -1,4 +1,4 @@
-# **calipseo-shiny -[v3.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.0) - ONGOING**
+# **calipseo-shiny -[v3.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.0) - 2026-11-17**
 
 ## Bug fixes
 
