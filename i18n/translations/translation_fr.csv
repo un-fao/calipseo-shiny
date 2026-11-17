@@ -650,3 +650,6 @@ WARNING_MESSAGE,Les captures rapportées ici sont le résultat d'enquêtes par �
 WARNING_REPORTING_LABEL_EMPTY_REPORT,Le rapport généré est vide!
 WEEKLY,Hebdomadaire
 YEARLY,Annuelle
+SESSION_EXPIRED_MESSAGE,Votre session a expiré. Veuillez vous reconnecter pour continuer.
+SESSION_EXPIRED_LOGIN,Se reconnecter
+SESSION_EXPIRED_TITLE,Session expirée

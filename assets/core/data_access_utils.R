@@ -626,55 +626,37 @@ accessActivityPeriodsFromDB <- function(con){
 }
 #accessors for Artfish methodology
 #accessArtfishA1FromDB
-accessArtfishA1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishA1FromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A1_active_vessels.sql")
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishA1FromDB
-accessArtfishA1EffortSurveyFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishA1EffortSurveyFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A1_active_vessels_by_effort_survey.sql")
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" WHERE CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
-  fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishA2FromDB
-accessArtfishA2FromDB <- function(con,year = NULL, month = NULL, fishing_unit = NULL){
+accessArtfishA2FromDB <- function(con,year = NULL, month = NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A2_census_typology.sql")
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishB1FromDB
-accessArtfishB1FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishB1FromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_B1_effort.sql")
   if(!is.null(month)&!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishB2FromDB
-accessArtfishB2FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishB2FromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_B2_effort.sql")
   if(!is.null(month)&!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND s.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   if(any(is.na(fa$fleet_engagement_max))){
@@ -683,75 +665,51 @@ accessArtfishB2FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL
   return(fa)
 }
 #accessArtfishB3FromDB
-accessArtfishB3FromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishB3FromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_B3_effort.sql")
   if(!is.null(month)&!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE rec.YEAR = %s AND rec.CL_APP_MONTH_ID = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND rec.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishCFromDB
-accessArtfishCFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishCFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_C_active_days.sql")
   if(!is.null(month)&!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE YEAR = %s AND CL_APP_MONTH_ID = %s ",year,month))
   }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
   fa_sql <- paste(fa_sql, "GROUP BY YEAR, CL_APP_MONTH_ID, CL_STAT_STRATA_ID, CL_FISH_LANDING_SITE_ID, CL_FISH_FISHING_UNIT_ID")
-  
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishCEffortSurveyFromDB
-accessArtfishCEffortSurveyFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishCEffortSurveyFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_C_active_days_by_effort_survey.sql")
   if(!is.null(month) & !is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year, month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND fishing_unit = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishDFromDB
-accessArtfishDFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishDFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_D_landings.sql")
   if(!is.null(month)&!is.null(year)){
     fa_sql <- paste0(fa_sql, sprintf(" WHERE year = %s AND month = %s ",year,month))
-  }
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf(" AND fishing_unit = %s",fishing_unit ))
   }
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishARegionFromDB
-accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishARegionFromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A1_active_vessels_region.sql")
-  
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
 #accessArtfishAFleetSegmentFromDB
-accessArtfishAFleetSegmentFromDB <- function(con,year = NULL,month=NULL,fishing_unit = NULL){
+accessArtfishAFleetSegmentFromDB <- function(con,year = NULL, month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_A1_active_vessels_fleet_segment.sql")
-  
-  if(!is.null(fishing_unit)){
-    fa_sql <- paste0(fa_sql, sprintf("fs.CL_FISH_FISHING_UNIT_ID = %s",fishing_unit ))
-  }
-  
   fa <- getFromSQL(con, fa_sql)
   return(fa)
 }
@@ -1012,10 +970,14 @@ accessCountryPrefUnitWeight <- function(con){ accessCountryPrefUnitWeightFromDB(
 accessCountryPrefCurrency <- function(con){ accessCountryPrefCurrencyFromDB(con) }
 
 #<MODULE:HOME>
-countVessels <- function(con){ countVesselsFromDB(con) }
-countVesselOwners <- function(con){ countVesselOwnersFromDB(con) }
-countVesselCaptains <- function(con){ countVesselCaptainsFromDB(con) }
-countFishingTrips <- function(con){ countFishingTripsFromDB(con) }
+#with the Calipseo API (see calipseo_api_utils.R), the counters only count what the user may see (data silo);
+#owners and captains are then people, each counted once even if linked to several vessels
+countVessels <- function(con){ if(useCalipseoAPI()) countFromAPI("vessels") else countVesselsFromDB(con) }
+countVesselOwners <- function(con){ if(useCalipseoAPI()) countFromAPI("vessel_owners") else countVesselOwnersFromDB(con) }
+countVesselCaptains <- function(con){ if(useCalipseoAPI()) countFromAPI("vessel_captains") else countVesselCaptainsFromDB(con) }
+countFishingTrips <- function(con){ if(useCalipseoAPI()) countFromAPI("fishing_trips") else countFishingTripsFromDB(con) }
+countYears <- function(con){ if(useCalipseoAPI()) countFromAPI("years") else nrow(accessAvailableYears(con)) }
+#no API counter yet: landing sites will follow the Artfish data silo rules
 countLandingSites <- function(con){ countLandingSitesFromDB(con) }
 
 #<COMMON:VESSELS>
@@ -1083,43 +1045,43 @@ accessSurveyPeriods <- function(con){ accessSurveyPeriodsFromDB(con) }
 accessEffortSurveyPeriods <- function(con){ accessEffortSurveyPeriodsFromDB(con)}
 accessActivityPeriods <- function(con){ accessActivityPeriodsFromDB(con) }
 #accessors for Artfish methodology
-accessArtfishA1EffortSurvey <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishA1EffortSurveyFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishA1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
+accessArtfishA1EffortSurvey <- function(con,year=NULL,month=NULL){ accessArtfishA1EffortSurveyFromDB(con,year=year,month=month) }
+accessArtfishA1 <- function(con,year=NULL,month=NULL){
   cnt_iso3 = accessCountryISOCode(con)
   if(cnt_iso3 %in% c("BHR")){
     #specific case of BHR (for now) where Artfish active vessels are derived from effort survey
     #parameterization deferred to Calipseo model 2.0 / Calipseo 3.0 with the transition to APIs
     INFO("Bahrain active vessels - derived from effort survey")
-    accessArtfishA1EffortSurvey(con, year=year, month=month, fishing_unit=fishing_unit)
+    accessArtfishA1EffortSurvey(con, year=year, month=month)
   }else{
-    accessArtfishA1FromDB(con,year=year,month=month,fishing_unit=fishing_unit)  
+    accessArtfishA1FromDB(con,year=year,month=month)  
   }
 }
-accessArtfishA2 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishA2FromDB(con,year=year,month=month,fishing_unit=fishing_unit)   }
+accessArtfishA2 <- function(con,year=NULL,month=NULL){ accessArtfishA2FromDB(con,year=year,month=month)   }
 #keep accessArtfishA as identity of accessArtfishA1
-accessArtfishA <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishA1(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishB1 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishB1FromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishB2 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ 
-  accessArtfishB2FromDB(con,year=year,month=month,fishing_unit=fishing_unit) 
+accessArtfishA <- function(con,year=NULL,month=NULL){ accessArtfishA1(con,year=year,month=month) }
+accessArtfishB1 <- function(con,year=NULL,month=NULL){ accessArtfishB1FromDB(con,year=year,month=month) }
+accessArtfishB2 <- function(con,year=NULL,month=NULL){ 
+  accessArtfishB2FromDB(con,year=year,month=month) 
 }
-accessArtfishB3 <- function(con,year=NULL,month=NULL,fishing_unit=NULL){
-  accessArtfishB3FromDB(con,year=year,month=month,fishing_unit=fishing_unit)
+accessArtfishB3 <- function(con,year=NULL,month=NULL){
+  accessArtfishB3FromDB(con,year=year,month=month)
 }
-accessArtfishCEffortSurvey <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishCEffortSurveyFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishC <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ 
+accessArtfishCEffortSurvey <- function(con,year=NULL,month=NULL){ accessArtfishCEffortSurveyFromDB(con,year=year,month=month) }
+accessArtfishC <- function(con,year=NULL,month=NULL){ 
   cnt_iso3 = accessCountryISOCode(con)
   if(cnt_iso3 %in% c("BHR")){
     #specific case of BHR (for now) where Artfish active days are derived from effort survey
     #parameterization deferred to Calipseo model 2.0 / Calipseo 3.0 with the transition to APIs
     INFO("Bahrain active days - derived from effort survey")
-    accessArtfishCEffortSurvey(con, year=year, month=month, fishing_unit=fishing_unit)
+    accessArtfishCEffortSurvey(con, year=year, month=month)
   }else{
-    accessArtfishCFromDB(con,year=year,month=month,fishing_unit=fishing_unit)  
+    accessArtfishCFromDB(con,year=year,month=month)  
   }
 }
-accessArtfishD <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishDFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishARegion <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishARegionFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
-accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL,fishing_unit=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month,fishing_unit=fishing_unit) }
+accessArtfishD <- function(con,year=NULL,month=NULL){ accessArtfishDFromDB(con,year=year,month=month) }
+accessArtfishARegion <- function(con,year=NULL,month=NULL){ accessArtfishARegionFromDB(con,year=year,month=month) }
+accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month) }
 #multireporting
 accessFDIFishingActivities <- function(con,year=NULL,month=NULL,receiver,exclude_landing_forms=NULL){ accessFDIFishingActivitiesFromDB(con,year=year,month=month,receiver=receiver,exclude_landing_forms=exclude_landing_forms) }
 accessFDIFishingCE <- function(con,year=NULL,month=NULL,receiver,exclude_landing_forms=NULL){ accessFDIFishingCEFromDB(con,year=year,month=month,receiver=receiver,exclude_landing_forms=exclude_landing_forms) }

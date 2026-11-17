@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - 'main'
+      - 'review'
     tags:
       - "*"
   pull_request:
     branches:
       - 'main'
+      - 'review'
 
 env:
   CACHE_IMAGE: ghcr.io/un-fao/calipseo-shiny-cache
@@ -16,7 +18,8 @@ env:
   RENV_PATHS_ROOT: ~/.cache/R/renv
 
 jobs:
-  docker:
+  build-and-push:
+    name: "🐳 Build/Publish Docker image"
     runs-on: ubuntu-latest
     steps:
       -
@@ -65,14 +68,116 @@ jobs:
             .
 
       - name: Load Docker image
-        if: github.ref_type == 'tag'
+        if: github.ref == 'refs/heads/review' || github.ref_type == 'tag'
         run: |
           docker load -i /tmp/docker-image.tar
 
       - name: Conditional push Docker image
-        if: github.ref_type == 'tag'
+        if: github.ref == 'refs/heads/review' || github.ref_type == 'tag'
         run: |
-          TAG_NAME=$(basename ${GITHUB_REF})
-          docker tag ghcr.io/un-fao/calipseo-shiny:latest ghcr.io/un-fao/calipseo-shiny:${TAG_NAME}
-          docker push ghcr.io/un-fao/calipseo-shiny:latest
-          docker push ghcr.io/un-fao/calipseo-shiny:${TAG_NAME}
+          TAG_NAME="${GITHUB_REF##*/}"
+          IMAGE="ghcr.io/un-fao/calipseo-shiny"
+
+          if [ "${GITHUB_REF}" = "refs/heads/review" ]; then
+            docker tag "${IMAGE}:latest" "${IMAGE}:review"
+            docker push "${IMAGE}:review"
+          else
+            docker tag "${IMAGE}:latest" "${IMAGE}:${TAG_NAME}"
+            docker push "${IMAGE}:latest"
+            docker push "${IMAGE}:${TAG_NAME}"
+          fi
+    
+  deploy-review:
+    name: "🧪 Deploy for Review"
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: 'review'
+    permissions:
+      id-token: write
+    steps:
+      - name: Authenticate to Google Cloud
+        if: github.ref == 'refs/heads/review'
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_ID_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        if: github.ref == 'refs/heads/review'
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ vars.PROJECT_ID }}
+          
+      - name: Generate ssh key
+        if: github.ref == 'refs/heads/review'
+        run: |
+          # Generate ssh key
+          mkdir -p "$HOME/.ssh"
+          ssh-keygen -t rsa -b 3072 -f "$HOME/.ssh/google_compute_engine" -N "" -q
+
+          # Force-upload the public key
+          gcloud compute os-login ssh-keys add \
+            --key-file="$HOME/.ssh/google_compute_engine.pub" \
+            --project=fao-calipseo-review \
+            --ttl=20m 
+          
+      - name: Update Review Docker image
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "docker pull ghcr.io/un-fao/calipseo-shiny:review"
+      
+      - name: Restart Review ShinyProxy
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "sudo systemctl restart shinyproxy"
+        
+      - name: Health check
+        if: github.ref == 'refs/heads/review'
+        run: |
+          # Fail the run if the application does not answer within 3 minutes of the restart
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "for i in \$(seq 1 36); do \
+                if curl -sf -o /dev/null http://localhost:8484/shinyproxy/login; then echo 'Calipseo Shiny Proxy is up'; exit 0; fi; \
+                sleep 5; \
+              done; \
+              echo 'Calipseo Shiny Proxy did not start, last errors:'; \
+              sudo journalctl -u shinyproxy -p err -n 1 --no-pager;\
+              exit 1"
+
+      - name: Remove Docker dangling images
+        if: github.ref == 'refs/heads/review'
+        run: |
+          gcloud compute ssh "${{ vars.VM_NAME }}" \
+            --zone="${{ vars.ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command "docker image prune -f"
+
+      - name: Wait for load balancer
+        if: github.ref == 'refs/heads/review'
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: |
+          # The load balancer keeps answering 503 until its own health checks see the restarted app:
+          # only report the deployment as done once the public URL serves the login page.
+          # The login page answers 200 with ShinyProxy's own login form, and 302 (redirect to the
+          # identity provider) with `authentication: openid`: both mean ShinyProxy is serving
+          if [ -z "$APP_URL" ]; then
+            echo "::notice::APP_URL is not set for this environment, skipping the public URL check"
+            exit 0
+          fi
+          for i in $(seq 1 24); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${APP_URL%/}/shinyproxy/login" || true)
+            if [ "$code" = "200" ] || [ "$code" = "302" ]; then echo "${APP_URL} is serving (HTTP ${code}) after $((i * 5)) s"; exit 0; fi
+            echo "HTTP ${code}, waiting..."
+            sleep 5
+          done
+          echo "${APP_URL} still not serving 2 minutes after the application started"
+          exit 1       

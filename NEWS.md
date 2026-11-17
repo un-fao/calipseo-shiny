@@ -1,8 +1,20 @@
-# **calipseo-shiny -[v3.0.3](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.3) - ONGOING**
+# **calipseo-shiny -[v3.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.0) - 2026-11-17**
 
 ## Bug fixes
 
 * [#404](https://github.com/un-fao/calipseo-shiny/issues/404) Fix table names in Artfishr SQL queries (from effort surveys)
+* [#414](https://github.com/un-fao/calipseo-shiny/issues/414) Home counters - Fix wrong reference SQL queries for captains / owners
+* [#416](https://github.com/un-fao/calipseo-shiny/issues/416) Artfish B2 Effort query - wrong join landing sites / frame survey
+* [#417](https://github.com/un-fao/calipseo-shiny/issues/417) artfishr - Activity coefficient - Control in case missing values for fleet_engagement_number
+
+## Enhancements
+
+* [415](https://github.com/un-fao/calipseo-shiny/pull/415) Remove 'fishing_unit' filter in Artfish data queries
+
+## CI/CD
+
+* [#406](https://github.com/un-fao/calipseo-shiny/issues/406) Set-up CI/CD for review branch
+* [413](https://github.com/un-fao/calipseo-shiny/pull/413) CI: accept the OpenID Connect redirect when waiting for the load balancer
 
 # **calipseo-shiny -[v3.0.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.0.2) - 2026-10-29**
 
@@ -40,6 +52,12 @@
 ## Bug fixes
 
 * [#396](https://github.com/un-fao/calipseo-shiny/issues/396) Computation module triggers reload of Artfish explorer modules
+
+# **calipseo-shiny [v2.3.2](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.2) - 2026-11-16 (Patch revision)** 
+
+## Bug fixes
+
+* [#417](https://github.com/un-fao/calipseo-shiny/issues/417) artfishr - Activity coefficient - Control in case missing values for fleet_engagement_number
 
 # **calipseo-shiny [v2.3.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v2.3.1) - 2026-06-21** 
 

@@ -463,9 +463,9 @@
     },
     "artfishr": {
       "Package": "artfishr",
-      "Version": "0.1.20261019",
+      "Version": "0.1.20261116",
       "Source": "GitHub",
-      "Date": "2026-10-19",
+      "Date": "2026-11-16",
       "Title": "ArtFish for R",
       "Authors@R": "c( person(\"Johanna\", \"Herfaut\", role = c(\"aut\")), person(\"Yann\", \"Laurent\", role = c(\"aut\")), person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Alexandre\", \"Bennici\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-2160-3487\")), person(\"Bracken\", \"Van Niekerk\", role = c(\"ctb\")) )",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -509,8 +509,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "artfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "0.1.20261019",
-      "RemoteSha": "f3adb0362af6dc6403bf3de2bd3d2832fd23d31c",
+      "RemoteRef": "v0.1.20261116",
+      "RemoteSha": "dc51ef1d2760fe9b3686ca39624f9a4001949ea6",
       "NeedsCompilation": "no",
       "Author": "Johanna Herfaut [aut], Yann Laurent [aut], Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Alexandre Bennici [aut] (ORCID: <https://orcid.org/0000-0003-2160-3487>), Bracken Van Niekerk [ctb]"
     },
@@ -1768,6 +1768,7 @@
       "RemoteUsername": "fdiwg",
       "RemoteRef": "HEAD",
       "RemoteSha": "3f0a0fcaaf6f0905bfb925e0d7205f4f11b3628b",
+      "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },
     "fdishinyr": {
@@ -4368,9 +4369,9 @@
     },
     "repfishr": {
       "Package": "repfishr",
-      "Version": "0.1.20260716",
+      "Version": "0.1.20260904",
       "Source": "GitHub",
-      "Date": "2026-07-16",
+      "Date": "2026-09-04",
       "Title": "Fisheries data reporting flows",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"Arturo\", \"Muñoz Albero\", role = c(\"ctb\")))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
@@ -4387,6 +4388,8 @@
         "readr",
         "mime",
         "lubridate",
+        "sf",
+        "terra",
         "vrule",
         "fdi4R",
         "fdisfdata",
@@ -4410,8 +4413,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "repfishr",
       "RemoteUsername": "fdiwg",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "115ae2863ec1eb12deecb0842dd37f7489a61cd5",
+      "RemoteRef": "0.1.20260904",
+      "RemoteSha": "61492d89bc68933387140c7af7a5b86d93243954",
       "NeedsCompilation": "no",
       "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), Arturo Muñoz Albero [ctb]"
     },

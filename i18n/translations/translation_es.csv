@@ -19,3 +19,6 @@ VESSEL_LIST_VESSEL_STATUS_ACTIVE,Activo
 VESSEL_LIST_VESSEL_STATUS_INACTIVE,Inactivo
 VESSEL_LIST_VESSEL_STATUS_UNDEFINED,Indefinido
 VESSELS,Buques
+SESSION_EXPIRED_MESSAGE,Su sesión ha expirado. Inicie sesión de nuevo para continuar.
+SESSION_EXPIRED_LOGIN,Iniciar sesión de nuevo
+SESSION_EXPIRED_TITLE,Sesión expirada

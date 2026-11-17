@@ -13,7 +13,11 @@ openfismis:
         port: 3306
         user: root
         password: root
-    
+    #optional, Calipseo API (OIDC): home counters read from calipseo-app, restricted to the user's data silo.
+    #Behind ShinyProxy, set the env var CALIPSEO_API instead (see assets/core/calipseo_api_utils.R)
+    #api:
+    #    url: https://calipseo.example.org
+
 structure:
     home:
         title: Home

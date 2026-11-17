@@ -29,7 +29,7 @@ home_server <- function(id, parent.session, lang = NULL, pool, reloader){
     infos$count_vessels_captains <- countVesselCaptains(pool)
     infos$count_fishing_trips <- countFishingTrips(pool)
     infos$count_landing_sites <- countLandingSites(pool)
-    infos$count_years <- nrow(accessAvailableYears(pool))
+    infos$count_years <- countYears(pool)
   })
   
   observe({
@@ -53,17 +53,19 @@ home_server <- function(id, parent.session, lang = NULL, pool, reloader){
     })
     
     output$nb_infos <- renderUI({
+      #NA = counter not available for the user (no right, Calipseo API)
+      show <- function(count){ if(length(count) == 1 && is.na(count)) "-" else count }
       fluidRow(
         if(isTRUE(HAS_REGMANGT)){
           shiny::tagList(
-            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSELS"), infos$count_vessels, icon = icon("ship"), color = "navy"),
-            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), infos$count_vessels_owners, icon = icon("user"), color = "primary"),
-            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), infos$count_vessels_captains, icon = icon("user-shield"), color = "primary")
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSELS"), show(infos$count_vessels), icon = icon("ship"), color = "navy"),
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_OWNERS"), show(infos$count_vessels_owners), icon = icon("user"), color = "primary"),
+            bs4Dash::infoBox(i18n("INFOBOX_TITLE_VESSEL_CAPTAINS"), show(infos$count_vessels_captains), icon = icon("user-shield"), color = "primary")
           )
         },
-        bs4Dash::infoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), infos$count_fishing_trips, icon = icon("ship"), color = "navy"),
-        bs4Dash::infoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), infos$count_landing_sites, icon = icon("map-marker"), color = "maroon"),
-        bs4Dash::infoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), infos$count_years, icon = icon("history"), color = "fuchsia")
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_FISHING_TRIPS"), show(infos$count_fishing_trips), icon = icon("ship"), color = "navy"),
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_LANDING_SITES"), show(infos$count_landing_sites), icon = icon("map-marker"), color = "maroon"),
+        bs4Dash::infoBox(i18n("INFOBOX_TITLE_YEARS_ANALYZED"), show(infos$count_years), icon = icon("history"), color = "fuchsia")
       )
     })
     
