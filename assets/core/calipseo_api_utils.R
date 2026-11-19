@@ -14,9 +14,21 @@
 #token expires after a few minutes, so the app gets a new one itself with the refresh token. When
 #Keycloak refuses the refresh token (Keycloak session expired or logged out), the user is asked to log in
 #again: a plain reload is not enough, ShinyProxy would reconnect to the same container and its old tokens.
-#With ShinyProxy each user has their own container (R process), so the tokens kept here are the user's.
+#
+#The tokens and the counters cache are kept per Shiny session (session$userData), not per R process, so two
+#users can never share them, even if several users one day share a container (ShinyProxy "seats"). Note that
+#with seats ShinyProxy cannot give a user's tokens as env vars: OIDC needs one container per user today.
 
-calipseo_api <- new.env()
+#calipseoAPIState
+#@returns the API state (tokens, counters cache) of the current Shiny session. Outside a Shiny session
+#(e.g. an R console during development) a single process-level state is used.
+calipseo_api_no_session <- new.env()
+calipseoAPIState <- function(){
+  session <- shiny::getDefaultReactiveDomain()
+  if(is.null(session)) return(calipseo_api_no_session)
+  if(is.null(session$userData$calipseo_api)) session$userData$calipseo_api <- new.env()
+  session$userData$calipseo_api
+}
 
 #calipseoAPIUrl
 calipseoAPIUrl <- function(){
@@ -80,6 +92,7 @@ calipseoSessionExpired <- function(reason){
 
 #refreshCalipseoAPIToken
 refreshCalipseoAPIToken <- function(){
+  calipseo_api <- calipseoAPIState()
   if(!nzchar(calipseo_api$refresh)) calipseoSessionExpired("no refresh token")
   token_url <- Sys.getenv("OIDC_TOKEN_URL")
   if(!nzchar(token_url)) stop("Calipseo API: OIDC_TOKEN_URL is not set (ShinyProxy container-env)", call. = FALSE)
@@ -107,6 +120,7 @@ refreshCalipseoAPIToken <- function(){
 #calipseoAPIToken
 #@returns a valid access token, refreshed when it expires within the next 30 seconds
 calipseoAPIToken <- function(force_refresh = FALSE){
+  calipseo_api <- calipseoAPIState()
   if(is.null(calipseo_api$access)){
     calipseo_api$access <- Sys.getenv("SHINYPROXY_OIDC_ACCESS_TOKEN")
     calipseo_api$refresh <- Sys.getenv("SHINYPROXY_OIDC_REFRESH_TOKEN")
@@ -145,9 +159,10 @@ calipseoAPIGet <- function(path, query = NULL){
 
 #<MODULE:HOME>
 #accessCountersFromAPI
-#All home counters in one call (/api/analysis/counters), kept 10 seconds so that the info boxes share it.
+#All home counters in one call (/api/analysis/counters), kept 10 seconds (per session) so that the info boxes share it.
 #A counter the user has no right for is not in the result.
 accessCountersFromAPI <- function(){
+  calipseo_api <- calipseoAPIState()
   if(is.null(calipseo_api$counters) || difftime(Sys.time(), calipseo_api$counters_time, units = "secs") > 10){
     DEBUG("Query home counters (API)")
     calipseo_api$counters <- calipseoAPIGet("/api/analysis/counters")
