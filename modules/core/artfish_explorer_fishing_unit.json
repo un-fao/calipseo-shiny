@@ -3,5 +3,6 @@
   "parent": "artfish_explorer",
   "rank": 2,
   "title": "C&E by Fishing Unit",
-  "icon": "ship"
+  "icon": "ship",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC", "R_SHINYSTATEXEC"]
 }

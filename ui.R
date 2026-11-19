@@ -17,7 +17,7 @@ ui <- shiny::tagList(
     ),
     bs4Dash::dashboardSidebar(
       collapsed = FALSE,
-      sidebarMenuFromModules(appConfig)
+      bs4Dash::sidebarMenuOutput("main_sidebar")
     ),
     bs4Dash::dashboardBody(
       tags$head(
@@ -27,7 +27,7 @@ ui <- shiny::tagList(
         tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"),
         tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js")
       ),
-      loadModuleUIs(appConfig),
+      uiOutput("main_content"),
       shinyjs::useShinyjs(),
       waiter::useWaiter()
     )
