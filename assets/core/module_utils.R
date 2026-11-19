@@ -113,7 +113,7 @@ loadModuleServer <- function(id, session, lang, config, pool, module_state, relo
   #per user role restriction
   module_profile <- loadModuleProfile(id, config)
   if(restrict_modules_access & !is.null(module_profile$roles)){
-    if(!any(calipseo_api$user_profile$given_roles %in% module_profile$roles)) return(NULL)
+    if(!any(calipseo_api$user_profile$givenRoles %in% module_profile$roles)) return(NULL)
   }
   
   id_out = id
@@ -232,7 +232,7 @@ loadModuleUIs <- function(config){
       if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
       #per user role restriction
       if(restrict_modules_access & !is.null(outp$roles)){
-        enabled = any(calipseo_api$user_profile$given_roles %in% outp$roles)
+        enabled = any(calipseo_api$user_profile$givenRoles %in% outp$roles)
       }
       if(enabled){
         INFO("Loading shiny module '%s' UI functions...", module)
@@ -286,7 +286,7 @@ sidebarMenuFromModules <- function(config){
     enabled <- x$enabled
     #per user role restriction
     if(restrict_modules_access & !is.null(x$roles)){
-      enabled = any(calipseo_api$user_profile$given_roles %in% x$roles)
+      enabled = any(calipseo_api$user_profile$givenRoles %in% x$roles)
     }
     if(enabled){
       DEBUG("Sidebar - Show '%s' module", x$module)
