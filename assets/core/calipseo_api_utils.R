@@ -139,9 +139,11 @@ calipseoAPIToken <- function(force_refresh = FALSE){
 #@returns the parsed JSON
 calipseoAPIGet <- function(path, query = NULL){
   start <- Sys.time()
-  url <- paste0(calipseoAPIUrl(), path)
+  #query parameters may come in the path ("/x?year=2020") and/or in query = list(...); httr::GET(url, query = NULL)
+  #would drop the ones in the path, so the URL is built here and httr::GET gets no query argument
+  url <- httr::modify_url(paste0(calipseoAPIUrl(), path), query = query)
   get <- function(token){
-    httr::GET(url, query = query, httr::timeout(120), httr::add_headers(Authorization = paste("Bearer", token)))
+    httr::GET(url, httr::timeout(120), httr::add_headers(Authorization = paste("Bearer", token)))
   }
   resp <- get(calipseoAPIToken())
   if(httr::status_code(resp) == 401){
