@@ -1079,7 +1079,7 @@ accessArtfishC <- function(con,year=NULL,month=NULL){
     accessArtfishCFromDB(con,year=year,month=month)  
   }
 }
-accessArtfishD <- function(con,year=NULL,month=NULL){ accessArtfishDFromDB(con,year=year,month=month) }
+accessArtfishD <- function(con,year=NULL,month=NULL){ if(useCalipseoAPI()) accessArtfishDFromAPI(year=year,month=month) else accessArtfishDFromDB(con,year=year,month=month) }
 accessArtfishARegion <- function(con,year=NULL,month=NULL){ accessArtfishARegionFromDB(con,year=year,month=month) }
 accessArtfishAFleetSegment <- function(con,year=NULL,month=NULL){ accessArtfishAFleetSegmentFromDB(con,year=year,month=month) }
 #multireporting

@@ -190,3 +190,14 @@ countFromAPI <- function(name){
   value <- accessCountersFromAPI()[[name]]
   if(is.null(value)) NA_integer_ else value
 }
+
+#<ARTFISH>
+#accessArtfishDFromAPI
+accessArtfishDFromAPI <- function(year = NULL, month = NULL){
+  q = NULL
+  if(!is.null(year)){
+    q = list(year = year)
+    if(!is.null(month)) q = c(q, month = month) 
+  }
+  calipseoAPIGet("/api/analysis/artfish/landings", query = q)
+}
