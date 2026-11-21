@@ -7,9 +7,22 @@ server <- function(input, output, session) {
   session$userData$module_selection <- NULL
   session$userData$record_selection <- NULL
   
+  #load user Profile
+  if(useCalipseoAPI()){
+    fetchUserProfileFromAPI()
+  }
+  
   #reactives
   loadedSideUI <- reactiveVal(FALSE)
   loadedMainUI <- reactiveVal(FALSE)
+  
+  #mainUI
+  output$main_sidebar <- bs4Dash::renderMenu({
+    sidebarMenuFromModules(appConfig)
+  })
+  output$main_content <- renderUI({
+    tagList( loadModuleUIs(appConfig) )
+  })
   
   #calipseo-shiny URL decoding mechanism
   observe({

@@ -159,6 +159,17 @@ calipseoAPIGet <- function(path, query = NULL){
   out
 }
 
+#<CORE:ME>
+#Fetch user profile (/api/analysis/me) including id,name,email and roles
+fetchUserProfileFromAPI <- function(){
+  calipseo_api <- calipseoAPIState()
+  if(is.null(calipseo_api$user_profile)){
+    DEBUG("Query user profile (API)")
+    calipseo_api$user_profile <- calipseoAPIGet("/api/analysis/me")
+  }
+  calipseo_api$user_profile
+}
+
 #<MODULE:HOME>
 #accessCountersFromAPI
 #All home counters in one call (/api/analysis/counters), kept 10 seconds (per session) so that the info boxes share it.

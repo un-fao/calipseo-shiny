@@ -3,5 +3,6 @@
   "parent": "sws",
   "rank": 3,
   "title": "C&E by Fishing Unit",
-  "icon": "ship"
+  "icon": "ship",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC"]
 }

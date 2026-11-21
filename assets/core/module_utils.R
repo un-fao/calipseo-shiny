@@ -17,15 +17,6 @@ listModuleProfiles <- function(config, core = TRUE, country = TRUE){
   return(default_module_profiles)
 }
 
-#loadModuleProfile
-loadModuleProfile <- function(filename){
-  profile <- jsonlite::read_json(filename)
-  if(is.null(profile$enabled)) profile$enabled <- TRUE
-  if(is.null(profile$menu)) profile$menu <- FALSE
-  if(is.null(profile$icon)) profile$icon <- "angle-double-right"
-  return(profile)
-}
-
 #loadModuleScripts
 loadModuleScripts <- function(config){
   default_module_profiles <- listModuleProfiles(config)
@@ -77,8 +68,17 @@ i18n <- function(term){
   return(i18n_term)
 }
 
-#listLinkedModules
-listLinkedModules <- function(id, config){
+#loadModuleProfileFile
+loadModuleProfileFile <- function(filename){
+  profile <- jsonlite::read_json(filename)
+  if(is.null(profile$enabled)) profile$enabled <- TRUE
+  if(is.null(profile$menu)) profile$menu <- FALSE
+  if(is.null(profile$icon)) profile$icon <- "angle-double-right"
+  return(profile)
+}
+
+#loadhModuleProfile
+loadModuleProfile <- function(id, config){
   module_file <- NULL
   core_module_file = paste0("./modules/core/",id,".json")
   is_core_module = file.exists(core_module_file)
@@ -90,15 +90,32 @@ listLinkedModules <- function(id, config){
   }else{
     module_file = core_module_file
   }
-  if(!is_core_module & !is_cnt_module) return(list());
+  if(!is_core_module & !is_cnt_module) return(NULL);
+  if(is.null(module_file)) return(NULL);
   
+  profile <- loadModuleProfileFile(module_file)
+  return(profile)
+}
+
+#listLinkedModules
+listLinkedModules <- function(id, config){
   print(module_file)
-  module_profile <- loadModuleProfile(module_file)
+  module_profile <- loadModuleProfile(module_file, config)
   return(module_profile$linked_modules)
 }
 
 #loadModuleServer
 loadModuleServer <- function(id, session, lang, config, pool, module_state, reloader){
+  
+  calipseo_api <- calipseoAPIState()
+  restrict_modules_access <- !is.null(calipseo_api$user_profile)
+  
+  #per user role restriction
+  module_profile <- loadModuleProfile(id, config)
+  if(restrict_modules_access & !is.null(module_profile$roles)){
+    if(!any(calipseo_api$user_profile$givenRoles %in% module_profile$roles)) return(NULL)
+  }
+  
   id_out = id
   load_module <- !id %in% module_state$initialized
   if(load_module){
@@ -139,21 +156,13 @@ loadModuleServer <- function(id, session, lang, config, pool, module_state, relo
 #@deprecated
 loadModuleServers <- function(config, pool, reloader){
   INFO("=> Loading Module Servers")							   
+  
+  calipseo_api <- calipseoAPIState()
+  restrict_modules_access <- !is.null(calipseo_api$user_profile)
+  
   default_module_profiles <- listModuleProfiles(config)
   if(!is.null(reloader())){
-    core_module_file = paste0("./modules/core/",reloader(),".json")
-    is_core_module = file.exists(core_module_file)
-    is_cnt_module = FALSE
-    if(!is_core_module){
-      cnt_module_file = sprintf("./modules/country/%s/%s.json", config$country_profile$iso3, reloader())
-      is_cnt_module = file.exists(cnt_module_file)
-      if(is_cnt_module) module_file = cnt_module_file
-    }else{
-      module_file = core_module_file
-    }
-    if(!is_core_module & !is_cnt_module) return(NULL);
-    
-    reloader_profile<-loadModuleProfile(module_file)
+    reloader_profile <- loadModuleProfile(reloader(), config)
     modules_to_reload<-reloader_profile$linked_modules
     if("*" %in% modules_to_reload){
       modules_to_reload = list.files(path = "./modules", pattern = ".json", recursive = TRUE, full.names = TRUE)
@@ -180,7 +189,7 @@ loadModuleServers <- function(config, pool, reloader){
   }  
   for(module_profile in default_module_profiles){
     module <- unlist(strsplit(unlist(strsplit(module_profile, paste0(dirname(module_profile),"/")))[2], ".json"))[1]
-    outp <- loadModuleProfile(module_profile)
+    outp <- loadModuleProfileFile(module_profile)
     if(outp$type != "internal" && !outp$menu){
       enabled = TRUE
       module_config = config$modules[[module]]
@@ -207,6 +216,10 @@ loadModuleServers <- function(config, pool, reloader){
 
 #loadModuleUIs
 loadModuleUIs <- function(config){
+  
+  calipseo_api <- calipseoAPIState()
+  restrict_modules_access <- !is.null(calipseo_api$user_profile)
+  
   default_module_profiles <- listModuleProfiles(config)
   module_uis <- lapply(default_module_profiles, function(module_profile){
     out <- NULL
@@ -217,6 +230,10 @@ loadModuleUIs <- function(config){
       module_config = config$modules[[module]]
       has_config = !is.null(module_config)
       if(has_config) if(!is.null(module_config$enabled)) enabled = module_config$enabled
+      #per user role restriction
+      if(restrict_modules_access & !is.null(outp$roles)){
+        enabled = any(calipseo_api$user_profile$givenRoles %in% outp$roles)
+      }
       if(enabled){
         INFO("Loading shiny module '%s' UI functions...", module)
         ui_fun_name <- paste0(module, "_ui")
@@ -238,10 +255,13 @@ loadModuleUIs <- function(config){
 #createSidebarfromModules
 sidebarMenuFromModules <- function(config){
   
+  calipseo_api <- calipseoAPIState()
+  restrict_modules_access <- !is.null(calipseo_api$user_profile)
+  
   #default modules
   default_module_profiles <- listModuleProfiles(config)
   
-  #extend default module profiles in case custom configs are availble
+  #extend default module profiles in case custom configs are available
   module_profiles = lapply(default_module_profiles, function(module_profile){
     #read module profile
     module_profile_name <- unlist(strsplit(unlist(strsplit(module_profile, paste0(dirname(module_profile),"/")))[2], ".json"))[1]
@@ -260,8 +280,25 @@ sidebarMenuFromModules <- function(config){
     }
     return(outp)
   })
+  
+  #Modules restriction/hiding rules based user roles
+  module_profiles <- lapply(module_profiles, function(x){
+    enabled <- x$enabled
+    #per user role restriction
+    if(restrict_modules_access & !is.null(x$roles)){
+      enabled = any(calipseo_api$user_profile$givenRoles %in% x$roles)
+    }
+    if(enabled){
+      DEBUG("Sidebar - Show '%s' module", x$module)
+    }else{
+      DEBUG("Sidebar - Hide '%s' module", x$module)
+    }
+    x$enabled <- enabled
+    return(x)
+  })
+  
   #remove internal modules
-  module_profiles <- module_profiles[sapply(module_profiles, function(x){x$type != "internal"})]
+  module_profiles <- module_profiles[sapply(module_profiles, function(x){ x$type != "internal" })]
   
   #TODO custom modules?
 
@@ -276,15 +313,21 @@ sidebarMenuFromModules <- function(config){
   
   #sidebar UI
   do.call(bs4Dash::sidebarMenu, c(id="calipseo-tabs", Filter(Negate(is.null), lapply(names(structure_menu_items), function(menu_item_name){
+    
+    #profiles of modules associated to this menu item
+    menu_item_profiles <- module_profiles[sapply(module_profiles, function(x){x$parent == menu_item_name})]
+    menu_item_profiles <- menu_item_profiles[order(sapply(menu_item_profiles, function(x){x$rank}))]
+    
     #menu item
     menu_item <- structure_menu_items[[menu_item_name]]
     menu_item_enabled <- TRUE
     if(!is.null(menu_item$enabled)) menu_item_enabled <- menu_item$enabled
     if(!menu_item_enabled) return(NULL)
-    
-    #profiles of modules associated to this menu item
-    menu_item_profiles <- module_profiles[sapply(module_profiles, function(x){x$parent == menu_item_name})]
-    menu_item_profiles <- menu_item_profiles[order(sapply(menu_item_profiles, function(x){x$rank}))]
+    if(length(menu_item_profiles)>0){
+      #if there is no at least one module enabled we disabled the menu
+      if(all(sapply(menu_item_profiles, function(x){!x$enabled}))) return(NULL)
+    }
+      
     #ui for menu item
     do.call(bs4Dash::menuItem, c(
       text = menu_item$title, tabName = menu_item_name, 

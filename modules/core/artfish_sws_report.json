@@ -3,5 +3,6 @@
   "parent": "sws",
   "rank": 5,
   "title": "Monthly Report",
-  "icon": "table"
+  "icon": "table",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC"]
 }
