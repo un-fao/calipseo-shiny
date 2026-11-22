@@ -1,3 +1,10 @@
+# **calipseo-shiny -[v3.1.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.1) - 2026-11-22**
+
+## Bug fixes
+
+* [#424](https://github.com/un-fao/calipseo-shiny/issues/424) Computation - Release of dependent indicators is broken
+
+
 # **calipseo-shiny -[v3.1.0](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.0) - 2026-11-17**
 
 ## Bug fixes
