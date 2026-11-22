@@ -99,8 +99,7 @@ loadModuleProfile <- function(id, config){
 
 #listLinkedModules
 listLinkedModules <- function(id, config){
-  print(module_file)
-  module_profile <- loadModuleProfile(module_file, config)
+  module_profile <- loadModuleProfile(id, config)
   return(module_profile$linked_modules)
 }
 
