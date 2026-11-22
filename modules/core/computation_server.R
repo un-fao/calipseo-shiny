@@ -399,7 +399,7 @@ computation_server <- function(id, parent.session, lang = NULL, pool, reloader) 
   #releaseIndicator
   releaseIndicator<-function(out,session,target,release_dependent_indicators=FALSE){
     
-    req(!is.null(torelease()))
+    req(!is.null(target))
     
     if(release_dependent_indicators){
       decode_target<-unlist(strsplit(target ,"/staging/"))[2]
