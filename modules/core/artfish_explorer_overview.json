@@ -3,5 +3,6 @@
   "parent": "artfish_explorer",
   "rank": 1,
   "title": "Total Catch and Effort",
-  "icon": "chart-line"
+  "icon": "chart-line",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC", "R_SHINYSTATEXEC"]
 }

@@ -3,5 +3,6 @@
   "parent": "sws",
   "rank": 4,
   "title": "C&E by Species",
-  "icon": "fish"
+  "icon": "fish",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC"]
 }

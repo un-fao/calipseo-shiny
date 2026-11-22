@@ -3,5 +3,6 @@
   "parent": "artfish_explorer",
   "rank": 3,
   "title": "C&E by Species",
-  "icon": "fish"
+  "icon": "fish",
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC", "R_SHINYSTATEXEC"]
 }

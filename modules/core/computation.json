@@ -4,5 +4,6 @@
   "rank": 1,
   "title": "Compute indicators",
   "icon": "database",
-  "linked_modules": ["artfish_sws_*", "landings1_*"]
+  "linked_modules": ["artfish_sws_*", "landings1_*"],
+  "roles": ["A_SHINYSTATEXEC", "W_SHINYSTATEXEC"]
 }
