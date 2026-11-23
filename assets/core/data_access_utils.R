@@ -664,6 +664,15 @@ accessArtfishB2FromDB <- function(con,year = NULL,month=NULL){
   }
   return(fa)
 }
+#accessArtfishB2EffortSurveyFromDB
+accessArtfishB2EffortSurveyFromDB <- function(con,year = NULL,month=NULL){
+  fa_sql <- readSQL("data/core/sql/artfish_B2_effort_by_effort_survey.sql")
+  if(!is.null(month)&!is.null(year)){
+    fa_sql <- paste0(fa_sql, sprintf(" WHERE s.YEAR = %s AND s.CL_APP_MONTH_ID = %s ",year,month))
+  }
+  fa <- getFromSQL(con, fa_sql)
+  return(fa)
+}
 #accessArtfishB3FromDB
 accessArtfishB3FromDB <- function(con,year = NULL,month=NULL){
   fa_sql <- readSQL("data/core/sql/artfish_B3_effort.sql")
@@ -1061,8 +1070,16 @@ accessArtfishA2 <- function(con,year=NULL,month=NULL){ accessArtfishA2FromDB(con
 #keep accessArtfishA as identity of accessArtfishA1
 accessArtfishA <- function(con,year=NULL,month=NULL){ accessArtfishA1(con,year=year,month=month) }
 accessArtfishB1 <- function(con,year=NULL,month=NULL){ accessArtfishB1FromDB(con,year=year,month=month) }
-accessArtfishB2 <- function(con,year=NULL,month=NULL){ 
-  accessArtfishB2FromDB(con,year=year,month=month) 
+accessArtfishB2 <- function(con,year=NULL,month=NULL){
+  cnt_iso3 = accessCountryISOCode(con)
+  if(cnt_iso3 %in% c("BHR")){
+    #specific case of BHR (for now) where Artfish active days are derived from effort survey
+    #parameterization deferred to Calipseo model 2.0 / Calipseo 3.0 with the transition to APIs
+    INFO("Bahrain effort B2 - derived from effort survey")
+    accessArtfishB2EffortSurveyFromDB(con, year=year,month=month)
+  }else{
+    accessArtfishB2FromDB(con,year=year,month=month)
+  }
 }
 accessArtfishB3 <- function(con,year=NULL,month=NULL){
   accessArtfishB3FromDB(con,year=year,month=month)
