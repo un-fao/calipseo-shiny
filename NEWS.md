@@ -1,3 +1,20 @@
+# **calipseo-shiny -3.2.x - ONGOING**
+
+## Bug fixes
+
+* [#424](https://github.com/un-fao/calipseo-shiny/issues/424) Computation - release of dependent indicators is broken
+
+
+## New features
+
+* [#421](https://github.com/un-fao/calipseo-shiny/issues/421) API - User profile & mechanism to load modules based on user role restrictions
+
+## New requirements
+
+- [fdishinyr](https://github.com/fdiwg/fdishinyr/releases/tag/0.1.20261123) R package (0.1.20261123 pre-release)
+- [artfishr](https://github.com/fdiwg/artfishr/releases/tag/0.1.20261123) R package (0.1.20261123 pre-release)
+
+
 # **calipseo-shiny -[v3.1.1](https://github.com/un-fao/calipseo-shiny/releases/tag/v3.1.1) - 2026-11-22**
 
 ## Bug fixes
