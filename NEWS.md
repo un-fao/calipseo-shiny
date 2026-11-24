@@ -3,6 +3,7 @@
 ## Bug fixes
 
 * [#424](https://github.com/un-fao/calipseo-shiny/issues/424) Computation - release of dependent indicators is broken
+* [#428](https://github.com/un-fao/calipseo-shiny/issues/428) Artfish draft report - Reference data queries - joining fails with MySQL 8.4 due data type mismatch
 
 
 ## New features
@@ -12,6 +13,7 @@
 ## Enhancements
 
 * [#427](https://github.com/un-fao/calipseo-shiny/issues/427) Create specific accessor for Bahrain effort data
+
 
 ## New requirements
 
