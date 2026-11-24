@@ -81,7 +81,10 @@ artfish_estimates_explorer <- function(pool, refresh, progress_fn = NULL){
   #active days
   active_days = reactive({
     refresh() #ensure we fetch DB data only on refresh
-    accessArtfishC(pool)
+    periods = accessEffortSurveyPeriods(pool)
+    do.call(rbind,lapply(1:nrow(periods), function(i){
+      accessArtfishC(pool, year = periods[i,]$year, month = periods[i,]$month)
+    }))
   })
   #landings
   landings = reactive({

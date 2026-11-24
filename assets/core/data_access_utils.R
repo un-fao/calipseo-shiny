@@ -1087,7 +1087,7 @@ accessArtfishB3 <- function(con,year=NULL,month=NULL){
 accessArtfishCEffortSurvey <- function(con,year=NULL,month=NULL){ accessArtfishCEffortSurveyFromDB(con,year=year,month=month) }
 accessArtfishC <- function(con,year=NULL,month=NULL){ 
   cnt_iso3 = accessCountryISOCode(con)
-  if(cnt_iso3 %in% c("BHR")){
+  if(cnt_iso3 %in% c("BHR") & year < 2026){
     #specific case of BHR (for now) where Artfish active days are derived from effort survey
     #parameterization deferred to Calipseo model 2.0 / Calipseo 3.0 with the transition to APIs
     INFO("Bahrain active days - derived from effort survey")

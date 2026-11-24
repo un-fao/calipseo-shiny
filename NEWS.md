@@ -4,7 +4,7 @@
 
 * [#424](https://github.com/un-fao/calipseo-shiny/issues/424) Computation - release of dependent indicators is broken
 * [#428](https://github.com/un-fao/calipseo-shiny/issues/428) Artfish draft report - Reference data queries - joining fails with MySQL 8.4 due data type mismatch
-
+* [#429](https://github.com/un-fao/calipseo-shiny/issues/429) Support custom shift in active days data query for BHR / 2026
 
 ## New features
 
